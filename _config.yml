@@ -105,7 +105,7 @@ theme: next
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: git@github.com:gamelife1314/gamelife1314.github.io.git
+  repo: git@github.com:fresh88888888/umbrella.github.io.git
   branch: master
 
 symbols_count_time:
