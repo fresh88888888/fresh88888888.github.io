@@ -11,7 +11,7 @@ author: umbrella
 language: 
   - zh-CN
   - en
-timezone: "Asia/BeiJing"
+timezone: "Asia/Shanghai"
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
