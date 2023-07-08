@@ -1,6 +1,6 @@
 ---
 title: 【Rust】闭包
-date: 2022-04-30 15:52:57
+date: 2023-07-07 15:52:57
 tags:
   - 闭包
   - 《Rust 程序设计》
@@ -137,7 +137,7 @@ fn count_selected_cities<F>(cities: &Vec<City>, test_fn: F) -> usize
 
 下图展示了不同种类的闭包在内存上的布局：
 
-![](closure-in-mem.png)
+{% asset_img closure-in-mem.png 不同种类的闭包在内存上的布局 %} 
 
 - 闭包 (a) 使用这两个变量，在内存中，这个闭包看起来像一个包含对它使用的变量的引用的小结构；
 
