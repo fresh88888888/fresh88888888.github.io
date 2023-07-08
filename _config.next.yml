@@ -252,7 +252,7 @@ post_meta:
 # Dependencies: https://github.com/next-theme/hexo-word-counter
 symbols_count_time:
   separated_meta: true
-  item_text_total: false
+  item_text_total: true
 
 # Use icon instead of the symbol # to indicate the tag at the bottom of the post
 tag_icon: false
@@ -897,6 +897,12 @@ canvas_ribbon:
   alpha: 0.6 # The transparency of the ribbon
   zIndex: -1 # The display level of the ribbon
 
+# Progress bar in the top during page loading.
+# For more information: https://github.com/rstacruz/nprogress
+nprogress:
+  enable: true
+  spinner: true
+  
 # ---------------------------------------------------------------
 # CDN Settings
 # See: https://theme-next.js.org/docs/advanced-settings/vendors

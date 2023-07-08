@@ -104,6 +104,11 @@ ignore:
 ## Themes: https://hexo.io/themes/
 theme: next
 
+# A JavaScript library for zooming images like Medium.
+# Warning: Do not enable both `fancybox` and `mediumzoom`.
+# For more information: https://medium-zoom.francoischalifour.com
+mediumzoom: true
+
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
@@ -116,6 +121,9 @@ symbols_count_time:
   time: true
   total_symbols: true
   total_time: true
+  exclude_codeblock: false
+  wpm: 300
+  suffix: "mins."
 
 search:
   path: local-search.xml
