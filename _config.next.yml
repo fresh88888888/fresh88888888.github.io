@@ -91,6 +91,7 @@ menu:
   #schedule: /schedule/ || fa fa-calendar
   #sitemap: /sitemap.xml || fa fa-sitemap
   #commonweal: /404/ || fa fa-heartbeat
+  "算法": /Algorithm/ || fa fa-calendar
   "Rust 编程": /Programming-Rust/ || fa fa-cat
   "Go &nbsp;&nbsp;&nbsp;编程": /Programming-Go/ || fa fa-hippo
 
