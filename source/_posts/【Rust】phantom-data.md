@@ -1,6 +1,6 @@
 ---
 title: 【Rust】幽灵数据（PhantomData）
-date: 2022-04-01 23:22:16
+date: 2022-04-15 23:22:16
 tags:
     - phantom-data
     - 《Rust 程序设计》
