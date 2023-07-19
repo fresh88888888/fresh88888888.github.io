@@ -92,6 +92,7 @@ menu:
   #sitemap: /sitemap.xml || fa fa-sitemap
   #commonweal: /404/ || fa fa-heartbeat
   "算法": /Algorithm/ || fa fa-calendar
+  "C++ &nbsp;编程": /Programming-C++/ || fa fa-heartbeat
   "Rust 编程": /Programming-Rust/ || fa fa-cat
   "Go &nbsp;&nbsp;&nbsp;编程": /Programming-Go/ || fa fa-hippo
 
@@ -170,6 +171,7 @@ links_settings:
 links:
   Rust: https://www.rust-lang.org/zh-CN/
   Golang: https://go.dev/
+  C++: https://isocpp.org/
   Python: https://www.python.org/
   Cargo: https://doc.rust-lang.org/cargo/index.html
   Emoji: https://gist.github.com/rxaviers/7360908
