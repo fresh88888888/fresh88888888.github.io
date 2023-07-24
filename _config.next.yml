@@ -91,6 +91,8 @@ menu:
   #schedule: /schedule/ || fa fa-calendar
   #sitemap: /sitemap.xml || fa fa-sitemap
   #commonweal: /404/ || fa fa-heartbeat
+  "算法": /Algorithm/ || fa fa-calendar
+  "C++ &nbsp;编程": /Programming-C++/ || fa fa-heartbeat
   "Rust 编程": /Programming-Rust/ || fa fa-cat
   "Go &nbsp;&nbsp;&nbsp;编程": /Programming-Go/ || fa fa-hippo
 
@@ -169,6 +171,7 @@ links_settings:
 links:
   Rust: https://www.rust-lang.org/zh-CN/
   Golang: https://go.dev/
+  C++: https://isocpp.org/
   Python: https://www.python.org/
   Cargo: https://doc.rust-lang.org/cargo/index.html
   Emoji: https://gist.github.com/rxaviers/7360908
@@ -252,7 +255,7 @@ post_meta:
 # Dependencies: https://github.com/next-theme/hexo-word-counter
 symbols_count_time:
   separated_meta: true
-  item_text_total: false
+  item_text_total: true
 
 # Use icon instead of the symbol # to indicate the tag at the bottom of the post
 tag_icon: false
@@ -266,8 +269,8 @@ reward_settings:
   comment: Buy me a coffee
 
 reward:
-  #wechatpay: /images/wechatpay.png
-  #alipay: /images/alipay.png
+  wechatpay: /images/wechatpay.png
+  alipay: /images/alipay.png
   #paypal: /images/paypal.png
   #bitcoin: /images/bitcoin.png
 
@@ -513,7 +516,7 @@ math:
   every_page: false
 
   mathjax:
-    enable: false
+    enable: ture
     # Available values: none | ams | all
     tags: none
 
@@ -897,6 +900,12 @@ canvas_ribbon:
   alpha: 0.6 # The transparency of the ribbon
   zIndex: -1 # The display level of the ribbon
 
+# Progress bar in the top during page loading.
+# For more information: https://github.com/rstacruz/nprogress
+nprogress:
+  enable: true
+  spinner: true
+  
 # ---------------------------------------------------------------
 # CDN Settings
 # See: https://theme-next.js.org/docs/advanced-settings/vendors

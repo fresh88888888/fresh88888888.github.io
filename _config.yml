@@ -3,10 +3,10 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: umbrella
-subtitle: "好记性不如烂笔头"
+title: UMBRELLA
+subtitle: "未雨绸缪，举重若轻"
 description: "没事就多看看书"
-keywords:
+keywords: "umbrella"
 author: umbrella
 language: 
   - zh-CN
@@ -39,10 +39,13 @@ titlecase: false # Transform title into titlecase
 external_link:
   enable: true # Open external links in new tab
   field: site # Apply to the whole site
-  exclude: ''
+  exclude: ""
 filename_case: 0
 render_drafts: false
-post_asset_folder: false
+post_asset_folder: true
+marked:
+  prependRoot: true
+  postAsset: true
 relative_link: false
 future: true
 highlight:
@@ -101,6 +104,11 @@ ignore:
 ## Themes: https://hexo.io/themes/
 theme: next
 
+# A JavaScript library for zooming images like Medium.
+# Warning: Do not enable both `fancybox` and `mediumzoom`.
+# For more information: https://medium-zoom.francoischalifour.com
+mediumzoom: true
+
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
@@ -113,6 +121,9 @@ symbols_count_time:
   time: true
   total_symbols: true
   total_time: true
+  exclude_codeblock: false
+  wpm: 300
+  suffix: "mins."
 
 search:
   path: local-search.xml
