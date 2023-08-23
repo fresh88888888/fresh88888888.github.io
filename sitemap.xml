@@ -11,6 +11,15 @@
   </url>
   
   <url>
+    <loc>https://umbrella.github.io/2023/08/22/Cloud-Native/service-mesh/</loc>
+    
+    <lastmod>2023-08-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://umbrella.github.io/2023/08/14/Cloud-Native/%E3%80%90Docker%E3%80%91%E6%9E%84%E5%BB%BA%E5%9F%BA%E7%A1%80%E9%95%9C%E5%83%8F/</loc>
     
     <lastmod>2023-08-14</lastmod>
@@ -951,6 +960,13 @@
     <priority>0.2</priority>
   </url>
   
+  <url>
+    <loc>https://umbrella.github.io/tags/service-mesh/</loc>
+    <lastmod>2023-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
 
   
   <url>
@@ -1053,6 +1069,13 @@
   
   <url>
     <loc>https://umbrella.github.io/categories/Quantitative-Trading/</loc>
+    <lastmod>2023-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://umbrella.github.io/categories/Service-Mesh/</loc>
     <lastmod>2023-08-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
