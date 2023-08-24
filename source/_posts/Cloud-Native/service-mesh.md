@@ -89,7 +89,7 @@ category:
 {% asset_img service_mesh_8.png  %}
 
 ###### 目标规则
-- 定义虚拟服务路由目标地址的真实地址，即子集（subset）
+- 定义虚拟服务路由目标地址的真实地址，即子集（`subset`）
 - 设置负载均衡的方式（随机、轮询、权重、最小请求数）
 {% asset_img service_mesh_9.png  %}
 
@@ -104,8 +104,8 @@ category:
 {% asset_img service_mesh_11.png  %}
 
 ###### SideCar
-- 调整Envoy代理接管的端口和协议
-- 限制Envoy代理可访问的服务
+- 调整`Envoy`代理接管的端口和协议
+- 限制`Envoy`代理可访问的服务
 {% asset_img service_mesh_12.png  %}
 
 ###### 网络弹性和测试
@@ -120,12 +120,12 @@ category:
 
 ###### 指标（Metrics）
 - 以聚合的方式监控和理解系统的行为
-- Istio指标的分类（1.**代理级别的指标**,收集目标是sidecar代理，资源粒度上的网格监控，容许指定收集的代理，主要用于针对性的调试；2.**服务级别的指标**，用于监控服务通信，四个基本的服务监控需求是延迟、流量、错误、饱和，默认指标导出到Prometheus，并且可自定更改。可根据需求开启和关闭；3.**控制平面指标**，对自身组件行为的监控，用于了解网络的健康情况）
+- `Istio`指标的分类（1.**代理级别的指标**,收集目标是`sidecar`代理，资源粒度上的网格监控，容许指定收集的代理，主要用于针对性的调试；2.**服务级别的指标**，用于监控服务通信，四个基本的服务监控需求是延迟、流量、错误、饱和，默认指标导出到`Prometheus`，并且可自定更改。可根据需求开启和关闭；3.**控制平面指标**，对自身组件行为的监控，用于了解网络的健康情况）
 
 ###### 访问日志（Access Logs）
 - 通过应用产生的事件来了解系统
 - 包括了完整的元数据信息（目标、源）
-- 生成位置可选（本地，远端，如filebeat）
+- 生成位置可选（本地，远端，如`filebeat`）
 - 日志内容
   - 应用日志
   - Envoy日志
@@ -133,7 +133,7 @@ category:
 ###### 分布式追踪（Distributed tracing）
 - 通过追踪请求，了解服务的调用关系
 - 常用于调用链路的问题排查、性能分析
-- 支持多种追踪系统（jeager、Zipkin、DataDog）
+- 支持多种追踪系统（`jeager、Zipkin、DataDog`）
 
 ##### 网络安全
 {% asset_img service_mesh_14.png  %}
@@ -144,17 +144,46 @@ category:
 
 ###### 认证
 - 认证方式
-  - 对等认证：用于服务间身份认证。Mutual（mTLS）
-  - 请求认证：用于终端用户身份认证；Json Web Token(JWT)
+  - 对等认证：用于服务间身份认证。 `Mutual（mTLS）`
+  - 请求认证：用于终端用户身份认证；`Json Web Token(JWT)`
 - 认证策略
-  - 配置方式：yaml配置文件
+  - 配置方式：`yaml`配置文件
   - 配置生效范围：网格-全网格生效、按命名空间生效、按服务（工作负载）生效
   - 策略更新：
 - 支持兼容模式
 {% asset_img service_mesh_15.png  %}
 
 认证策略同步到数据面的方式为：
-{% asset_img service_mesh_16.png  %} {% asset_img service_mesh_17.png  %}
+阶段一：
+```
+对等认证-----设置mTLS----兼容模式
+                          
+                          
+                       严格模式
+
+                (新)jwt
+              /      \
+             /        \
+身份认证                 策略
+             \        /
+              \      /
+                (旧)jwt
+```
+阶段二：
+```
+对等认证-----设置mTLS----严格模式
+                          
+                          
+                       严格模式
+
+                (新)jwt
+            /      \
+           /        \
+身份认证                 策略
+           \         
+            \     
+                (旧)jwt
+```
 
 ###### 访问授权
 - 授权级别
@@ -168,4 +197,294 @@ category:
 - 按命名空间授权
 - 按服务（工作负载）授权
 
-授权策略：配置通过AuthorizationPolicy实现；组成部分：选择器（selector）;行为(Action); 规则列表(Rules)：来源（from）、操作(to)、匹配条件(when);范围设置：metadata/namespace,selector; 值匹配：精确、模糊、前缀、后缀；全部允许和拒绝；自定义条件。
+授权策略：配置通过`AuthorizationPolicy`实现；组成部分：选择器（`selector`）;行为(`Action`); 规则列表(`Rules`)：来源（`from`）、操作(`to`)、匹配条件(`when`);范围设置：`metadata/namespace,selector`; 值匹配：精确、模糊、前缀、后缀；全部允许和拒绝；自定义条件。
+###### 故障注入
+- `Netflix`的 `Chaos Monkey`
+- 混沌工程（`Chaos engineering`）
+{% asset_img service_mesh_22.png  %}
+配置延迟故障
+{% asset_img service_mesh_23.png  %}
+###### 流量镜像（Traffic Mirroring）
+- 实时复制请求到镜像服务
+- 应用场景：1.线上问题排查(troubleshooting)；2.观察生产环境的请求处理能力(压力测试)；3.复制请求信息用于分析
+
+##### Istio 安装部署
+
+1. 安装K8s
+2. 安装 `Istio`
+3. 部署官方 `Demo` 体验 `Istio`
+
+###### 安装K8S
+请参见[`minikubte download`](https://minikube.sigs.k8s.io/docs/start/) 略
+
+###### 下载 Istio
+- 在线下载：`curl -L https://istio.io/downloadIstio | sh -`
+- 离线下载：
+```bash
+sudo wget https://github.com/istio/istio/releases/download/1.18.2/istio-1.18.2-linux-amd64.tar.gz
+...
+tar -zxvf istio-1.18.2-linux-amd64.tar.gz
+```
+压缩包里包含以下内容:
+```bash
+[root@vela istio-1.18.1]# ll
+drwxr-x---  2 root root    22 Jul 14 04:37 bin
+-rw-r--r--  1 root root 11348 Jul 14 04:37 LICENSE
+drwxr-xr-x  5 root root    52 Jul 14 04:37 manifests
+-rw-r-----  1 root root   986 Jul 14 04:37 manifest.yaml
+-rw-r--r--  1 root root  6595 Jul 14 04:37 README.md
+drwxr-xr-x 24 root root  4096 Jul 14 04:37 samples
+drwxr-xr-x  3 root root    57 Jul 14 04:37 tools
+
+```
+各个目录的作用：
+- `bin`：存放的是 `istioctl` 工具
+- `manifests`：相关 `yaml` 用于部署 `Istio`
+- `samples`：一些 `Demo` 用的 `yaml`
+- `tools`：一些工具，暂时使用不到
+先将`istioctl`工具 `cp` 到 `bin` 目录下，便于后续使用 `istioctl` 命令。
+```bash
+cp bin/istioctl /usr/local/bin/
+```
+
+###### 安装 Istio
+>由于易用性的问题，Istio 废弃了以前的 Helm 安装方式，现在使用 istioctl 即可一键安装。
+`Istio` 提供了以下配置档案（`configuration profile`）供不同场景使用，查看当前内置的 `profile`：
+```bash
+$ istioctl profile list
+Istio configuration profiles:
+    default
+    demo
+    empty
+    external
+    minimal
+    openshift
+    preview
+    remote
+
+```
+具体每个 `profile` 包含哪些组件，可以使用`istioctl profile dump`命令查看：
+```bash
+$ istioctl profile dump demo
+```
+对于演示环境，我们直接安装 demo 版本就可以了 
+```bash
+$ istioctl install --set profile=demo -y
+
+✔ Istiod installed                                       
+✔ Ingress gateways installed                             
+✔ Egress gateways installed                             
+✔ Installation complete
+Making this installation the default for injection and validation.
+```
+部署完成后,这里k8s先需要创建一个命名空间, 然后给命名空间打上 label，告诉 Istio 在部署应用的时候，自动注入 Envoy 边车代理：
+```bash
+$ kubectl create namspace `k8s-istio`
+...
+$ kubectl label namespace `k8s-istio` istio-injection=enabled
+```
+安装后可以验证是否安装正确。
+```bash
+# 先根据安装的profile导出manifest
+istioctl manifest generate --set profile=demo > $HOME/generated-manifest.yaml
+# 然后根据验证实际环境和manifest文件是否一致
+istioctl verify-install -f $HOME/generated-manifest.yaml
+# 出现下面信息则表示验证通过
+✔ Istio is installed and verified successfully
+```
+查看一下安装了些什么东西：
+```bash
+$ kubectl get pods -n istio-system
+
+NAME                                    READY   STATUS    RESTARTS   AGE
+istio-egressgateway-75db994b58-jlc28    1/1     Running   0          38m
+istio-ingressgateway-79bb75ddbb-dmm87   1/1     Running   0          38m
+istiod-68cb9f5cb6-h5fcv                 1/1     Running   0          39m
+```
+可以看到只安装了出入站网关以及最重要的 Istiod 服务。再看下 CRD 情况:
+```bash
+$ kubectl get crds |grep istio
+
+authorizationpolicies.security.istio.io    2023-08-24T05:12:04Z
+destinationrules.networking.istio.io       2023-08-24T05:12:04Z
+envoyfilters.networking.istio.io           2023-08-24T05:12:04Z
+gateways.networking.istio.io               2023-08-24T05:12:04Z
+istiooperators.install.istio.io            2023-08-24T05:12:04Z
+peerauthentications.security.istio.io      2023-08-24T05:12:04Z
+proxyconfigs.networking.istio.io           2023-08-24T05:12:04Z
+requestauthentications.security.istio.io   2023-08-24T05:12:04Z
+serviceentries.networking.istio.io         2023-08-24T05:12:04Z
+sidecars.networking.istio.io               2023-08-24T05:12:04Z
+telemetries.telemetry.istio.io             2023-08-24T05:12:04Z
+virtualservices.networking.istio.io        2023-08-24T05:12:04Z
+wasmplugins.extensions.istio.io            2023-08-24T05:12:05Z
+workloadentries.networking.istio.io        2023-08-24T05:12:05Z
+workloadgroups.networking.istio.io         2023-08-24T05:12:05Z
+```
+这些就是 istio 需要用到的 CRD 了，比较常见的比如：
+- `gateways`
+- `virtualservices`
+- `destinationrules`
+
+###### 部署 bookinfo 应用
+官方提供了 `bookinfo` 应用来演示 `Istio` 相关功能。
+```bash
+$ kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+
+service/details created
+serviceaccount/bookinfo-details created
+deployment.apps/details-v1 created
+service/ratings created
+serviceaccount/bookinfo-ratings created
+deployment.apps/ratings-v1 created
+service/reviews created
+serviceaccount/bookinfo-reviews created
+deployment.apps/reviews-v1 created
+deployment.apps/reviews-v2 created
+deployment.apps/reviews-v3 created
+service/productpage created
+serviceaccount/bookinfo-productpage created
+deployment.apps/productpage-v1 created
+```
+
+**部署应用**
+在 `k8s-istio` 命名空间创建了应用对应的 `service` 和 `deployment`。服务启动需要一定时间，可通过以下命令进行查看：
+```bash
+$ kubectl get services
+NAME          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+details       ClusterIP   10.106.81.196   <none>        9080/TCP   54m
+kubernetes    ClusterIP   10.96.0.1       <none>        443/TCP    19h
+productpage   ClusterIP   10.103.139.13   <none>        9080/TCP   54m
+ratings       ClusterIP   10.102.135.80   <none>        9080/TCP   54m
+reviews       ClusterIP   10.103.83.28    <none>        9080/TCP   54m
+
+$ kubectl get pods
+NAME                              READY   STATUS              RESTARTS   AGE
+details-v1-698b5d8c98-p5kwm       0/1     ContainerCreating   0          37s
+productpage-v1-75875cf969-frn4z   0/1     ContainerCreating   0          35s
+ratings-v1-5967f59c58-zbldg       0/1     ContainerCreating   0          36s
+reviews-v1-9c6bb6658-kztz7        0/1     ContainerCreating   0          36s
+reviews-v2-8454bb78d8-jzghc       0/1     ContainerCreating   0          36s
+reviews-v3-6dc9897554-qvn7g       0/1     ContainerCreating   0          36s
+```
+等 `pod` 都启动后，通过以下命令测试应用是否正常启动了：
+```bash
+kubectl exec "$(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}')" -c ratings -- curl -s productpage:9080/productpage | grep -o "<title>.*</title>"
+```
+输出以下内容就算成功:
+```html
+<title>Simple Bookstore App</title>
+```
+
+**部署网关**
+此时，BookInfo 应用已经部署，但还不能被外界访问。需要借助网关才行
+```bash
+$ kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+```
+输出如下：
+```bash
+gateway.networking.istio.io/bookinfo-gateway created
+virtualservice.networking.istio.io/bookinfo created
+```
+可以看到， 这里部署了一个网关（`gateway`）和一个虚拟服务（`virtualservice`）。此时在浏览器中，输入`http://localhost/productpage`应该可以访问到具体页面了。
+确保配置文件没有问题：
+```bash
+$ istioctl analyze
+✔ No validation issues found when analyzing namespace: default.
+```
+确定ingress的ip和端口，外部访问则需要通过 `NodePort` 访问:
+```bash
+$ kubectl -n  istio-system get svc istio-ingressgateway
+NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                                      AGE
+istio-ingressgateway   LoadBalancer   10.108.211.196   <pending>     15021:31160/TCP,80:32096/TCP,443:30055/TCP,31400:31682/TCP,15443:30083/TCP   22m
+```
+可以看到，80 端口对应的 `NodePort` 为 32096,那么直接访问的 `URL` 就是：`http://$IP:32096/productpage`。
+
+在新的终端窗口中运行此命令以启动一个 Minikube 隧道，将流量发送到 Istio Ingress Gateway。 这将为 service/istio-ingressgateway 提供一个外部负载均衡器 EXTERNAL-IP。
+```bash
+$ minikube tunnel
+
+Status:	
+	machine: minikube
+	pid: 1462709
+	route: 10.96.0.0/12 -> 192.168.49.2
+	minikube: Running
+	services: [istio-ingressgateway]
+    errors: 
+		minikube: no errors
+		router: no errors
+		loadbalancer emulator: no errors
+```
+设置入站主机和端口：
+```bash
+$ export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+$ export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
+$ export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
+```
+设置环境变量 GATEWAY_URL：
+```bash
+$ export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+```
+确保 IP 地址和端口均成功地赋值给了环境变量：
+```bash
+$ echo "$GATEWAY_URL"
+192.168.99.100:32194
+```
+用浏览器查看 Bookinfo 应用的产品页面，验证 Bookinfo 已经实现了外部访问。
+
+###### 查看仪表盘（Dashboard）
+`Istio` 也提供了 `Dashboard`，可以通过UI 界面更加方便的进行管理，安装命令如下：
+```bash
+$ kubectl apply -f samples/addons
+```
+等待安装完成
+```bash
+$ kubectl rollout status deployment/kiali -n istio-system
+...
+Waiting for deployment "kiali" rollout to finish: 0 of 1 updated replicas are available..
+kubectl rollout status deployment/kiali -n istio-system.
+```
+
+访问 bashboard：
+```bash
+# 安装 Kiali 和其他插件，等待部署完成。
+$ kubectl apply -f samples/addons
+$ kubectl rollout status deployment/kiali -n istio-system
+Waiting for deployment "kiali" rollout to finish: 0 of 1 updated replicas are available...
+deployment "kiali" successfully rolled out
+# 访问 Kiali 仪表板。
+$ istioctl dashboard kiali
+```
+外部访问则把 `service` 改成 `nodeport` 类型即可
+```bash
+$ kubectl -n istio-system  patch svc kiali -p '{"spec":{"type":"NodePort"}}'
+```
+查看修改后的端口
+```bash
+$ kubectl -n istio-system get svc kiali
+NAME    TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)                          AGE
+kiali   NodePort   10.101.47.41   <none>        20001:31989/TCP,9090:32136/TCP   4m14s
+```
+访问 `http://$IP:31989` 即可，在主界面可以看到部署的服务以及请求量、资源使用量等情况。在 `Graph` 界面则能够看到，服务间流量分发情况。由于之前部署的 `bookinfo` 服务没怎么访问，所以界面是空白的，先通过 `curl` 命令访问一下。在左侧的导航菜单，选择 Graph ，然后在 Namespace 下拉列表中，选择 istio-system 。
+>**要查看追踪数据，必须向服务发送请求。请求的数量取决于 Istio 的采样率。 采样率在安装 `Istio` 时设置，默认采样速率为 1%。在第一个跟踪可见之前，您需要发送至少 100 个请求。 使用以下命令向 `productpage` 服务发送 100 个请求：**
+```bash
+for i in `seq 1 100`; do curl -s -o /dev/null http://$GATEWAY_URL/productpage; done
+```
+`Kiali` 仪表板展示了网格的概览以及 `Bookinfo` 示例应用的各个服务之间的关系。 它还提供过滤器来可视化流量的流动。
+{% asset_img service_mesh_21.png %}
+
+###### 卸载 Istio
+以下命令卸载 Istio 并删除所有相关资源
+```bash
+$ kubectl delete -f samples/addons
+$ istioctl x uninstall --purge -y
+```
+删除 `namespace`
+```bash
+kubectl delete namespace k8s-istio
+```
+移除之前打的 `label`
+```bash
+$ kubectl label namespace default istio-injection-
+```
+到这里，Istio 的安装就结束了，后续就可以用起来了。
