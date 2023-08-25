@@ -24,12 +24,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"umbrella.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
     <meta name="description" content="std::marker::PhantomData 是一个零大小的类型，用于标记一些类型，这些类型看起来拥有类型 T，但实际上并没有： 123pub struct PhantomData&lt;T&gt; where    T: ?Sized;  Rust 并不希望在定义类型时，出现目前还没使用，但未来会被使用的泛型参数，例如未使用的生命周期参数以及未使用的类型。 PhantomData 最常见的用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Rust】幽灵数据（PhantomData）">
-<meta property="og:url" content="https://umbrella.github.io/2022/04/15/%E3%80%90Rust%E3%80%91phantom-data/index.html">
+<meta property="og:url" content="https://fresh88888888.github.io/2022/04/15/%E3%80%90Rust%E3%80%91phantom-data/index.html">
 <meta property="og:site_name" content="UMBRELLA">
 <meta property="og:description" content="std::marker::PhantomData 是一个零大小的类型，用于标记一些类型，这些类型看起来拥有类型 T，但实际上并没有： 123pub struct PhantomData&lt;T&gt; where    T: ?Sized;  Rust 并不希望在定义类型时，出现目前还没使用，但未来会被使用的泛型参数，例如未使用的生命周期参数以及未使用的类型。 PhantomData 最常见的用">
 <meta property="og:locale" content="zh_CN">
@@ -41,11 +41,11 @@
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://umbrella.github.io/2022/04/15/%E3%80%90Rust%E3%80%91phantom-data/">
+<link rel="canonical" href="https://fresh88888888.github.io/2022/04/15/%E3%80%90Rust%E3%80%91phantom-data/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://umbrella.github.io/2022/04/15/%E3%80%90Rust%E3%80%91phantom-data/","path":"2022/04/15/【Rust】phantom-data/","title":"【Rust】幽灵数据（PhantomData）"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2022/04/15/%E3%80%90Rust%E3%80%91phantom-data/","path":"2022/04/15/【Rust】phantom-data/","title":"【Rust】幽灵数据（PhantomData）"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>【Rust】幽灵数据（PhantomData） | UMBRELLA</title>
@@ -241,7 +241,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://umbrella.github.io/2022/04/15/%E3%80%90Rust%E3%80%91phantom-data/">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/04/15/%E3%80%90Rust%E3%80%91phantom-data/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.jpeg">
@@ -365,7 +365,7 @@ MichaelFu 正在使用付费功能
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://umbrella.github.io/2022/04/15/%E3%80%90Rust%E3%80%91phantom-data/" title="【Rust】幽灵数据（PhantomData）">https://umbrella.github.io/2022/04/15/【Rust】phantom-data/</a>
+      <a href="https://fresh88888888.github.io/2022/04/15/%E3%80%90Rust%E3%80%91phantom-data/" title="【Rust】幽灵数据（PhantomData）">https://fresh88888888.github.io/2022/04/15/【Rust】phantom-data/</a>
   </li>
   <li class="post-copyright-license">
       <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -508,9 +508,9 @@ MichaelFu 正在使用付费功能
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
-  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://umbrella.github.io/2022/04/15/%E3%80%90Rust%E3%80%91phantom-data/"}</script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2022/04/15/%E3%80%90Rust%E3%80%91phantom-data/"}</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
-<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"umbrella/umbrella.github.io","issue_term":"title","theme":"github-light"}</script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
 
 </body>

@@ -24,17 +24,17 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"umbrella.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
     <meta name="description" content="编程中可能经常遇到要用相同的逻辑处理不同的类型，即使这个类型是还没出世的自定义类型。这种能力对于 Rust 来说并不新鲜，它被称为多态性，诞生于 1970 年代的编程语言技术，到现在为止仍然普遍。Rust 支持具有两个相关特性的多态性：Trait 和 泛型。 Trait 是 Rust 对接口或抽象基类的对照实现，它们看起来就像 Java 或 C# 中的接口： 12345678trait Write">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Rust】Trait和泛型">
-<meta property="og:url" content="https://umbrella.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/index.html">
+<meta property="og:url" content="https://fresh88888888.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/index.html">
 <meta property="og:site_name" content="UMBRELLA">
 <meta property="og:description" content="编程中可能经常遇到要用相同的逻辑处理不同的类型，即使这个类型是还没出世的自定义类型。这种能力对于 Rust 来说并不新鲜，它被称为多态性，诞生于 1970 年代的编程语言技术，到现在为止仍然普遍。Rust 支持具有两个相关特性的多态性：Trait 和 泛型。 Trait 是 Rust 对接口或抽象基类的对照实现，它们看起来就像 Java 或 C# 中的接口： 12345678trait Write">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://umbrella.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/trait-obj-inmem.png">
-<meta property="og:image" content="https://umbrella.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/type-parameter-implement-multiple-trait.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/trait-obj-inmem.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/type-parameter-implement-multiple-trait.png">
 <meta property="article:published_time" content="2022-06-20T14:08:30.000Z">
 <meta property="article:modified_time" content="2022-06-20T14:08:30.000Z">
 <meta property="article:author" content="umbrella">
@@ -42,14 +42,14 @@
 <meta property="article:tag" content="Trait">
 <meta property="article:tag" content="泛型">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://umbrella.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/trait-obj-inmem.png">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/trait-obj-inmem.png">
 
 
-<link rel="canonical" href="https://umbrella.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/">
+<link rel="canonical" href="https://fresh88888888.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://umbrella.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/","path":"2022/06/20/【Rust】Trait和泛型/","title":"【Rust】Trait和泛型"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/","path":"2022/06/20/【Rust】Trait和泛型/","title":"【Rust】Trait和泛型"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>【Rust】Trait和泛型 | UMBRELLA</title>
@@ -245,7 +245,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://umbrella.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.jpeg">
@@ -611,7 +611,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://umbrella.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/" title="【Rust】Trait和泛型">https://umbrella.github.io/2022/06/20/【Rust】Trait和泛型/</a>
+      <a href="https://fresh88888888.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/" title="【Rust】Trait和泛型">https://fresh88888888.github.io/2022/06/20/【Rust】Trait和泛型/</a>
   </li>
   <li class="post-copyright-license">
       <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -755,9 +755,9 @@
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
-  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://umbrella.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/"}</script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/"}</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
-<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"umbrella/umbrella.github.io","issue_term":"title","theme":"github-light"}</script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
 
 </body>

@@ -24,30 +24,30 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"umbrella.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
     <meta name="description" content="迭代器是产生一系列值的值，通常用于循环操作。Rust 的标准库提供了遍历vector、字符串、哈希表和其他集合的迭代器，还提供了从输入流生成文本行、网络连接、用于多线程之间值传递的迭代器，Rust 的迭代器灵活、富有表现力且高效。 在 Rust 中，std::iter::Iterator 和 std::iter::IntoIterator 是实现迭代器的基础。 12345pub trait Ite">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Rust】迭代器">
-<meta property="og:url" content="https://umbrella.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/index.html">
+<meta property="og:url" content="https://fresh88888888.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/index.html">
 <meta property="og:site_name" content="UMBRELLA">
 <meta property="og:description" content="迭代器是产生一系列值的值，通常用于循环操作。Rust 的标准库提供了遍历vector、字符串、哈希表和其他集合的迭代器，还提供了从输入流生成文本行、网络连接、用于多线程之间值传递的迭代器，Rust 的迭代器灵活、富有表现力且高效。 在 Rust 中，std::iter::Iterator 和 std::iter::IntoIterator 是实现迭代器的基础。 12345pub trait Ite">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://umbrella.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/other-iterators.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/other-iterators.png">
 <meta property="article:published_time" content="2022-05-28T12:20:44.000Z">
 <meta property="article:modified_time" content="2022-05-28T12:20:44.000Z">
 <meta property="article:author" content="umbrella">
 <meta property="article:tag" content="《Rust 程序设计》">
 <meta property="article:tag" content="迭代器">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://umbrella.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/other-iterators.png">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/other-iterators.png">
 
 
-<link rel="canonical" href="https://umbrella.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/">
+<link rel="canonical" href="https://fresh88888888.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://umbrella.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/","path":"2022/05/28/【Rust】迭代器/","title":"【Rust】迭代器"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/","path":"2022/05/28/【Rust】迭代器/","title":"【Rust】迭代器"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>【Rust】迭代器 | UMBRELLA</title>
@@ -243,7 +243,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://umbrella.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.jpeg">
@@ -643,7 +643,7 @@ You have received: 2 turtle doves
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://umbrella.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/" title="【Rust】迭代器">https://umbrella.github.io/2022/05/28/【Rust】迭代器/</a>
+      <a href="https://fresh88888888.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/" title="【Rust】迭代器">https://fresh88888888.github.io/2022/05/28/【Rust】迭代器/</a>
   </li>
   <li class="post-copyright-license">
       <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -786,9 +786,9 @@ You have received: 2 turtle doves
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
-  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://umbrella.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/"}</script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/"}</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
-<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"umbrella/umbrella.github.io","issue_term":"title","theme":"github-light"}</script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
 
 </body>

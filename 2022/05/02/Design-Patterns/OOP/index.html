@@ -24,29 +24,29 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"umbrella.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
     <meta name="description" content="几年前在面试的时候，还经常被面试官问 OOP 的四个特征是什么以及他们背后代表的意思，几年过去了，除了不支持面向对象的语言之外，面向对象编程思想已经深入到了每个开发者的灵魂，只是做的好与不好罢了。 面向对象编程中有两个非常基础的概念，类和对象，面向对象编程是一种编程范式或者说编程风格，它以类或者对象作为组织代码的基本单元，并将封装，继承，抽象，多态作为代码设计和实现的基石，不像面向过程编程语言，以">
 <meta property="og:type" content="article">
 <meta property="og:title" content="面向对象">
-<meta property="og:url" content="https://umbrella.github.io/2022/05/02/Design-Patterns/OOP/index.html">
+<meta property="og:url" content="https://fresh88888888.github.io/2022/05/02/Design-Patterns/OOP/index.html">
 <meta property="og:site_name" content="UMBRELLA">
 <meta property="og:description" content="几年前在面试的时候，还经常被面试官问 OOP 的四个特征是什么以及他们背后代表的意思，几年过去了，除了不支持面向对象的语言之外，面向对象编程思想已经深入到了每个开发者的灵魂，只是做的好与不好罢了。 面向对象编程中有两个非常基础的概念，类和对象，面向对象编程是一种编程范式或者说编程风格，它以类或者对象作为组织代码的基本单元，并将封装，继承，抽象，多态作为代码设计和实现的基石，不像面向过程编程语言，以">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://umbrella.github.io/2022/05/02/Design-Patterns/OOP/%E7%BB%A7%E6%89%BF%E7%88%86%E7%82%B8.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2022/05/02/Design-Patterns/OOP/%E7%BB%A7%E6%89%BF%E7%88%86%E7%82%B8.png">
 <meta property="article:published_time" content="2022-05-02T04:34:32.000Z">
 <meta property="article:modified_time" content="2022-05-02T04:34:32.000Z">
 <meta property="article:author" content="umbrella">
 <meta property="article:tag" content="面向对象">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://umbrella.github.io/2022/05/02/Design-Patterns/OOP/%E7%BB%A7%E6%89%BF%E7%88%86%E7%82%B8.png">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2022/05/02/Design-Patterns/OOP/%E7%BB%A7%E6%89%BF%E7%88%86%E7%82%B8.png">
 
 
-<link rel="canonical" href="https://umbrella.github.io/2022/05/02/Design-Patterns/OOP/">
+<link rel="canonical" href="https://fresh88888888.github.io/2022/05/02/Design-Patterns/OOP/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://umbrella.github.io/2022/05/02/Design-Patterns/OOP/","path":"2022/05/02/Design-Patterns/OOP/","title":"面向对象"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2022/05/02/Design-Patterns/OOP/","path":"2022/05/02/Design-Patterns/OOP/","title":"面向对象"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>面向对象 | UMBRELLA</title>
@@ -242,7 +242,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://umbrella.github.io/2022/05/02/Design-Patterns/OOP/">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/05/02/Design-Patterns/OOP/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.jpeg">
@@ -480,7 +480,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://umbrella.github.io/2022/05/02/Design-Patterns/OOP/" title="面向对象">https://umbrella.github.io/2022/05/02/Design-Patterns/OOP/</a>
+      <a href="https://fresh88888888.github.io/2022/05/02/Design-Patterns/OOP/" title="面向对象">https://fresh88888888.github.io/2022/05/02/Design-Patterns/OOP/</a>
   </li>
   <li class="post-copyright-license">
       <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -622,9 +622,9 @@
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
-  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://umbrella.github.io/2022/05/02/Design-Patterns/OOP/"}</script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2022/05/02/Design-Patterns/OOP/"}</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
-<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"umbrella/umbrella.github.io","issue_term":"title","theme":"github-light"}</script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
 
 </body>
