@@ -15,7 +15,7 @@ timezone: "Asia/Shanghai"
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: https://umbrella.github.io
+url: https://fresh88888888.github.io
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
@@ -113,7 +113,7 @@ mediumzoom: true
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: git@github.com:fresh88888888/umbrella.github.io.git
+  repo: git@github.com:fresh88888888/fresh88888888.github.io.git
   branch: main
 
 symbols_count_time:

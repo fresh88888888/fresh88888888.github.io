@@ -632,7 +632,7 @@ livere_uid: # <your_uid>
 gitalk:
   enable: false
   github_id: umbrella
-  repo: umbrella.github.io
+  repo: fresh88888888.github.io
   client_id: # GitHub Application Client ID
   client_secret: # GitHub Application Client Secret
   admin_user: # GitHub repo owner and collaborators, only these guys can initialize gitHub issues
@@ -648,7 +648,7 @@ gitalk:
 # For more information: https://utteranc.es
 utterances:
   enable: true
-  repo: umbrella/umbrella.github.io # Github repository owner and name
+  repo: fresh88888888.github.io # Github repository owner and name
   # Available values: pathname | url | title | og:title
   issue_term: title
   # Available values: github-light | github-dark | preferred-color-scheme | github-dark-orange | icy-dark | dark-blue | photon-dark | boxy-light
