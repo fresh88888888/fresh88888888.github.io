@@ -7948,24 +7948,17 @@ Process finished with exit code 101
     <url>/2023/08/22/Cloud-Native/service-mesh/</url>
     <content><![CDATA[<p>微服务架构的特性</p>
 <ul>
-<li><p>围绕业务构建团队</p>
-<img data-src="/2023/08/22/Cloud-Native/service-mesh/service_mesh_1.png" class="">
-</li>
-<li><p>去中心化的数据管理</p>
-<img data-src="/2023/08/22/Cloud-Native/service-mesh/service_mesh_2.png" class="">
-<span id="more"></span>
+<li>围绕业务构建团队<img data-src="/2023/08/22/Cloud-Native/service-mesh/service_mesh_1.png" class="">
+<span id="more"></span></li>
+<li>去中心化的数据管理<img data-src="/2023/08/22/Cloud-Native/service-mesh/service_mesh_2.png" class=""></li>
+</ul>
 <p>如何管理和控制服务间的通信</p>
-</li>
-<li><p>服务注册和发现</p>
-</li>
-<li><p>路由，流量转移</p>
-</li>
-<li><p>弹性能力（熔断、超时、重试）</p>
-</li>
-<li><p>安全（身份认证、授权）</p>
-</li>
-<li><p>可观察性（可视化）</p>
-</li>
+<ul>
+<li>服务注册和发现</li>
+<li>路由，流量转移</li>
+<li>弹性能力（熔断、超时、重试）</li>
+<li>安全（身份认证、授权）</li>
+<li>可观察性（可视化）</li>
 </ul>
 <h5 id="Service-Mesh-演进"><a href="#Service-Mesh-演进" class="headerlink" title="Service Mesh 演进"></a>Service Mesh 演进</h5><img data-src="/2023/08/22/Cloud-Native/service-mesh/service_mesh_3.png" class="">
 
