@@ -12,10 +12,10 @@ category:
 
 - 围绕业务构建团队
 {% asset_img service_mesh_1.png %}
-
+<!-- more -->
 - 去中心化的数据管理
 {% asset_img service_mesh_2.png %}
-<!-- more -->
+
 如何管理和控制服务间的通信
 
 - 服务注册和发现
