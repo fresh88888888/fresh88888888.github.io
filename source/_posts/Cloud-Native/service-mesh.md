@@ -138,9 +138,9 @@ category:
 ##### 网络安全
 {% asset_img service_mesh_14.png  %}
 
-- 证书管理
-- 身份认证
-- 访问授权
+- 身份认证（authentication）：证书管理、证书认证，`You are who you say you are`
+- 访问授权（authoriztaion）：授权策略, `You can do what you want to do`
+- 验证（vaildation）：输入验证, `Input is correct`
 
 ###### 认证
 - 认证方式
@@ -198,6 +198,22 @@ category:
 - 按服务（工作负载）授权
 
 授权策略：配置通过`AuthorizationPolicy`实现；组成部分：选择器（`selector`）;行为(`Action`); 规则列表(`Rules`)：来源（`from`）、操作(`to`)、匹配条件(`when`);范围设置：`metadata/namespace,selector`; 值匹配：精确、模糊、前缀、后缀；全部允许和拒绝；自定义条件。
+###### 安全发现服务（SDS）
+- 身份和证书管理
+- 实现安全配置自动化
+- 中心化`SDS Server`
+- 优点：无需挂载secret卷；动态更新证书，无需重启；可监视多个证书密钥对
+{% asset_img service_mesh_31.png  %}
+###### 双向验证 (mTLS)
+- `TLS`：客户端根据服务端证书验证其身份
+- `mTLS`：客户端、服务器端彼此都验证对方身份
+###### 身份认证及授权（JWT）
+- `Json Web Token`
+- 以`json`格式传递信息
+- 应用场景：授权和信息交换
+- 组成部分：`Header、Payload、Signature`
+{% asset_img service_mesh_32.png  %}
+##### 调试及测试
 ###### 故障注入
 - `Netflix`的 `Chaos Monkey`
 - 混沌工程（`Chaos engineering`）
@@ -206,7 +222,7 @@ category:
 {% asset_img service_mesh_23.png  %}
 ###### 流量镜像（Traffic Mirroring）
 - 实时复制请求到镜像服务
-- 应用场景：1.线上问题排查(troubleshooting)；2.观察生产环境的请求处理能力(压力测试)；3.复制请求信息用于分析
+- 应用场景：1.线上问题排查(`troubleshooting`)；2.观察生产环境的请求处理能力(压力测试)；3.复制请求信息用于分析
 
 ##### Istio 安装部署
 
@@ -488,3 +504,194 @@ kubectl delete namespace k8s-istio
 $ kubectl label namespace default istio-injection-
 ```
 到这里，Istio 的安装就结束了，后续就可以用起来了。
+
+##### Istio 遥测（Telemetry）
+
+`Istio` 服务网格最受欢迎和最强大的功能之一是其高级可观察性。由于所有服务到服务的通信都是通过 `Envoy` 代理进行路由，并且 `Istio` 的控制平面能够从这些代理收集日志和指标，因此服务网格可以为我们提供有关网络状态和服务行为的数据。这为运营商提供了独特的故障排除、管理和优化服务的方法，而不会给应用程序开发人员带来任何额外的负担。
+
+###### Istio 遥测指标
+- 代理级别指标
+  代理级别指标是 `Envoy` 代理本身提供的有关所有直通流量的标准指标，以及有关代理管理功能的详细统计信息，包括配置和运行状况信息。Envoy 生成的指标存在于 Envoy 资源（例如监听器和集群）的粒度级别。
+  ```json
+  # TYPE envoy_cluster_internal_upstream_rq_200 counter
+  envoy_cluster_internal_upstream_rq_200{cluster_name="xds-grpc"} 2
+
+  # TYPE envoy_cluster_upstream_rq_200 counter
+  envoy_cluster_upstream_rq_200{cluster_name="xds-grpc"} 2
+
+  # TYPE envoy_cluster_upstream_rq_completed counter
+  envoy_cluster_upstream_rq_completed{cluster_name="xds-grpc"} 3
+
+  # TYPE envoy_cluster_internal_upstream_rq_503 counter
+  envoy_cluster_internal_upstream_rq_503{cluster_name="xds-grpc"} 1
+
+  # TYPE envoy_cluster_upstream_cx_rx_bytes_total counter
+  envoy_cluster_upstream_cx_rx_bytes_total{cluster_name="xds-grpc"} 2056154
+
+  # TYPE envoy_server_memory_allocated gauge
+  envoy_server_memory_allocated{} 15853480
+  ```
+
+- 服务级别指标
+  除了代理级别的指标之外，`Istio` 还提供了一组面向服务的指标来监控服务通信。这些指标涵盖了四种基本服务监控需求：延迟、流量、错误和饱和度。`Istio` 附带了一组默认的仪表板，用于根据这些指标监控服务行为。
+  ```json
+  # TYPE istio_requests_total counter
+  istio_requests_total{
+      connection_security_policy="mutual_tls",
+      destination_app="analytics",
+      destination_principal="cluster.local/ns/backyards-demo/sa/default",
+      destination_service="analytics.backyards-demo.svc.cluster.local",
+      destination_service_name="analytics",
+      destination_service_namespace="backyards-demo",
+      destination_version="v1",
+      destination_workload="analytics-v1",
+      destination_workload_namespace="backyards-demo",
+      permissive_response_code="none",
+      permissive_response_policyid="none",
+      reporter="destination",
+      request_protocol="http",
+      response_code="200",
+      response_flags="-",
+      source_app="bookings",
+      source_principal="cluster.local/ns/backyards-demo/sa/default",
+      source_version="v1",
+      source_workload="bookings-v1",
+      source_workload_namespace="backyards-demo"
+  } 1855
+  ```
+###### Istio 遥测架构 v2
+{% asset_img service_mesh_24.png %}
+>根据 `Istio` 文档，新的遥测系统将延迟减少了一半 - 90% 的延迟已从 7 毫秒减少到 3.3 毫秒。不仅如此，`Mixer` 的消除还使总 `CPU` 消耗减少了 50%，达到每秒每 1,000 个请求 0.55 个 `vCPU`。
+###### WASM架构
+`WebAssembly`（通常缩写为 `WASM`）是一种开放标准，它定义了可执行程序的可移植二进制代码格式、相应的文本汇编语言以及促进程序与其主机环境之间交互的接口。`WebAssembly` 的主要目标是在网页上启用高性能应用程序，但该格式也设计用于在其他环境中执行和集成。它提供了一个基于精简堆栈的虚拟机，允许 `Web` 应用程序通过利用快速加载的二进制格式以接近本机的速度运行，该格式也可以转换为文本格式以进行调试。而且，虽然 `WebAssembly` 最初是作为客户端技术出现的，但在服务器端使用它有很多优点。`Istio` 社区一直在领导 `Envoy` 的 `WebAssembly` (`WASM`) 运行时的实现。该实现使用基于 `Google` 高性能`V8` 引擎构建的 `WebAssembly` 运行时。借助 Envoy 的 `WebAssembly` 插件，开发人员可以编写自定义代码，将其编译为 `WebAssembly` 插件，并配置 `Envoy` 来执行它。
+
+`Telemetry V2` 中的代理内服务级别指标由两个自定义插件提供，
+- `metadata-exchange`：必须解决的第一个问题是如何在代理中提供有关连接两端的客户端/服务器元数据。对于基于 `HTTP` 的流量，这是通过包含对方元数据属性的请求/响应中的自定义 `HTTP` 标头 (`envoy.wasm.metadata_exchange.upstream、envoy.wasm.metadata_exchange.downstream`) 来完成的。对于通用 `TCP` 流量，元数据交换使用基于 `ALPN` 的隧道和基于前缀的协议。定义了一个新协议`istio-peer-exchange`，该协议由网格中的客户端和服务器 `sidecar` 进行通告和优先级排序。`ALPN` 协商将协议解析为 `istio-peer-exchange`，用于启用 `Istio` 的代理之间的连接，但不解析启用 `Istio` 的代理和任何客户端之间的连接。
+
+- `stats`：`stats` 插件将传入和传出的流量指标记录到 `Envoy` 统计子系统中，并可供 `Prometheus` 抓取。以下是服务级别指标的默认标签。
+```json
+eporter: conditional((context.reporter.kind | "inbound") == "outbound", "source", "destination")
+source_workload: source.workload.name | "unknown"
+source_workload_namespace: source.workload.namespace | "unknown"
+source_principal: source.principal | "unknown"
+source_app: source.labels["app"] | "unknown"
+source_version: source.labels["version"] | "unknown"
+destination_workload: destination.workload.name | "unknown"
+destination_workload_namespace: destination.workload.namespace | "unknown"
+destination_principal: destination.principal | "unknown"
+destination_app: destination.labels["app"] | "unknown"
+destination_version: destination.labels["version"] | "unknown"
+destination_service: destination.service.host | "unknown"
+destination_service_name: destination.service.name | "unknown"
+destination_service_namespace: destination.service.namespace | "unknown"
+request_protocol: api.protocol | context.protocol | "unknown"
+response_code: response.code | 200
+connection_security_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
+response_flags: context.proxy_error_code | "-"
+source_canonical_service
+source_canonical_revision
+destination_canonical_service
+destination_canonical_revision
+```
+###### Istio 的安全机制
+- 透明的安全层
+- `CA`：秘钥和证书管理
+- `API Server`：认证、授权策略分发
+- `Envoy`：服务间安全通信（认证、加密）
+
+##### Envoy 架构
+
+###### Envoy 流量五元组
+{% asset_img service_mesh_25.png %}
+
+###### Envoy 调试关键字段（RESPONSE_FLAG）
+- `UH：upstream_cluster` 中没有监控的`host`, 503
+- `UF: upstream` 连接失败， 503
+- `UO: upstream_overflow` (熔断)
+- `NR:` 没有路由配置，404
+- `URX:` 请求被拒绝因为限流或超过最大连接次数
+- ... ...
+
+##### 分布式追踪
+
+- 分析和监控应用的监控方法
+- 查找故障点，分析性能问题
+- 观测请求范围内的信息
+- 起源于`Google的Dapper`
+- `OpenTracing: API` 规范、框架、库的组合
+
+- `Span`: 逻辑单元；有操作名、执行时间；嵌套、有序、因果关系
+- `Trace`：数据/执行路径；`Span`的组合
+{% asset_img service_mesh_26.png %}
+
+###### Jaejer 组件
+[分布式追踪框架 Jaejer](https://www.jaegertracing.io/) `Jaeger` 是`Uber Technologies`开源发布的分布式追踪平台。组件包括：
+- `Tracing SDKs`: 
+  为了生成跟踪数据，必须对应用程序进行检测。受检测的应用程序在接收新请求时创建跨度，并将上下文信息（`trace id, span id, and baggage`）附加到传出请求。仅`ids`和`baggage`通过请求传播；不会传播所有其他分析数据，例如操作名称、时间、标签和日志。它会在后台异步导出到 `Jaeger` 后端。
+  {% asset_img service_mesh_27.png %}
+- `Agent`: 
+  >`jaeger-agent`已弃用。`OpenTelemetry`数据可以直接发送到 `Jaeger` 后端，也可以使用 `OpenTelemetry Collector` 作为代理。
+- `Collector`: `jaeger-collector`接收跟踪的数据，通过管道处理数据以进行检验和清晰/补全，并将跟踪的数据存储在数据库中。`jaeger-collector`内置了对多种数据库的支持,以及实现了可扩展插件框架用于自定义存储插件。
+- `Query`: `jaeger-query`提供了从存储中检索跟踪的`API`，并托管用于搜索和分析跟踪的 `Web UI`。
+- `Ingester`: `jaeger-ingester`是一项从 `Kafka` 读取跟踪并将其写入存储后端的服务。实际上，它是 `Jaeger` 收集器的精简版本，支持 `Kafka` 作为唯一的输入协议。
+###### Jaejer 架构
+- 直接存储模式
+  此部署方式，收集器从跟踪的应用程序接收数据并将其直接写入存储。存储必须能够处理平均流量和峰值流量。收集器使用内存队列来平滑短期流量峰值，但如果存储无法跟上，持续的流量峰值可能会导致数据丢失。收集器能够向 `SDK` 集中提供采样配置，称为远程采样模式。它们还可以启用自动采样配置计算，称为自适应采样。
+  {% asset_img service_mesh_28.png %}
+- `Kafka`存储模式
+  为了防止收集器和存储之间的数据丢失，`Kafka` 可以用作中间的持久队列。需要部署一个附加组件`jaeger-ingester`来从 `Kafka` 读取数据并保存到数据库。可以部署多个`jaeger-ingester`来扩大摄取规模；他们会自动分配负载。
+  {% asset_img service_mesh_29.png %}
+- 开放遥测模式
+  `Jaeger Collectors` 可以直接从 `OpenTelemetry SDK` 接收 `OpenTelemetry` 数据。如果您已经使用 `OpenTelemetry Collectors`，例如用于收集其他类型的遥测数据或用于预处理/丰富跟踪数据，则可以将其放置在 `SDK` 和 `Jaeger Collectors` 之间。`OpenTelemetry Collector` 可以作为应用程序边车、主机代理/守护程序或中央集群运行。`OpenTelemetry Collector`支持`Jaeger` 的远程采样协议，可以直接从配置文件提供静态配置，也可以将请求代理到 `Jaeger` 后端（例如，当使用自适应采样时）。
+  {% asset_img service_mesh_30.png %}
+
+##### 项目实践
+
+###### 典型的CI/CD过程（DevOps）
+{% asset_img service_mesh_33.png %}
+###### GitOps 持续集成/交付过程
+- `GitOps`：集群管理和应用分发的持续交付方式
+- 使用`git`作为信任源，保存声明式基础架构（`declarative infrastructure`）和应用程序
+- 以git作为交付过程（`pipeline`）的中心
+- 开发者只需通过`pull request`完成应用的部署和运维任务
+- 优势：提高生产率、改进开发体验、一致性和标准化、安全
+{% asset_img service_mesh_34.png %}
+###### DevOps（push pipeline）vs GitOps（pull pipeline）
+{% asset_img service_mesh_35.png %}
+
+优点：`GitOps（pull pipeline）`方式，部署时不用暴露安全相关的脚本操作
+
+###### Flux 介绍
+`Flux` 是一套开放、可扩展的 `Kubernetes` 持续渐进式交付解决方案。
+- 定义：`The GitOps operator for kubernetes`
+- 自动化部署工具（基于GitOps）
+- 官方地址：![Flux](https://fluxcd.io/)
+- 只需推送到 Git，Flux 就会完成剩下的工作
+- 自动同步自动部署
+- 声明式
+- 基于代码（`Pull Request`），而不是容器
+{% asset_img service_mesh_36.png %}
+
+###### Flagger 自动化灰度发布(金丝雀部署)
+`Flagger` 实现了一个控制循环，逐渐将流量转移到金丝雀，同时测量 `HTTP` 请求成功率、请求平均持续时间和 `Pod` 运行状况等关键性能指标。根据设置的阈值，金丝雀将被升级或中止，其分析将被推送到 `Slack` 通道。
+- 自动化的灰度发布工具
+- 支持多种`Service Mesh`,包括(`istio`、`linkerd`、`app aws mesh`)
+- 指标监控灰度发布状态
+- 通知功能（接入`slack、microsoft term`）
+{% asset_img service_mesh_37.png %}
+
+`Flagger`工作流程（状态流转）
+- `Initializing`
+- `Initialized`
+- `Progressing`
+- `Successed(Failed)`
+{% asset_img service_mesh_38.png %}
+官方地址：![Flagger](https://docs.flagger.app/)
+
+##### 弹性设计
+系统/服务的弹性能力直接决定了它的可用性，可用性的度量是由服务级别协议（SLA - Service Level Agreement）来计算的，可用性计算公式 $Availability = \dfrac{MTBF}{MTBF + MTTR}$。
+- 应对故障的一种方法，让系统具有容错和适应能力。
+- 防止故障（`Fault`）转化为失败（`Failure`）。
+- 特点：包括1.容错性：重试、幂等；伸缩性：自动水平扩展（`autoscaling`）;过载保护：超时、熔断、降级、限流；弹性测试：故障注入
+
+`Istio`提供的弹性能力包括：超时、重试、熔断、故障注入。
