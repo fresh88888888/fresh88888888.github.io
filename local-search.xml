@@ -11182,6 +11182,42 @@ Process finished with exit code 101
       </tags>
   </entry>
   <entry>
+    <title>认证、授权、凭证</title>
+    <url>/2023/08/30/Other/authentication/</url>
+    <content><![CDATA[<h5 id="认证（Authentication）、授权（Authorization）、凭证（credentials）"><a href="#认证（Authentication）、授权（Authorization）、凭证（credentials）" class="headerlink" title="认证（Authentication）、授权（Authorization）、凭证（credentials）"></a>认证（Authentication）、授权（Authorization）、凭证（credentials）</h5><p><strong>认证</strong>是指以当前用户的身份登录过后，系统便能追踪到他的身份，并做出符合相应业务逻辑的操作。即使用户没有登录，大多数系统也会追踪他的身份，只是当做来宾或匿名用户来处理，认证技术解决的是**我是谁?**的问题。</p>
+<p><strong>授权</strong>是指什么样的身份被允许访问某些资源，在获取用户身份后继续检查用的权限。单一的系统授权往往是伴随认证来完成的，但是开放API的多系统结构之下，授权可以有不同的系统来完成。例如<code>OAuth</code>。授权是解决<strong>我能做什么？</strong>的问题。</p>
+<p><strong>凭证</strong>，实现认证和授权的基础是需要一种媒介（<code>credentials</code>）来标记访问者的身份或权利，在现实生活中每个人都需要一张身份证才能访问自己的银行账户、结婚和办理养老保险等，<strong>这就是认证的凭证</strong>。在互联网世界中，服务器为每一个访问者颁发 <code>session ID</code>存放到<code>cookie</code>，这就是一种凭证技术。数字凭证还表现在方方面面，<code>SSH</code>登录的秘钥、<code>JWT</code>令牌、一次性密码等。用户账户也不一定存放在数据库中的一张表，在一些企业的IT系统中，对账户管理的权限有了更多的要求。所以账户技术（accounting）可以帮助我们使用不同的方式管理用户账户，同时具有不同系统之间共享账户的能力。</p>
+<p><strong>访问控制策略（AC）</strong>，如果我们需要把资源的权限划分到一个很细的粒度，就不得不考虑用户以何种身份来访问受限的资源，选择基于<strong>访问控制列表（ACL）</strong>，还是基于<strong>用户角色的访问控制（RBAC）</strong>，或者其他的访问控制策略</p>
+<h6 id="HTTP-Basic-Authentication"><a href="#HTTP-Basic-Authentication" class="headerlink" title="HTTP Basic Authentication"></a>HTTP Basic Authentication</h6><p>这种方式实现起来非常简单，在大量场景下被采用。当然缺点也很明显，<code>Base64</code> 只能称为编码，而不是加密 (实际上无需配置密匙的客户端并没有任何可靠地加密方式，我们都依赖 <code>TSL</code>协议)。这种方式的致命弱点是编码后的密码如果明文传输则容易在网络传输中泄露，在密码不会过期的情况下，密码一旦泄露，只能通过修改密码的方式。</p>
+<h6 id="HMAC（AK-SK）认证"><a href="#HMAC（AK-SK）认证" class="headerlink" title="HMAC（AK&#x2F;SK）认证"></a>HMAC（AK&#x2F;SK）认证</h6><p>在我对接一些PaaS平台和支付平台时会要求我们提前生成一个<code>Access Key(AK) and Secure Key(SK)</code>, 然后通过签名的方式完成认证请求，这种方式可以避免传输<code>secure key</code>, 且大多数情况下签名只允许一次，避免了重放攻击。这种<code>AK/SK</code>的认证方式主要是利用了散列的消息认证码 (<code>Hash-based MessageAuthentication Code</code>) 来实现的。为了让每一次请求的签名变得独一无二，从而实现重放攻击，我们需要在签名时放入一些干扰信息。在业界标准中有两种典型的做法，质疑&#x2F;应答算法（<code>OCRA: OATH Challenge-Response Algorithm</code>）、基于时间的一次性密码算法（<code>TOTP：Time-based One-time Password Algorithm</code>）。</p>
+<p>质疑&#x2F;应答算法需要客户端先请求一次服务器，获得一个 401 未认证的返回，并得到一个随机字符串（<code>nonce</code>）。将 nonce 附加到按照上面说到的方法进行 <code>HMAC</code> 签名，服务器使用预先分配的 <code>nonce</code> 同样进行签名校验，这个 nonce 在服务器只会被使用一次，因此可以提供唯一的摘要。</p>
+<img data-src="/2023/08/30/Other/authentication/aac1.png" class="">
+<p>基于时间的一次性密码认证，为了避免额外的请求来获取 <code>nonce</code>，还有一种算法是使用时间戳，并且通过同步时间的方式协商到一致，在一定的时间窗口内有效（1分钟左右）。</p>
+<img data-src="/2023/08/30/Other/authentication/aac2.png" class="">
+<p>这里的只是利用时间戳作为验证的时间窗口，并不能严格的算作基于时间的一次性密码算法。标准的基于时间的一次性密码算法在两步验证中被大量使用，例如 <code>Google</code> 身份验证器不需要网络通信也能实现验证（但依赖准确的授时服务）。原理是客户端服务器共享密钥然后根据时间窗口能通过 <code>HMAC</code> 算法计算出一个相同的验证码。</p>
+<h6 id="OAuth2-和-Open-ID"><a href="#OAuth2-和-Open-ID" class="headerlink" title="OAuth2 和 Open ID"></a>OAuth2 和 Open ID</h6><p><code>OAuth</code>（开放授权）是一个开放标准，允许用户授权第三方网站访问他们存储在另外的服务提供者上的信息，而不需要将用户名和密码提供给第三方网站或分享他们数据的所有内容。<code>OAuth</code> 是一个授权标准，而不是认证标准。提供资源的服务器不需要知道确切的用户身份（<code>session</code>），只需要验证授权服务器授予的权限（<code>token</code>）即可。</p>
+<img data-src="/2023/08/30/Other/authentication/aac3.png" class="">
+<p>上图只是 <code>OAuth</code> 的一个简化流程，<code>OAuth</code> 的基本思路就是通过授权服务器获取 <code>access token</code> 和 <code>refresh token</code>（<code>refresh token</code> 用于重新刷新<code>access token</code>），然后通过 <code>access token</code> 从资源服务器获取数据 。如果需要获取用户的认证信息，<code>OAuth</code> 本身没有定义这部分内容，如果需要识别用户信息，则需要借助另外的认证层，例如 <code>OpenID Connect</code>。<code>OAuth</code> 负责解决分布式系统之间的授权问题，即使有时候客户端和资源服务器或者认证服务器存在同一台机器上。<code>OAuth</code>没有解决认证的问题，但提供了良好的设计利于和现有的认证系统对接。<code>Open ID </code>解决的问题是分布式系统之间身份认证问题，使用<code>Open ID token</code> 能在多个系统之间验证用户，以及返回用户信息，可以独立使用，与 <code>OAuth</code> 没有关联。<code>OpenID Connect</code> 解决的是在 <code>OAuth</code> 这套体系下的用户认证问题，实现的基本原理是将用户的认证信息（<code>ID token</code>）当做资源处理。在 <code>OAuth</code> 框架下完成授权后，再通过 <code>access token</code>获取用户的身份。这三个概念之间的关系有点难以理解，用现实场景来说，如果系统中需要一套独立的认证系统，并不需要多系统之间的授权可以直接采用 <code>Open ID</code>。如果使用了 <code>OAuth</code> 作为授权标准，可以再通过 <code>OpenID Connect</code> 来完成用户的认证。</p>
+<h6 id="JWT"><a href="#JWT" class="headerlink" title="JWT"></a>JWT</h6><p>在 <code>OAuth</code> 等分布式的认证、授权体系下，对凭证技术有了更多的要求，比如包含用户 <code>ID</code>、过期等信息，不需要与外部存储关联。因此业界对 <code>token</code> 做了进一步优化，设计了一种自包含令牌，令牌签发后无需从服务器存储中检查是否合法，通过解析令牌就能获取令牌的过期、有效等信息，这就是<code>JWT （JSON Web Token）</code>。<code>JWT</code> 是一种包含令牌（<code>self-contained token</code>），或者叫值令牌 （<code>value token</code>），我们以前使用关联到 <code>session</code> 上的 hash 值被叫做引用令牌（<code>reference token</code>）。</p>
+<img data-src="/2023/08/30/Other/authentication/aac4.png" class="">
+<p>简而言之，一个基本的JWT令牌为一段点分3段式结构。生成JWT 令牌的流程为</p>
+<img data-src="/2023/08/30/Other/authentication/aac5.png" class="">
+<ol>
+<li>header json 的 base64 编码为令牌第一部分</li>
+<li>payload json 的 base64 编码为令牌第二部分</li>
+<li>拼装第一、第二部分编码后的 <code>json</code> 以及 <code>secret</code> 进行签名的令牌的第三部分<br>因此只需要签名的 <code>secret key</code>就能校验 <code>JWT</code> 令牌，如果在消息体中加入用户 <code>ID</code>、过期信息就可以实现验证令牌是否有效、过期了，无需从数据库&#x2F;缓存中读取信息。因为使用了加密算法，所以第一、二部分即使被修改（包括过期信息）也无法通过验证。<code>JWT</code> 优点是不仅可以作为 <code>token</code> 使用，同时也可以承载一些必要信息，省去多次查询。<code>JWT token</code>在微服务的系统中优势特别突出。多层调用的 API 中可以直接传递 <code>JWT token</code>，利用自包含的能力，可以减少用户信息查询次数；更重要的是，使用非对称的加密方式可以通过在系统中分发密匙的方式验证 <code>JWT token</code>。</li>
+</ol>
+<h6 id="选择合适的认证方式"><a href="#选择合适的认证方式" class="headerlink" title="选择合适的认证方式"></a>选择合适的认证方式</h6><p>客户端到服务器之间认证和服务器到服务器之间认证是不同的。我们把终端用户（<code>Human</code>）参与的通信，叫做 <code>Human-to-machine (H2M)</code>，服务器与服务器之间的通信叫做 <code>Machine-to-machine (M2M)</code>。<code>H2M</code>的通信需要更高的安全性，<code>M2M</code> 的通信天然比 <code>H2M</code> 安全，因此更多的强调性能，在不同的场合下选择合适的认证技术就显得特别重要。例如 <code>HTTP Basic Authentication</code> 用来作为 <code>H2M</code> 认证显得有些落后，但是在 <code>M2M</code> 中被大量使用。另外值得一提的是，<code>H2M</code> 这种通信方式下，客户端不受控制，由于无法自主分发密匙，认证通信的安全高度依赖 <code>HTTPS</code>。从一个宏观的角度看待他们的关系，对我们技术选型非常有帮助。</p>
+<img data-src="/2023/08/30/Other/authentication/aac6.png" class="">
+]]></content>
+      <categories>
+        <category>Network Security</category>
+      </categories>
+      <tags>
+        <tag>network security</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Git 解决分支冲突</title>
     <url>/2023/07/27/Other/git-reconcile_divergent_branches/</url>
     <content><![CDATA[<p>昨天我在处理项目时我尝试使用 <code>git pull</code> 命令从远程分支中拉取更改的内容，但最终报错：<code>&quot;fatal: Need to specify how to reconcile divergent branches&quot;</code>, 这阻碍了我的工作。我决定写一篇关于这个问题的文章，以便它也能帮助你们。</p>
