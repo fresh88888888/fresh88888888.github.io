@@ -29,6 +29,15 @@
   </url>
   
   <url>
+    <loc>https://fresh88888888.github.io/2023/08/29/Design-Patterns/dev-invest-ops/</loc>
+    
+    <lastmod>2023-08-29</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://fresh88888888.github.io/2023/08/22/Cloud-Native/service-mesh/</loc>
     
     <lastmod>2023-08-22</lastmod>
@@ -720,13 +729,6 @@
   </url>
   
   <url>
-    <loc>https://fresh88888888.github.io/tags/rust%E5%9F%BA%E7%A1%80/</loc>
-    <lastmod>2023-08-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://fresh88888888.github.io/tags/%E5%B8%B8%E7%94%A8-Trait/</loc>
     <lastmod>2023-08-29</lastmod>
     <changefreq>weekly</changefreq>
@@ -909,6 +911,13 @@
   </url>
   
   <url>
+    <loc>https://fresh88888888.github.io/tags/architecture/</loc>
+    <lastmod>2023-08-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://fresh88888888.github.io/tags/SOLID/</loc>
     <lastmod>2023-08-29</lastmod>
     <changefreq>weekly</changefreq>
@@ -999,6 +1008,13 @@
     <priority>0.2</priority>
   </url>
   
+  <url>
+    <loc>https://fresh88888888.github.io/tags/rust%E5%9F%BA%E7%A1%80/</loc>
+    <lastmod>2023-08-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
 
   
   <url>
@@ -1058,14 +1074,14 @@
   </url>
   
   <url>
-    <loc>https://fresh88888888.github.io/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/</loc>
+    <loc>https://fresh88888888.github.io/categories/Architecture/</loc>
     <lastmod>2023-08-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://fresh88888888.github.io/categories/Architecture/</loc>
+    <loc>https://fresh88888888.github.io/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/</loc>
     <lastmod>2023-08-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
