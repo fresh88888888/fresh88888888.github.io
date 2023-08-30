@@ -27,7 +27,7 @@ category:
 多运行时微服务架构（`Multi-Runtime Microservice Architecture`）也被简称为多运行时架构，是由 `Red Hat` 的首席架构师 `Bilgin Ibryam` 在 2020 年初所提出的一种微服务架构形态，它相对完整地从理论和方法的角度阐述了多运行时架构的模型（实际上，在 2019 年末，微软的 `Dapr v0.1.0` 就已经发布）。`Bilgin Ibryam` 梳理了分布式应用的各类需求后，将其划分到了四个领域内：
 {% asset_img Multi-Runtime-Microservices-Architecture.png %}
 
-来源：![Multi Runtime Microservices Architecture](https://www.infoq.com/articles/multi-runtime-microservice-architecture/)
+（来源：[Multi Runtime Microservices Architecture](https://www.infoq.com/articles/multi-runtime-microservice-architecture/)）
 
 - **生命周期**：即应用从开发态到运行态之间进行打包、部署、扩缩容等需求。
 - **网络**：分布式系统中各应用之间的服务发现、容错、灵活的发布模式、流量管理、跟踪和遥测等需求。
