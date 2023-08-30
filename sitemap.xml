@@ -20,6 +20,15 @@
   </url>
   
   <url>
+    <loc>https://fresh88888888.github.io/2023/08/30/Design-Patterns/multi-runtime-architecture/</loc>
+    
+    <lastmod>2023-08-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://fresh88888888.github.io/2023/08/30/Other/authentication/</loc>
     
     <lastmod>2023-08-30</lastmod>
@@ -841,13 +850,6 @@
   </url>
   
   <url>
-    <loc>https://fresh88888888.github.io/tags/%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/</loc>
-    <lastmod>2023-08-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://fresh88888888.github.io/tags/edge-computing/</loc>
     <lastmod>2023-08-30</lastmod>
     <changefreq>weekly</changefreq>
@@ -974,6 +976,20 @@
   </url>
   
   <url>
+    <loc>https://fresh88888888.github.io/tags/Quantitative-Trading/</loc>
+    <lastmod>2023-08-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://fresh88888888.github.io/tags/%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93/</loc>
+    <lastmod>2023-08-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://fresh88888888.github.io/tags/network-security/</loc>
     <lastmod>2023-08-30</lastmod>
     <changefreq>weekly</changefreq>
@@ -1002,14 +1018,7 @@
   </url>
   
   <url>
-    <loc>https://fresh88888888.github.io/tags/Quantitative-Trading/</loc>
-    <lastmod>2023-08-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://fresh88888888.github.io/tags/%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93/</loc>
+    <loc>https://fresh88888888.github.io/tags/%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/</loc>
     <lastmod>2023-08-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1109,6 +1118,13 @@
   </url>
   
   <url>
+    <loc>https://fresh88888888.github.io/categories/Quantitative-Trading/</loc>
+    <lastmod>2023-08-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://fresh88888888.github.io/categories/Network-Security/</loc>
     <lastmod>2023-08-30</lastmod>
     <changefreq>weekly</changefreq>
@@ -1131,13 +1147,6 @@
   
   <url>
     <loc>https://fresh88888888.github.io/categories/linux/</loc>
-    <lastmod>2023-08-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://fresh88888888.github.io/categories/Quantitative-Trading/</loc>
     <lastmod>2023-08-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

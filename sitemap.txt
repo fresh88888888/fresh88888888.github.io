@@ -1,5 +1,6 @@
 https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/
 https://fresh88888888.github.io/baidu_verify_code-NR10G09zww.html
+https://fresh88888888.github.io/2023/08/30/Design-Patterns/multi-runtime-architecture/
 https://fresh88888888.github.io/2023/08/30/Other/authentication/
 https://fresh88888888.github.io/2023/08/29/Design-Patterns/dev-invest-ops/
 https://fresh88888888.github.io/2023/08/22/Cloud-Native/service-mesh/
@@ -99,7 +100,6 @@ https://fresh88888888.github.io/tags/%E8%BF%90%E7%AE%97%E7%AC%A6%E9%87%8D%E8%BD%
 https://fresh88888888.github.io/tags/%E8%BF%AD%E4%BB%A3%E5%99%A8/
 https://fresh88888888.github.io/tags/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/
 https://fresh88888888.github.io/tags/%E9%97%AD%E5%8C%85/
-https://fresh88888888.github.io/tags/%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/
 https://fresh88888888.github.io/tags/edge-computing/
 https://fresh88888888.github.io/tags/Cloud-Native/
 https://fresh88888888.github.io/tags/docker/
@@ -118,12 +118,13 @@ https://fresh88888888.github.io/tags/%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/
 https://fresh88888888.github.io/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/
 https://fresh88888888.github.io/tags/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/
 https://fresh88888888.github.io/tags/Nginx/
+https://fresh88888888.github.io/tags/Quantitative-Trading/
+https://fresh88888888.github.io/tags/%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93/
 https://fresh88888888.github.io/tags/network-security/
 https://fresh88888888.github.io/tags/git/
 https://fresh88888888.github.io/tags/multipass/
 https://fresh88888888.github.io/tags/regex/
-https://fresh88888888.github.io/tags/Quantitative-Trading/
-https://fresh88888888.github.io/tags/%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93/
+https://fresh88888888.github.io/tags/%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/
 https://fresh88888888.github.io/categories/rust/
 https://fresh88888888.github.io/categories/Edge-Computing/
 https://fresh88888888.github.io/categories/Docker/
@@ -137,8 +138,8 @@ https://fresh88888888.github.io/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/
 https://fresh88888888.github.io/categories/HTTPS/
 https://fresh88888888.github.io/categories/java/
 https://fresh88888888.github.io/categories/Nginx/
+https://fresh88888888.github.io/categories/Quantitative-Trading/
 https://fresh88888888.github.io/categories/Network-Security/
 https://fresh88888888.github.io/categories/Git/
 https://fresh88888888.github.io/categories/other/
 https://fresh88888888.github.io/categories/linux/
-https://fresh88888888.github.io/categories/Quantitative-Trading/

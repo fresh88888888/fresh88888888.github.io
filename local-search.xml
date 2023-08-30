@@ -7315,430 +7315,6 @@ Process finished with exit code 101
       </tags>
   </entry>
   <entry>
-    <title>【Rust】集合类型</title>
-    <url>/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/</url>
-    <content><![CDATA[<p>Rust 标准库包含几个集合，用于在内存中存储数据的泛型类型。我们已经在前面使用了集合，例如 <code>Vec</code> 和 <code>HashMap</code>。在本章中，我们将详细介绍这两种类型的方法，以及其他<code>6</code>个标准集合。</p>
-<p><code>Rust</code> 一共有<code>8</code>个标准集合类型，它们都是泛型：</p>
-<img data-src="/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/std-collections.png" class="">
-
-<ul>
-<li><p><code>Vec&lt;T&gt;</code>：一个可增长的、堆分配的 <code>T</code> 类型值数组；</p>
-</li>
-<li><p><code>VecDeque&lt;T&gt;</code>：与 <code>Vec&lt;T&gt;</code> 类似，但更适合用作先进先出队列，它支持在列表的前面和后面有效地添加和删除值；</p>
-</li>
-<li><p><code>BinaryHeap&lt;T&gt;</code>：一个优先队列，<code>BinaryHeap</code> 中的值是有组织的，所以它总是有效地找到并删除最大值；</p>
-</li>
-<li><p><code>HashMap&lt;K, V&gt;</code>：键值对表，通过键查找值很快，<code>item</code> 以任意顺序存储；</p>
-</li>
-<li><p><code>BTreeMap&lt;K, V&gt;</code>：与 <code>HashMap&lt;K, V&gt;</code> 类似，但它保持<code>entries</code>按键排序。 <code>BTreeMap&lt;String, i32&gt;</code> 以字符串比较顺序存储其<code>entries</code>。除非需要<code>entries</code>保持排序，否则 <code>HashMap</code> 更快；</p>
-</li>
-<li><p><code>HashSet&lt;T&gt;</code>：一组 <code>T</code> 类型的值。添加和删除值很快，查询给定值是否在集合中也很快；</p>
-</li>
-<li><p><code>BTreeSet&lt;T&gt;</code>：与 <code>HashSet&lt;T&gt;</code> 类似，但它保持元素按值排序。 同样，除非需要对数据进行排序，否则 <code>HashSet</code> 更快；</p>
-</li>
-</ul>
-<span id="more"></span>
-
-<h3 id="Vec"><a href="#Vec" class="headerlink" title="Vec&lt;T&gt;"></a><code>Vec&lt;T&gt;</code></h3><p><code>vector</code>具有 <code>3</code> 个字段：长度、容量和指向存储元素的堆分配的指针。空 <code>vector</code>，容量为 <code>0</code>，在添加第一个元素之前，不会为其分配堆内存。和所有其他集合类型一样，<code>Vec&lt;T&gt;</code> 实现了 <code>std::iter::FromIterator</code>，所以我们可以通过 <code>.collect()</code> 方法创建，例如：</p>
-<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">my_vec</span> = my_set.<span class="title function_ invoke__">into_iter</span>().collect::&lt;<span class="type">Vec</span>&lt;<span class="type">String</span>&gt;&gt;();</span><br></pre></td></tr></table></figure>
-
-<p>我们再来回顾下 <code>vector</code> 的内存表示：</p>
-<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Create an empty vector</span></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">numbers</span>: <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt; = <span class="built_in">vec!</span>[];</span><br><span class="line"><span class="comment">// Create a vector with given contents</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">words</span> = <span class="built_in">vec!</span>[<span class="string">&quot;step&quot;</span>, <span class="string">&quot;on&quot;</span>, <span class="string">&quot;no&quot;</span>, <span class="string">&quot;pets&quot;</span>];</span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">buffer</span> = <span class="built_in">vec!</span>[<span class="number">0u8</span>; <span class="number">1024</span>]; <span class="comment">// 1024 zeroed-out bytes</span></span><br></pre></td></tr></table></figure>
-
-<p>内存表示如下图：</p>
-<img data-src="/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/vec-collections.png" class="">
-
-<h4 id="元素访问"><a href="#元素访问" class="headerlink" title="元素访问"></a>元素访问</h4><p>最直接的访问是通过索引，如果索引越界会 <code>panic</code>，<code>vector</code> 长度和索引是 <code>usize</code> 类型，尝试使用 <code>u32</code>、<code>u64</code> 或 i<code>size</code> 作为<code>vector</code>索引是错误的，可以根据需要使用 <code>n as usize</code> 进行转换：</p>
-<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Get a reference to an element</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">first_line</span> = &amp;lines[<span class="number">0</span>];</span><br><span class="line"><span class="comment">// Get a copy of an element</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">fifth_number</span> = numbers[<span class="number">4</span>]; <span class="comment">// requires Copy</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">second_line</span> = lines[<span class="number">1</span>].<span class="title function_ invoke__">clone</span>(); <span class="comment">// requires Clone</span></span><br><span class="line"><span class="comment">// Get a reference to a slice</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">my_ref</span> = &amp;buffer[<span class="number">4</span>..<span class="number">12</span>];</span><br><span class="line"><span class="comment">// Get a copy of a slice</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">my_copy</span> = buffer[<span class="number">4</span>..<span class="number">12</span>].<span class="title function_ invoke__">to_vec</span>(); <span class="comment">// requires Clone</span></span><br></pre></td></tr></table></figure>
-
-<p>有几种方法可以轻松访问 <code>vector</code> 或<code>slice</code>的特定元素（请注意，所有<code>slice</code>方法也可用于数组和<code>vector</code>）：</p>
-<ul>
-<li><p><code>slice.first()</code>：返回第一个元素的引用以 <code>Option&lt;&amp;T&gt;</code> 的形式，如果没有就返回 <code>None</code>：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(item) = v.<span class="title function_ invoke__">first</span>() &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;We got one! &#123;&#125;&quot;</span>, item);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>slice.last()</code>：类似于 <code>slice.first()</code>，但返回最后一个；</p>
-</li>
-<li><p><code>slice.get(index)</code>：返回第 <code>index</code> 个元素索引，不存在返回 <code>None</code>：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">slice</span> = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="built_in">assert_eq!</span>(slice.<span class="title function_ invoke__">get</span>(<span class="number">2</span>), <span class="title function_ invoke__">Some</span>(&amp;<span class="number">2</span>));</span><br><span class="line"><span class="built_in">assert_eq!</span>(slice.<span class="title function_ invoke__">get</span>(<span class="number">4</span>), <span class="literal">None</span>);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>slice.first_mut(), slice.last_mut(), slice.get_mut(index)</code>：前面几个的变种，只是返回可变借用：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">slice</span> = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">last</span> = slice.<span class="title function_ invoke__">last_mut</span>().<span class="title function_ invoke__">unwrap</span>(); <span class="comment">// type of last: &amp;mut i32</span></span><br><span class="line">    <span class="built_in">assert_eq!</span>(*last, <span class="number">3</span>);</span><br><span class="line">    *last = <span class="number">100</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">assert_eq!</span>(slice, [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">100</span>]);</span><br></pre></td></tr></table></figure>
-
-<p>  因为按值返回 <code>T</code> 意味着转移所有权，所以访问 <code>item</code> 的方法通常通过引用返回这些 <code>item</code>。</p>
-</li>
-<li><p><code>slice.to_vec()</code>：克隆整个 <code>slice</code>，返回新的，仅仅用于可以 <code>Clone</code> 的 <code>item</code>：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">v</span> = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>];</span><br><span class="line"><span class="built_in">assert_eq!</span>(v.<span class="title function_ invoke__">to_vec</span>(),</span><br><span class="line"><span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]);</span><br><span class="line"><span class="built_in">assert_eq!</span>(v[<span class="number">0</span>..<span class="number">6</span>].<span class="title function_ invoke__">to_vec</span>(),</span><br><span class="line"><span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]);</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="Iteration"><a href="#Iteration" class="headerlink" title="Iteration"></a><code>Iteration</code></h4><p>可以通过值或者引用迭代 <code>vector</code> 或者 <code>slice</code>：</p>
-<ul>
-<li><p>如果迭代 <code>Vec&lt;T&gt;</code>，将返回 <code>T</code>，<code>vector</code> 中的值被溢出并且消费；</p>
-</li>
-<li><p>如果迭代 <code>&amp;[T; N]，&amp;[T]，&amp;Vec&lt;T&gt;</code>，将返回 <code>&amp;T</code>，引用到单独的 <code>item</code>，不会转移它们的所有权；</p>
-</li>
-<li><p>如果迭代 <code>&amp;mut [T; N]，&amp;mut [T]，&amp;mut Vec&lt;T&gt;</code>，将返回 <code>&amp;mut T</code>。</p>
-</li>
-</ul>
-<h4 id="扩容缩容"><a href="#扩容缩容" class="headerlink" title="扩容缩容"></a>扩容缩容</h4><p>数组，<code>vector</code> 或者 <code>slice</code> 的长度是它包含的元素的数量，例如：</p>
-<ul>
-<li><p><code>slice.len()</code>：<code>slice</code> 长度，类型是 <code>usize</code>；</p>
-</li>
-<li><p><code>slice.is_empty()</code>：等价于 <code>slice.len() == 0</code>；</p>
-</li>
-</ul>
-<p>下面的方法用于 <code>vector</code> 扩缩容，不能用在数组上，它们的长度在创建的时候就确定了：</p>
-<ul>
-<li><p><code>Vec::with_capacity(n)</code>：创建新的能容纳 <code>n</code> 个元素的 <code>vector</code>；</p>
-</li>
-<li><p><code>vec.capacity()</code>：返回 <code>vector</code> 的容量，<code>vec.capacity() &gt;= vec.len()</code>；</p>
-</li>
-<li><p><code>vec.reserve(n)</code>：确认这里有足够的的空间再容纳 <code>n</code> 个元素，即 <code>vec.capacity() &gt;= vec.len() + n</code>，如果已经满足，则什么也不做，如果不够就会申请足够的空间并且将当前的内容移进去；</p>
-</li>
-<li><p><code>vec.reserve_exact(n)</code>：和 <code>vec.reserve(n)</code> 类似，但是不会申请额外的空间为未来的增长，也就是扩容之后 <code>vec.capacity() = exactly vec.len() + n</code>；</p>
-</li>
-<li><p><code>vec.shrink_to_fit()</code>：尝试释放额外的空闲空间；</p>
-</li>
-</ul>
-<p><code>Vec&lt;T&gt;</code> 有许多方法可以添加或删除元素，从而改变<code>vector</code>的长度。这些中的每一个都通过 <code>mut</code> 引用获取其自身参数。这两种方法在<code>vector</code>末尾添加或删除单个值：</p>
-<ul>
-<li><p><code>vec.push(value)</code>：将 <code>value</code> 添加到末尾；</p>
-</li>
-<li><p><code>vec.pop()</code>：移除和返回最后一个元素，返回类型是 <code>Option&lt;T&gt;</code>，返回的是值而不是引用；</p>
-</li>
-<li><p><code>vec.insert(index, value)</code>：将给定的值插入到指定的 <code>index</code> 处，并且将 <code>vec[index..]</code> 往后移动，如果 <code>index &gt; vec.len()</code>，就会 <code>panic</code>；</p>
-</li>
-<li><p><code>vec.remove(index)</code>：将给定索引处的值删除，并且将 <code>vec[index+1..]</code> 的值向左移动；</p>
-</li>
-<li><p><code>vec.resize(new_len, value)</code>：设置 <code>vec</code> 的新长度，如果这会增加长度，将会使用 <code>value</code> 填充增加的值，<code>value</code> 必须实现 <code>Clone</code>；</p>
-</li>
-<li><p><code>vec.resize_with(new_len, closure)</code>：像 <code>vec.resize()</code>，但是使用闭包构造新的 <code>item</code>，可以用于没有实现 <code>Clone</code> 的场景；</p>
-</li>
-<li><p><code>vec.truncate(new_len)</code>：设置 <code>vec</code> 的新长度为 <code>new_len</code>，删除 <code>vec[new_len..]</code>，如果 <code>vec.len() &lt; new_len</code>，啥也不做；</p>
-</li>
-<li><p><code>vec.clear()</code>：删除 <code>vec</code> 所有的元素，类似 <code>vec.truncate(0)</code>；</p>
-</li>
-<li><p><code>vec.extend(iterable)</code>：将 <code>iterable</code> 中的所有 <code>item</code> 添加到 <code>vec</code> 中；</p>
-</li>
-<li><p><code>vec.split_off(index)</code>：类似 <code>vec.truncate(index)</code>，但是它返回一个包含被移除值的 <code>Vec</code>，就像多次调用 <code>pop</code>；</p>
-</li>
-<li><p><code>vec.append(&amp;mut vec2)</code>：将 <code>vec2</code> 中的所有元素移到 <code>vec</code> 中，之后，<code>vec2</code> 就成为空的了，有点类似 <code>extend</code>，但是 <code>extend</code> 会保留 <code>vec2</code>；</p>
-</li>
-<li><p><code>vec.drain(range)</code>：移除区间内的 <code>item</code>，并且返回移除的元素；</p>
-</li>
-<li><p><code>vec.retain(test)</code>：删除所有没有通过 <code>test</code> 的 <code>item</code>，<code>test</code> 是 <code>FnMut(&amp;T) -&gt; bool</code> 类型的函数；</p>
-</li>
-<li><p><code>vec.dedup()</code>：删除连续重复的元素，删除完之后仍然有两个 <code>s</code>：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">byte_vec</span> = <span class="string">b&quot;Misssssssissippi&quot;</span>.<span class="title function_ invoke__">to_vec</span>();</span><br><span class="line">byte_vec.<span class="title function_ invoke__">dedup</span>();</span><br><span class="line"><span class="built_in">assert_eq!</span>(&amp;byte_vec, <span class="string">b&quot;Misisipi&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>  如果要删除所有重复的 <code>item</code>，可以：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> std::collections::HashSet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">byte_vec</span> = <span class="string">b&quot;Misssssssissippi&quot;</span>.<span class="title function_ invoke__">to_vec</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">seen</span> = HashSet::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    byte_vec.<span class="title function_ invoke__">retain</span>(|r| seen.<span class="title function_ invoke__">insert</span>(*r));</span><br><span class="line">    <span class="built_in">assert_eq!</span>(&amp;byte_vec, <span class="string">b&quot;Misp&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>vec.dedup_by(same)</code>：类似于 <code>vec.dedup()</code>，但是它使用闭包函数判断是否相等，而不是 <code>==</code>；</p>
-</li>
-<li><p><code>vec.dedup_by_key(key)</code>：类似于 <code>vec.dedup()</code>，判断两个元素的想等是通过 <code>key(&amp;mut elem1) == key(&amp;mut elem2)</code>，例如，如果 <code>errors</code> 是 <code>Vec&lt;Box&lt;dyn Error&gt;&gt;</code>，你可以这样写：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 删除具有重复 Messge 的 err</span></span><br><span class="line">errors.<span class="title function_ invoke__">dedup_by_key</span>(|err| err.<span class="title function_ invoke__">to_string</span>());</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="Joining"><a href="#Joining" class="headerlink" title="Joining"></a><code>Joining</code></h4><p>下面的量方法用于元素本身是数组、<code>slice</code>或<code>vector</code>的数组、<code>slice</code>或<code>vector</code>：</p>
-<ul>
-<li><p><code>slices.concat()</code>：连接所有的<code>item</code>并且返回新的 <code>vector</code>：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="built_in">assert_eq!</span>([[<span class="number">1</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">4</span>], [<span class="number">5</span>, <span class="number">6</span>]].<span class="title function_ invoke__">concat</span>(), <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>slices.join(&amp;separator)</code>：类似于前者，但是在连接的过程中可以插入一个分割 <code>item</code>：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="built_in">assert_eq!</span>(</span><br><span class="line">    [[<span class="number">1</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">4</span>], [<span class="number">5</span>, <span class="number">6</span>]].<span class="title function_ invoke__">join</span>(&amp;<span class="number">0</span>),</span><br><span class="line">    <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">);</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="Splitting"><a href="#Splitting" class="headerlink" title="Splitting"></a><code>Splitting</code></h4><p>由于 <code>Rust</code> 安全规则的限制，我们没法得到 <code>vector</code> 的多个可变引用，例如：</p>
-<div class="note danger"><figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">v</span> = <span class="built_in">vec!</span>[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> <span class="variable">a</span> = &amp;<span class="keyword">mut</span> v[i];</span><br><span class="line"><span class="keyword">let</span> <span class="variable">b</span> = &amp;<span class="keyword">mut</span> v[j]; <span class="comment">// error: cannot borrow `v` as mutable</span></span><br><span class="line">                   <span class="comment">// more than once at a time</span></span><br><span class="line">*a = <span class="number">6</span>; <span class="comment">// references `a` and `b` get used here,</span></span><br><span class="line">*b = <span class="number">7</span>; <span class="comment">// so their lifetimes must overlap</span></span><br></pre></td></tr></table></figure></div>
-
-<p>如果 <code>i == j</code>，就会出先可变借用了同一个 <code>item</code>。<code>Rust</code> 有几种方法可以同时借用对数组、<code>slice</code>或向量的两个或多个部分的 <code>mut</code> 引用。 与前面的代码不同，这些方法是安全的，因为根据设计，它们总是将数据拆分为不重叠的区域。 其中许多方法对于使用非 <code>mut</code> <code>slice</code>也很方便，因此每种方法都有 <code>mut</code> 和 <code>non-mut</code> 版本。</p>
-<img data-src="/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/vec-multiple-mut-ref.png" class="">
-
-<p>这些方法都没有直接修改数组、<code>slice</code>或向量。 它们只是返回对内部部分数据的新引用：</p>
-<h5 id="slice-iter-、slice-iter-mut"><a href="#slice-iter-、slice-iter-mut" class="headerlink" title="slice.iter()、slice.iter_mut()"></a><code>slice.iter()</code>、<code>slice.iter_mut()</code></h5><p>生成对每个 <code>slice</code> 中 <code>item</code> 的引用，<a href="/2022/04/30/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/#iter-%E5%92%8C-iter_mut">详见</a>。</p>
-<h5 id="slice-split-at-index-、slice-split-at-mut-index"><a href="#slice-split-at-index-、slice-split-at-mut-index" class="headerlink" title="slice.split_at(index)、slice.split_at_mut(index)"></a><code>slice.split_at(index)</code>、<code>slice.split_at_mut(index)</code></h5><p>将 <code>slice</code> 分成一对返回，<code>slice.split_at(index)</code> 等价于 <code>(&amp;slice[..index], &amp;slice[index..])</code>，如果长度超出越界，就会 <code>panic</code>。</p>
-<h5 id="slice-split-first-、slice-split-first-mut"><a href="#slice-split-first-、slice-split-first-mut" class="headerlink" title="slice.split_first()、slice.split_first_mut()"></a><code>slice.split_first()</code>、<code>slice.split_first_mut()</code></h5><p>返回 <code>(&amp;slice[0], &amp;slice[1..])</code>，<code>slice.split_first()</code> 返回 <code>Option&lt;(&amp;T, &amp;[T])&gt;</code>，如果 <code>slice</code> 为空返回 <code>None</code>。</p>
-<h5 id="slice-split-last-、slice-split-last-mut"><a href="#slice-split-last-、slice-split-last-mut" class="headerlink" title="slice.split_last()、slice.split_last_mut()"></a><code>slice.split_last()</code>、<code>slice.split_last_mut()</code></h5><p><code>slice.split_last()</code> 的返回类型是 <code>Option&lt;(&amp;T, &amp;[T])&gt;</code>。</p>
-<h5 id="slice-split-is-sep-、-slice-split-mut-is-sep"><a href="#slice-split-is-sep-、-slice-split-mut-is-sep" class="headerlink" title="slice.split(is_sep)、 slice.split_mut(is_sep)"></a><code>slice.split(is_sep)</code>、<code> slice.split_mut(is_sep)</code></h5><p>将 <code>slice</code> 分割成一个或者多个子 <code>slice</code>，根据传入的 <code>is_sep</code> 函数后者闭包，输出至少包含一个子 <code>slice</code>。</p>
-<h5 id="slice-rsplit-is-sep-、slice-rsplit-mut-is-sep"><a href="#slice-rsplit-is-sep-、slice-rsplit-mut-is-sep" class="headerlink" title="slice.rsplit(is_sep)、slice.rsplit_mut(is_sep)"></a><code>slice.rsplit(is_sep)</code>、<code>slice.rsplit_mut(is_sep)</code></h5><p>从右往左找 <code>split</code>。</p>
-<h5 id="slice-splitn-n-is-sep-、slice-splitn-mut-n-is-sep"><a href="#slice-splitn-n-is-sep-、slice-splitn-mut-n-is-sep" class="headerlink" title="slice.splitn(n, is_sep)、slice.splitn_mut(n, is_sep)"></a><code>slice.splitn(n, is_sep)</code>、<code>slice.splitn_mut(n, is_sep)</code></h5><p>和 <code>slice.split(is_sep)</code> 相同，但是之多 <code>n</code> 个子<code>slcie</code>，多出来的放在最后的子 <code>slice</code> 中；</p>
-<h5 id="slice-rsplitn-n-is-sep-、slice-rsplitn-mut-n-is-sep"><a href="#slice-rsplitn-n-is-sep-、slice-rsplitn-mut-n-is-sep" class="headerlink" title="slice.rsplitn(n, is_sep)、slice.rsplitn_mut(n, is_sep)"></a><code>slice.rsplitn(n, is_sep)</code>、<code>slice.rsplitn_mut(n, is_sep)</code></h5><p>和前面的类似，只是从右往左。</p>
-<h5 id="slice-chunks-n-、slice-chunks-mut-n"><a href="#slice-chunks-n-、slice-chunks-mut-n" class="headerlink" title="slice.chunks(n)、slice.chunks_mut(n)"></a><code>slice.chunks(n)</code>、<code>slice.chunks_mut(n)</code></h5><p>返回长度为 <code>n</code> 的子 <code>slcie</code>，最后一个可以包含少于 <code>n</code> 个 <code>item</code>。</p>
-<h5 id="slice-rchunks-n-、-slice-rchunks-mut-n"><a href="#slice-rchunks-n-、-slice-rchunks-mut-n" class="headerlink" title="slice.rchunks(n)、 slice.rchunks_mut(n)"></a><code>slice.rchunks(n)</code>、<code> slice.rchunks_mut(n)</code></h5><p>和前面的相同，只是从右往左。</p>
-<h5 id="slice-chunks-exact-n-、slice-chunks-exact-mut-n"><a href="#slice-chunks-exact-n-、slice-chunks-exact-mut-n" class="headerlink" title="slice.chunks_exact(n)、slice.chunks_exact_mut(n)"></a><code>slice.chunks_exact(n)</code>、<code>slice.chunks_exact_mut(n)</code></h5><p>精确按照 <code>n</code> 进行分片，如果最后一个不足 <code>n</code> 个，可以通过 <code>remainder()</code> 访问。</p>
-<h5 id="slice-rchunks-exact-n-、slice-rchunks-exact-mut-n"><a href="#slice-rchunks-exact-n-、slice-rchunks-exact-mut-n" class="headerlink" title="slice.rchunks_exact(n)、slice.rchunks_exact_mut(n)"></a><code>slice.rchunks_exact(n)</code>、<code>slice.rchunks_exact_mut(n)</code></h5><p>同上，只是从右往左。</p>
-<h5 id="slice-windows-n"><a href="#slice-windows-n" class="headerlink" title="slice.windows(n)"></a><code>slice.windows(n)</code></h5><p>采用滑动窗口的方式返回子<code>slice</code>，例如第一个是 <code>slice[0..n]</code>，第二个就是 <code>slice[1..n+1]</code>。如果 <code>n</code> 大于 <code>slice.len()</code> 什么也不会返回，如果 <code>n == 0</code>，<code>panic</code>。</p>
-<p>例如：</p>
-<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>].<span class="title function_ invoke__">windows</span>(<span class="number">2</span>).<span class="title function_ invoke__">for_each</span>(|items| &#123;</span><br><span class="line">        <span class="keyword">for</span> <span class="variable">item</span> <span class="keyword">in</span> items &#123;</span><br><span class="line">            <span class="built_in">print!</span>(<span class="string">&quot;&#123;&#125; &quot;</span>, item);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>该代码输出：</p>
-<pre><code>    1 2 2 3 3 4 4 5 
-</code></pre>
-<h4 id="Swapping"><a href="#Swapping" class="headerlink" title="Swapping"></a><code>Swapping</code></h4><ul>
-<li><p><code>slice.swap(i, j)</code>：交换 <code>slice[i]</code> 和 <code>slice[j]</code>；</p>
-</li>
-<li><p><code>slice_a.swap(&amp;mut slice_b)</code>：将两个 <code>slice</code> 完整交换，它们必须要有相同的长度；</p>
-</li>
-<li><p><code>vec.swap_remove(i)</code>：删除并返回 <code>vec[i]</code>，并且将最后一个元素填充到 <code>vec[i]</code>；</p>
-</li>
-</ul>
-<h4 id="搜索和排序"><a href="#搜索和排序" class="headerlink" title="搜索和排序"></a>搜索和排序</h4><ul>
-<li><p><code>slice.sort()</code>：升序排序；</p>
-</li>
-<li><p><code>slice.sort_by(cmp)</code>：自定义排序函数或闭包，<code>cmp</code> 必须实现 <code> Fn(&amp;T, &amp;T) -&gt; std::cmp::Ordering</code>；</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line">students.<span class="title function_ invoke__">sort_by</span>(|a, b| a.last_name.<span class="title function_ invoke__">cmp</span>(&amp;b.last_name));</span><br><span class="line"></span><br><span class="line">students.<span class="title function_ invoke__">sort_by</span>(|a, b| &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a_key</span> = (&amp;a.last_name, &amp;a.first_name);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b_key</span> = (&amp;b.last_name, &amp;b.first_name);</span><br><span class="line">    a_key.<span class="title function_ invoke__">cmp</span>(&amp;b_key)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>slice.sort_by_key(key)</code>：通过自定义的闭包或者函数 <code>key</code> 升序排列，<code>key</code> 的类型是 <code> Fn(&amp;T) -&gt; K where K: Ord</code>。这个很有用当 <code>T</code> 包含一个或者多个可排序字段时：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Sort by grade point average, lowest first.</span></span><br><span class="line">students.<span class="title function_ invoke__">sort_by_key</span>(|s| s.<span class="title function_ invoke__">grade_point_average</span>());</span><br></pre></td></tr></table></figure>
-
-<p>  <code>key</code> 不能返回任何元素的引用：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line">students.<span class="title function_ invoke__">sort_by_key</span>(|s| &amp;s.last_name); <span class="comment">// error: can&#x27;t infer lifetime</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>slice.reverse()</code>：就地反转 <code>slice</code>；</p>
-</li>
-<li><p><code>slice.binary_search(&amp;value)</code>：</p>
-</li>
-<li><p><code>slice.binary_search_by(&amp;value, cmp)</code>：</p>
-</li>
-<li><p><code>slice.binary_search_by_key(&amp;value, key)</code>：在已排序的<code>slice</code>上二分查找给定值，这些方法的返回类型是 <code>Result&lt;usize, usize&gt;</code>。 如果 <code>slice[index]</code> 在指定的排序顺序下等于 <code>value</code>，则返回 <code>Ok(index)</code>。 如果没有这样的索引，则它们返回 <code>Err(insertion_point)</code> 以便在 <code>insert_point</code> 插入值将保留顺序。</p>
-</li>
-<li><p><code>slice.contains(&amp;value)</code>：返回 <code>true</code> 如果 <code>slice</code> 有 <code>item</code> 等于 <code>value</code>。</p>
-</li>
-</ul>
-<h4 id="Slice-比较"><a href="#Slice-比较" class="headerlink" title="Slice 比较"></a><code>Slice</code> 比较</h4><p>如果类型 <code>T</code> 支持 <code>==</code> 和 <code>!=</code> 运算符，那么 <code>[T; N]</code>，<code>[T]</code> 以及 <code>Vec&lt;T&gt;</code> 也支持，两个 <code>slice</code> 是相等的，如果他们的值和长度都相等；</p>
-<p>如果类型 <code>T</code> 支持 <code>&lt; &lt;= &gt; &gt;=</code> 和 <code>!=</code> 运算符，那么 <code>[T; N]</code>，<code>[T]</code> 以及 <code>Vec&lt;T&gt;</code> 也支持。</p>
-<p>还有两个比较方法：</p>
-<ul>
-<li><p><code>slice.starts_with(other)</code>：如果 <code>slice</code> 以 <code>other</code> 为前缀，返回 <code>true</code>。</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="built_in">assert_eq!</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>].<span class="title function_ invoke__">starts_with</span>(&amp;[<span class="number">1</span>, <span class="number">2</span>]), <span class="literal">true</span>);</span><br><span class="line"><span class="built_in">assert_eq!</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>].<span class="title function_ invoke__">starts_with</span>(&amp;[<span class="number">2</span>, <span class="number">3</span>]), <span class="literal">false</span>);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>slice.starts_with(other)</code>：如果 <code>slice</code> 以 <code>other</code> 为后缀，返回 <code>true</code>。</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line">    <span class="built_in">assert_eq!</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>].<span class="title function_ invoke__">ends_with</span>(&amp;[<span class="number">3</span>, <span class="number">4</span>]), <span class="literal">true</span>);</span><br><span class="line">    ``</span><br><span class="line"></span><br><span class="line">#### 随机元素</span><br><span class="line"></span><br><span class="line">- `slice.<span class="title function_ invoke__">choose</span>(&amp;<span class="keyword">mut</span> rng)`：随即返回 `slice` 一个元素的引用，他返回 `<span class="type">Option</span>&lt;&amp;T&gt;`，`slice` 为空时返回 `<span class="literal">None</span>`；</span><br><span class="line"></span><br><span class="line">- `slice.<span class="title function_ invoke__">shuffle</span>(&amp;<span class="keyword">mut</span> rng)`：随机就地打乱 `slice`；</span><br><span class="line"></span><br><span class="line">    ```rust</span><br><span class="line">    <span class="keyword">use</span> rand::seq::SliceRandom;</span><br><span class="line">    <span class="keyword">use</span> rand::thread_rng;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">my_vec</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line">        my_vec.<span class="title function_ invoke__">shuffle</span>(&amp;<span class="keyword">mut</span> <span class="title function_ invoke__">thread_rng</span>());</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, my_vec);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="VecDeque"><a href="#VecDeque" class="headerlink" title="VecDeque&lt;T&gt;"></a><code>VecDeque&lt;T&gt;</code></h3><p><code>Vec</code> 仅支持在结尾高效增删元素，而 <a href="https://doc.rust-lang.org/stable/std/collections/struct.VecDeque.html"><code>std::collections::VecDeque&lt;T&gt;</code></a> 是一个双端队列，支持在两端增删元素：</p>
-<ul>
-<li><p><code>deque.push_front(value)</code>：用于在队列前面插入值；</p>
-</li>
-<li><p><code>deque.push_front(value)</code>：用于在队尾插入值；</p>
-</li>
-<li><p><code>deque.pop_front()</code>：删除队首元素；</p>
-</li>
-<li><p><code>deque.pop_back()</code>：删除队尾元素；</p>
-</li>
-<li><p><code>deque.front(), deque.back()</code>：获取队首或者队尾元素的引用，返回值是 <code>Option&lt;&amp;T&gt;</code>；</p>
-</li>
-<li><p><code>deque.front_mut(), deque.back_mut()</code> 类似于前者，只是返回值的可变借用 <code>Option&lt;&amp;mut T&gt;</code>；</p>
-</li>
-</ul>
-<p><code>std::collections::VecDeque&lt;T&gt;</code> 的实现是一个环形 <code>buffer</code>，如下图所示：</p>
-<img data-src="/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/vec-dequeue.png" class="">
-
-<p>与<code>vector</code>一样，双端队列可以按值、共享引用或 <code>mut</code> 引用进行迭代。 它们具有三个迭代器方法 <code>.into_iter(</code>)、<code>.iter()</code> 和 <code>.iter_mut()</code>，它们可以以通常的方式被索引：<code>deque[index]</code>。</p>
-<p>因为双端队列不会将它们的元素连续存储在内存中，所以它们不能继承<code>slice</code>的所有方法。 但是，如果您愿意支付转移内容的成本，<code>VecDeque</code> 提供了一种可以解决此问题的方法：</p>
-<ul>
-<li><p><code>deque.make_contiguous()</code>：将队列整理成连续内存的形式，返回 <code> &amp;mut [T]</code>；</p>
-</li>
-<li><p><code>Vec::from(deque)</code>：<code>Vec</code> 实现了 <code>From&lt;VecDeque&lt;T&gt;&gt;</code>，这将队列转换成 <code>Vec</code>；</p>
-</li>
-<li><p><code>VecDeque::from(vec)</code>：<code>VecDeque</code> 实现了 <code>From&lt;Vec&lt;T&gt;&gt;</code>，将 <code>vector</code> 转换成队列，这也是 <code>O(n)</code>，但它通常很快，即使向量很大，因为向量的堆内存可以简单地移动到新的双端队列；这使得从已有 <code>vector</code> 创建队列很方便：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> std::collections::VecDeque;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">v</span> = VecDeque::<span class="title function_ invoke__">from</span>(<span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]);</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="BinaryHeap"><a href="#BinaryHeap" class="headerlink" title="BinaryHeap&lt;T&gt;"></a><code>BinaryHeap&lt;T&gt;</code></h3><p><a href="https://doc.rust-lang.org/stable/std/collections/struct.BinaryHeap.html#"><code>std::collections::BinaryHeap</code></a> 是一个二叉堆实现的大顶堆，它只实现了 <code>Vec</code> 的某些方法，例如：<code>BinaryHeap::new()</code>，<code>.len()</code>，<code>.is_empty()</code>，<code>.capacity()</code>，<code>.clear()</code>和<br><code>.append(&amp;mut heap2)</code>，下面是它独有的一些方法。</p>
-<ul>
-<li><p><code>heap.push(value)</code>：增加元素到堆；</p>
-</li>
-<li><p><code>heap.pop()</code>：删除并且返回堆中的最大值，返回值是 <code>Option&lt;T&gt;</code>，如果堆是空的；</p>
-</li>
-<li><p><code>heap.peek()</code>：返回最大值的引用，返回类型是 <code>Option&lt;&amp;T&gt;</code>；</p>
-</li>
-<li><p><code>heap.peek_mut()</code>：返回类型是 <a href="https://doc.rust-lang.org/stable/std/collections/binary_heap/struct.PeekMut.html"><code>PeekMut&lt;T&gt;</code></a>，它代表了堆中最大值的可变引用，并且提供了一个类型关联方法 <code>pop()</code> 以从堆中弹出数据。用这个方法，我们可以基于最大值判断是否要从堆中弹出数据：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> std::collections::binary_heap::PeekMut;</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(top) = heap.<span class="title function_ invoke__">peek_mut</span>() &#123;</span><br><span class="line">    <span class="keyword">if</span> *top &gt; <span class="number">10</span> &#123;</span><br><span class="line">        PeekMut::<span class="title function_ invoke__">pop</span>(top);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p><code>BinaryHeap</code> 是可迭代的，它有一个 <code>.iter()</code> 方法，但迭代器以任意顺序产生堆的元素，而不是从大到小。要按优先级顺序使用 <code>BinaryHeap</code> 中的值，请使用 <code>while</code> 循环：</p>
-<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Some</span>(task) = heap.<span class="title function_ invoke__">pop</span>() &#123;</span><br><span class="line">    <span class="title function_ invoke__">handle</span>(task);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="HashMap、BTreeMap"><a href="#HashMap、BTreeMap" class="headerlink" title="HashMap&lt;K, V&gt;、BTreeMap&lt;K, V&gt;"></a><code>HashMap&lt;K, V&gt;</code>、<code>BTreeMap&lt;K, V&gt;</code></h3><p><code>map</code> 是键值对的集合，叫做 <code>entries</code>，<code>map</code> 中可以高效地通过 <code>key</code> 查找，不存在两个不同的 <code>entries</code> 有相同的 <code>key</code>。<code>Rust</code> 有两种 <code>map</code> 的实现，<a href="https://doc.rust-lang.org/stable/std/collections/struct.HashMap.html"><code>HashMap&lt;K, V&gt;</code></a> 和 <a href="https://doc.rust-lang.org/stable/std/collections/struct.BTreeMap.html"><code>BTreeMap&lt;K, V&gt;</code></a>，它们两个有相同的方法，不同的地方在于两者如何保持<code>entries</code>排列以进行快速查找。</p>
-<p><code>HashMap</code> 存储键值在<code>hash</code>表中，所以要求键的类型必须实现 <code>Hash</code> 和 <code>Eq</code>，下图展示了它在内存中的表示，深色区域是未使用的。所有键、值和缓存的哈希码都存储在单个堆分配表中。 添加<code>entries</code>最终会迫使 <code>HashMap</code> 分配一个更大的表并将所有数据移入其中。</p>
-<img data-src="/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/hashmap-inmem.png" class="">
-
-<p><code>BTreeMap</code> 将<code>entries</code>按键顺序存储在树结构中，因此它需要一个实现 <code>Ord</code> 的键类型 <code>K</code>。 下图显示了一个 <code>BTreeMap</code>。 同样，较暗的区域是未使用的备用容量。</p>
-<img data-src="/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/btreemap-inmem.png" class="">
-
-<p><code>BTreeMap</code> 将其<code>entries</code>存储在节点中。<code>BTreeMap</code> 中的大多数节点只包含键值对。非叶节点，如该图所示的根节点，也为指向子节点的指针留有空间。 <code>(20, &#39;q&#39;)</code> 和 <code>(30, &#39;r&#39;)</code> 之间的指针指向包含 <code>20</code> 到 <code>30</code> 之间的键的子节点。添加<code>entries</code>通常需要将节点的一些现有<code>entries</code>向右滑动，以保持它们的排序，有时还涉及分配新节点。</p>
-<p><code>Rust</code> 标准库使用 <code>BTree</code> 而不是平衡二叉树，因为 <code>BTree</code> 在现代硬件上更快。 与 <code>BTree</code> 相比，二叉树每次搜索使用的比较次数可能更少，但搜索 <code>BTree</code> 具有更好的局部性——也就是说，内存访问被分组在一起，而不是分散在整个堆中，这会提高内存缓存的命中率，这是一个显着的速度提升。</p>
-<h4 id="创建-map"><a href="#创建-map" class="headerlink" title="创建 map"></a>创建 <code>map</code></h4><ul>
-<li><p><code>HashMap::new()</code>、<code>BTreeMap::new()</code>：创建空的 <code>map</code>；</p>
-</li>
-<li><p><code>iter.collect()</code>：可以从一个 <code>Iterator&lt;Item=(K, V)&gt;</code> 创建新的 <code>HashMap</code> 或者 <code>BTreeMap</code>；</p>
-</li>
-<li><p><code>HashMap::with_capacity(n)</code>：创建空的 <code>map</code> 至少能存储 <code>n</code> 个 <code>entries</code>，由于它们存储 <code>entries</code> 在一个整个的堆内存中，所以他们有容量及相关的方法 <code>hash_map.capacity()</code>，<code>hash_map.reserve(additional)</code> 和 <code>hash_map.shrink_to_fit()</code>，<code>BTreeMaps</code> 没有这些。</p>
-</li>
-</ul>
-<h4 id="键值处理"><a href="#键值处理" class="headerlink" title="键值处理"></a>键值处理</h4><ul>
-<li><p><code>map.len()</code>：返回 <code>entries</code> 的数量；</p>
-</li>
-<li><p><code>map.is_empty()</code>：如果 <code>map</code> 没有 <code>entries</code> 返回 <code>true</code>；</p>
-</li>
-<li><p><code>map.contains_key(&amp;key)</code>：返回 <code>true</code> 如果 <code>map</code> 包含指定 <code>key</code>；</p>
-</li>
-<li><p><code>map.get(&amp;key)</code>：在 <code>map</code> 中搜索指定 <code>key</code>。如果找到，返回 <code>Some(r)</code>，<code>r</code> 是一个指向对应值的引用。否则，返回 <code>None</code>；</p>
-</li>
-<li><p><code>map.get_mut(&amp;key)</code>：类似于 <code>map.get(&amp;key)</code>，但是返回指定值的可变引用。一般来说，<code>map</code>允许对存储在其中的值进行 <code>mut</code> 访问，但不能访问键。 这些值是可以随意修改的。键属于<code>map</code>本身；它需要确保它们不会改变，因为<code>entries</code>是按它们的键组织的。就地修改<code>key</code>将是一个错误；</p>
-</li>
-<li><p><code>map.insert(key, value)</code>：插入或者更新一个 <code>(key, entry)</code> 到 <code>map</code> 中，如果存在旧值返回；</p>
-</li>
-<li><p><code>map.extend(iterable)</code>：迭代 <code>iterable</code> 将得到 <code>(K, V)</code> 插入到 <code>map</code> 中；</p>
-</li>
-<li><p><code>map.append(&amp;mut map2)</code>：将 <code>map2</code> 的所有 <code>entries</code> 移动到 <code>map</code> 中；</p>
-</li>
-<li><p><code>map.remove(&amp;key)</code>：找到并且删除指定 <code>key</code>，如果存在返回删除对应 <code>key</code> 的值，返回类型是 <code>Option&lt;V&gt;</code>；</p>
-</li>
-<li><p><code>map.remove_entry(&amp;key)</code>：找到并且删除指定 <code>key</code>，如果存在返回删除对应键值对，返回类型是 <code>Option&lt;K, V&gt;</code>；</p>
-</li>
-<li><p><code>map.retain(test)</code>：删除所有未通过 <code>test</code> 函数的键值对，<code>test</code> 的类型是 <code>FnMut(&amp;K, &amp;mut V) -&gt; bool</code>。对于 <code>map</code> 的每个元素都会调用 <code>test(&amp;key, &amp;mut value)</code>，如果返回 <code>false</code>，这个 <code>key</code> 就会从 <code>map</code> 中删除；不考虑性能，就像这样写：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line">map = map.<span class="title function_ invoke__">into_iter</span>().<span class="title function_ invoke__">filter</span>(test).<span class="title function_ invoke__">collect</span>();</span><br></pre></td></tr></table></figure></li>
-<li><p><code>map.clear()</code>：删除所有键值对；</p>
-</li>
-</ul>
-<p>一个 <code>map</code> 也可以通过 <code>map[&amp;key]</code> 这种形式查询，<code>map</code> 实现了内建的 <a href="https://doc.rust-lang.org/stable/std/ops/trait.Index.html"><code>std::ops::Index</code></a>。但是如果给定的 <code>key</code> 不存在，就会 <code>panic</code>，这就像数组越界访问。</p>
-<p>对于 <code>.contains_key()</code>，<code>.get()</code>，<code>.get_mut()</code>，<code>.remove()</code> 中的 <code>key</code>，没必要是精确的 <code>&amp;T</code> 类型，这些方法是泛型，它们可以从 <code>K</code> 借用。所以，在 <code>HashMap&lt;String, Fish&gt;</code> 中这样调用 <code>fish_map.contains_key(&quot;conger&quot;)</code> 是没有问题的，即使 <code>&quot;conger&quot;</code> 不是 <code>String</code> 类型，但是它实现了 <code>Borrow&lt;&amp;str&gt;</code>。</p>
-<p>由于 <code>BTreeMap&lt;K, V&gt;</code> 按 <code>key</code>顺序存储，所以支持额外的操作：</p>
-<ul>
-<li><code>btree_map.split_off(&amp;key)</code>：将 <code>btree_map</code> 一分为二，键小于<code>key</code>的<code>entries</code>留在 <code>btree_map</code> 中，返回包含其他<code>entries</code>的新 <code>BTreeMap&lt;K, V&gt;</code>；</li>
-</ul>
-<h4 id="Entry"><a href="#Entry" class="headerlink" title="Entry"></a><code>Entry</code></h4><p><code>HashMap</code> 和 <code>BTreeMap</code> 都有对应的 <a href="https://doc.rust-lang.org/stable/std/collections/hash_map/enum.Entry.html"><code>std::collections::hash_map::Entry</code></a> 或者 <a href="https://doc.rust-lang.org/stable/std/collections/btree_map/enum.Entry.html"><code>std::collections::btree_map::Entry</code></a> 类型，<code>Entry</code> 的重点是消除冗余的映射查找，例如，这里有一些获取或创建学生记录的代码：</p>
-<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Do we already have a record for this student?</span></span><br><span class="line"><span class="keyword">if</span> !student_map.<span class="title function_ invoke__">contains_key</span>(name) &#123;</span><br><span class="line">    <span class="comment">// No: create one.</span></span><br><span class="line">    student_map.<span class="title function_ invoke__">insert</span>(name.<span class="title function_ invoke__">to_string</span>(), Student::<span class="title function_ invoke__">new</span>());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Now a record definitely exists.</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">record</span> = student_map.<span class="title function_ invoke__">get_mut</span>(name).<span class="title function_ invoke__">unwrap</span>();</span><br></pre></td></tr></table></figure>
-
-<p>这可以完成工作，但是访问了 <code>student_map</code> 两三次，每次都要查找，其实我们要的只是有这个 <code>key</code> 更新没有的话插入。<code>entries</code>的想法是我们只进行一次查找，生成一个<code>entries</code>值，然后用于所有后续操作。这个单行代码等效于前面的所有代码，只是它只进行一次查找：</p>
-<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">record</span> = student_map.<span class="title function_ invoke__">entry</span>(name.<span class="title function_ invoke__">to_string</span>()).<span class="title function_ invoke__">or_insert_with</span>(Student::new);</span><br></pre></td></tr></table></figure>
-
-<p><code>student_map.entry(name.to_string())</code> 返回的 <code>Entry</code> 就像对 <code>map</code> 中某个位置的可变引用，该位置要么被键值对占用，要么空置，这意味着那里还没有<code>Entry</code>。如果为空，则 <code>Entry</code>的 <code>.or_insert_with()</code> 方法会插入一个新记录。</p>
-<p>所有的 <code>Entry</code> 都是使用相同的方法创建的：</p>
-<ul>
-<li><p><code>map.entry(key)</code>：返回给定键的 <code>Entry</code>，如果<code>map</code>中没有这样的键，则返回一个空 <code>Entry</code>。此方法通过 <code>mut</code> 引用获取其 <code>self</code> 参数并返回具有匹配生命周期的 <code>Entry</code>：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">entry</span>&lt;<span class="symbol">&#x27;a</span>&gt;(&amp;<span class="symbol">&#x27;a</span> <span class="keyword">mut</span> <span class="keyword">self</span>, key: K) <span class="punctuation">-&gt;</span> Entry&lt;<span class="symbol">&#x27;a</span>, K, V&gt;</span><br></pre></td></tr></table></figure>
-
-<p>  <code>Entry</code> 类型有一个生命周期参数 <code>&#39;a</code>，因为它实际上是一种对<code>map</code>的 <code>mut</code> 引用，只要<code>Entry</code> 存在，它就拥有对<code>map</code>的独占访问权。</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">enum</span> <span class="title class_">Entry</span>&lt;<span class="symbol">&#x27;a</span>, K: <span class="symbol">&#x27;a</span>, V: <span class="symbol">&#x27;a</span>&gt; &#123;</span><br><span class="line">    <span class="title function_ invoke__">Occupied</span>(OccupiedEntry&lt;<span class="symbol">&#x27;a</span>, K, V&gt;),</span><br><span class="line">    <span class="title function_ invoke__">Vacant</span>(VacantEntry&lt;<span class="symbol">&#x27;a</span>, K, V&gt;),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>  不幸的是，如果<code>map</code>具有 <code>String</code> 键，则无法将 <code>&amp;str</code> 类型的引用传递给此方法。在这种情况下，<code>.entry()</code> 方法需要一个真正的字符串。</p>
-</li>
-</ul>
-<p><code>Entry</code> 提供了三种处理空条目的方法：</p>
-<ul>
-<li><p><code>map.entry(key).or_insert(value)</code>：确保<code>map</code>包含具有给定键的条目，如果需要，插入具有给定值的新条目。它返回对新值或现有值的 <code>mut</code> 引用。假设我们需要统计投票，可以这样写：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> std::collections::HashMap;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">ballots</span> = <span class="built_in">vec!</span>[];</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">vote_counts</span>: HashMap&lt;<span class="type">String</span>, <span class="type">usize</span>&gt; = HashMap::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">name</span> <span class="keyword">in</span> ballots &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">count</span> = vote_counts.<span class="title function_ invoke__">entry</span>(name).<span class="title function_ invoke__">or_insert</span>(<span class="number">0</span>);</span><br><span class="line">        *count += <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>map.entry(key).or_default()</code>：确保 <code>map</code> 包含具有给定键的条目，如果需要，插入具有 <code>Default::default()</code> 返回的值的新条目。这仅适用于实现 <code>Default</code> 的类型。与 <code>or_insert</code> 一样，此方法返回对新值或现有值的<code> mut</code> 引用；</p>
-</li>
-<li><p><code>map.entry(key).or_insert_with(default_fn)</code>：和前两个方法相同，只是它调用 <code>default_fn()</code> 生成默认值。如果已经存在，<code>default_fn</code> 是不会调用的；假设我们想知道哪些单词出现在哪些文件中。 我们可以写：</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">word_occurrence</span>: HashMap&lt;<span class="type">String</span>, HashSet&lt;<span class="type">String</span>&gt;&gt; = HashMap::<span class="title function_ invoke__">new</span>();</span><br><span class="line"><span class="keyword">for</span> <span class="variable">file</span> <span class="keyword">in</span> files &#123;</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">word</span> <span class="keyword">in</span> <span class="title function_ invoke__">read_words</span>(file)? &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">set</span> = word_occurrence.<span class="title function_ invoke__">entry</span>(word).<span class="title function_ invoke__">or_insert_with</span>(HashSet::new);</span><br><span class="line">        set.<span class="title function_ invoke__">insert</span>(file.<span class="title function_ invoke__">clone</span>());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>map.entry(key).and_modify(closure)</code>：如果指定 <code>key</code> 的 <code>Entry</code> 已经存在，将调用闭包并且传入 <code>Entry</code> 的可变借用，然后将 <code>Entry</code> 返回，所以它可以和其他方法串联起来使用；</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">// This map contains all the words in a given string,</span></span><br><span class="line"><span class="comment">// along with the number of times they occur.</span></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">word_frequency</span>: HashMap&lt;&amp;<span class="type">str</span>, <span class="type">u32</span>&gt; = HashMap::<span class="title function_ invoke__">new</span>();</span><br><span class="line"><span class="keyword">for</span> <span class="variable">c</span> <span class="keyword">in</span> text.<span class="title function_ invoke__">split_whitespace</span>() &#123;</span><br><span class="line">    word_frequency</span><br><span class="line">        .<span class="title function_ invoke__">entry</span>(c)</span><br><span class="line">        .<span class="title function_ invoke__">and_modify</span>(|count| *count += <span class="number">1</span>)</span><br><span class="line">        .<span class="title function_ invoke__">or_insert</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p><code>Entry</code> 是枚举类型，例如，<code>HashMap</code> 中的：</p>
-<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">// (in std::collections::hash_map)</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">enum</span> <span class="title class_">Entry</span>&lt;<span class="symbol">&#x27;a</span>, K, V&gt; &#123;</span><br><span class="line">    <span class="title function_ invoke__">Occupied</span>(OccupiedEntry&lt;<span class="symbol">&#x27;a</span>, K, V&gt;),</span><br><span class="line">    <span class="title function_ invoke__">Vacant</span>(VacantEntry&lt;<span class="symbol">&#x27;a</span>, K, V&gt;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="迭代-Map"><a href="#迭代-Map" class="headerlink" title="迭代 Map"></a>迭代 <code>Map</code></h4><p>这里还有几个迭代 <code>map</code> 的方法：</p>
-<ul>
-<li><p>通过值迭代， <code>for (k, v) in map</code> 产生 <code>(K，V)</code> 对，这将消费 <code>map</code>；</p>
-</li>
-<li><p>通过引用迭代，<code>for (k, v) in &amp;map</code> 产生 <code>(&amp;K, &amp;V)</code> 对；</p>
-</li>
-<li><p>通过可变引用迭代，<code>for (k, v) in &amp;mut map</code> 产生 <code>(&amp;K, &amp;mutV)</code> 对；</p>
-</li>
-</ul>
-<p>而 <code>.iter()</code> 和 <code>.iter_mut()</code> 就像按 <code>&amp;map</code> 和 <code>&amp;mut map</code> 迭代。除此之外，还有：</p>
-<ul>
-<li><p><code>map.keys()</code>：返回一个所有 <code>key</code> 引用的迭代器；</p>
-</li>
-<li><p><code>map.values()</code>：返回一个所有 <code>value</code> 引用的迭代器；</p>
-</li>
-<li><p><code>map.values_mut()</code>：返回一个所有 <code>value</code> 可变引用的迭代器；</p>
-</li>
-</ul>
-<h3 id="HashSet、BTreeSet"><a href="#HashSet、BTreeSet" class="headerlink" title="HashSet&lt;T&gt;、BTreeSet&lt;T&gt;"></a><code>HashSet&lt;T&gt;</code>、<code>BTreeSet&lt;T&gt;</code></h3><p>集合中的值都是唯一的，<code>Map</code> 和 <code>Set</code> 有不同的方法，但在实现上，<code>Set</code> 就像只有键的映射，而不是键值对。 事实上，<code>Rust</code> 的两种集合类型 <code>HashSet&lt;T&gt;</code> 和 <code>BTreeSet&lt;T&gt;</code> 被实现为 <code>HashMap&lt;T, ()&gt;</code> 和 <code>BTreeMap&lt;T, ()&gt;</code>。</p>
-<p>这里有一些集合常用的方法：</p>
-<ul>
-<li><p><code>HashSet::new()</code>、<code>BTreeSet::new()</code>：创建新的集合；</p>
-</li>
-<li><p><code>iter.collect()</code>：可以用于从迭代器创建一个集合，如果迭代器产生重复值，将会被自动丢弃；</p>
-</li>
-<li><p><code>HashSet::with_capacity(n)</code>：创建至少能容纳 <code>n</code> 个值的集合；</p>
-</li>
-<li><p><code>set.len()</code>：返回集合中值的数量；</p>
-</li>
-<li><p><code>set.is_empty()</code>：返回 <code>true</code> 当集合为空时；</p>
-</li>
-<li><p><code>set.contains(&amp;value)</code>：当集合包含 <code>value</code> 是返回 <code>true</code>；</p>
-</li>
-<li><p><code>set.insert(value)</code>：插入集合新的值，返回 <code>true</code> 如果值被添加，如果已经存在返回 <code>false</code>；</p>
-</li>
-<li><p><code>set.remove(&amp;value)</code>：从集合中删除值，删除成功则返回 <code>true</code>，如果之前不存在则返回 <code>false</code>；</p>
-</li>
-<li><p><code>set.retain(test)</code>：删除所有没通过测试的值，<code>test</code> 的类型是 <code>FnMut(&amp;T) -&gt; bool</code>，对于集合的每个元素，将调用 <code>test(&amp;value)</code>，如果返回 <code>false</code>，这个值就会被移除；</p>
-</li>
-</ul>
-<h4 id="迭代"><a href="#迭代" class="headerlink" title="迭代"></a>迭代</h4><p>有两种迭代集合的方式：</p>
-<ol>
-<li><p>按值迭代，<code>for v in set</code> 返回集合的成员；</p>
-</li>
-<li><p>按共享引用迭代，<code>for v in &amp;set</code> 返回集合值的引用；</p>
-</li>
-</ol>
-<p>通过可变引用迭代集合是不支持的，这里没有方法获取集合中值的可变引用，而 <code>set.iter()</code> 返回一个迭代器包含集合中值的引用。</p>
-<p><code>HashSet</code> 迭代器，就像 <code>HashMap</code> 迭代器，以任意顺序获取它们的值，而 <code>BTreeSet</code> 迭代器产生的值是有序的。</p>
-<h4 id="某些方法"><a href="#某些方法" class="headerlink" title="某些方法"></a>某些方法</h4><ul>
-<li><p><code>set.get(&amp;value)</code>：返回 <code> Option&lt;&amp;T&gt;</code>，等于 <code>value</code> 的集合中成员的引用；</p>
-</li>
-<li><p><code>set.take(&amp;value)</code>：像 <code>set.remove(&amp;value)</code>，但是他返回移除的值；</p>
-</li>
-<li><p><code>set.replace(value)</code>：就像 <code>set.insert(value)</code>，但是如果集合已经包含这个值，这个会返回并替换旧的值，返回类型是 <code>Option&lt;T&gt;</code>；</p>
-</li>
-</ul>
-<h4 id="集合操作"><a href="#集合操作" class="headerlink" title="集合操作"></a>集合操作</h4><ul>
-<li><p><code>set1.intersection(&amp;set2)</code>：返回两个集合之间的交集；</p>
-</li>
-<li><p><code>set1.union(&amp;set2)</code>：求集合之间的并集；</p>
-</li>
-<li><p><code>set1.difference(&amp;set2)</code>：求集合之间的差集；</p>
-</li>
-<li><p><code>set1.symmetric_difference(&amp;set2)</code>：返回只存在其中一个集合中的值的新集合；</p>
-  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> std::collections::HashSet;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">a</span> = HashSet::<span class="title function_ invoke__">from</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">b</span> = HashSet::<span class="title function_ invoke__">from</span>([<span class="number">4</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Print 1, 4 in arbitrary order.</span></span><br><span class="line"><span class="keyword">for</span> <span class="variable">x</span> <span class="keyword">in</span> a.<span class="title function_ invoke__">symmetric_difference</span>(&amp;b) &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">diff1</span>: HashSet&lt;_&gt; = a.<span class="title function_ invoke__">symmetric_difference</span>(&amp;b).<span class="title function_ invoke__">collect</span>();</span><br><span class="line"><span class="keyword">let</span> <span class="variable">diff2</span>: HashSet&lt;_&gt; = b.<span class="title function_ invoke__">symmetric_difference</span>(&amp;a).<span class="title function_ invoke__">collect</span>();</span><br><span class="line"></span><br><span class="line"><span class="built_in">assert_eq!</span>(diff1, diff2);</span><br><span class="line"><span class="built_in">assert_eq!</span>(diff1, [<span class="number">1</span>, <span class="number">4</span>].<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">collect</span>());</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>set1.is_disjoint(set2)</code>：如果 <code>self</code> 与 <code>other</code> 没有共同的元素，则返回 <code>true</code>；</p>
-</li>
-<li><p><code>set1.is_subset(set2)</code>：如果 <code>set1</code> 是 <code>set2</code> 的子集，将返回 <code>true</code>；</p>
-</li>
-<li><p><code>set1.is_superset(set2)</code>：如果 <code>set1</code> 是 <code>set2</code> 的超集，将返回 <code>true</code>；</p>
-</li>
-</ul>
-<h3 id="Hashing"><a href="#Hashing" class="headerlink" title="Hashing"></a><code>Hashing</code></h3><p><a href="https://doc.rust-lang.org/stable/std/hash/trait.Hash.html"><code>std::hash::Hash</code></a> 是标准库中所有可 hash 类型必须实现的，<code>HashMap</code> 的键和 <code>HashSet</code> 的元素都必须实现 <code>Hash</code> 和 <code>Eq</code>。</p>
-<p>大对数内部实现了 <code>Eq</code> 的类型也都实现了 <code>Hash</code>，整数，字符和 <code>String</code> 都是可 <code>hash</code> 的，以及 <code>tuple</code>，<code>array</code>，<code>slice</code> 和 <code>vector</code>，只要他们的元素时可 <code>hash</code> 的。</p>
-<p>标准库的一个原则是一个值不管存在哪里或者你如何引用，它们都有相同的<code>hash</code>值。因此，一个值和它的引用有相同的hash值，<code>Box&lt;T&gt;</code> 也和它包含的值有相同的 <code>hash</code> 值，一个 <code>vector</code> 和包含相同的数据的<code>slice</code>有同样的<code>hash</code>值。一个字符串和包含相同字符的 <code>&amp;str</code> 有相同的<code>hash</code>值。</p>
-<p>结构体和枚举默认没有实现 <code>Hash</code>，但是可以自动派生，只有所有元素可 <code>hash</code>：</p>
-<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="meta">#[derive(Clone, PartialEq, Eq, Hash)]</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">MuseumNumber</span> &#123;</span><br><span class="line"> ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果你为一个类型手动实现 <code>PartialEq</code>，你也应该手动实现 <code>Hash</code>。</p>
-<h3 id="自定义-Hash-算法"><a href="#自定义-Hash-算法" class="headerlink" title="自定义 Hash 算法"></a>自定义 <code>Hash</code> 算法</h3><p><code>hash</code> 方法是通用的，因此前面显示的 <code>Hash</code> 实现可以将数据提供给任何实现 <a href="https://doc.rust-lang.org/stable/std/hash/trait.Hasher.html"><code>Hasher</code></a> 的类型，这就是 <code>Rust</code> 支持可插入哈希算法的方式。</p>
-<p><code>std::hash::BuildHasher</code> 是表示散列算法初始状态的类型的特征。每个 <code>Hasher</code> 都是一次性使用的，就像一个迭代器：你使用一次就扔掉它，<code>BuildHasher</code> 是可重用的。</p>
-<p>每个 <code>HashMap</code> 都包含一个 <code>BuildHasher</code>，每次需要计算哈希码时都会使用它。<code>BuildHasher</code> 值包含哈希算法每次运行时所需的键、初始状态或其他参数。完整计算一个 <code>hash</code> 值如下所示：</p>
-<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> std::hash::&#123;Hash, Hasher, BuildHasher&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">compute_hash</span>&lt;B, T&gt;(builder: &amp;B, value: &amp;T) <span class="punctuation">-&gt;</span> <span class="type">u64</span></span><br><span class="line">    <span class="keyword">where</span> B: BuildHasher, T: Hash</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">hasher</span> = builder.<span class="title function_ invoke__">build_hasher</span>(); <span class="comment">// 1. start the algorithm</span></span><br><span class="line">    value.<span class="title function_ invoke__">hash</span>(&amp;<span class="keyword">mut</span> hasher); <span class="comment">// 2. feed it data</span></span><br><span class="line">    hasher.<span class="title function_ invoke__">finish</span>() <span class="comment">// 3. finish, producing a u64</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>HashMap</code> 每次在需要计算 <code>hash</code> 值的时候会调用这三个方法，所有方法都是可以内联的，所以非常快。</p>
-<p><code>Rust</code> 的默认哈希算法是 <code>SipHash-1-3</code>，<code>SipHash</code> 速度很快，并且非常擅长最小化哈希冲突。事实上，它是一种密码算法：没有已知的有效方法来生成 <code>SipHash-1-3</code> 冲突。 只要为每个哈希表使用不同的、不可预测的密钥，<code>Rust</code> 就可以抵御一种称为 <code>HashDoS</code> 的拒绝服务攻击，在这种攻击中，攻击者故意使用哈希冲突来触发服务器中最坏情况的性能。</p>
-<p>但也许您的应用程序不需要它，如果要存储许多小密钥，例如整数或非常短的字符串，则可以实现更快的哈希函数，但会牺牲 <code>HashDoS</code> 安全性。 <a href="https://doc.servo.org/fnv/"><code>fnv</code></a> 实现了一种这样的算法，即 <code>FNV</code> 哈希，要尝试它，请将此行添加到您的 <code>Cargo.toml</code>：</p>
-<figure class="highlight toml"><table><tr><td class="code"><pre><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="attr">fnv</span> = <span class="string">&quot;1.0&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>然后导入使用：</p>
-<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> fnv::&#123;FnvHashMap, FnvHashSet&#125;;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>rust</category>
-      </categories>
-      <tags>
-        <tag>《Rust 程序设计》</tag>
-        <tag>集合类型</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>边缘计算是什么？</title>
     <url>/2023/08/01/Cloud-Native/edge-computing/</url>
     <content><![CDATA[<h4 id="边缘计算"><a href="#边缘计算" class="headerlink" title="边缘计算"></a>边缘计算</h4><p>边缘计算是一种即将到来的计算方法，指的是一系列更接近用户的计算机网络和设备。边缘计算就是通过将数据存储在更靠近用户位置的位置来处理用户生成的数据。这确保了数据处理快速进行，从而确保大数据块得到无缝处理。这进一步帮助组织更快地做出决策。边缘计算技术的一些用例包括自动驾驶汽车、自动化零售店、机器人和智能设备。</p>
@@ -10792,6 +10368,139 @@ Process finished with exit code 101
       </tags>
   </entry>
   <entry>
+    <title>多运行时微服务架构</title>
+    <url>/2023/08/30/Design-Patterns/multi-runtime-architecture/</url>
+    <content><![CDATA[<h5 id="服务化演进中的问题"><a href="#服务化演进中的问题" class="headerlink" title="服务化演进中的问题"></a>服务化演进中的问题</h5><p>自从数年前微服务的概念被提出，到现在基本成了技术架构的标配。微服务的场景下衍生出了对分布式能力的大量需求：各服务之间需要相互协作和通信，以及共享状态等等，因此就有了各种中间件来为业务服务提供这种分布式能力。</p>
+<span id="more"></span>
+
+<p>我们熟知的<code>Spring Cloud</code> 全家桶”正是凭借着对各种中间件优秀的集成与抽象能力，成为了当时炙手可热的项目。然而随着业务的快速发展，组织规模的不断扩大，微服务越来越多，系统规模越来越大则是服务化体系架构演进的必然。这就带来了两方面复杂度的上升：</p>
+<ul>
+<li><strong>服务治理与接入的复杂度</strong>: 服务治理代表了系统中服务资源的地图及其获取途径，例如通过注册发现服务提供图谱能力，路由、网关、负载均衡服务提供获取途径。服务接入则代表了如何使用系统中的服务能力，例如通过中间件提供的API 协议或是封装的 SDK 来接入该中间件。各种业务服务越多、中间件越复杂，整个系统服务治理与接入的复杂度就会急剧上升。</li>
+<li><strong>团队协作的复杂度</strong>: 该复杂度主要体现在团队的认知负载上，复杂的依赖、沟通、协作将明显拖慢交付进度。正如康威定律所述的，由于服务复杂度的上升，团队之间的交互成本也随之上升。
+当系统中的中间件都通过 <code>SDK</code> 作为其外化能力的控制方式，来封装协议、数据结构与操作方法。随着中间件数量和种类不断增多，大量孤立的 <code>SDK</code> 被绑定在业务服务上，导致两方面问题：</li>
+</ul>
+<ol>
+<li>版本升级困难：<code>SDK</code> 与业务服务的强依赖性导致想要升级 <code>SDK</code> 版本变得异常复杂与缓慢</li>
+<li>业务服务难以异构：<code>SDK</code> 所支持的语言反向限制了业务服务所能选择的语言，例如 <code>Spring Cloud</code> 几乎没有官方的多语言支持</li>
+</ol>
+<p>如何治理这种不断上升的复杂度呢？复杂问题归一化是一种不错的手段。</p>
+<h5 id="什么是多运行时微服务架构？"><a href="#什么是多运行时微服务架构？" class="headerlink" title="什么是多运行时微服务架构？"></a>什么是多运行时微服务架构？</h5><p>多运行时微服务架构（<code>Multi-Runtime Microservice Architecture</code>）也被简称为多运行时架构，是由 <code>Red Hat</code> 的首席架构师 <code>Bilgin Ibryam</code> 在 2020 年初所提出的一种微服务架构形态，它相对完整地从理论和方法的角度阐述了多运行时架构的模型（实际上，在 2019 年末，微软的 <code>Dapr v0.1.0</code> 就已经发布）。<code>Bilgin Ibryam</code> 梳理了分布式应用的各类需求后，将其划分到了四个领域内：</p>
+
+
+<p>（来源：<img data-src="https://www.infoq.com/articles/multi-runtime-microservice-architecture/" alt="Multi-Runtime Microservices Architecture">）</p>
+<ul>
+<li><strong>生命周期</strong>：即应用从开发态到运行态之间进行打包、部署、扩缩容等需求。</li>
+<li><strong>网络</strong>：分布式系统中各应用之间的服务发现、容错、灵活的发布模式、流量管理、跟踪和遥测等需求。</li>
+<li><strong>状态</strong>：我们期望服务是无状态的，但业务本身一定需要有状态，因此包含对缓存、编排调度、幂等、事务等需求。</li>
+<li><strong>绑定</strong>：与外部服务之间进行集成可能面临的交互适配、协议转换等需求。</li>
+</ul>
+<p><code>Bilgin Ibryam</code> 认为，应用之间对分布式能力的需求，无外乎这四大类。且在 <code>Kubernetes</code> 成为云原生场景下运行时的事实标准后，对生命周期这部分的需求已经基本被覆盖到了。因此实际上我们更关注的是如何归一化其他三种需求。</p>
+<h6 id="与单机应用的类比"><a href="#与单机应用的类比" class="headerlink" title="与单机应用的类比"></a>与单机应用的类比</h6><p>单机应用一般大都是以用户态进程的形式运行在操作系统上。显然，与微服务类似，单机应用的核心关注点也是业务逻辑，与业务关系不大的支撑能力，都要依赖操作系统来完成。因此上述由 Bilgin 归纳的分布式应用四大类需求，其实我们很容易就可以和单机应用进行合理的类比：</p>
+<table>
+<thead>
+<tr>
+<th align="left">支撑能力</th>
+<th align="left">单机应用</th>
+<th align="left">分布式应用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">生命周期</td>
+<td align="left">用户态进程</td>
+<td align="left">Kubernetes</td>
+</tr>
+<tr>
+<td align="left">网络</td>
+<td align="left">网络协议、域名解析、路由服务</td>
+<td align="left">服务发现&#x2F;注册、负载均衡、流量管理</td>
+</tr>
+<tr>
+<td align="left">状态</td>
+<td align="left">文件系统</td>
+<td align="left">数据库、对象存储、块存储</td>
+</tr>
+<tr>
+<td align="left">绑定</td>
+<td align="left">标准库、系统调用</td>
+<td align="left">事件分发、分布式事务、消息路由</td>
+</tr>
+</tbody></table>
+<p>从上述类比来看我们发现，单单是 <code>Kubernetes</code> 可能还不足以称为是 “云原生操作系统”，除非有一种解决方案，能在分布式环境下，把其他几项支撑能力也进行归一化整合。</p>
+<h6 id="Service-Mesh"><a href="#Service-Mesh" class="headerlink" title="Service Mesh"></a>Service Mesh</h6><p><code>Service Mesh</code> 在近几年的高速发展，让我们认识到网络相关的需求是如何被归一化并与业务本身解耦的：<br>通过流量控制能力实现多变的发布模式以及对服务韧性的灵活配置，通过安全能力实现的开箱即用的 <code>mTLS</code> 双向认证来构建零信任网络，通过可观察性能力实现的网络层<code>Metrics，Logging</code> 和 <code>Tracing</code> 的无侵入式采集。而上述服务治理能力，全部被代理到 <code>Sidecar</code> 进程中完成。这就实现了 <code>codebase level</code> 的解耦，网络相关的分布式能力完全抛弃 <code>SDK</code>。</p>
+
+<p>伴随着 <code>Service Mesh</code> 的成功，我们不禁会想到，是否可以将另外的两种需求——状态和绑定 ——也进行 <code>Mesh</code> 化改造呢？</p>
+<h6 id="分布式能力-Mesh-化"><a href="#分布式能力-Mesh-化" class="headerlink" title="分布式能力 Mesh 化"></a>分布式能力 Mesh 化</h6><p>基于对 <code>Service Mesh</code> 的拓展，我们大可以将其他的能力也进行 <code>Mesh</code> 化，每一类能力都以 <code>Sidecar</code> 的形式部署和运作：</p>
+
+<p>在业界也有不少从某些能力角度切入的方案：<code>istio(networking)、dapr(state，binding)、kubernetes(lifecycle)</code>。我们可以发现，各类方案都有自己的一套对某些能力需求的 <code>Mesh</code> 化方案，合理地选择它们，的确满足了分布式能力 <code>Mesh</code> 化的要求，但却引入了新的问题：</p>
+<ul>
+<li>复杂度从业务服务下沉到了 <code>Mesh</code> 层：多种 <code>Mesh</code> 化方案之间缺乏一致性，导致选型和运维的成本很高</li>
+<li>多个 <code>Sidecar</code> 进程会带来不小的资源开销，很多解决方案还需要搭配控制面进程，资源消耗难以忽视</li>
+</ul>
+<p>对业务复杂度上升的归一化，现在变成了对 Mesh 复杂度上升的归一化。</p>
+<h6 id="Multi-Runtime-Micrologic-Mecha"><a href="#Multi-Runtime-Micrologic-Mecha" class="headerlink" title="Multi-Runtime &#x3D; Micrologic + Mecha"></a>Multi-Runtime &#x3D; Micrologic + Mecha</h6><p><code>Bilgin Ibryam</code> 在多运行时微服务架构中，对前述讨论的各种问题点进行了整合，提出了 <code>Micrologic + Mecha</code> 的架构形态：</p>
+
+<p>在 <code>Micrologic</code> 中只包含业务逻辑，尽可能的把分布式系统层面的需求剥离出去，放到 <code>Mecha</code> 中。从 <code>Mecha</code> 的命名就可以明白它的功能：由提供各种分布式能力的 “机甲” 组成的 <code>Sidecar</code> 进程，与 “裸奔的” 业务逻辑一起部署。因为是 <code>Micrologic</code> 进程和 <code>Mecha</code> 进程共同部署的这种多个 “运行时” 的架构，所以称之为 “多运行时架构”。<code>Mecha</code> 不仅成功地将分布式能力从耦合的业务进程中抽取出来，还整合了方案，避免了多种方案混合的额外成本。可以说 <code>Mecha</code> 在本质上提供了一个分布式能力抽象层。</p>
+<p>因此与其叫 “多运行时架构”，不如叫 “面向能力的架构”。</p>
+<h6 id="微软的尝试：Dapr"><a href="#微软的尝试：Dapr" class="headerlink" title="微软的尝试：Dapr"></a>微软的尝试：Dapr</h6><p><code>Dapr</code> 是微软主导开发并开源的一种 <code>Mecha runtime</code>，从宏观上看它处在整个架构的中间层：</p>
+
+<p>自上而下分别是业务层、<code>Dapr Runtime</code>层、基础设施层。<code>Dapr</code> 通过 <code>Http</code> 或 <code>gRPC API</code> 向业务层提供分布式能力抽象，通过称为 “<code>Component</code>” 的接口定义，实现对具体基础设施的插件式管理。</p>
+<h6 id="云和边缘的微服务构建块-Building-Blocks"><a href="#云和边缘的微服务构建块-Building-Blocks" class="headerlink" title="云和边缘的微服务构建块(Building Blocks)"></a>云和边缘的微服务构建块(Building Blocks)</h6><p>作为一个合格的 <code>Mecha</code>，最关键的就是如何定义分布式能力抽象层。如何把各类中间件提供的分布式能力定义清楚是一项挑战。<code>Dapr</code> 中定义的分布式能力抽象层，称为 <code>Building Blocks</code>。顾名思义，就是一系列的 “构建块”，每一个块定义了一种分布式能力。</p>
+
+<p>其中有一些 <code>Blocks</code> 的能力由 <code>Dapr</code> 自己就能实现，有一些则需要由实际的基础设施或中间件来实现。选取几个典型举例说明：</p>
+<ul>
+<li><code>Service-to-service Invocation</code>：提供服务间调用的能力，其中也隐含了服务的注册与发现。该 <code>Block</code> 的能力由 <code>Dapr</code> 直接实现。</li>
+<li><code>State management</code>：提供状态管理能力，最简单的就是存取状态。该 <code>Block</code> 需要其他基础设施通过 <code>Component</code> 的形式实现，例如定义一个 <code>Redis Component</code>。</li>
+<li><code>Publish and subscribe</code>：提供消息发布和订阅的能力，这是非常典型的一种分布式能力。也需要通过基础设施来实现，如定义一个 <code>Kafka Component</code>。</li>
+</ul>
+<h6 id="Dapr-的限制与挑战"><a href="#Dapr-的限制与挑战" class="headerlink" title="Dapr 的限制与挑战"></a>Dapr 的限制与挑战</h6><p><code>Dapr</code> 期望通过定义一个能容纳所有需求的分布式能力抽象层，来彻底解放业务逻辑。从归一化的角度看，不得不说这是一种大胆而富有野心的尝试，理想条件下的确能非常优雅地解决问题。但现实总是充斥着各种跳脱出理想的情况，<code>Dapr</code> 在推广的过程中遇到了很多限制与挑战。</p>
+<h6 id="与-Service-Mesh-整合"><a href="#与-Service-Mesh-整合" class="headerlink" title="与 Service Mesh 整合"></a>与 Service Mesh 整合</h6><p>作为面向开发侧提供的能力抽象层，<code>Dapr</code> 在网络能力上包含了 <code>mTLS、Observability</code> 与 <code>Resiliency</code>（即超时重试熔断等），但并没有包含诸如负载均衡、动态切换、金丝雀发布等运维侧的流量管理能力。</p>
+
+<p>因此对于不断走向成熟的业务系统，可能既要 <code>Service Mesh</code> 在运维侧的流量管理能力，又要 <code>Dapr</code> 在开发侧的分布式抽象能力，不管谁先谁后，都将面临一个问题：怎样搭配使用它们才是正确的？某些场景下可以做适配，如：</p>
+<ul>
+<li>对于 <code>distributed tracing</code> 的能力，如果采用 <code>Service Mesh</code> 来实现，则需要考虑将原本 <code>Dapr</code> 直连的中间件也加入 <code>mesh</code> 网络，否则会 <code>trace</code> 不到。但从 <code>distributed tracing</code>本身功能角度讲，更应该使用 <code>Dapr</code>。</li>
+<li><code>mTLS</code> 应该只在 <code>Dapr</code> 或者 <code>Service Mesh</code> 中开启，而不应该都开启。</li>
+</ul>
+<p>但 <code>Dapr</code> 与 <code>Service Mesh</code> 配合使用中难以避免的是开销的问题，包括资源开销和性能开销。每个应用 <code>Pod</code> 携带两种 <code>sidecar</code>，再加上 <code>Dapr</code> 和 <code>Service Mesh </code>自己的控制面应用（高可用方案主备或多副本），这些资源开销是无法忽略，甚至是非常可观的。而由于 <code>Service Mesh</code> 网络代理的流量劫持，网络调用需要先经过 <code>Dapr sidecar</code>，再经过网络代理 <code>sidecar</code>，被代理两次，也会造成一定的性能开销。</p>
+<p>简单计算一下就会发现，当拥有 1000 个业务实例时，<code>dapr + istio</code> 的 <code>Sidecar</code> 进程可能会消耗 <code>800+ vCPU</code> 和 <code>60+ GiB</code> 内存。随着分布式能力抽象层的不断扩展，到底哪些属于开发侧，哪些属于运维侧，也许不会像现在这样泾渭分明了。因此已经有对 <code>Multi-Runtime</code> 与 <code>Service Mesh</code> 能力边界越来越模糊的讨论。</p>
+<h6 id="Sidecarless？"><a href="#Sidecarless？" class="headerlink" title="Sidecarless？"></a>Sidecarless？</h6><p>从上一节的表格我们发现，资源消耗以及性能的问题其实不只是 <code>Dapr</code> 下的场景，实际上它是 <code>sidecar</code> 模式自有的限制，因此在 <code>Service Mesh</code> 领域的讨论中，已经有提出 <code>Sidecarless</code> 的概念了，即通过 <code>DaemonSet</code> 而不是 <code>Sidecar</code> 的形式来部署网络代理。</p>
+
+<p>对于网络代理的 <code>Sidecarless</code> 化，支持方认为它能带来高性能、低资源消耗的优点，而反对方则认为它会导致安全性与隔离性差、故障的爆炸半径过大等缺点。那么，<code>Mecha</code> 是否也可能会走向 <code>Sidecarless</code> 呢？</p>
+<p>就像今年 <code>Cilium</code> 发布支持 <code>Service Mesh</code> 能力的办法，通过 <code>eBPF</code> 在内核态实现 <code>L3 L4</code> 层能力，而对应的 <code>L7</code> 层能力则交给用户态的 <code>Envoy</code> 处理这种将问题一分为二的思想，也许多运行时架构的未来方案也可能是折中或是多种方式结合的。例如采用在 <code>Node</code> 上按 <code>Service Account</code> 或 <code>Namespace</code> 运行多实例，或是轻量级 <code>Sidecar</code> 做协议转换＋<code>DaemonSet</code> 做流量管理和网络调用。当然 <code>DaemonSet</code> 也有其固有的缺陷，资源被共享从而降低消耗的同时，故障也被共享了，而且故障产生的伤害面也变大了，此外还会导致 <code>DaemonSet</code> 被应用使用的争抢问题，以及应用之间的数据暴露风险。到底后续将会如何演进，我们拭目以待。</p>
+<h6 id="定义抽象能力的（API）的困境"><a href="#定义抽象能力的（API）的困境" class="headerlink" title="定义抽象能力的（API）的困境"></a>定义抽象能力的（API）的困境</h6><p>分布式能力抽象层，是对分布式场景下需求的抽象性定义，抽象作为一种共识，其要义就在于保留共性而排除个性。但实际当中会发现，同类型中间件的差异化恰恰体现在了一些高级的、细分的专有特性上，很多业务对中间件选型的原因也在于这些专有特性上。这就引出了一个困境：抽象能力所覆盖的需求，其丰富程度与可移植性成反比。</p>
+
+<p>就如上图所示，如果抽象能力范围只覆盖到红色的部分，则组件 <code>ABC</code> 的专有特性都无法被引入，而如果抽象能力范围覆盖到绿色，那么就无法迁移到组件C。定义抽象能力的困境，本质上是一种对能力收敛的权衡，这种权衡可能是与具体的业务需要高度相关的。然而，在企业实际的场景下，这个“全集”的规模可能并不一定像我们想象的那么庞大，因此就有可能提供额外的一种思路，即对分布是抽象层进行扩展，将有限规模的“个性”全部包含进去，形成 “并集” 从而规避上述问题。</p>
+
+
+<h6 id="蚂蚁金服的方案：layotto"><a href="#蚂蚁金服的方案：layotto" class="headerlink" title="蚂蚁金服的方案：layotto"></a>蚂蚁金服的方案：layotto</h6><p>蚂蚁金服作为 <code>Dapr</code> 的早起使用者，在落地的过程中结合遇到的问题及业务思考，在 2021 年年中推出了自研的 <code>Mecha</code> 方案：<code>layotto</code>。</p>
+
+<p>由于 <code>layotto</code> 在运行态上是与 <code>MOSN</code> 绑定在一个 <code>Sidecar</code> 内的，因此就减少了一部分前文提到的两个 <code>Sidecar</code> 之间通信的开销。当然 <code>layotto</code> 可以这样做也有一部分原因在于 <code>MOSN</code> 本身已经在蚂蚁内部大规模落地，同时蚂蚁也有足够的研发强度来支撑 <code>layotto</code> 的开发。</p>
+<h6 id="“私有协议”与“可信协议”"><a href="#“私有协议”与“可信协议”" class="headerlink" title="“私有协议”与“可信协议”"></a>“私有协议”与“可信协议”</h6><p><code>Layotto</code> 的开发者，在讨论多运行时架构以及 <code>layotto</code> 落地实践的文章中，尝试对可移植性的概念进行了扩展，将支撑分布式能力的协议划分为“可信协议”与“私有协议”。其中，可信协议指代的是一类影响力很大的协议如 <code>Redis</code> 协议、<code>S3</code> 协议、<code>SQL</code> 标准等。这一类协议由于用户众多，且被各类云厂商所支持，因此可以认为它们本身就具有可移植性。私有协议则指代一些企业内部自研的、闭源或影响力小的开源软件提供的协议。显然这一类协议才更需要考虑抽象与可移植性。因此实际上的所谓分布式能力抽象层可能会是如下图所示的样子：</p>
+
+<p>各类可信协议不再二次抽象，而是直接支持，对其余的私有协议再进行抽象。这种直接支持开源协议的思路，部分缓解了定义抽象能力的困境问题。</p>
+<h6 id="灵活的扩展模型"><a href="#灵活的扩展模型" class="headerlink" title="灵活的扩展模型"></a>灵活的扩展模型</h6><p>前文提到的 <code>API</code> 扩展形成 “并集”，<code>Layotto</code> 通过提供 <code>In-Tree</code> 形式的私有 <code>API</code> 注册点，实现了不修改 <code>Layotto</code> 代码就能扩展 <code>API</code> 能力：</p>
+
+<p>从代码角度看，<code>Layotto</code> 是通过暴露 <code>API</code> 注册钩子、启动入口，来允许用户自行扩展代码，之后再调用启动函数启动进程。这样扩展 <code>API</code> 代码与 <code>Layotto package</code> 级隔离，但编译后可形成同一个二进制文件。另外，通过 <code>MOSN</code> 的 <code>WASM</code> 插件能力，<code>Layotto</code> 也支持通过 <code>WASM</code> 镜像来扩展 <code>API Filter</code>。</p>
+<h5 id="未来展望"><a href="#未来展望" class="headerlink" title="未来展望"></a>未来展望</h5><p>虽然多运行时架构这种理念从提出到现在只有两年，但已经很少有人会否认它所带来的价值，不论是 Dapr 还是 layotto 的快速发展，都明确了头部企业对这一领域的投资逻辑。</p>
+<p>当然目前从理论到实践可能都不够成熟，大家在落地实践的过程中也都会或多或少遇到前文提到的一些局限。但这些局限所处的层次大都是工程化、技术选择等具体的问题，相信随着各方技术的不断整合，实践的不断完善，问题都能解决。对多运行时架构实践的未来，结合当下的限制、挑战以及趋势，我们也许能勾勒出某种未来可能的架构形态：</p>
+
+<p>在这一架构形态下：</p>
+<ul>
+<li>分布式能力抽象层提供标准能力抽象，以及灵活扩展的私有协议的能力</li>
+<li>既成标准协议（对前文 “可信协议” 的另一种提法）作为 “既成的” 抽象能力，在Mecha 层只做协议转换或直接透传</li>
+<li>Mecha 与网络代理层进程级耦合，各类特性不再明确区分开发侧与运维侧</li>
+<li>进程在 Node 上按租户&#x2F;namespace 以及高可用要求划分多实例</li>
+<li>接入现代化的可观测性体系，提升对故障的洞察分析能力，降低由于架构分层带来的问题诊断困难</li>
+</ul>
+<p>总之，不管是架构形态怎么变、能力怎么抽象，让业务逻辑不断内聚，越来越面向接口、面向能力编程的趋势不会改变，服务化体系的未来值得期待。</p>
+]]></content>
+      <categories>
+        <category>Architecture</category>
+      </categories>
+      <tags>
+        <tag>architecture</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SOLID 设计原则</title>
     <url>/2022/05/03/Design-Patterns/solid-design-principles/</url>
     <content><![CDATA[<p><code>SOLID</code> 设计原则并非单纯的一个原则，它实际上包含5个设计原则：单一职责原则、开闭原则、里氏替换替换原则，接口隔离原则和依赖反转原则。</p>
@@ -11786,6 +11495,18 @@ Process finished with exit code 101
       </tags>
   </entry>
   <entry>
+    <title>【量化】网格交易策略详解</title>
+    <url>/2023/07/17/Quantitative/grid-trading-strategy-explained/</url>
+    <content><![CDATA[<h3 id="一、网格交易的原理"><a href="#一、网格交易的原理" class="headerlink" title="一、网格交易的原理"></a>一、网格交易的原理</h3><h3 id="二、最低价-最高价"><a href="#二、最低价-最高价" class="headerlink" title="二、最低价&amp;最高价"></a>二、最低价&amp;最高价</h3><h3 id="三、等差或等比"><a href="#三、等差或等比" class="headerlink" title="三、等差或等比"></a>三、等差或等比</h3><h3 id="四、网格数量"><a href="#四、网格数量" class="headerlink" title="四、网格数量"></a>四、网格数量</h3><h3 id="五、网格交易适合怎样的市场"><a href="#五、网格交易适合怎样的市场" class="headerlink" title="五、网格交易适合怎样的市场"></a>五、网格交易适合怎样的市场</h3><h3 id="六、总结"><a href="#六、总结" class="headerlink" title="六、总结"></a>六、总结</h3>]]></content>
+      <categories>
+        <category>Quantitative Trading</category>
+      </categories>
+      <tags>
+        <tag>Quantitative Trading</tag>
+        <tag>量化交易</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>认证、授权、凭证</title>
     <url>/2023/08/30/Other/authentication/</url>
     <content><![CDATA[<h5 id="认证（Authentication）、授权（Authorization）、凭证（credentials）"><a href="#认证（Authentication）、授权（Authorization）、凭证（credentials）" class="headerlink" title="认证（Authentication）、授权（Authorization）、凭证（credentials）"></a>认证（Authentication）、授权（Authorization）、凭证（credentials）</h5><p><strong>认证</strong>是指以当前用户的身份登录过后，系统便能追踪到他的身份，并做出符合相应业务逻辑的操作。即使用户没有登录，大多数系统也会追踪他的身份，只是当做来宾或匿名用户来处理，认证技术解决的是**我是谁?**的问题。</p>
@@ -12126,15 +11847,427 @@ Process finished with exit code 101
       </tags>
   </entry>
   <entry>
-    <title>【量化】网格交易策略详解</title>
-    <url>/2023/07/17/Quantitative/grid-trading-strategy-explained/</url>
-    <content><![CDATA[<h3 id="一、网格交易的原理"><a href="#一、网格交易的原理" class="headerlink" title="一、网格交易的原理"></a>一、网格交易的原理</h3><h3 id="二、最低价-最高价"><a href="#二、最低价-最高价" class="headerlink" title="二、最低价&amp;最高价"></a>二、最低价&amp;最高价</h3><h3 id="三、等差或等比"><a href="#三、等差或等比" class="headerlink" title="三、等差或等比"></a>三、等差或等比</h3><h3 id="四、网格数量"><a href="#四、网格数量" class="headerlink" title="四、网格数量"></a>四、网格数量</h3><h3 id="五、网格交易适合怎样的市场"><a href="#五、网格交易适合怎样的市场" class="headerlink" title="五、网格交易适合怎样的市场"></a>五、网格交易适合怎样的市场</h3><h3 id="六、总结"><a href="#六、总结" class="headerlink" title="六、总结"></a>六、总结</h3>]]></content>
+    <title>【Rust】集合类型</title>
+    <url>/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/</url>
+    <content><![CDATA[<p>Rust 标准库包含几个集合，用于在内存中存储数据的泛型类型。我们已经在前面使用了集合，例如 <code>Vec</code> 和 <code>HashMap</code>。在本章中，我们将详细介绍这两种类型的方法，以及其他<code>6</code>个标准集合。</p>
+<p><code>Rust</code> 一共有<code>8</code>个标准集合类型，它们都是泛型：</p>
+<img data-src="/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/std-collections.png" class="">
+
+<ul>
+<li><p><code>Vec&lt;T&gt;</code>：一个可增长的、堆分配的 <code>T</code> 类型值数组；</p>
+</li>
+<li><p><code>VecDeque&lt;T&gt;</code>：与 <code>Vec&lt;T&gt;</code> 类似，但更适合用作先进先出队列，它支持在列表的前面和后面有效地添加和删除值；</p>
+</li>
+<li><p><code>BinaryHeap&lt;T&gt;</code>：一个优先队列，<code>BinaryHeap</code> 中的值是有组织的，所以它总是有效地找到并删除最大值；</p>
+</li>
+<li><p><code>HashMap&lt;K, V&gt;</code>：键值对表，通过键查找值很快，<code>item</code> 以任意顺序存储；</p>
+</li>
+<li><p><code>BTreeMap&lt;K, V&gt;</code>：与 <code>HashMap&lt;K, V&gt;</code> 类似，但它保持<code>entries</code>按键排序。 <code>BTreeMap&lt;String, i32&gt;</code> 以字符串比较顺序存储其<code>entries</code>。除非需要<code>entries</code>保持排序，否则 <code>HashMap</code> 更快；</p>
+</li>
+<li><p><code>HashSet&lt;T&gt;</code>：一组 <code>T</code> 类型的值。添加和删除值很快，查询给定值是否在集合中也很快；</p>
+</li>
+<li><p><code>BTreeSet&lt;T&gt;</code>：与 <code>HashSet&lt;T&gt;</code> 类似，但它保持元素按值排序。 同样，除非需要对数据进行排序，否则 <code>HashSet</code> 更快；</p>
+</li>
+</ul>
+<span id="more"></span>
+
+<h3 id="Vec"><a href="#Vec" class="headerlink" title="Vec&lt;T&gt;"></a><code>Vec&lt;T&gt;</code></h3><p><code>vector</code>具有 <code>3</code> 个字段：长度、容量和指向存储元素的堆分配的指针。空 <code>vector</code>，容量为 <code>0</code>，在添加第一个元素之前，不会为其分配堆内存。和所有其他集合类型一样，<code>Vec&lt;T&gt;</code> 实现了 <code>std::iter::FromIterator</code>，所以我们可以通过 <code>.collect()</code> 方法创建，例如：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">my_vec</span> = my_set.<span class="title function_ invoke__">into_iter</span>().collect::&lt;<span class="type">Vec</span>&lt;<span class="type">String</span>&gt;&gt;();</span><br></pre></td></tr></table></figure>
+
+<p>我们再来回顾下 <code>vector</code> 的内存表示：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Create an empty vector</span></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">numbers</span>: <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt; = <span class="built_in">vec!</span>[];</span><br><span class="line"><span class="comment">// Create a vector with given contents</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">words</span> = <span class="built_in">vec!</span>[<span class="string">&quot;step&quot;</span>, <span class="string">&quot;on&quot;</span>, <span class="string">&quot;no&quot;</span>, <span class="string">&quot;pets&quot;</span>];</span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">buffer</span> = <span class="built_in">vec!</span>[<span class="number">0u8</span>; <span class="number">1024</span>]; <span class="comment">// 1024 zeroed-out bytes</span></span><br></pre></td></tr></table></figure>
+
+<p>内存表示如下图：</p>
+<img data-src="/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/vec-collections.png" class="">
+
+<h4 id="元素访问"><a href="#元素访问" class="headerlink" title="元素访问"></a>元素访问</h4><p>最直接的访问是通过索引，如果索引越界会 <code>panic</code>，<code>vector</code> 长度和索引是 <code>usize</code> 类型，尝试使用 <code>u32</code>、<code>u64</code> 或 i<code>size</code> 作为<code>vector</code>索引是错误的，可以根据需要使用 <code>n as usize</code> 进行转换：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Get a reference to an element</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">first_line</span> = &amp;lines[<span class="number">0</span>];</span><br><span class="line"><span class="comment">// Get a copy of an element</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">fifth_number</span> = numbers[<span class="number">4</span>]; <span class="comment">// requires Copy</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">second_line</span> = lines[<span class="number">1</span>].<span class="title function_ invoke__">clone</span>(); <span class="comment">// requires Clone</span></span><br><span class="line"><span class="comment">// Get a reference to a slice</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">my_ref</span> = &amp;buffer[<span class="number">4</span>..<span class="number">12</span>];</span><br><span class="line"><span class="comment">// Get a copy of a slice</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">my_copy</span> = buffer[<span class="number">4</span>..<span class="number">12</span>].<span class="title function_ invoke__">to_vec</span>(); <span class="comment">// requires Clone</span></span><br></pre></td></tr></table></figure>
+
+<p>有几种方法可以轻松访问 <code>vector</code> 或<code>slice</code>的特定元素（请注意，所有<code>slice</code>方法也可用于数组和<code>vector</code>）：</p>
+<ul>
+<li><p><code>slice.first()</code>：返回第一个元素的引用以 <code>Option&lt;&amp;T&gt;</code> 的形式，如果没有就返回 <code>None</code>：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(item) = v.<span class="title function_ invoke__">first</span>() &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;We got one! &#123;&#125;&quot;</span>, item);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>slice.last()</code>：类似于 <code>slice.first()</code>，但返回最后一个；</p>
+</li>
+<li><p><code>slice.get(index)</code>：返回第 <code>index</code> 个元素索引，不存在返回 <code>None</code>：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">slice</span> = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="built_in">assert_eq!</span>(slice.<span class="title function_ invoke__">get</span>(<span class="number">2</span>), <span class="title function_ invoke__">Some</span>(&amp;<span class="number">2</span>));</span><br><span class="line"><span class="built_in">assert_eq!</span>(slice.<span class="title function_ invoke__">get</span>(<span class="number">4</span>), <span class="literal">None</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>slice.first_mut(), slice.last_mut(), slice.get_mut(index)</code>：前面几个的变种，只是返回可变借用：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">slice</span> = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">last</span> = slice.<span class="title function_ invoke__">last_mut</span>().<span class="title function_ invoke__">unwrap</span>(); <span class="comment">// type of last: &amp;mut i32</span></span><br><span class="line">    <span class="built_in">assert_eq!</span>(*last, <span class="number">3</span>);</span><br><span class="line">    *last = <span class="number">100</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">assert_eq!</span>(slice, [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">100</span>]);</span><br></pre></td></tr></table></figure>
+
+<p>  因为按值返回 <code>T</code> 意味着转移所有权，所以访问 <code>item</code> 的方法通常通过引用返回这些 <code>item</code>。</p>
+</li>
+<li><p><code>slice.to_vec()</code>：克隆整个 <code>slice</code>，返回新的，仅仅用于可以 <code>Clone</code> 的 <code>item</code>：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">v</span> = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>];</span><br><span class="line"><span class="built_in">assert_eq!</span>(v.<span class="title function_ invoke__">to_vec</span>(),</span><br><span class="line"><span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]);</span><br><span class="line"><span class="built_in">assert_eq!</span>(v[<span class="number">0</span>..<span class="number">6</span>].<span class="title function_ invoke__">to_vec</span>(),</span><br><span class="line"><span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="Iteration"><a href="#Iteration" class="headerlink" title="Iteration"></a><code>Iteration</code></h4><p>可以通过值或者引用迭代 <code>vector</code> 或者 <code>slice</code>：</p>
+<ul>
+<li><p>如果迭代 <code>Vec&lt;T&gt;</code>，将返回 <code>T</code>，<code>vector</code> 中的值被溢出并且消费；</p>
+</li>
+<li><p>如果迭代 <code>&amp;[T; N]，&amp;[T]，&amp;Vec&lt;T&gt;</code>，将返回 <code>&amp;T</code>，引用到单独的 <code>item</code>，不会转移它们的所有权；</p>
+</li>
+<li><p>如果迭代 <code>&amp;mut [T; N]，&amp;mut [T]，&amp;mut Vec&lt;T&gt;</code>，将返回 <code>&amp;mut T</code>。</p>
+</li>
+</ul>
+<h4 id="扩容缩容"><a href="#扩容缩容" class="headerlink" title="扩容缩容"></a>扩容缩容</h4><p>数组，<code>vector</code> 或者 <code>slice</code> 的长度是它包含的元素的数量，例如：</p>
+<ul>
+<li><p><code>slice.len()</code>：<code>slice</code> 长度，类型是 <code>usize</code>；</p>
+</li>
+<li><p><code>slice.is_empty()</code>：等价于 <code>slice.len() == 0</code>；</p>
+</li>
+</ul>
+<p>下面的方法用于 <code>vector</code> 扩缩容，不能用在数组上，它们的长度在创建的时候就确定了：</p>
+<ul>
+<li><p><code>Vec::with_capacity(n)</code>：创建新的能容纳 <code>n</code> 个元素的 <code>vector</code>；</p>
+</li>
+<li><p><code>vec.capacity()</code>：返回 <code>vector</code> 的容量，<code>vec.capacity() &gt;= vec.len()</code>；</p>
+</li>
+<li><p><code>vec.reserve(n)</code>：确认这里有足够的的空间再容纳 <code>n</code> 个元素，即 <code>vec.capacity() &gt;= vec.len() + n</code>，如果已经满足，则什么也不做，如果不够就会申请足够的空间并且将当前的内容移进去；</p>
+</li>
+<li><p><code>vec.reserve_exact(n)</code>：和 <code>vec.reserve(n)</code> 类似，但是不会申请额外的空间为未来的增长，也就是扩容之后 <code>vec.capacity() = exactly vec.len() + n</code>；</p>
+</li>
+<li><p><code>vec.shrink_to_fit()</code>：尝试释放额外的空闲空间；</p>
+</li>
+</ul>
+<p><code>Vec&lt;T&gt;</code> 有许多方法可以添加或删除元素，从而改变<code>vector</code>的长度。这些中的每一个都通过 <code>mut</code> 引用获取其自身参数。这两种方法在<code>vector</code>末尾添加或删除单个值：</p>
+<ul>
+<li><p><code>vec.push(value)</code>：将 <code>value</code> 添加到末尾；</p>
+</li>
+<li><p><code>vec.pop()</code>：移除和返回最后一个元素，返回类型是 <code>Option&lt;T&gt;</code>，返回的是值而不是引用；</p>
+</li>
+<li><p><code>vec.insert(index, value)</code>：将给定的值插入到指定的 <code>index</code> 处，并且将 <code>vec[index..]</code> 往后移动，如果 <code>index &gt; vec.len()</code>，就会 <code>panic</code>；</p>
+</li>
+<li><p><code>vec.remove(index)</code>：将给定索引处的值删除，并且将 <code>vec[index+1..]</code> 的值向左移动；</p>
+</li>
+<li><p><code>vec.resize(new_len, value)</code>：设置 <code>vec</code> 的新长度，如果这会增加长度，将会使用 <code>value</code> 填充增加的值，<code>value</code> 必须实现 <code>Clone</code>；</p>
+</li>
+<li><p><code>vec.resize_with(new_len, closure)</code>：像 <code>vec.resize()</code>，但是使用闭包构造新的 <code>item</code>，可以用于没有实现 <code>Clone</code> 的场景；</p>
+</li>
+<li><p><code>vec.truncate(new_len)</code>：设置 <code>vec</code> 的新长度为 <code>new_len</code>，删除 <code>vec[new_len..]</code>，如果 <code>vec.len() &lt; new_len</code>，啥也不做；</p>
+</li>
+<li><p><code>vec.clear()</code>：删除 <code>vec</code> 所有的元素，类似 <code>vec.truncate(0)</code>；</p>
+</li>
+<li><p><code>vec.extend(iterable)</code>：将 <code>iterable</code> 中的所有 <code>item</code> 添加到 <code>vec</code> 中；</p>
+</li>
+<li><p><code>vec.split_off(index)</code>：类似 <code>vec.truncate(index)</code>，但是它返回一个包含被移除值的 <code>Vec</code>，就像多次调用 <code>pop</code>；</p>
+</li>
+<li><p><code>vec.append(&amp;mut vec2)</code>：将 <code>vec2</code> 中的所有元素移到 <code>vec</code> 中，之后，<code>vec2</code> 就成为空的了，有点类似 <code>extend</code>，但是 <code>extend</code> 会保留 <code>vec2</code>；</p>
+</li>
+<li><p><code>vec.drain(range)</code>：移除区间内的 <code>item</code>，并且返回移除的元素；</p>
+</li>
+<li><p><code>vec.retain(test)</code>：删除所有没有通过 <code>test</code> 的 <code>item</code>，<code>test</code> 是 <code>FnMut(&amp;T) -&gt; bool</code> 类型的函数；</p>
+</li>
+<li><p><code>vec.dedup()</code>：删除连续重复的元素，删除完之后仍然有两个 <code>s</code>：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">byte_vec</span> = <span class="string">b&quot;Misssssssissippi&quot;</span>.<span class="title function_ invoke__">to_vec</span>();</span><br><span class="line">byte_vec.<span class="title function_ invoke__">dedup</span>();</span><br><span class="line"><span class="built_in">assert_eq!</span>(&amp;byte_vec, <span class="string">b&quot;Misisipi&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>  如果要删除所有重复的 <code>item</code>，可以：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> std::collections::HashSet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">byte_vec</span> = <span class="string">b&quot;Misssssssissippi&quot;</span>.<span class="title function_ invoke__">to_vec</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">seen</span> = HashSet::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    byte_vec.<span class="title function_ invoke__">retain</span>(|r| seen.<span class="title function_ invoke__">insert</span>(*r));</span><br><span class="line">    <span class="built_in">assert_eq!</span>(&amp;byte_vec, <span class="string">b&quot;Misp&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>vec.dedup_by(same)</code>：类似于 <code>vec.dedup()</code>，但是它使用闭包函数判断是否相等，而不是 <code>==</code>；</p>
+</li>
+<li><p><code>vec.dedup_by_key(key)</code>：类似于 <code>vec.dedup()</code>，判断两个元素的想等是通过 <code>key(&amp;mut elem1) == key(&amp;mut elem2)</code>，例如，如果 <code>errors</code> 是 <code>Vec&lt;Box&lt;dyn Error&gt;&gt;</code>，你可以这样写：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 删除具有重复 Messge 的 err</span></span><br><span class="line">errors.<span class="title function_ invoke__">dedup_by_key</span>(|err| err.<span class="title function_ invoke__">to_string</span>());</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="Joining"><a href="#Joining" class="headerlink" title="Joining"></a><code>Joining</code></h4><p>下面的量方法用于元素本身是数组、<code>slice</code>或<code>vector</code>的数组、<code>slice</code>或<code>vector</code>：</p>
+<ul>
+<li><p><code>slices.concat()</code>：连接所有的<code>item</code>并且返回新的 <code>vector</code>：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="built_in">assert_eq!</span>([[<span class="number">1</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">4</span>], [<span class="number">5</span>, <span class="number">6</span>]].<span class="title function_ invoke__">concat</span>(), <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>slices.join(&amp;separator)</code>：类似于前者，但是在连接的过程中可以插入一个分割 <code>item</code>：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="built_in">assert_eq!</span>(</span><br><span class="line">    [[<span class="number">1</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">4</span>], [<span class="number">5</span>, <span class="number">6</span>]].<span class="title function_ invoke__">join</span>(&amp;<span class="number">0</span>),</span><br><span class="line">    <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line">);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="Splitting"><a href="#Splitting" class="headerlink" title="Splitting"></a><code>Splitting</code></h4><p>由于 <code>Rust</code> 安全规则的限制，我们没法得到 <code>vector</code> 的多个可变引用，例如：</p>
+<div class="note danger"><figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">v</span> = <span class="built_in">vec!</span>[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">let</span> <span class="variable">a</span> = &amp;<span class="keyword">mut</span> v[i];</span><br><span class="line"><span class="keyword">let</span> <span class="variable">b</span> = &amp;<span class="keyword">mut</span> v[j]; <span class="comment">// error: cannot borrow `v` as mutable</span></span><br><span class="line">                   <span class="comment">// more than once at a time</span></span><br><span class="line">*a = <span class="number">6</span>; <span class="comment">// references `a` and `b` get used here,</span></span><br><span class="line">*b = <span class="number">7</span>; <span class="comment">// so their lifetimes must overlap</span></span><br></pre></td></tr></table></figure></div>
+
+<p>如果 <code>i == j</code>，就会出先可变借用了同一个 <code>item</code>。<code>Rust</code> 有几种方法可以同时借用对数组、<code>slice</code>或向量的两个或多个部分的 <code>mut</code> 引用。 与前面的代码不同，这些方法是安全的，因为根据设计，它们总是将数据拆分为不重叠的区域。 其中许多方法对于使用非 <code>mut</code> <code>slice</code>也很方便，因此每种方法都有 <code>mut</code> 和 <code>non-mut</code> 版本。</p>
+<img data-src="/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/vec-multiple-mut-ref.png" class="">
+
+<p>这些方法都没有直接修改数组、<code>slice</code>或向量。 它们只是返回对内部部分数据的新引用：</p>
+<h5 id="slice-iter-、slice-iter-mut"><a href="#slice-iter-、slice-iter-mut" class="headerlink" title="slice.iter()、slice.iter_mut()"></a><code>slice.iter()</code>、<code>slice.iter_mut()</code></h5><p>生成对每个 <code>slice</code> 中 <code>item</code> 的引用，<a href="/2022/04/30/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/#iter-%E5%92%8C-iter_mut">详见</a>。</p>
+<h5 id="slice-split-at-index-、slice-split-at-mut-index"><a href="#slice-split-at-index-、slice-split-at-mut-index" class="headerlink" title="slice.split_at(index)、slice.split_at_mut(index)"></a><code>slice.split_at(index)</code>、<code>slice.split_at_mut(index)</code></h5><p>将 <code>slice</code> 分成一对返回，<code>slice.split_at(index)</code> 等价于 <code>(&amp;slice[..index], &amp;slice[index..])</code>，如果长度超出越界，就会 <code>panic</code>。</p>
+<h5 id="slice-split-first-、slice-split-first-mut"><a href="#slice-split-first-、slice-split-first-mut" class="headerlink" title="slice.split_first()、slice.split_first_mut()"></a><code>slice.split_first()</code>、<code>slice.split_first_mut()</code></h5><p>返回 <code>(&amp;slice[0], &amp;slice[1..])</code>，<code>slice.split_first()</code> 返回 <code>Option&lt;(&amp;T, &amp;[T])&gt;</code>，如果 <code>slice</code> 为空返回 <code>None</code>。</p>
+<h5 id="slice-split-last-、slice-split-last-mut"><a href="#slice-split-last-、slice-split-last-mut" class="headerlink" title="slice.split_last()、slice.split_last_mut()"></a><code>slice.split_last()</code>、<code>slice.split_last_mut()</code></h5><p><code>slice.split_last()</code> 的返回类型是 <code>Option&lt;(&amp;T, &amp;[T])&gt;</code>。</p>
+<h5 id="slice-split-is-sep-、-slice-split-mut-is-sep"><a href="#slice-split-is-sep-、-slice-split-mut-is-sep" class="headerlink" title="slice.split(is_sep)、 slice.split_mut(is_sep)"></a><code>slice.split(is_sep)</code>、<code> slice.split_mut(is_sep)</code></h5><p>将 <code>slice</code> 分割成一个或者多个子 <code>slice</code>，根据传入的 <code>is_sep</code> 函数后者闭包，输出至少包含一个子 <code>slice</code>。</p>
+<h5 id="slice-rsplit-is-sep-、slice-rsplit-mut-is-sep"><a href="#slice-rsplit-is-sep-、slice-rsplit-mut-is-sep" class="headerlink" title="slice.rsplit(is_sep)、slice.rsplit_mut(is_sep)"></a><code>slice.rsplit(is_sep)</code>、<code>slice.rsplit_mut(is_sep)</code></h5><p>从右往左找 <code>split</code>。</p>
+<h5 id="slice-splitn-n-is-sep-、slice-splitn-mut-n-is-sep"><a href="#slice-splitn-n-is-sep-、slice-splitn-mut-n-is-sep" class="headerlink" title="slice.splitn(n, is_sep)、slice.splitn_mut(n, is_sep)"></a><code>slice.splitn(n, is_sep)</code>、<code>slice.splitn_mut(n, is_sep)</code></h5><p>和 <code>slice.split(is_sep)</code> 相同，但是之多 <code>n</code> 个子<code>slcie</code>，多出来的放在最后的子 <code>slice</code> 中；</p>
+<h5 id="slice-rsplitn-n-is-sep-、slice-rsplitn-mut-n-is-sep"><a href="#slice-rsplitn-n-is-sep-、slice-rsplitn-mut-n-is-sep" class="headerlink" title="slice.rsplitn(n, is_sep)、slice.rsplitn_mut(n, is_sep)"></a><code>slice.rsplitn(n, is_sep)</code>、<code>slice.rsplitn_mut(n, is_sep)</code></h5><p>和前面的类似，只是从右往左。</p>
+<h5 id="slice-chunks-n-、slice-chunks-mut-n"><a href="#slice-chunks-n-、slice-chunks-mut-n" class="headerlink" title="slice.chunks(n)、slice.chunks_mut(n)"></a><code>slice.chunks(n)</code>、<code>slice.chunks_mut(n)</code></h5><p>返回长度为 <code>n</code> 的子 <code>slcie</code>，最后一个可以包含少于 <code>n</code> 个 <code>item</code>。</p>
+<h5 id="slice-rchunks-n-、-slice-rchunks-mut-n"><a href="#slice-rchunks-n-、-slice-rchunks-mut-n" class="headerlink" title="slice.rchunks(n)、 slice.rchunks_mut(n)"></a><code>slice.rchunks(n)</code>、<code> slice.rchunks_mut(n)</code></h5><p>和前面的相同，只是从右往左。</p>
+<h5 id="slice-chunks-exact-n-、slice-chunks-exact-mut-n"><a href="#slice-chunks-exact-n-、slice-chunks-exact-mut-n" class="headerlink" title="slice.chunks_exact(n)、slice.chunks_exact_mut(n)"></a><code>slice.chunks_exact(n)</code>、<code>slice.chunks_exact_mut(n)</code></h5><p>精确按照 <code>n</code> 进行分片，如果最后一个不足 <code>n</code> 个，可以通过 <code>remainder()</code> 访问。</p>
+<h5 id="slice-rchunks-exact-n-、slice-rchunks-exact-mut-n"><a href="#slice-rchunks-exact-n-、slice-rchunks-exact-mut-n" class="headerlink" title="slice.rchunks_exact(n)、slice.rchunks_exact_mut(n)"></a><code>slice.rchunks_exact(n)</code>、<code>slice.rchunks_exact_mut(n)</code></h5><p>同上，只是从右往左。</p>
+<h5 id="slice-windows-n"><a href="#slice-windows-n" class="headerlink" title="slice.windows(n)"></a><code>slice.windows(n)</code></h5><p>采用滑动窗口的方式返回子<code>slice</code>，例如第一个是 <code>slice[0..n]</code>，第二个就是 <code>slice[1..n+1]</code>。如果 <code>n</code> 大于 <code>slice.len()</code> 什么也不会返回，如果 <code>n == 0</code>，<code>panic</code>。</p>
+<p>例如：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>].<span class="title function_ invoke__">windows</span>(<span class="number">2</span>).<span class="title function_ invoke__">for_each</span>(|items| &#123;</span><br><span class="line">        <span class="keyword">for</span> <span class="variable">item</span> <span class="keyword">in</span> items &#123;</span><br><span class="line">            <span class="built_in">print!</span>(<span class="string">&quot;&#123;&#125; &quot;</span>, item);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该代码输出：</p>
+<pre><code>    1 2 2 3 3 4 4 5 
+</code></pre>
+<h4 id="Swapping"><a href="#Swapping" class="headerlink" title="Swapping"></a><code>Swapping</code></h4><ul>
+<li><p><code>slice.swap(i, j)</code>：交换 <code>slice[i]</code> 和 <code>slice[j]</code>；</p>
+</li>
+<li><p><code>slice_a.swap(&amp;mut slice_b)</code>：将两个 <code>slice</code> 完整交换，它们必须要有相同的长度；</p>
+</li>
+<li><p><code>vec.swap_remove(i)</code>：删除并返回 <code>vec[i]</code>，并且将最后一个元素填充到 <code>vec[i]</code>；</p>
+</li>
+</ul>
+<h4 id="搜索和排序"><a href="#搜索和排序" class="headerlink" title="搜索和排序"></a>搜索和排序</h4><ul>
+<li><p><code>slice.sort()</code>：升序排序；</p>
+</li>
+<li><p><code>slice.sort_by(cmp)</code>：自定义排序函数或闭包，<code>cmp</code> 必须实现 <code> Fn(&amp;T, &amp;T) -&gt; std::cmp::Ordering</code>；</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line">students.<span class="title function_ invoke__">sort_by</span>(|a, b| a.last_name.<span class="title function_ invoke__">cmp</span>(&amp;b.last_name));</span><br><span class="line"></span><br><span class="line">students.<span class="title function_ invoke__">sort_by</span>(|a, b| &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a_key</span> = (&amp;a.last_name, &amp;a.first_name);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b_key</span> = (&amp;b.last_name, &amp;b.first_name);</span><br><span class="line">    a_key.<span class="title function_ invoke__">cmp</span>(&amp;b_key)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>slice.sort_by_key(key)</code>：通过自定义的闭包或者函数 <code>key</code> 升序排列，<code>key</code> 的类型是 <code> Fn(&amp;T) -&gt; K where K: Ord</code>。这个很有用当 <code>T</code> 包含一个或者多个可排序字段时：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Sort by grade point average, lowest first.</span></span><br><span class="line">students.<span class="title function_ invoke__">sort_by_key</span>(|s| s.<span class="title function_ invoke__">grade_point_average</span>());</span><br></pre></td></tr></table></figure>
+
+<p>  <code>key</code> 不能返回任何元素的引用：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line">students.<span class="title function_ invoke__">sort_by_key</span>(|s| &amp;s.last_name); <span class="comment">// error: can&#x27;t infer lifetime</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>slice.reverse()</code>：就地反转 <code>slice</code>；</p>
+</li>
+<li><p><code>slice.binary_search(&amp;value)</code>：</p>
+</li>
+<li><p><code>slice.binary_search_by(&amp;value, cmp)</code>：</p>
+</li>
+<li><p><code>slice.binary_search_by_key(&amp;value, key)</code>：在已排序的<code>slice</code>上二分查找给定值，这些方法的返回类型是 <code>Result&lt;usize, usize&gt;</code>。 如果 <code>slice[index]</code> 在指定的排序顺序下等于 <code>value</code>，则返回 <code>Ok(index)</code>。 如果没有这样的索引，则它们返回 <code>Err(insertion_point)</code> 以便在 <code>insert_point</code> 插入值将保留顺序。</p>
+</li>
+<li><p><code>slice.contains(&amp;value)</code>：返回 <code>true</code> 如果 <code>slice</code> 有 <code>item</code> 等于 <code>value</code>。</p>
+</li>
+</ul>
+<h4 id="Slice-比较"><a href="#Slice-比较" class="headerlink" title="Slice 比较"></a><code>Slice</code> 比较</h4><p>如果类型 <code>T</code> 支持 <code>==</code> 和 <code>!=</code> 运算符，那么 <code>[T; N]</code>，<code>[T]</code> 以及 <code>Vec&lt;T&gt;</code> 也支持，两个 <code>slice</code> 是相等的，如果他们的值和长度都相等；</p>
+<p>如果类型 <code>T</code> 支持 <code>&lt; &lt;= &gt; &gt;=</code> 和 <code>!=</code> 运算符，那么 <code>[T; N]</code>，<code>[T]</code> 以及 <code>Vec&lt;T&gt;</code> 也支持。</p>
+<p>还有两个比较方法：</p>
+<ul>
+<li><p><code>slice.starts_with(other)</code>：如果 <code>slice</code> 以 <code>other</code> 为前缀，返回 <code>true</code>。</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="built_in">assert_eq!</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>].<span class="title function_ invoke__">starts_with</span>(&amp;[<span class="number">1</span>, <span class="number">2</span>]), <span class="literal">true</span>);</span><br><span class="line"><span class="built_in">assert_eq!</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>].<span class="title function_ invoke__">starts_with</span>(&amp;[<span class="number">2</span>, <span class="number">3</span>]), <span class="literal">false</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>slice.starts_with(other)</code>：如果 <code>slice</code> 以 <code>other</code> 为后缀，返回 <code>true</code>。</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line">    <span class="built_in">assert_eq!</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>].<span class="title function_ invoke__">ends_with</span>(&amp;[<span class="number">3</span>, <span class="number">4</span>]), <span class="literal">true</span>);</span><br><span class="line">    ``</span><br><span class="line"></span><br><span class="line">#### 随机元素</span><br><span class="line"></span><br><span class="line">- `slice.<span class="title function_ invoke__">choose</span>(&amp;<span class="keyword">mut</span> rng)`：随即返回 `slice` 一个元素的引用，他返回 `<span class="type">Option</span>&lt;&amp;T&gt;`，`slice` 为空时返回 `<span class="literal">None</span>`；</span><br><span class="line"></span><br><span class="line">- `slice.<span class="title function_ invoke__">shuffle</span>(&amp;<span class="keyword">mut</span> rng)`：随机就地打乱 `slice`；</span><br><span class="line"></span><br><span class="line">    ```rust</span><br><span class="line">    <span class="keyword">use</span> rand::seq::SliceRandom;</span><br><span class="line">    <span class="keyword">use</span> rand::thread_rng;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">my_vec</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line">        my_vec.<span class="title function_ invoke__">shuffle</span>(&amp;<span class="keyword">mut</span> <span class="title function_ invoke__">thread_rng</span>());</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, my_vec);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="VecDeque"><a href="#VecDeque" class="headerlink" title="VecDeque&lt;T&gt;"></a><code>VecDeque&lt;T&gt;</code></h3><p><code>Vec</code> 仅支持在结尾高效增删元素，而 <a href="https://doc.rust-lang.org/stable/std/collections/struct.VecDeque.html"><code>std::collections::VecDeque&lt;T&gt;</code></a> 是一个双端队列，支持在两端增删元素：</p>
+<ul>
+<li><p><code>deque.push_front(value)</code>：用于在队列前面插入值；</p>
+</li>
+<li><p><code>deque.push_front(value)</code>：用于在队尾插入值；</p>
+</li>
+<li><p><code>deque.pop_front()</code>：删除队首元素；</p>
+</li>
+<li><p><code>deque.pop_back()</code>：删除队尾元素；</p>
+</li>
+<li><p><code>deque.front(), deque.back()</code>：获取队首或者队尾元素的引用，返回值是 <code>Option&lt;&amp;T&gt;</code>；</p>
+</li>
+<li><p><code>deque.front_mut(), deque.back_mut()</code> 类似于前者，只是返回值的可变借用 <code>Option&lt;&amp;mut T&gt;</code>；</p>
+</li>
+</ul>
+<p><code>std::collections::VecDeque&lt;T&gt;</code> 的实现是一个环形 <code>buffer</code>，如下图所示：</p>
+<img data-src="/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/vec-dequeue.png" class="">
+
+<p>与<code>vector</code>一样，双端队列可以按值、共享引用或 <code>mut</code> 引用进行迭代。 它们具有三个迭代器方法 <code>.into_iter(</code>)、<code>.iter()</code> 和 <code>.iter_mut()</code>，它们可以以通常的方式被索引：<code>deque[index]</code>。</p>
+<p>因为双端队列不会将它们的元素连续存储在内存中，所以它们不能继承<code>slice</code>的所有方法。 但是，如果您愿意支付转移内容的成本，<code>VecDeque</code> 提供了一种可以解决此问题的方法：</p>
+<ul>
+<li><p><code>deque.make_contiguous()</code>：将队列整理成连续内存的形式，返回 <code> &amp;mut [T]</code>；</p>
+</li>
+<li><p><code>Vec::from(deque)</code>：<code>Vec</code> 实现了 <code>From&lt;VecDeque&lt;T&gt;&gt;</code>，这将队列转换成 <code>Vec</code>；</p>
+</li>
+<li><p><code>VecDeque::from(vec)</code>：<code>VecDeque</code> 实现了 <code>From&lt;Vec&lt;T&gt;&gt;</code>，将 <code>vector</code> 转换成队列，这也是 <code>O(n)</code>，但它通常很快，即使向量很大，因为向量的堆内存可以简单地移动到新的双端队列；这使得从已有 <code>vector</code> 创建队列很方便：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> std::collections::VecDeque;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">v</span> = VecDeque::<span class="title function_ invoke__">from</span>(<span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="BinaryHeap"><a href="#BinaryHeap" class="headerlink" title="BinaryHeap&lt;T&gt;"></a><code>BinaryHeap&lt;T&gt;</code></h3><p><a href="https://doc.rust-lang.org/stable/std/collections/struct.BinaryHeap.html#"><code>std::collections::BinaryHeap</code></a> 是一个二叉堆实现的大顶堆，它只实现了 <code>Vec</code> 的某些方法，例如：<code>BinaryHeap::new()</code>，<code>.len()</code>，<code>.is_empty()</code>，<code>.capacity()</code>，<code>.clear()</code>和<br><code>.append(&amp;mut heap2)</code>，下面是它独有的一些方法。</p>
+<ul>
+<li><p><code>heap.push(value)</code>：增加元素到堆；</p>
+</li>
+<li><p><code>heap.pop()</code>：删除并且返回堆中的最大值，返回值是 <code>Option&lt;T&gt;</code>，如果堆是空的；</p>
+</li>
+<li><p><code>heap.peek()</code>：返回最大值的引用，返回类型是 <code>Option&lt;&amp;T&gt;</code>；</p>
+</li>
+<li><p><code>heap.peek_mut()</code>：返回类型是 <a href="https://doc.rust-lang.org/stable/std/collections/binary_heap/struct.PeekMut.html"><code>PeekMut&lt;T&gt;</code></a>，它代表了堆中最大值的可变引用，并且提供了一个类型关联方法 <code>pop()</code> 以从堆中弹出数据。用这个方法，我们可以基于最大值判断是否要从堆中弹出数据：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> std::collections::binary_heap::PeekMut;</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(top) = heap.<span class="title function_ invoke__">peek_mut</span>() &#123;</span><br><span class="line">    <span class="keyword">if</span> *top &gt; <span class="number">10</span> &#123;</span><br><span class="line">        PeekMut::<span class="title function_ invoke__">pop</span>(top);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><code>BinaryHeap</code> 是可迭代的，它有一个 <code>.iter()</code> 方法，但迭代器以任意顺序产生堆的元素，而不是从大到小。要按优先级顺序使用 <code>BinaryHeap</code> 中的值，请使用 <code>while</code> 循环：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Some</span>(task) = heap.<span class="title function_ invoke__">pop</span>() &#123;</span><br><span class="line">    <span class="title function_ invoke__">handle</span>(task);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="HashMap、BTreeMap"><a href="#HashMap、BTreeMap" class="headerlink" title="HashMap&lt;K, V&gt;、BTreeMap&lt;K, V&gt;"></a><code>HashMap&lt;K, V&gt;</code>、<code>BTreeMap&lt;K, V&gt;</code></h3><p><code>map</code> 是键值对的集合，叫做 <code>entries</code>，<code>map</code> 中可以高效地通过 <code>key</code> 查找，不存在两个不同的 <code>entries</code> 有相同的 <code>key</code>。<code>Rust</code> 有两种 <code>map</code> 的实现，<a href="https://doc.rust-lang.org/stable/std/collections/struct.HashMap.html"><code>HashMap&lt;K, V&gt;</code></a> 和 <a href="https://doc.rust-lang.org/stable/std/collections/struct.BTreeMap.html"><code>BTreeMap&lt;K, V&gt;</code></a>，它们两个有相同的方法，不同的地方在于两者如何保持<code>entries</code>排列以进行快速查找。</p>
+<p><code>HashMap</code> 存储键值在<code>hash</code>表中，所以要求键的类型必须实现 <code>Hash</code> 和 <code>Eq</code>，下图展示了它在内存中的表示，深色区域是未使用的。所有键、值和缓存的哈希码都存储在单个堆分配表中。 添加<code>entries</code>最终会迫使 <code>HashMap</code> 分配一个更大的表并将所有数据移入其中。</p>
+<img data-src="/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/hashmap-inmem.png" class="">
+
+<p><code>BTreeMap</code> 将<code>entries</code>按键顺序存储在树结构中，因此它需要一个实现 <code>Ord</code> 的键类型 <code>K</code>。 下图显示了一个 <code>BTreeMap</code>。 同样，较暗的区域是未使用的备用容量。</p>
+<img data-src="/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/btreemap-inmem.png" class="">
+
+<p><code>BTreeMap</code> 将其<code>entries</code>存储在节点中。<code>BTreeMap</code> 中的大多数节点只包含键值对。非叶节点，如该图所示的根节点，也为指向子节点的指针留有空间。 <code>(20, &#39;q&#39;)</code> 和 <code>(30, &#39;r&#39;)</code> 之间的指针指向包含 <code>20</code> 到 <code>30</code> 之间的键的子节点。添加<code>entries</code>通常需要将节点的一些现有<code>entries</code>向右滑动，以保持它们的排序，有时还涉及分配新节点。</p>
+<p><code>Rust</code> 标准库使用 <code>BTree</code> 而不是平衡二叉树，因为 <code>BTree</code> 在现代硬件上更快。 与 <code>BTree</code> 相比，二叉树每次搜索使用的比较次数可能更少，但搜索 <code>BTree</code> 具有更好的局部性——也就是说，内存访问被分组在一起，而不是分散在整个堆中，这会提高内存缓存的命中率，这是一个显着的速度提升。</p>
+<h4 id="创建-map"><a href="#创建-map" class="headerlink" title="创建 map"></a>创建 <code>map</code></h4><ul>
+<li><p><code>HashMap::new()</code>、<code>BTreeMap::new()</code>：创建空的 <code>map</code>；</p>
+</li>
+<li><p><code>iter.collect()</code>：可以从一个 <code>Iterator&lt;Item=(K, V)&gt;</code> 创建新的 <code>HashMap</code> 或者 <code>BTreeMap</code>；</p>
+</li>
+<li><p><code>HashMap::with_capacity(n)</code>：创建空的 <code>map</code> 至少能存储 <code>n</code> 个 <code>entries</code>，由于它们存储 <code>entries</code> 在一个整个的堆内存中，所以他们有容量及相关的方法 <code>hash_map.capacity()</code>，<code>hash_map.reserve(additional)</code> 和 <code>hash_map.shrink_to_fit()</code>，<code>BTreeMaps</code> 没有这些。</p>
+</li>
+</ul>
+<h4 id="键值处理"><a href="#键值处理" class="headerlink" title="键值处理"></a>键值处理</h4><ul>
+<li><p><code>map.len()</code>：返回 <code>entries</code> 的数量；</p>
+</li>
+<li><p><code>map.is_empty()</code>：如果 <code>map</code> 没有 <code>entries</code> 返回 <code>true</code>；</p>
+</li>
+<li><p><code>map.contains_key(&amp;key)</code>：返回 <code>true</code> 如果 <code>map</code> 包含指定 <code>key</code>；</p>
+</li>
+<li><p><code>map.get(&amp;key)</code>：在 <code>map</code> 中搜索指定 <code>key</code>。如果找到，返回 <code>Some(r)</code>，<code>r</code> 是一个指向对应值的引用。否则，返回 <code>None</code>；</p>
+</li>
+<li><p><code>map.get_mut(&amp;key)</code>：类似于 <code>map.get(&amp;key)</code>，但是返回指定值的可变引用。一般来说，<code>map</code>允许对存储在其中的值进行 <code>mut</code> 访问，但不能访问键。 这些值是可以随意修改的。键属于<code>map</code>本身；它需要确保它们不会改变，因为<code>entries</code>是按它们的键组织的。就地修改<code>key</code>将是一个错误；</p>
+</li>
+<li><p><code>map.insert(key, value)</code>：插入或者更新一个 <code>(key, entry)</code> 到 <code>map</code> 中，如果存在旧值返回；</p>
+</li>
+<li><p><code>map.extend(iterable)</code>：迭代 <code>iterable</code> 将得到 <code>(K, V)</code> 插入到 <code>map</code> 中；</p>
+</li>
+<li><p><code>map.append(&amp;mut map2)</code>：将 <code>map2</code> 的所有 <code>entries</code> 移动到 <code>map</code> 中；</p>
+</li>
+<li><p><code>map.remove(&amp;key)</code>：找到并且删除指定 <code>key</code>，如果存在返回删除对应 <code>key</code> 的值，返回类型是 <code>Option&lt;V&gt;</code>；</p>
+</li>
+<li><p><code>map.remove_entry(&amp;key)</code>：找到并且删除指定 <code>key</code>，如果存在返回删除对应键值对，返回类型是 <code>Option&lt;K, V&gt;</code>；</p>
+</li>
+<li><p><code>map.retain(test)</code>：删除所有未通过 <code>test</code> 函数的键值对，<code>test</code> 的类型是 <code>FnMut(&amp;K, &amp;mut V) -&gt; bool</code>。对于 <code>map</code> 的每个元素都会调用 <code>test(&amp;key, &amp;mut value)</code>，如果返回 <code>false</code>，这个 <code>key</code> 就会从 <code>map</code> 中删除；不考虑性能，就像这样写：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line">map = map.<span class="title function_ invoke__">into_iter</span>().<span class="title function_ invoke__">filter</span>(test).<span class="title function_ invoke__">collect</span>();</span><br></pre></td></tr></table></figure></li>
+<li><p><code>map.clear()</code>：删除所有键值对；</p>
+</li>
+</ul>
+<p>一个 <code>map</code> 也可以通过 <code>map[&amp;key]</code> 这种形式查询，<code>map</code> 实现了内建的 <a href="https://doc.rust-lang.org/stable/std/ops/trait.Index.html"><code>std::ops::Index</code></a>。但是如果给定的 <code>key</code> 不存在，就会 <code>panic</code>，这就像数组越界访问。</p>
+<p>对于 <code>.contains_key()</code>，<code>.get()</code>，<code>.get_mut()</code>，<code>.remove()</code> 中的 <code>key</code>，没必要是精确的 <code>&amp;T</code> 类型，这些方法是泛型，它们可以从 <code>K</code> 借用。所以，在 <code>HashMap&lt;String, Fish&gt;</code> 中这样调用 <code>fish_map.contains_key(&quot;conger&quot;)</code> 是没有问题的，即使 <code>&quot;conger&quot;</code> 不是 <code>String</code> 类型，但是它实现了 <code>Borrow&lt;&amp;str&gt;</code>。</p>
+<p>由于 <code>BTreeMap&lt;K, V&gt;</code> 按 <code>key</code>顺序存储，所以支持额外的操作：</p>
+<ul>
+<li><code>btree_map.split_off(&amp;key)</code>：将 <code>btree_map</code> 一分为二，键小于<code>key</code>的<code>entries</code>留在 <code>btree_map</code> 中，返回包含其他<code>entries</code>的新 <code>BTreeMap&lt;K, V&gt;</code>；</li>
+</ul>
+<h4 id="Entry"><a href="#Entry" class="headerlink" title="Entry"></a><code>Entry</code></h4><p><code>HashMap</code> 和 <code>BTreeMap</code> 都有对应的 <a href="https://doc.rust-lang.org/stable/std/collections/hash_map/enum.Entry.html"><code>std::collections::hash_map::Entry</code></a> 或者 <a href="https://doc.rust-lang.org/stable/std/collections/btree_map/enum.Entry.html"><code>std::collections::btree_map::Entry</code></a> 类型，<code>Entry</code> 的重点是消除冗余的映射查找，例如，这里有一些获取或创建学生记录的代码：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Do we already have a record for this student?</span></span><br><span class="line"><span class="keyword">if</span> !student_map.<span class="title function_ invoke__">contains_key</span>(name) &#123;</span><br><span class="line">    <span class="comment">// No: create one.</span></span><br><span class="line">    student_map.<span class="title function_ invoke__">insert</span>(name.<span class="title function_ invoke__">to_string</span>(), Student::<span class="title function_ invoke__">new</span>());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Now a record definitely exists.</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">record</span> = student_map.<span class="title function_ invoke__">get_mut</span>(name).<span class="title function_ invoke__">unwrap</span>();</span><br></pre></td></tr></table></figure>
+
+<p>这可以完成工作，但是访问了 <code>student_map</code> 两三次，每次都要查找，其实我们要的只是有这个 <code>key</code> 更新没有的话插入。<code>entries</code>的想法是我们只进行一次查找，生成一个<code>entries</code>值，然后用于所有后续操作。这个单行代码等效于前面的所有代码，只是它只进行一次查找：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">record</span> = student_map.<span class="title function_ invoke__">entry</span>(name.<span class="title function_ invoke__">to_string</span>()).<span class="title function_ invoke__">or_insert_with</span>(Student::new);</span><br></pre></td></tr></table></figure>
+
+<p><code>student_map.entry(name.to_string())</code> 返回的 <code>Entry</code> 就像对 <code>map</code> 中某个位置的可变引用，该位置要么被键值对占用，要么空置，这意味着那里还没有<code>Entry</code>。如果为空，则 <code>Entry</code>的 <code>.or_insert_with()</code> 方法会插入一个新记录。</p>
+<p>所有的 <code>Entry</code> 都是使用相同的方法创建的：</p>
+<ul>
+<li><p><code>map.entry(key)</code>：返回给定键的 <code>Entry</code>，如果<code>map</code>中没有这样的键，则返回一个空 <code>Entry</code>。此方法通过 <code>mut</code> 引用获取其 <code>self</code> 参数并返回具有匹配生命周期的 <code>Entry</code>：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">entry</span>&lt;<span class="symbol">&#x27;a</span>&gt;(&amp;<span class="symbol">&#x27;a</span> <span class="keyword">mut</span> <span class="keyword">self</span>, key: K) <span class="punctuation">-&gt;</span> Entry&lt;<span class="symbol">&#x27;a</span>, K, V&gt;</span><br></pre></td></tr></table></figure>
+
+<p>  <code>Entry</code> 类型有一个生命周期参数 <code>&#39;a</code>，因为它实际上是一种对<code>map</code>的 <code>mut</code> 引用，只要<code>Entry</code> 存在，它就拥有对<code>map</code>的独占访问权。</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">enum</span> <span class="title class_">Entry</span>&lt;<span class="symbol">&#x27;a</span>, K: <span class="symbol">&#x27;a</span>, V: <span class="symbol">&#x27;a</span>&gt; &#123;</span><br><span class="line">    <span class="title function_ invoke__">Occupied</span>(OccupiedEntry&lt;<span class="symbol">&#x27;a</span>, K, V&gt;),</span><br><span class="line">    <span class="title function_ invoke__">Vacant</span>(VacantEntry&lt;<span class="symbol">&#x27;a</span>, K, V&gt;),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>  不幸的是，如果<code>map</code>具有 <code>String</code> 键，则无法将 <code>&amp;str</code> 类型的引用传递给此方法。在这种情况下，<code>.entry()</code> 方法需要一个真正的字符串。</p>
+</li>
+</ul>
+<p><code>Entry</code> 提供了三种处理空条目的方法：</p>
+<ul>
+<li><p><code>map.entry(key).or_insert(value)</code>：确保<code>map</code>包含具有给定键的条目，如果需要，插入具有给定值的新条目。它返回对新值或现有值的 <code>mut</code> 引用。假设我们需要统计投票，可以这样写：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> std::collections::HashMap;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">ballots</span> = <span class="built_in">vec!</span>[];</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">vote_counts</span>: HashMap&lt;<span class="type">String</span>, <span class="type">usize</span>&gt; = HashMap::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">name</span> <span class="keyword">in</span> ballots &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">count</span> = vote_counts.<span class="title function_ invoke__">entry</span>(name).<span class="title function_ invoke__">or_insert</span>(<span class="number">0</span>);</span><br><span class="line">        *count += <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>map.entry(key).or_default()</code>：确保 <code>map</code> 包含具有给定键的条目，如果需要，插入具有 <code>Default::default()</code> 返回的值的新条目。这仅适用于实现 <code>Default</code> 的类型。与 <code>or_insert</code> 一样，此方法返回对新值或现有值的<code> mut</code> 引用；</p>
+</li>
+<li><p><code>map.entry(key).or_insert_with(default_fn)</code>：和前两个方法相同，只是它调用 <code>default_fn()</code> 生成默认值。如果已经存在，<code>default_fn</code> 是不会调用的；假设我们想知道哪些单词出现在哪些文件中。 我们可以写：</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">word_occurrence</span>: HashMap&lt;<span class="type">String</span>, HashSet&lt;<span class="type">String</span>&gt;&gt; = HashMap::<span class="title function_ invoke__">new</span>();</span><br><span class="line"><span class="keyword">for</span> <span class="variable">file</span> <span class="keyword">in</span> files &#123;</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">word</span> <span class="keyword">in</span> <span class="title function_ invoke__">read_words</span>(file)? &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">set</span> = word_occurrence.<span class="title function_ invoke__">entry</span>(word).<span class="title function_ invoke__">or_insert_with</span>(HashSet::new);</span><br><span class="line">        set.<span class="title function_ invoke__">insert</span>(file.<span class="title function_ invoke__">clone</span>());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>map.entry(key).and_modify(closure)</code>：如果指定 <code>key</code> 的 <code>Entry</code> 已经存在，将调用闭包并且传入 <code>Entry</code> 的可变借用，然后将 <code>Entry</code> 返回，所以它可以和其他方法串联起来使用；</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">// This map contains all the words in a given string,</span></span><br><span class="line"><span class="comment">// along with the number of times they occur.</span></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">word_frequency</span>: HashMap&lt;&amp;<span class="type">str</span>, <span class="type">u32</span>&gt; = HashMap::<span class="title function_ invoke__">new</span>();</span><br><span class="line"><span class="keyword">for</span> <span class="variable">c</span> <span class="keyword">in</span> text.<span class="title function_ invoke__">split_whitespace</span>() &#123;</span><br><span class="line">    word_frequency</span><br><span class="line">        .<span class="title function_ invoke__">entry</span>(c)</span><br><span class="line">        .<span class="title function_ invoke__">and_modify</span>(|count| *count += <span class="number">1</span>)</span><br><span class="line">        .<span class="title function_ invoke__">or_insert</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><code>Entry</code> 是枚举类型，例如，<code>HashMap</code> 中的：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">// (in std::collections::hash_map)</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">enum</span> <span class="title class_">Entry</span>&lt;<span class="symbol">&#x27;a</span>, K, V&gt; &#123;</span><br><span class="line">    <span class="title function_ invoke__">Occupied</span>(OccupiedEntry&lt;<span class="symbol">&#x27;a</span>, K, V&gt;),</span><br><span class="line">    <span class="title function_ invoke__">Vacant</span>(VacantEntry&lt;<span class="symbol">&#x27;a</span>, K, V&gt;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="迭代-Map"><a href="#迭代-Map" class="headerlink" title="迭代 Map"></a>迭代 <code>Map</code></h4><p>这里还有几个迭代 <code>map</code> 的方法：</p>
+<ul>
+<li><p>通过值迭代， <code>for (k, v) in map</code> 产生 <code>(K，V)</code> 对，这将消费 <code>map</code>；</p>
+</li>
+<li><p>通过引用迭代，<code>for (k, v) in &amp;map</code> 产生 <code>(&amp;K, &amp;V)</code> 对；</p>
+</li>
+<li><p>通过可变引用迭代，<code>for (k, v) in &amp;mut map</code> 产生 <code>(&amp;K, &amp;mutV)</code> 对；</p>
+</li>
+</ul>
+<p>而 <code>.iter()</code> 和 <code>.iter_mut()</code> 就像按 <code>&amp;map</code> 和 <code>&amp;mut map</code> 迭代。除此之外，还有：</p>
+<ul>
+<li><p><code>map.keys()</code>：返回一个所有 <code>key</code> 引用的迭代器；</p>
+</li>
+<li><p><code>map.values()</code>：返回一个所有 <code>value</code> 引用的迭代器；</p>
+</li>
+<li><p><code>map.values_mut()</code>：返回一个所有 <code>value</code> 可变引用的迭代器；</p>
+</li>
+</ul>
+<h3 id="HashSet、BTreeSet"><a href="#HashSet、BTreeSet" class="headerlink" title="HashSet&lt;T&gt;、BTreeSet&lt;T&gt;"></a><code>HashSet&lt;T&gt;</code>、<code>BTreeSet&lt;T&gt;</code></h3><p>集合中的值都是唯一的，<code>Map</code> 和 <code>Set</code> 有不同的方法，但在实现上，<code>Set</code> 就像只有键的映射，而不是键值对。 事实上，<code>Rust</code> 的两种集合类型 <code>HashSet&lt;T&gt;</code> 和 <code>BTreeSet&lt;T&gt;</code> 被实现为 <code>HashMap&lt;T, ()&gt;</code> 和 <code>BTreeMap&lt;T, ()&gt;</code>。</p>
+<p>这里有一些集合常用的方法：</p>
+<ul>
+<li><p><code>HashSet::new()</code>、<code>BTreeSet::new()</code>：创建新的集合；</p>
+</li>
+<li><p><code>iter.collect()</code>：可以用于从迭代器创建一个集合，如果迭代器产生重复值，将会被自动丢弃；</p>
+</li>
+<li><p><code>HashSet::with_capacity(n)</code>：创建至少能容纳 <code>n</code> 个值的集合；</p>
+</li>
+<li><p><code>set.len()</code>：返回集合中值的数量；</p>
+</li>
+<li><p><code>set.is_empty()</code>：返回 <code>true</code> 当集合为空时；</p>
+</li>
+<li><p><code>set.contains(&amp;value)</code>：当集合包含 <code>value</code> 是返回 <code>true</code>；</p>
+</li>
+<li><p><code>set.insert(value)</code>：插入集合新的值，返回 <code>true</code> 如果值被添加，如果已经存在返回 <code>false</code>；</p>
+</li>
+<li><p><code>set.remove(&amp;value)</code>：从集合中删除值，删除成功则返回 <code>true</code>，如果之前不存在则返回 <code>false</code>；</p>
+</li>
+<li><p><code>set.retain(test)</code>：删除所有没通过测试的值，<code>test</code> 的类型是 <code>FnMut(&amp;T) -&gt; bool</code>，对于集合的每个元素，将调用 <code>test(&amp;value)</code>，如果返回 <code>false</code>，这个值就会被移除；</p>
+</li>
+</ul>
+<h4 id="迭代"><a href="#迭代" class="headerlink" title="迭代"></a>迭代</h4><p>有两种迭代集合的方式：</p>
+<ol>
+<li><p>按值迭代，<code>for v in set</code> 返回集合的成员；</p>
+</li>
+<li><p>按共享引用迭代，<code>for v in &amp;set</code> 返回集合值的引用；</p>
+</li>
+</ol>
+<p>通过可变引用迭代集合是不支持的，这里没有方法获取集合中值的可变引用，而 <code>set.iter()</code> 返回一个迭代器包含集合中值的引用。</p>
+<p><code>HashSet</code> 迭代器，就像 <code>HashMap</code> 迭代器，以任意顺序获取它们的值，而 <code>BTreeSet</code> 迭代器产生的值是有序的。</p>
+<h4 id="某些方法"><a href="#某些方法" class="headerlink" title="某些方法"></a>某些方法</h4><ul>
+<li><p><code>set.get(&amp;value)</code>：返回 <code> Option&lt;&amp;T&gt;</code>，等于 <code>value</code> 的集合中成员的引用；</p>
+</li>
+<li><p><code>set.take(&amp;value)</code>：像 <code>set.remove(&amp;value)</code>，但是他返回移除的值；</p>
+</li>
+<li><p><code>set.replace(value)</code>：就像 <code>set.insert(value)</code>，但是如果集合已经包含这个值，这个会返回并替换旧的值，返回类型是 <code>Option&lt;T&gt;</code>；</p>
+</li>
+</ul>
+<h4 id="集合操作"><a href="#集合操作" class="headerlink" title="集合操作"></a>集合操作</h4><ul>
+<li><p><code>set1.intersection(&amp;set2)</code>：返回两个集合之间的交集；</p>
+</li>
+<li><p><code>set1.union(&amp;set2)</code>：求集合之间的并集；</p>
+</li>
+<li><p><code>set1.difference(&amp;set2)</code>：求集合之间的差集；</p>
+</li>
+<li><p><code>set1.symmetric_difference(&amp;set2)</code>：返回只存在其中一个集合中的值的新集合；</p>
+  <figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> std::collections::HashSet;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">a</span> = HashSet::<span class="title function_ invoke__">from</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">b</span> = HashSet::<span class="title function_ invoke__">from</span>([<span class="number">4</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Print 1, 4 in arbitrary order.</span></span><br><span class="line"><span class="keyword">for</span> <span class="variable">x</span> <span class="keyword">in</span> a.<span class="title function_ invoke__">symmetric_difference</span>(&amp;b) &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">diff1</span>: HashSet&lt;_&gt; = a.<span class="title function_ invoke__">symmetric_difference</span>(&amp;b).<span class="title function_ invoke__">collect</span>();</span><br><span class="line"><span class="keyword">let</span> <span class="variable">diff2</span>: HashSet&lt;_&gt; = b.<span class="title function_ invoke__">symmetric_difference</span>(&amp;a).<span class="title function_ invoke__">collect</span>();</span><br><span class="line"></span><br><span class="line"><span class="built_in">assert_eq!</span>(diff1, diff2);</span><br><span class="line"><span class="built_in">assert_eq!</span>(diff1, [<span class="number">1</span>, <span class="number">4</span>].<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">collect</span>());</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>set1.is_disjoint(set2)</code>：如果 <code>self</code> 与 <code>other</code> 没有共同的元素，则返回 <code>true</code>；</p>
+</li>
+<li><p><code>set1.is_subset(set2)</code>：如果 <code>set1</code> 是 <code>set2</code> 的子集，将返回 <code>true</code>；</p>
+</li>
+<li><p><code>set1.is_superset(set2)</code>：如果 <code>set1</code> 是 <code>set2</code> 的超集，将返回 <code>true</code>；</p>
+</li>
+</ul>
+<h3 id="Hashing"><a href="#Hashing" class="headerlink" title="Hashing"></a><code>Hashing</code></h3><p><a href="https://doc.rust-lang.org/stable/std/hash/trait.Hash.html"><code>std::hash::Hash</code></a> 是标准库中所有可 hash 类型必须实现的，<code>HashMap</code> 的键和 <code>HashSet</code> 的元素都必须实现 <code>Hash</code> 和 <code>Eq</code>。</p>
+<p>大对数内部实现了 <code>Eq</code> 的类型也都实现了 <code>Hash</code>，整数，字符和 <code>String</code> 都是可 <code>hash</code> 的，以及 <code>tuple</code>，<code>array</code>，<code>slice</code> 和 <code>vector</code>，只要他们的元素时可 <code>hash</code> 的。</p>
+<p>标准库的一个原则是一个值不管存在哪里或者你如何引用，它们都有相同的<code>hash</code>值。因此，一个值和它的引用有相同的hash值，<code>Box&lt;T&gt;</code> 也和它包含的值有相同的 <code>hash</code> 值，一个 <code>vector</code> 和包含相同的数据的<code>slice</code>有同样的<code>hash</code>值。一个字符串和包含相同字符的 <code>&amp;str</code> 有相同的<code>hash</code>值。</p>
+<p>结构体和枚举默认没有实现 <code>Hash</code>，但是可以自动派生，只有所有元素可 <code>hash</code>：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="meta">#[derive(Clone, PartialEq, Eq, Hash)]</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">MuseumNumber</span> &#123;</span><br><span class="line"> ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果你为一个类型手动实现 <code>PartialEq</code>，你也应该手动实现 <code>Hash</code>。</p>
+<h3 id="自定义-Hash-算法"><a href="#自定义-Hash-算法" class="headerlink" title="自定义 Hash 算法"></a>自定义 <code>Hash</code> 算法</h3><p><code>hash</code> 方法是通用的，因此前面显示的 <code>Hash</code> 实现可以将数据提供给任何实现 <a href="https://doc.rust-lang.org/stable/std/hash/trait.Hasher.html"><code>Hasher</code></a> 的类型，这就是 <code>Rust</code> 支持可插入哈希算法的方式。</p>
+<p><code>std::hash::BuildHasher</code> 是表示散列算法初始状态的类型的特征。每个 <code>Hasher</code> 都是一次性使用的，就像一个迭代器：你使用一次就扔掉它，<code>BuildHasher</code> 是可重用的。</p>
+<p>每个 <code>HashMap</code> 都包含一个 <code>BuildHasher</code>，每次需要计算哈希码时都会使用它。<code>BuildHasher</code> 值包含哈希算法每次运行时所需的键、初始状态或其他参数。完整计算一个 <code>hash</code> 值如下所示：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> std::hash::&#123;Hash, Hasher, BuildHasher&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">compute_hash</span>&lt;B, T&gt;(builder: &amp;B, value: &amp;T) <span class="punctuation">-&gt;</span> <span class="type">u64</span></span><br><span class="line">    <span class="keyword">where</span> B: BuildHasher, T: Hash</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">hasher</span> = builder.<span class="title function_ invoke__">build_hasher</span>(); <span class="comment">// 1. start the algorithm</span></span><br><span class="line">    value.<span class="title function_ invoke__">hash</span>(&amp;<span class="keyword">mut</span> hasher); <span class="comment">// 2. feed it data</span></span><br><span class="line">    hasher.<span class="title function_ invoke__">finish</span>() <span class="comment">// 3. finish, producing a u64</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>HashMap</code> 每次在需要计算 <code>hash</code> 值的时候会调用这三个方法，所有方法都是可以内联的，所以非常快。</p>
+<p><code>Rust</code> 的默认哈希算法是 <code>SipHash-1-3</code>，<code>SipHash</code> 速度很快，并且非常擅长最小化哈希冲突。事实上，它是一种密码算法：没有已知的有效方法来生成 <code>SipHash-1-3</code> 冲突。 只要为每个哈希表使用不同的、不可预测的密钥，<code>Rust</code> 就可以抵御一种称为 <code>HashDoS</code> 的拒绝服务攻击，在这种攻击中，攻击者故意使用哈希冲突来触发服务器中最坏情况的性能。</p>
+<p>但也许您的应用程序不需要它，如果要存储许多小密钥，例如整数或非常短的字符串，则可以实现更快的哈希函数，但会牺牲 <code>HashDoS</code> 安全性。 <a href="https://doc.servo.org/fnv/"><code>fnv</code></a> 实现了一种这样的算法，即 <code>FNV</code> 哈希，要尝试它，请将此行添加到您的 <code>Cargo.toml</code>：</p>
+<figure class="highlight toml"><table><tr><td class="code"><pre><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="attr">fnv</span> = <span class="string">&quot;1.0&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后导入使用：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> fnv::&#123;FnvHashMap, FnvHashSet&#125;;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>Quantitative Trading</category>
+        <category>rust</category>
       </categories>
       <tags>
-        <tag>Quantitative Trading</tag>
-        <tag>量化交易</tag>
+        <tag>《Rust 程序设计》</tag>
+        <tag>集合类型</tag>
       </tags>
   </entry>
   <entry>
