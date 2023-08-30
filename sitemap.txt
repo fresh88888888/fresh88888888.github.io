@@ -83,6 +83,7 @@ https://fresh88888888.github.io/tags/%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91/
 https://fresh88888888.github.io/tags/%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%9E%8B/
 https://fresh88888888.github.io/tags/String-%E5%92%8C%E6%96%87%E6%9C%AC/
 https://fresh88888888.github.io/tags/%E5%AE%8F/
+https://fresh88888888.github.io/tags/rust%E5%9F%BA%E7%A1%80/
 https://fresh88888888.github.io/tags/%E5%B8%B8%E7%94%A8-Trait/
 https://fresh88888888.github.io/tags/%E5%B9%B6%E5%8F%91/
 https://fresh88888888.github.io/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/
@@ -123,7 +124,6 @@ https://fresh88888888.github.io/tags/multipass/
 https://fresh88888888.github.io/tags/regex/
 https://fresh88888888.github.io/tags/Quantitative-Trading/
 https://fresh88888888.github.io/tags/%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93/
-https://fresh88888888.github.io/tags/rust%E5%9F%BA%E7%A1%80/
 https://fresh88888888.github.io/categories/rust/
 https://fresh88888888.github.io/categories/Edge-Computing/
 https://fresh88888888.github.io/categories/Docker/
