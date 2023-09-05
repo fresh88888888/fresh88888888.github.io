@@ -686,7 +686,7 @@ destination_canonical_revision
 - `Progressing`
 - `Successed(Failed)`
 {% asset_img service_mesh_38.png %}
-官方地址：![Flagger](https://docs.flagger.app/)
+官方地址：[Flagger](https://docs.flagger.app/)
 
 ##### 弹性设计
 系统/服务的弹性能力直接决定了它的可用性，可用性的度量是由服务级别协议（SLA - Service Level Agreement）来计算的，可用性计算公式 $Availability = \dfrac{MTBF}{MTBF + MTTR}$。
