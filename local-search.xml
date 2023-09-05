@@ -7739,6 +7739,89 @@ Process finished with exit code 101
       </tags>
   </entry>
   <entry>
+    <title>eBPF 介绍</title>
+    <url>/2023/09/04/Cloud-Native/ebpf/</url>
+    <content><![CDATA[<h5 id="什么事eBPF"><a href="#什么事eBPF" class="headerlink" title="什么事eBPF?"></a>什么事eBPF?</h5><p><code>eBPF</code> 是一项革命性技术，起源于 <code>Linux</code> 内核，可以在特权上下文（例如操作系统内核）中运行沙盒程序。它用于安全有效地扩展内核的功能，而无需更改内核源代码或加载内核模块。从历史上看，由于内核具有监督和控制整个系统的特权能力，操作系统一直是实现可观察性、安全性和网络功能的理想场所。同时，操作系统内核由于其核心地位，对稳定性和安全性要求较高，演化难度较大。因此，与操作系统外部实现的功能相比，操作系统级别的创新率传统上较低。</p>
+<img data-src="/2023/09/04/Cloud-Native/ebpf/ebpf_desc1.png" class="">
+<p><code>eBPF</code> 从根本上改变了这个公式。它允许沙盒程序在操作系统内运行，这意味着应用程序开发人员可以运行 <code>eBPF</code> 程序以在运行时向操作系统添加附加功能。然后，操作系统可以保证安全性和执行效率，就像借助即时 (<code>JIT</code>) 编译器和验证引擎进行本机编译一样。这引发了一波基于 <code>eBPF</code> 的项目，涵盖广泛的用例，包括下一代网络、可观察性和安全功能。<br>如今，<code>eBPF</code> 被广泛用于驱动各种场景：在现代数据中心和云原生环境中提供高性能网络和负载平衡，以低开销提取细粒度的安全和可观察性数据，帮助应用程序开发人员跟踪应用程序，提供性能故障排查、预防应用程序和容器运行时安全实施等方面的问题。</p>
+<span id="more"></span>
+<h5 id="钩子概述"><a href="#钩子概述" class="headerlink" title="钩子概述"></a>钩子概述</h5><p><code>eBPF</code> 程序是事件驱动的，当内核或应用程序通过某个挂钩点时运行。预定义的挂钩包括系统调用、函数入口&#x2F;出口、内核跟踪点、网络事件等。</p>
+<img data-src="/2023/09/04/Cloud-Native/ebpf/ebpf_desc2.png" class="">
+<p>如果不存在满足特定需求的预定义挂钩，则可以创建内核探针 (<code>kprobe</code>) 或用户探针 (<code>uprobe</code>) 来将 <code>eBPF</code> 程序附加到内核或用户应用程序中的几乎任何位置。</p>
+<img data-src="/2023/09/04/Cloud-Native/ebpf/ebpf_desc3.png" class="">
+
+<h5 id="eBPF程序是如何编写的？"><a href="#eBPF程序是如何编写的？" class="headerlink" title="eBPF程序是如何编写的？"></a>eBPF程序是如何编写的？</h5><p>在很多场景中，<code>eBPF</code> 并不直接使用，而是通过<code>Cilium</code>、<code>bcc</code>或<code>bpftrace</code>等项目间接使用，这些项目在 <code>eBPF</code> 之上提供抽象，不需要直接编写程序，而是提供指定基于意图的定义的能力，然后这些定义用<code>eBPF</code>实现。</p>
+<img data-src="/2023/09/04/Cloud-Native/ebpf/ebpf_desc4.png" class="">
+<p>如果不存在更高级别的抽象，则需要直接编写程序。<code>Linux</code> 内核期望 <code>eBPF</code> 程序以字节码的形式加载。虽然直接编写字节码当然是可能的，但更常见的开发实践是利用<code>LLVM</code>等编译器套件将伪 <code>C</code> 代码编译为 <code>eBPF</code> 字节码。</p>
+<h5 id="加载器和验证架构"><a href="#加载器和验证架构" class="headerlink" title="加载器和验证架构"></a>加载器和验证架构</h5><p>当识别出所需的钩子后，可以使用 <code>bpf</code> 系统调用将 <code>eBPF</code> 程序加载到 <code>Linux</code> 内核中。这通常是使用可用的 <code>eBPF</code> 库来完成的。</p>
+<img data-src="/2023/09/04/Cloud-Native/ebpf/ebpf_desc5.png" class="">
+<p>当程序加载到 <code>Linux</code> 内核中时，它在附加到请求的钩子之前要经过两个步骤：验证步骤确保 <code>eBPF</code> 程序可以安全运行。它验证程序是否满足多个条件，例如：</p>
+<img data-src="/2023/09/04/Cloud-Native/ebpf/ebpf_desc6.png" class="">
+<ul>
+<li>加载 <code>eBPF</code> 程序的进程拥有所需的能力（特权）。除非启用非特权 <code>eBPF</code>，否则只有特权进程才能加载 <code>eBPF</code> 程序。</li>
+<li>该程序不会崩溃或以其他方式损害系统。</li>
+<li>程序总是运行到完成（即程序不会永远处于循环中，从而阻止进一步的处理）。<br>即时 (<code>JIT</code>) 编译步骤将程序的通用字节码转换为机器特定的指令集，以优化程序的执行速度。这使得 <code>eBPF</code> 程序的运行效率与本机编译的内核代码或作为内核模块加载的代码一样高效。<code>eBPF</code> 程序的一个重要方面是共享收集的信息和存储状态的能力。为此，<code>eBPF</code> 程序可以利用 <code>eBPF</code> 映射的概念来存储和检索各种数据结构中的数据。<code>eBPF</code> 映射可以通过系统调用从 <code>eBPF</code> 程序以及用户空间中的应用程序访问。<img data-src="/2023/09/04/Cloud-Native/ebpf/ebpf_desc7.png" class="">
+以下是支持的映射类型的不完整列表，以帮助您了解数据结构的多样性。对于各种地图类型，可以使用共享版本和每个 <code>CPU</code> 版本。</li>
+<li>哈希表、数组</li>
+<li>LRU（最近最少使用）</li>
+<li>环形缓冲器</li>
+<li>堆栈跟踪</li>
+<li>LPM（最长前缀匹配）</li>
+<li>…<br><code>eBPF</code> 程序无法调用任意内核函数。允许这样做会将 <code>eBPF</code> 程序绑定到特定的内核版本，并使程序的兼容性变得复杂。相反，<code>eBPF</code> 程序可以对辅助函数进行函数调用，辅助函数是内核提供的众所周知且稳定的 <code>API</code>。<img data-src="/2023/09/04/Cloud-Native/ebpf/ebpf_desc8.png" class="">
+<code>eBPF</code> 程序可以通过尾部和函数调用的概念进行组合。函数调用允许在 <code>eBPF</code> 程序中定义和调用函数。尾部调用可以调用并执行另一个 <code>eBPF</code> 程序并替换执行上下文，类似于常规进程的 <code>execve()</code> 系统调用的操作方式。<img data-src="/2023/09/04/Cloud-Native/ebpf/ebpf_desc9.png" class=""></li>
+</ul>
+<h5 id="eBPF-安全"><a href="#eBPF-安全" class="headerlink" title="eBPF 安全"></a>eBPF 安全</h5><p><code>eBPF</code> 是一项极其强大的技术，现在运行在许多关键软件基础设施组件的核心。在<code>eBPF</code>的开发过程中，当考虑将<code>eBPF</code>纳入<code>Linux</code>内核时，<code>eBPF</code>的安全性是最重要的方面。<code>eBPF</code> 的安全性通过多个层面来确保：除非启用非特权 <code>eBPF</code>，否则所有打算将 <code>eBPF</code> 程序加载到 <code>Linux</code> 内核中的进程都必须在特权模式（<code>root</code>）下运行，或者需要 <code>CAP_BPF</code> 功能。这意味着不受信任的程序无法加载 <code>eBPF</code> 程序。如果启用非特权 <code>eBPF</code>，非特权进程可以加载某些 <code>eBPF</code> 程序，但功能集会减少，并且对内核的访问受到限制。</p>
+<ul>
+<li>程序经过验证以确保它们始终运行完成，例如，eBPF 程序可能永远不会阻塞或永远处于循环中。eBPF 程序可能包含所谓的有界循环，但只有当验证者可以确保循环包含保证为真的退出条件时，该程序才会被接受。</li>
+<li>程序不得使用任何未初始化的变量或越界访问内存。</li>
+<li>程序必须符合系统的大小要求。不可能加载任意大的 eBPF 程序。</li>
+<li>程序必须具有有限的复杂性。验证者将评估所有可能的执行路径，并且必须能够在配置的复杂性上限范围内完成分析。</li>
+</ul>
+<p>验证器是一种安全工具，用于检查程序是否可以安全运行。它不是检查程序正在做什么的安全工具。成功完成验证后，<code>eBPF</code> 程序将根据程序是从特权进程还是非特权进程加载来运行强化过程。该步骤包括：</p>
+<ul>
+<li>程序执行保护：保存 <code>eBPF</code> 程序的内核内存受到保护并设为只读。如果由于任何原因，无论是内核错误还是恶意操纵，试图修改 <code>eBPF</code> 程序，内核将崩溃，而不是允许它继续执行损坏&#x2F;操纵的程序。</li>
+<li>针对 <code>Spectre</code> 的缓解措施：据推测，<code>CPU</code> 可能会错误预测分支并留下可通过侧通道提取的可观察到的副作用。举几个例子：<code>eBPF</code> 程序屏蔽内存访问，以便将瞬态指令下的访问重定向到受控区域，验证器还遵循仅在推测执行下可访问的程序路径，并且 <code>JIT</code> 编译器在尾调用无法转换为直接调用的情况下发出 <code>Retpolines</code> 。</li>
+<li>常量致盲：代码中的所有常量都被致盲，以防止 <code>JIT</code> 喷射攻击。这可以防止攻击者将可执行代码作为常量注入，在存在另一个内核错误的情况下，可能允许攻击者跳转到 <code>eBPF</code> 程序的内存部分来执行代码。</li>
+</ul>
+<p><code>eBPF</code> 程序无法直接访问任意内核内存。位于程序上下文之外的数据和数据结构必须通过 <code>eBPF</code> 帮助程序进行访问。这保证了数据访问的一致性，并使任何此类访问都受到 <code>eBPF</code> 程序特权的约束，例如，只有与程序类型相关的数据结构可以被读取或（有时）修改，前提是验证者可以确保在加载时绑定访问永远不会发生；或者，运行中的<code>eBPF</code>程序只有在能够保证修改安全的情况下才允许修改某些数据结构的数据。<code>eBPF</code> 程序不能随机修改内核中的数据结构。</p>
+<h5 id="eBPF-对-Linux-内核的影响"><a href="#eBPF-对-Linux-内核的影响" class="headerlink" title="eBPF 对 Linux 内核的影响"></a>eBPF 对 Linux 内核的影响</h5><p>现在让我们回到 <code>eBPF</code>。为了了解 <code>eBPF</code> 对 <code>Linux</code> 内核的可编程性影响，有助于对 <code>Linux</code> 内核的架构以及它如何与应用程序和硬件交互有一个高层次的了解。</p>
+<img data-src="/2023/09/04/Cloud-Native/ebpf/ebpf_desc10.png" class="">
+<p><code>Linux</code>内核的主要目的是抽象硬件或虚拟硬件并提供一致的<code>API</code>（系统调用），允许应用程序运行和共享资源。为了实现这一目标，需要维护大量的子系统和层来分配这些职责。每个子系统通常允许某种级别的配置来满足用户的不同需求。如果无法配置所需的行为，则需要更改内核，从历史上看，留下两个选项：</p>
+<img data-src="/2023/09/04/Cloud-Native/ebpf/ebpf_desc11.png" class="">
+<p>借助 <code>eBPF</code>，可以使用一个新选项，允许对 <code>Linux</code> 内核的行为进行重新编程，而无需更改内核源代码或加载内核模块。在很多方面，这与 <code>JavaScript</code> 和其他脚本语言如何解锁系统的演变非常相似，而系统的改变变得困难或昂贵。</p>
+<h5 id="开发工具链"><a href="#开发工具链" class="headerlink" title="开发工具链"></a>开发工具链</h5><p>存在多个开发工具链来协助 eBPF 程序的开发和管理。它们都满足用户的不同需求：</p>
+<h6 id="bcc"><a href="#bcc" class="headerlink" title="bcc"></a>bcc</h6><p><code>BCC</code> 是一个框架，使用户能够编写嵌入了 <code>eBPF</code> 程序的 <code>python</code> 程序。该框架主要针对涉及应用程序和系统分析&#x2F;跟踪的用例，其中 <code>eBPF</code> 程序用于收集统计数据或生成事件，而用户空间中的对应程序则收集数据并以人类可读的形式显示数据。运行<code>python</code>程序将生成<code>eBPF</code>字节码并将其加载到内核中。</p>
+<img data-src="/2023/09/04/Cloud-Native/ebpf/ebpf_desc12.png" class="">
+
+<h6 id="bpftrace"><a href="#bpftrace" class="headerlink" title="bpftrace"></a>bpftrace</h6><p><code>bpftrace</code> 是一种适用于 <code>Linux eBPF</code> 的高级跟踪语言，可在半新的 <code>Linux</code> 内核 (4.x) 中使用。<code>bpftrace</code> 使用 <code>LLVM</code> 作为后端将脚本编译为 <code>eBPF</code> 字节码，并利用 <code>BCC</code> 与 <code>Linux eBPF</code> 子系统以及现有的 <code>Linux</code> 跟踪功能进行交互：内核动态跟踪 (<code>kprobes</code>)、用户级动态跟踪 (<code>uprobes</code>) 和跟踪点。<code>bpftrace</code> 语言受到 <code>awk、C</code> 和前身跟踪器（例如 <code>DTrace</code> 和 <code>SystemTap</code>）的启发。</p>
+<img data-src="/2023/09/04/Cloud-Native/ebpf/ebpf_desc13.png" class="">
+
+<h6 id="eBPF-Go-库"><a href="#eBPF-Go-库" class="headerlink" title="eBPF Go 库"></a>eBPF Go 库</h6><p><code>eBPF Go</code> 库提供了一个通用的 <code>eBPF</code> 库，它将获取 <code>eBPF</code> 字节码的过程与 <code>eBPF</code> 程序的加载和管理解耦。<code>eBPF</code> 程序通常是通过编写更高级的语言来创建的，然后使用 <code>clang/LLVM</code> 编译器编译为 <code>eBPF</code> 字节码。</p>
+<img data-src="/2023/09/04/Cloud-Native/ebpf/ebpf_desc14.png" class="">
+
+<h6 id="libbpf-C-C-库"><a href="#libbpf-C-C-库" class="headerlink" title="libbpf C&#x2F;C++ 库"></a>libbpf C&#x2F;C++ 库</h6><p><code>libbpf</code> 库是一个基于 <code>C/C++</code> 的通用 <code>eBPF</code> 库，它有助于将从 <code>clang/LLVM</code> 编译器生成的 <code>eBPF</code> 目标文件加载到内核中，并通过为应用程序提供易于使用的库 <code>API</code> 来抽象与 <code>BPF</code> 系统调用的交互。</p>
+<img data-src="/2023/09/04/Cloud-Native/ebpf/ebpf_desc15.png" class="">
+
+<h6 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h6><ul>
+<li><a href="https://cilium.readthedocs.io/en/stable/bpf/">BPF 和 XDP 参考指南</a></li>
+<li><a href="https://www.kernel.org/doc/html/latest/bpf/index.html">BPF 文档</a></li>
+<li><a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/bpf/bpf_design_QA.rst">BPF 设计问答</a></li>
+</ul>
+<h6 id="教程"><a href="#教程" class="headerlink" title="教程"></a>教程</h6><ul>
+<li><a href="http://www.brendangregg.com/blog/2019-01-01/learn-ebpf-tracing.html">学习 eBPF 跟踪：教程和示例</a></li>
+<li><a href="https://github.com/xdp-project/xdp-tutorial">XDP 实践教程</a></li>
+<li><a href="https://facebookmicrosites.github.io/bpf/blog/">BCC、libbpf 和 BPF CO-RE 教程</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Cloud Native</category>
+      </categories>
+      <tags>
+        <tag>eBPF</tag>
+        <tag>Cloud Native</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>边缘计算是什么？</title>
     <url>/2023/08/01/Cloud-Native/edge-computing/</url>
     <content><![CDATA[<h4 id="边缘计算"><a href="#边缘计算" class="headerlink" title="边缘计算"></a>边缘计算</h4><p>边缘计算是一种即将到来的计算方法，指的是一系列更接近用户的计算机网络和设备。边缘计算就是通过将数据存储在更靠近用户位置的位置来处理用户生成的数据。这确保了数据处理快速进行，从而确保大数据块得到无缝处理。这进一步帮助组织更快地做出决策。边缘计算技术的一些用例包括自动驾驶汽车、自动化零售店、机器人和智能设备。</p>
@@ -7769,8 +7852,8 @@ Process finished with exit code 101
         <category>Edge Computing</category>
       </categories>
       <tags>
-        <tag>edge computing</tag>
         <tag>Cloud Native</tag>
+        <tag>edge computing</tag>
       </tags>
   </entry>
   <entry>
@@ -8316,7 +8399,7 @@ Process finished with exit code 101
 <li><code>Initialized</code></li>
 <li><code>Progressing</code></li>
 <li><code>Successed(Failed)</code><img data-src="/2023/08/22/Cloud-Native/service-mesh/service_mesh_38.png" class="">
-官方地址：<img data-src="https://docs.flagger.app/" alt="Flagger"></li>
+官方地址：<a href="https://docs.flagger.app/">Flagger</a></li>
 </ul>
 <h5 id="弹性设计"><a href="#弹性设计" class="headerlink" title="弹性设计"></a>弹性设计</h5><p>系统&#x2F;服务的弹性能力直接决定了它的可用性，可用性的度量是由服务级别协议（SLA - Service Level Agreement）来计算的，可用性计算公式 $Availability &#x3D; \dfrac{MTBF}{MTBF + MTTR}$。</p>
 <ul>
