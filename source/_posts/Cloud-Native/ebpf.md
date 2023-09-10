@@ -93,6 +93,10 @@ category:
 `libbpf` 库是一个基于 `C/C++` 的通用 `eBPF` 库，它有助于将从 `clang/LLVM` 编译器生成的 `eBPF` 目标文件加载到内核中，并通过为应用程序提供易于使用的库 `API` 来抽象与 `BPF` 系统调用的交互。
 {% asset_img ebpf_desc15.png %}
 
+{% mathjax '{ "conversion": { "em": 14 }, "tex": { "tags": "ams" }, "svg": { "exFactor": 0.03 } }' %}
+\frac{1}{x^2-1}
+{% endmathjax %}
+
 ###### 文档
 - [BPF 和 XDP 参考指南](https://cilium.readthedocs.io/en/stable/bpf/)
 - [BPF 文档](https://www.kernel.org/doc/html/latest/bpf/index.html)

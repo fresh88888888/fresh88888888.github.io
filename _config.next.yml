@@ -502,29 +502,21 @@ baidu_site_verification: code-NR10G09zww
 # More plugins: https://github.com/next-theme/awesome-next
 # ---------------------------------------------------------------
 
-# ---------------------------------------------------------------
-# Math Formulas Render Support
-# See: https://theme-next.js.org/docs/third-party-services/math-equations
-# Warning: Please install / uninstall the relevant renderer according to the documentation.
-# Server-side plugin: https://github.com/next-theme/hexo-filter-mathjax
-# ---------------------------------------------------------------
-
 math:
-  # Default (false) will load mathjax / katex script on demand.
-  # That is it only render those page which has `mathjax: true` in front-matter.
-  # If you set it to true, it will load mathjax / katex script EVERY PAGE.
-  every_page: false
-
-  mathjax:
-    enable: ture
-    # Available values: none | ams | all
-    tags: none
-
   katex:
-    enable: true
-    # See: https://github.com/KaTeX/KaTeX/tree/master/contrib/copy-tex
-    copy_tex: false
-
+    css: 'https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css'
+    options:
+      throwOnError: false
+  mathjax:
+    css: 'https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css'
+    options:
+      conversion:
+        display: false
+      tex:
+      svg:
+      
+mathjax:
+   enable: true
 
 # ---------------------------------------------------------------
 # External Libraries
