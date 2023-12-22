@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-count">60</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -174,7 +174,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-count">62</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -231,6 +231,230 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/06/28/%E3%80%90Rust%E3%80%91%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/06/28/%E3%80%90Rust%E3%80%91%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%9E%8B/" class="post-title-link" itemprop="url">【Rust】基础类型</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-06-28 14:00:03" itemprop="dateCreated datePublished" datetime="2022-06-28T14:00:03+08:00">2022-06-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>30 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>下面是在 <code>Rust</code> 中会看到的类型的总结，展示了Rust的基本类型，标准库中一些非常常见的类型，以及一些用户定义类型的例子。</p>
+<table>
+<thead>
+<tr>
+<th align="center">Type</th>
+<th align="center">Description</th>
+<th align="center">Values</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>i8, i16, i32, i64, i128 u8, u16, u32, u64, u128</code></td>
+<td align="center">给定宽度的有符号和无符号整数</td>
+<td align="center"><code>42</code>,<code>-5i8</code>, <code>0x400u16</code>, <code>0o100i16</code>, <code>20_922_789_888_000u64</code>, <code>b&#39;*&#39;</code></td>
+</tr>
+<tr>
+<td align="center"><code>isize</code>, <code>usize</code></td>
+<td align="center">有符号整数和无符号整数， 与计算机上的地址大小相同(32位或64位)</td>
+<td align="center"><code>137</code>, <code>-0b0101_0010isize</code>, <code>0xffff_fc00usize</code></td>
+</tr>
+<tr>
+<td align="center"><code>f32</code>, <code>f64</code></td>
+<td align="center">IEEE浮点数，单精度和双精度</td>
+<td align="center"><code>1.61803</code>, <code>3.14f32</code>, <code>6.0221e23f64</code></td>
+</tr>
+<tr>
+<td align="center"><code>bool</code></td>
+<td align="center">Boolean</td>
+<td align="center"><code>true</code>，<code>false</code></td>
+</tr>
+<tr>
+<td align="center"><code>char</code></td>
+<td align="center">Unicode字符，32位宽</td>
+<td align="center"><code>&#39;*&#39;</code>, <code>&#39;\n&#39;</code>, <code>&#39;字&#39;</code>, <code>&#39;\x7f&#39;</code>, <code>&#39;\u&#123;CA0&#125;&#39;</code></td>
+</tr>
+<tr>
+<td align="center"><code>(char, u8, i32)</code></td>
+<td align="center">Tuple:允许混合类型</td>
+<td align="center"><code>(&#39;%&#39;, 0x7f, -1)</code></td>
+</tr>
+<tr>
+<td align="center"><code>()</code></td>
+<td align="center">空元组</td>
+<td align="center"><code>()</code></td>
+</tr>
+<tr>
+<td align="center"><code>struct S &#123; x: f32, y: f32 &#125;</code></td>
+<td align="center">字段带名称的复合结构</td>
+<td align="center"><code>S &#123; x: 120.0, y: 209.0 &#125;</code></td>
+</tr>
+<tr>
+<td align="center"><code>struct T (i32, char);</code></td>
+<td align="center">Tuple-like struct</td>
+<td align="center"><code>T(120, &#39;X&#39;)</code></td>
+</tr>
+<tr>
+<td align="center"><code>struct E;</code></td>
+<td align="center"><code>Unit-like struct; has no fields</code></td>
+<td align="center"><code>E</code></td>
+</tr>
+<tr>
+<td align="center"><code>enum Attend &#123; OnTime, Late(u32) &#125;</code></td>
+<td align="center">枚举</td>
+<td align="center"><code>Attend::Late(5), Attend::OnTime</code></td>
+</tr>
+<tr>
+<td align="center"><code>Box&lt;Attend&gt;</code></td>
+<td align="center"><code>Box</code>:拥有指向堆中的值的指针</td>
+<td align="center"><code>Box::new(Late(15))</code></td>
+</tr>
+<tr>
+<td align="center"><code>&amp;i32, &amp;mut i32</code></td>
+<td align="center">共享引用和可变引用:非拥有指针，不能比它们的引用活得更久</td>
+<td align="center"><code>&amp;s.y, &amp;mut v</code></td>
+</tr>
+<tr>
+<td align="center"><code>String</code></td>
+<td align="center">动态大小的<code>UTF-8</code>字符串</td>
+<td align="center"><code>&quot;ラーメン: ramen&quot;.to_string()</code></td>
+</tr>
+<tr>
+<td align="center"><code>&amp;str</code></td>
+<td align="center"><code>Reference to str: non-owning pointer to UTF-8 text</code></td>
+<td align="center"><code>&quot;そば: soba&quot;</code>, <code>&amp;s[0..12]</code></td>
+</tr>
+<tr>
+<td align="center"><code>[f64; 4]</code>, <code>[u8; 256]</code></td>
+<td align="center">数组，固定长度，元素同类型</td>
+<td align="center"><code>[1.0, 0.0, 0.0, 1.0]</code>, <code>[b&#39; &#39;; 256]</code></td>
+</tr>
+<tr>
+<td align="center"><code>Vec&lt;f64&gt;</code></td>
+<td align="center">变长<code>Vector</code>，元素同类型</td>
+<td align="center"><code>vec![0.367, 2.718, 7.389]</code></td>
+</tr>
+<tr>
+<td align="center"><code>&amp;[u8],&amp;mut [u8]</code></td>
+<td align="center">对<code>slice</code>的引用:对数组或<code>vector</code>的一部分的引用，包括指针和长度</td>
+<td align="center"><code>&amp;v[10..20]</code>, <code>&amp;mut a[..]</code></td>
+</tr>
+<tr>
+<td align="center"><code>Option&lt;&amp;str&gt;</code></td>
+<td align="center">可选值，要么是 <code>None</code>，要么是 <code>Some(v)</code></td>
+<td align="center"><code>Some(&quot;Dr.&quot;)</code>, <code>None</code></td>
+</tr>
+<tr>
+<td align="center"><code>Result&lt;u64, Error&gt;</code></td>
+<td align="center">可能失败的操作结果，成功就是 <code>Ok(v)</code>，失败则是：<code>Err(e)</code></td>
+<td align="center"><code>Ok(4096)</code>, <code>Err(Error::last_os_error())</code></td>
+</tr>
+<tr>
+<td align="center"><code>&amp;dyn Any</code>, <code>&amp;mut dyn Read</code></td>
+<td align="center"><code>Trait</code>对象:引用任何实现了给定方法集的值</td>
+<td align="center"><code>value as &amp;dyn Any,&amp;mut file as &amp;mut dyn Read</code></td>
+</tr>
+<tr>
+<td align="center"><code>fn(&amp;str) -&gt; bool</code></td>
+<td align="center">函数指针</td>
+<td align="center"><code>str::is_empty</code></td>
+</tr>
+<tr>
+<td align="center"><code>(Closure types have no written form)</code></td>
+<td align="center">闭包</td>
+<td align="center">&#96;</td>
+</tr>
+</tbody></table>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/28/%E3%80%90Rust%E3%80%91%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%9E%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1249,127 +1473,6 @@ Process finished with exit code 101
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/05/29/%E3%80%90Rust%E3%80%91%E5%B8%B8%E7%94%A8-Trait/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/05/29/%E3%80%90Rust%E3%80%91%E5%B8%B8%E7%94%A8-Trait/" class="post-title-link" itemprop="url">【Rust】常用 Trait</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-05-29 11:46:42" itemprop="dateCreated datePublished" datetime="2022-05-29T11:46:42+08:00">2022-05-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>4.8k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>16 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><code>Rust</code> 中的 <code>Trait</code> 可以分为三类：</p>
-<ol>
-<li><p>语言扩展 <code>Trait</code>：主要用于运算符重载，我们可以将常用的运算符使用在自己的类型之中，只要相应的 <code>Trait</code> 即可，例如 <code>Eq</code>，<code>AddAssign</code>，<code>Dere</code>，<code>Drop</code> 以及 <code>From</code> 和 <code>Into</code> 等；</p>
-</li>
-<li><p>标记类型 <code>Trait</code>：这些 <code>Trait</code> 主要用于绑定泛型类型变量，以表达无法以其他方式捕获的约束，这些包括 <code>Sized</code> 和 <code>Copy</code>；</p>
-</li>
-<li><p>剩下的主要是一些为解决常遇到的问题，例如：<code>Default</code>，<code>AsRef</code>，<code>AsMut</code>，<code>Borrow</code>，<code>BorrowMut</code>，<code>TryFrom</code> 和 <code>TryInto</code>；</p>
-</li>
-</ol>
-<h3 id="Drop"><a href="#Drop" class="headerlink" title="Drop"></a><code>Drop</code></h3><p><code>Rust</code> 中当一个值离开作用域时就会对它的内存进行清理，但是所有权转移不会，这类似于 <code>C++</code> 中的析构函数。在 <code>Rust</code> 中我们也可以对析构的过程进行自定义，只要实现 <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/stable/std/ops/trait.Drop.html"><code>std::ops::Drop</code></a> 即可，在值需要清理的时候会自动调用 <code>drop</code> 函数，不能显示调用：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">Drop</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">drop</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>通常不需要实现 <code>std::ops::Drop</code>，除非定义了一个拥有 <code>Rust</code> 不知道的资源的类型。 例如，在 <code>Unix</code> 系统上，<code>Rust</code> 的标准库在内部使用以下类型来表示操作系统文件描述符：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">FileDesc</span> &#123;</span><br><span class="line">    fd: c_int,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://docs.rs/fd/0.2.1/src/fd/.cargo/registry/src/github.com-1ecc6299db9ec823/fd-0.2.1/src/lib.rs.html#57-63"><code>FileDesc</code></a> 的 <code>fd</code> 字段只是程序完成时应该关闭的文件描述符的编号，<code>c_int</code> 是 <code>i32</code> 的别名。标准库为 <code>FileDesc</code> 实现 <code>Drop</code> 如下：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">Drop</span> <span class="keyword">for</span> <span class="title class_">FileDesc</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">drop</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">self</span>.close_on_drop &#123;</span><br><span class="line">            <span class="keyword">unsafe</span> &#123; ::libc::<span class="title function_ invoke__">close</span>(<span class="keyword">self</span>.fd); &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这里，<code>libc::close</code> 是 <code>C</code> 库关闭函数的 <code>Rust</code> 名称，<code>Rust</code> 仅能在 <code>unsafe</code> 块中调用 <code>C</code> 函数。</p>
-<p>如果一个类型实现了 <code>Drop</code>，它就不能实现 <code>Copy</code>，如果类型可 <code>Copy</code>，则意味着简单的逐字节复制足以生成该值的独立副本，但是在相同的数据上多次调用相同的 <code>drop</code> 方法通常是错误的。</p>
-<p>标准库预包含的 <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/stable/std/mem/fn.drop.html"><code>drop</code></a> 函数可以显示删除一个值：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">v</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">drop</span>(v); <span class="comment">// explicitly drop the vector</span></span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/05/29/%E3%80%90Rust%E3%80%91%E5%B8%B8%E7%94%A8-Trait/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/5/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1396,14 +1499,14 @@ Process finished with exit code 101
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">366k</span>
+    <span title="站点总字数">367k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">20:21</span>
+    <span title="站点阅读时长">20:22</span>
   </span>
 </div>
 <div class="busuanzi-count">
