@@ -8,7 +8,7 @@ categories:
 searchOnlyTitle: true
 ---
 
-{% asset_img SD_Blueprint.png %}
+{% asset_img Sd_Blueprint.png %}
 
 <!-- more -->
 
