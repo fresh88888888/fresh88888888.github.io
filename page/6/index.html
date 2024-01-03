@@ -163,13 +163,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">61</span>
+          <span class="site-state-item-count">62</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">20</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -231,6 +231,125 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/" class="post-title-link" itemprop="url">【Rust】集合类型</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-04-23 13:52:56" itemprop="dateCreated datePublished" datetime="2022-04-23T13:52:56+08:00">2022-04-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>23 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Rust 标准库包含几个集合，用于在内存中存储数据的泛型类型。我们已经在前面使用了集合，例如 <code>Vec</code> 和 <code>HashMap</code>。在本章中，我们将详细介绍这两种类型的方法，以及其他<code>6</code>个标准集合。</p>
+<p><code>Rust</code> 一共有<code>8</code>个标准集合类型，它们都是泛型：</p>
+<img data-src="/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/std-collections.png" class="">
+
+<ul>
+<li><p><code>Vec&lt;T&gt;</code>：一个可增长的、堆分配的 <code>T</code> 类型值数组；</p>
+</li>
+<li><p><code>VecDeque&lt;T&gt;</code>：与 <code>Vec&lt;T&gt;</code> 类似，但更适合用作先进先出队列，它支持在列表的前面和后面有效地添加和删除值；</p>
+</li>
+<li><p><code>BinaryHeap&lt;T&gt;</code>：一个优先队列，<code>BinaryHeap</code> 中的值是有组织的，所以它总是有效地找到并删除最大值；</p>
+</li>
+<li><p><code>HashMap&lt;K, V&gt;</code>：键值对表，通过键查找值很快，<code>item</code> 以任意顺序存储；</p>
+</li>
+<li><p><code>BTreeMap&lt;K, V&gt;</code>：与 <code>HashMap&lt;K, V&gt;</code> 类似，但它保持<code>entries</code>按键排序。 <code>BTreeMap&lt;String, i32&gt;</code> 以字符串比较顺序存储其<code>entries</code>。除非需要<code>entries</code>保持排序，否则 <code>HashMap</code> 更快；</p>
+</li>
+<li><p><code>HashSet&lt;T&gt;</code>：一组 <code>T</code> 类型的值。添加和删除值很快，查询给定值是否在集合中也很快；</p>
+</li>
+<li><p><code>BTreeSet&lt;T&gt;</code>：与 <code>HashSet&lt;T&gt;</code> 类似，但它保持元素按值排序。 同样，除非需要对数据进行排序，否则 <code>HashSet</code> 更快；</p>
+</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/04/23/%E3%80%90Rust%E3%80%91%E9%9B%86%E5%90%88%E7%B1%BB%E5%9E%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1216,113 +1335,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/04/11/%E3%80%90Rust%E3%80%91anyhow-and-thiserror/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/04/11/%E3%80%90Rust%E3%80%91anyhow-and-thiserror/" class="post-title-link" itemprop="url">【Rust】anyhow & thiserror</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-04-11 13:41:16" itemprop="dateCreated datePublished" datetime="2022-04-11T13:41:16+08:00">2022-04-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.8k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>6 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><code>Rust</code> 中使用 <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/stable/std/result/enum.Result.html"><code>std::result::Result</code></a> 表示可能出错的操作，成功的时候是 <code>Ok(T)</code>，而出错的时候则是 <code>Err(E)</code>：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">enum</span> <span class="title class_">Result</span>&lt;T, E&gt; &#123;</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(T),</span><br><span class="line">    <span class="title function_ invoke__">Err</span>(E),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>通常情况下，<code>E</code> 是实现 <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/stable/std/error/trait.Error.html"><code>std::error::Error</code></a> 的错误类型：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">Error</span>: <span class="built_in">Debug</span> + Display &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">source</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;&amp;(<span class="keyword">dyn</span> Error + <span class="symbol">&#x27;static</span>)&gt; &#123; ... &#125;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">backtrace</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;&amp;Backtrace&gt; &#123; ... &#125;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">description</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> &amp;<span class="type">str</span> &#123; ... &#125;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">cause</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;&amp;<span class="keyword">dyn</span> Error&gt; &#123; ... &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们通常也需要在自己的代码中自定义错误，并且为之手动实现 <code>std::error::Error</code>，这个工作很麻烦，所以就有了 <code>thiserror</code>，自动帮我们生成实现的 <code>std::error::Error</code> 的代码。</p>
-<p>而借助于 <code>anyhow::Error</code>，和与之对应的 <code>Result&lt;T, anyhow::Error&gt;</code>，等价于 <code>anyhow::Result&lt;T&gt;</code>，我们可以使用 <code>?</code> 在可能失败的函数中传播任何实现了 <code>std::error::Error</code> 的错误。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/04/11/%E3%80%90Rust%E3%80%91anyhow-and-thiserror/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/7/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1356,7 +1368,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">20:23</span>
+    <span title="站点阅读时长">20:24</span>
   </span>
 </div>
 <div class="busuanzi-count">
