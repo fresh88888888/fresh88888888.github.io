@@ -33,7 +33,7 @@ categories:
 
 #### 抽象语法
 
-{% asset_img uml_1.png `Unified Modeling Language 2.5.1` %}
+{% asset_img uml_1.png Unified Modeling Language 2.5.1 %}
 
 #### 语义
 
@@ -61,7 +61,26 @@ categories:
 
 #### 抽象语法
 
-{% asset_img uml_2.png `Templates` %}
+{% asset_img uml_2.png Templates %}
 
 
-{% asset_img uml_3.png `Template bindings` %}
+{% asset_img uml_3.png Template bindings %}
+
+#### 语义
+
+##### Templates 
+
+`TemplateableElement` 是一种可以选择定义为模板并绑定到其他模板的元素。 `A template` 是使用 `TemplateSignature` 进行参数化的 `TemplateableElement`。 这样的模板可以用来使用 `TemplateBinding` 关系生成其他模型元素。
+
+模板不能以与同类非模板元素相同的方式使用（例如，模板类不能用作 `TypedElement` 的类型）。 模板元素只能用于生成绑定元素或作为另一个模板规范的一部分（例如，一个模板类可以转化为另一个模板类）。
+
+模板的 `TemplateSignature` 定义了一组可以绑定到实际模型元素的 `TemplateParameters` 在模板的绑定元素中。 绑定元素是具有一个或多个此类的 `TemplateableElement` 模板绑定。
+
+完全绑定元素是其所有 `TemplateBindings` 都绑定了该元素的所有 `TemplateParameter` 的绑定元素。模板正在绑定。 完全绑定元素是普通元素，可以像使用完全绑定元素一样使用同类非绑定（和非模板）元素。 例如，类模板的完全绑定元素可以用作类型化元素的类型。
+
+部分绑定元素是至少其中一个 `TemplateBindings` 不绑定所绑定模板的`TemplateParameter`。 部分绑定的元素仍被视为模板，由其 `TemplateBindings` 未绑定的剩余 `TemplateParameters` 进行参数化。
+
+##### Template Signatures
+
+`TemplateSignature` 的 `TemplateParameters` 指定将被实际替换的形参绑定中的参数（或默认值）。 `TemplateParameter` 是根据包含的 `ParameterableElement`定义的在拥有 `TemplateSignature` 的模板内，`TemplateParameter` 是其中的一部分。 这样的元素被称为由 `TemplateParameter` 公开。
+
