@@ -224,4 +224,45 @@ and <template-param-substitution> is defined as above.
 The textual syntax for an ElementImport is:
  ‘{element import’ <qualified-name> ‘}’ | ‘{element access ’ <qualified-name> ‘}’
  ```
- 
+ 或者，也可以显示别名（如果有）：
+
+```c++
+‘{element import ’ <qualified-name> ‘ as ’ <alias> ‘}’ | ‘{element access ’ <qualified-name> ‘as’ <alias> ‘}’
+```
+#### Examples
+
+##### Name Expressions
+
+下图显示了一个资源分配包模板，其中前两个正式模板参数是字符串表达式参数。 这些正式的模板参数在包模板中使用来命名一些`Classes` 和 `Association`结束。 该图还显示了一个绑定包（名为 `TrainingAdmin`），它有两个绑定到此 `ResourceAllocation` 模板。 第一个绑定用字符串`“Instructor”`替换资源，`ResourceKind` 的字符串`“Qualification”`，`System` 的 `Class TrainingAdminSystem`。 第二个绑定将字符串`“Facility”`替换为 `Resource`，将字符串`“FacilitySpecification”`替换为 `ResourceKind`，将 `Class` 替换为`TrainingAdminSystem` 再次替换为 `System`。
+
+绑定的结果包括 `Classes Instructor、Qualification、InstructorAllocation` 以及 `Classes Facility`，设施规格和设施分配。 这些关联也被类似地复制。
+
+{% note danger %}
+**注意**：请求将具有从单个`“the<ResourceKind>”`属性派生的两个属性（此处通过箭头），即规格和设施规格。
+{% endnote %}
+
+{% asset_img uml_5.png Template package with string parameters %}
+
+##### Imports
+
+下图中，所示的 `ElementImport` 允许包程序中的元素通过名称引用 `DataType`时间类型无限定。 然而，他们仍然需要显式引用 `Types::Integer`，因为这个 `Element` 不是进口的。 数据类型字符串被导入到程序包中，但它作为以下成员不公开可见程序在该包之外，并且不能通过其他命名空间进一步从该程序包导入。
+
+{% asset_img uml_6.png Example of element import %}
+
+在下图中，`ElementImport` 与别名相结合，这意味着将引用 `DataType Types::Real`在 `Shapes` 包中名为 `Double`。
+
+{% asset_img uml_7.png Example of element import with aliasing %}
+
+在下图中，显示了许多 `PackageImport`。 `Types` 的公共成员被导入到 `ShoppingCart` 中然后进一步导入到`WebShop`。 不过，辅助队的成员只是由私人引进的。`ShoppingCart` 不能使用 `WebShop` 中的不合格名称进行引用。
+
+{% asset_img uml_8.png Examples of public and private package imports %}
+
+### Types and Multiplicity
+
+#### 概括
+
+类型和多重性在包含值的元素的声明中使用，以约束类型和可能包含的值的数量。
+
+#### 抽象语法
+
+{% asset_img uml_9.png Abstract syntax of types and multiplicity elements %}
