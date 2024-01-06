@@ -155,3 +155,73 @@ and <template-param-substitution> is defined as above.
 
 {% asset_img uml_4.png Namespaces %}
 
+#### 语义
+
+##### NameSpaces
+
+命名空间为命名元素提供容器，称为其拥有的成员。 命名空间也可以从其他命名空间导入 `NamedElements`，在这种情况下，这些元素与`ownedMembers` 一起都是导入命名空间。 如果名称为 `N` 的命名空间的成员是名称为 `x` 的 `NamedElement`，则成员可以通过 `N::x` 形式的限定名称来引用。
+
+当需要区分时，不符合命名空间名称的简单名称可以称为不合格的名字。 在命名空间内，非限定名称可用于引用该命名空间的成员，并且到未隐藏的外部名称。 外部名称是 `NamedElement` 的名称，可以使用直接封闭的命名空间中的非限定名称。 外部名称被隐藏，除非它可以与所有名称区分开来内部命名空间的成员。 （请参阅下面“命名元素”下关于可区分性的讨论。）
+
+由于命名空间本身就是一个 `NamedElement`，因此 `NamedElement` 的完全限定名称可能包括多个命名空间名称，例如 N1::N2::x。
+
+命名空间的`ownedRule`约束表示受约束元素的格式良好的规则（参见子第 `7.6` 条关于约束）。 在确定受约束元素是否格式良好时，将评估这些约束。
+
+##### Named Elements
+
+`NamedElement` 是模型中可能有名称的元素。 该名称可用于识别命名空间内的 `NamedElement` 可以访问其名称。
+
+{% note danger %}
+**注意**：`NamedElement` 的名称是可选的，它提供了缺少名称的可能性（即与空名称不同）。
+{% endnote %}
+
+`NamedElements` 可能会根据指定 `NamedElement` 的规则出现在命名空间中与另一个有区别。 默认规则是，如果两个成员具有不同的名称或者如果它们具有相同的名称，但它们的元类不同，并且都不是另一个的（直接或间接）子类。对于特定情况，例如通过签名区分的操作（请参阅子命令），此规则可能会被覆盖第 9.6 条）。
+
+`NamedElement` 的可见性提供了一种限制元素使用的方法，无论是在命名空间还是在访问元素。 它旨在与导入、泛化和访问机制结合使用。
+
+除了具有显式名称之外，`NamedElement` 还可以与 `StringExpression` 关联（参见第 8.3 节）可用于指定 `NamedElement` 的计算名称。 在模板中（参见第 7.3 条），`NamedElement` 可能有一个关联的 `StringExpression`，其子表达式可能是 `ParameteredElements` 公开的通过模板参数。 绑定模板时，公开的子表达式将替换为实际值替换模板参数。 `StringExpression` 的值是连接后产生的字符串子表达式的值，然后提供 `NamedElement` 的名称。
+
+`NamedElement` 可以具有与其关联的名称和名称表达式。 在这种情况下，名称可以用作`NamedElement` 的别名，例如，可用于引用约束表达式中的元素。（这避免了在文本表面表示法中使用 `StringExpressions` 的需要，这通常很麻烦，尽管它确实不排除它。）
+
+##### Packageable Elements and Imports
+
+`PackageableElement` 是可以直接由包拥有的 `NamedElement`（请参阅有关包的第 12 条）。 任何这样的元素可以充当模板参数（参见有关模板的子条款 7.3）。
+
+`ElementImport` 是导入命名空间和 `PackageableElement` 之间的 `DirectedRelationship`。 它添加了`PackageableElement` 的名称到导入命名空间。 `ElementImport` 的可见性可以是与导入元素相同或更受限制。
+
+如果名称与外部名称（在封闭的命名空间中定义的元素，可使用它在封闭的命名空间中的非限定名称）在导入命名空间中，外部名称被隐藏`ElementImport`，非限定名称指的是导入的元素。 外部名称可以使用其访问合格名称。
+
+`PackageImport` 是导入命名空间和 `Package` 之间的 `DirectedRelationship`，表明`importing Namespace` 会将 `Package` 的成员名称添加到其自己的命名空间中。 从概念上讲，一个包`import` 相当于对导入的命名空间的每个单独成员都有一个 `ElementImport`，除非有单独定义的 `ElementImport`。 如果某个元素有 `ElementImport`，那么它优先于通过 `PackageImport` 可能导入相同的元素。
+
+如果无法区分的元素由于 `ElementImports` 或`PackageImports`，元素不会添加到导入命名空间中，并且这些元素的名称必须是符合资格才能在该命名空间中使用。 如果导入元素的名称与元素归导入命名空间所有，该元素未添加到导入命名空间且名称为该元素必须经过限定才能使用。
+
+公开导入的元素是导入命名空间的公共成员。 这意味着，如果命名空间是一个包，另一个命名空间对它的 PackageImport 将导致进一步公开这些内容除了包的公共成员之外，还将成员导入到其他命名空间中。
+{% note danger %}
+**注意**：命名空间不能导入自身，也不能导入任何它自己拥有的成员。 这意味着它不是`NamedElement` 可以在其所属的命名空间中获取别名。
+{% endnote %}
+
+#### Notation
+
+##### Namespaces
+
+命名空间没有通用的符号。 特定种类的命名空间有其自己特定的符号。符合标准的工具可以选择允许使用第 12.2.4 条中定义的“圆加号”符号来显示封装成员资格也可用于显示其他类型命名空间中的成员资格（例如，显示嵌套分类器和拥有的类的行为）。
+
+##### Name Expressions
+
+与 `NamedElement` 关联的 `nameExpression` 可以通过两种方式显示，具体取决于别名是否为是否需要。 两种表示法如图 7.6 所示.
+- 无别名：`StringExpression` 显示为模型元素的名称。
+- 使用别名：无论名称出现在何处，都会显示 `StringExpression` 和别名。 别名下面给出 `StringExpression`。
+
+在这两种情况下，`StringExpression` 都出现在`“$”`符号之间。 `UML` 中的表达式规范支持在抽象语法中使用替代字符串表达式语言——它们必须以 `String` 作为其类型，并且可以是带有操作数的运算符表达式的一些结构。在模板的上下文中，在 `a` 中参数化的 `StringExpression`（通常是 `LiteralStrings`）的子表达式模板显示在尖括号之间。
+
+##### Imports
+
+`PackageImport` 或 `ElementImport` 使用虚线箭头显示，带有来自导入的空心箭头导入的包或元素的命名空间。 如果可见性，则关键字 `«import»` 将显示在虚线箭头附近是公开的； 否则，将显示关键字`“access”`以指示私有可见性。 别名可能显示在之后或下方关键字“导入”。 如果 `ElementImport` 的导入元素是 `Package`，则关键字可以选择为前面是`“element”，即“element import”`。
+
+作为虚线箭头的替代方案，可以通过以下文本来显示 `PackageImport` 或 `ElementImport`：在大括号内唯一标识导入的包或元素，位于名称下方或之后命名空间。 `PackageImport` 的文本语法是：
+```c++
+‘{import ’ <qualified-name> ‘}’ | ‘{access ’ <qualified-name> ‘}’
+The textual syntax for an ElementImport is:
+ ‘{element import’ <qualified-name> ‘}’ | ‘{element access ’ <qualified-name> ‘}’
+ ```
+ 
