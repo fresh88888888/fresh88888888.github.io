@@ -371,3 +371,42 @@ The textual syntax for an ElementImport is:
 #### Summary
 
 依赖关系表示模型元素之间的供应商/客户关系，其中供应商的修改可能影响客户端模型元素。
+
+#### Abstract Syntax
+
+{% asset_img uml_17.png Abstract syntax of dependencies %}
+
+#### Semantics
+
+##### Dependency
+
+依赖关系意味着如果没有供应商，客户端的语义就不完整。 模型中的依赖关系没有任何运行时语义含义。 语义全部给出参与关系的 `NamedElements` 的术语，而不是它们的实例。
+
+##### Usage
+
+`Usage`是一种依赖关系，其中一个 `NamedElement` 需要另一个 `NamedElement`（或一组 `NamedElement`）其全面实施或运作。 使用并未指定客户如何使用供应商，除了以下事实：供应商由客户的定义或实现使用。
+
+##### Abstraction
+
+抽象是一种依赖关系，它关联两个 `NamedElements` 或代表相同内容的 `NamedElements` 集不同抽象层次或不同观点的概念。 该关系可以被定义为映射供应商和客户之间。 根据抽象的具体构造型，映射可以是形式的或非正式的，可以是单向的，也可以是双向的。 抽象具有预定义的构造型（例如`“Derive”，“Refine”和“Trace”`）在标准配置文件中定义。 如果一个抽象有多个客户，供应商作为一个组映射到客户集合中。 例如，一个分析级类可能会被分成几个设计级类。 如果有多个供应商，情况也类似。
+
+##### Realization
+
+`Realization`是两组 `NamedElement` 之间的特殊抽象依赖关系，一组代表一个规范（供应商）和另一个代表该规范的实现（客户）。 实现可以用于建模逐步细化、优化、转换、模板、模型合成、框架实现表示客户端集合是供应商集合的实现，供应商集合充当规范。 `“Realization”`的含义并没有严格定义，而是暗示了更细化或关于特定建模环境的复杂形式。 可以指定规范和之间的映射实现元素，尽管这不一定是可计算的。
+
+#### Notation
+
+依赖关系显示为两个模型元素之间的虚线箭头。 箭头尾部的模型元素（客户）箭头处的模型元素（供应商）。 箭头可以标有可选的关键字或构造型以及可选名称。
+
+{% asset_img uml_18.png Notation for a Dependency between two elements %}
+
+可以为客户或供应商提供一组元素。 在这种情况下，一个或多个箭头的尾部位于客户与一个或多个箭头的尾部相连，其头指向供应商。 可以在上面放置一个小点如果需要的话。 应在连接点附上有关依赖关系的注释。用法显示为依赖项，并附加有`“use”`关键字。抽象显示为带有“抽象”关键字或附加的特定预定义构造型的依赖项到它。实现显示为一条虚线，末端有一个三角形箭头，对应于已实现的元素。
+
+#### Examples
+
+下图中，`CarFactory` 类依赖于 `Car` 类。 在这种情况下，依赖关系是一个用法应用了标准构造型`“Instantiate”`，表明 `CarFactory` 类的实例创建了汽车类。
+
+{% asset_img uml_19.png  An example of an «Instantiate» Dependency %}
+
+下图中，`Order`类需要`Line Item`类才能完整实现。
+
