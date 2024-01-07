@@ -410,3 +410,136 @@ The textual syntax for an ElementImport is:
 
 下图中，`Order`类需要`Line Item`类才能完整实现。
 
+{% asset_img uml_20.png  An example of a «use» Dependency %}
+
+下图中，举例说明了 `Business` 类由 `Owner` 和 `Employee` 组合实现的示例类。
+
+{% asset_img uml_21.png An example of a realization Dependency %}
+
+### Classifier Descriptions
+
+#### Abstraction [Class]
+
+##### Description
+
+抽象是一种关系，它将表示同一概念的两个元素或元素集联系起来。不同的抽象层次或不同的`viewpoints`。
+
+#### Comment [Class]
+
+##### Description
+
+注释是可以附加到一组元素的文本注释。
+
+#### Constraint [Class]
+
+##### Description
+
+约束是用自然语言文本或机器可读语言表达的条件或限制声明一个元素或一组元素的一些语义的目的。
+
+#### Dependency [Class]
+
+##### Description
+
+依赖关系是一种关系，表示单个模型元素或一组模型元素需要其他元素其规范或实现的模型元素。 这意味着客户端的完整语义元素在语义上或结构上取决于供应商元素的定义。
+
+#### DirectedRelationship [Abstract Class]
+
+##### Description
+
+`DirectedRelationship` 表示源模型元素集合和目标模型元素。
+
+#### Element [Abstract Class]
+
+##### Description
+
+元素是模型的组成部分。 因此，它有能力拥有其他元素。
+
+#### ElementImport [Class]
+
+##### Description
+
+`ElementImport` 标识命名空间中的 `NamedElement`，而不是拥有该 `NamedElement` 的命名空间，并且允许在拥有 `ElementImport` 的命名空间中使用非限定名称来引用 `NamedElement`。
+
+#### MultiplicityElement [Abstract Class]
+
+##### Description
+
+重数是非负整数的包含区间的定义，从下限开始到结束具有（可能是无限的）上限。 `MultiplicityElement` 嵌入此信息来指定允许的元素实例化的基数。
+
+#### NamedElement [Abstract Class]
+
+##### Description
+
+`NamedElement` 是模型中可能有名称的元素。 该名称可以直接给出和/或通过使用一个字符串表达式。
+
+#### Namespace [Abstract Class]
+
+##### Description
+
+命名空间是模型中的一个元素，它拥有和/或导入一组可以通过以下方式识别的命名元素姓名。
+
+### Values
+
+#### Summary
+
+一般来说，`ValueSpecification` 是一个模型元素，被认为是在语义上产生零个或多个值。 值的类型和数量应适合于上下文使用 `ValueSpecification`（由该上下文中给出的约束确定）。以下子条款描述了 `UML` 中可用的各种 `ValueSpecification`。
+
+### Literals
+
+#### Summary
+
+`LiteralSpecification` 是指定文字值的 `ValueSpecification`。 有一种不同的 `UML` 标准 `PrimitiveTypes` 的 `LiteralSpecification`，带有相应的文字符号，加上`“null”`字面意思是“缺少值”。
+
+#### Abstract Syntax
+
+{% asset_img uml_22.png Literals %}
+
+#### Semantics
+
+`LiteralSpecification` 有六种：
+1. `LiteralNull` 旨在用于显式建模缺少值的情况。 在一个背景下`MultiplicityElement` 的重数下界为 `0`，这对应于空集（即，一组没有值）。 这相当于没有为 `Element` 指定任何值。
+2. `LiteralString` 指定 `PrimitiveType String` 的常量值。 虽然 `String` 被指定为字符序列，字符串值在 `UML` 中被认为是原始的，因此它们的内部结构不是指定为 `UML` 语义的一部分。
+3. `LiteralInteger` 指定 `PrimitiveType Integer` 的常量值。
+4. `LiteralBoolean` 指定 `PrimitiveType Boolean` 的常量值。
+5. `LiteralUnlimitedNatural` 指定 `PrimitiveType UnlimitedNatural` 的常量值。
+6. `LiteralReal` 指定 `PrimitiveType Real` 的常量值。
+
+#### Notation
+
+`LiteralSpecifications` 以文本方式标注。
+
+`LiteralNull` 的表示法根据其使用位置的不同而有所不同。 它通常显示为`“null”一词`。 其他地方描述了符号的具体用途。
+- `LiteralString` 显示为双引号内的字符序列。 String 值是以下序列字符，不包括引号。 使用的字符集未指定。
+- `LiteralInteger` 显示为表示 `Integer` 值的十进制数字的数字序列。
+- `LiteralBoolean` 显示为单词`“true”`或单词`“false”`，与其值相对应。
+- `LiteralUnlimitedNatural` 显示为数字序列或星号 `(*)`，其中星号表示无限制。 请注意，“无限制”表示对某些元素的值没有限制（例如多重性上限），而不是“无穷大”值。
+- `LiteralReal` 以十进制记数法或科学记数法显示。 十进制表示法由可选符号组成字符 `(+/-)` 后跟零个或多个数字，可选地后跟一个点 `(.)`，后跟一个或多个数字。科学记数法由十进制记数法后跟字母`“e”`或`“E”`和指数组成由可选的符号字符后跟一个或多个数字组成。 科学记数法表达的是实数等于指数前面的小数表示的数字乘以 `10` 的幂指数。
+该表示法由以下 EBNF 规则指定：
+```c++
+<natural-literal> ::= ('0'..'9')+
+<decimal-literal> ::= ['+' | '-' ] <natural-literal> | ['+' | '-' ] [<natural-literal>] '.' <natural-literal>
+<real-literal> ::= <decimal-literal> [ ('e' | 'E') ['+' | '-' ] <natural-literal> ]
+```
+### Expressions
+
+#### Summary
+
+表达式是指定计算结果值的 `ValueSpecifications`。
+
+#### Abstract Syntax
+
+{% asset_img uml_23.png Expressions %}
+
+#### Semantics
+
+##### Expressions
+
+表达式被指定为树结构。 该树结构中的每个节点都包含一个符号和一组可选的操作数。 如果没有操作数，则表达式表示终端节点。 如果有操作数，则表达式表示由应用于这些操作数的符号给出的运算符。表达式的计算方法是首先计算其每个操作数，然后执行由结果操作数值的表达式符号。 然而，该符号的实际解释取决于表达式的使用上下文和本规范不提供任何标准符号定义。 一个合格的工具可以定义一组特定的符号并为其提供解释，也可以简单地将所有表达式视为未解释的。
+
+##### String Expressions
+
+`StringExpression` 是一个表达式，它指定通过连接子字符串列表而派生的字符串值。子字符串以 `LiteralString` 操作数列表或 `StringExpression` 子表达式列表的形式给出（但它是不允许将两者混合）。 `StringExpression` 的 `String` 值是通过按顺序连接 `String` 获得的操作数或子表达式的值，具体取决于给定的值。`StringExpressions` 旨在用于在模板上下文中指定 `NamedElements` 的名称。 任何一个整个 `StringExpression` 或其一个或多个子表达式可以用作 `ParameterableElements TemplateParameters`，允许在模板中参数化 `NamedElement` 的名称。
+
+##### Opaque Expressions
+
+`OpaqueExpression` 指定根据 `UML` 行为或基于使用除 `UML` 之外的语言的文本语句。 `OpaqueExpression` 可能有一个由一系列文本字符串组成的主体，这些文本字符串表示替代方法计算 `OpaqueExpression` 的值。 相应的语言字符串序列可用于指定每个正文字符串要解释的语言。 语言按顺序与正文字符串匹配。`UML` 规范没有定义正文字符串相对于任何语言的解释方式，尽管其他语言规范可以定义特定的语言字符串，用于指示对这些语言的解释规范（例如，`“OCL”`表示根据 `OCL` 规范解释的表达式）。 另请注意，它不是需要指定语言。 如果未指定，则必须确定任何正文字符串的解释隐含地来自主体的形式或 `OpaqueExpression` 的使用上下文。
