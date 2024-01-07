@@ -266,3 +266,108 @@ The textual syntax for an ElementImport is:
 #### 抽象语法
 
 {% asset_img uml_9.png Abstract syntax of types and multiplicity elements %}
+
+#### Semantics
+
+##### Types and Typed Elements
+
+类型指定一组允许的值，称为类型的实例。 根据类型、实例的种类随着时间的推移，该类型可能会被创建或销毁。 然而，类型实例的构成规则由该类型的定义保持固定。 `UML` 中的所有类型都是分类器。
+
+`TypedElement` 是 `NamedElement`，它以某种方式表示特定值。 取决于种类`TypedElement`，它所代表的实际值可能会随着时间的推移而改变。 `TypedElement` 种类的示例包括
+`ValueSpecification`，它直接指定值的集合，以及 `StructuralFeature`，它表示作为拥有它的分类器实例的结构的一部分而保存的值。
+
+如果 `TypedElement` 有关联的 `Type`，则 `TypedElement` 表示的任何值（在任何时间点）都应是给定类型的实例。 没有关联 `Type` 的 `TypeElement` 可以表示任何值。
+
+##### Multiplicities
+
+`MultiplicityElement` 是可以以某种方式实例化以表示值集合的元素。根据 `MultiplicityElement` 的类型，集合中的值可能会随时间而变化。 种类的例子`MultiplicityElement` 包括 `StructuralFeature`，它在拥有的 `Classifier` 实例的上下文中具有它和变量，它在活动执行的上下文中有值。
+
+集合的基数是该集合中包含的值的数量。 `MultiplicityElement` 指定它所代表的集合的有效基数。 多重性是对基数，不得小于为指定的下界且不大于指定的上限（除非多重性是无限的，在这种情况下，上限没有限制）。
+
+`MultiplicityElement` 的重数的下限和上限由 `ValueSpecifications` 指定，`lowerBound` 必须为 `Integer` 值，`upperBound` 必须为 `UnlimitedNatural` 值。 如果`MultiplicityElement` 的 `upperBound` 有无限自然值（“*”）。 如果 `MultiplicityElement` 的 `upperBound`大于 1，则它是多值的（包括无界）。 非多值的 `MultiplicityElement` 最多只能表示一个值。
+
+`MultiplicityElement` 可以定义其边界均为零的重数。 这将允许的基数限制为为 `0`； 也就是说，它要求该元素的实例化不包含任何值。 这在以下情况下很有用概括以约束更一般分类器的基数。 它适用于（但不仅限于）重新定义更通用的分类器中存在的属性。如果 `MultiplicityElement` 被指定为有序（即 `isOrdered` 为 `true`），则实例化中的值集合该元素的值是有序的。 这种排序意味着存在从正整数到元素的映射值的集合。 如果 `MultiplicityElement` 不是多值，则 `isOrdered` 的值没有语义效果。如果 `MultiplicityElement` 被指定为无序（即 `isOrdered` 为 `false`），则不能对该元素的实例化中的值排序。
+
+如果 `MultiplicityElement` 被指定为唯一（即 `isUnique` 为 `true`），则实例化中的值集合该元素必须是唯一的。 也就是说，集合中没有两个值可以相等，其中对象（实例）相等类）基于对象标识，而数据值（数据类型的实例）和信号实例的相等性是基于值。 如果一个`MultiplicityElement` 不是多值的，因此 `isUnique` 的值没有语义效果。总而言之，`isOrdered` 和 `isUnique` 属性可用于指定`MultiplicityElement` 的实例化属于四种类型之一。 
+
+{% asset_img uml_10.png Collection types for MultiplicityElements %}
+
+#### Notation
+
+##### Multiplicity Element
+
+`MultiplicityElement` 的特定符号是为每种具体类型的 `MultiplicityElement` 定义的。 一般来说，符号将包括多重性规范，它显示为包含边界的文本字符串多重性和用于显示可选排序和唯一性规范的符号。
+
+多重界限可以用以下格式显示：
+
+```c++
+<lower-bound> ‘..’ <upper-bound>
+```
+其中 `<lower-bound>` 是 `Integer` 类型的 `ValueSpecification`，`<upper-bound>` 是UnlimitedNatural类型的 `ValueSpecification`。 星号 `(*)` 用作多重性规范的一部分，表示无限的上限边界。如果多重性与表示法是文本字符串（例如属性）的 `MultiplicityElement` 关联，则多重字符串作为该文本字符串的一部分放置在方括号 `([ ])`内。如果多重性与显示为符号（例如关联端）的多重性元素相关联，则多重性字符串显示时不带方括号，并且可以放置在元素符号附近。
+
+如果下限等于上限，则另一种表示法是使用仅包含上限的字符串边界。 例如，“1”在语义上等同于“1..1”多重性。 以零为下界的重数未指定的上限可以使用包含单星“*”而不是“0..*”的替代符号多重性。排序和唯一性规范的具体符号可能会根据具体类型而有所不同多重性元素。 一般的表示法是使用包含“有序”或“无序”的文本注释来定义排序，以及“唯一”或“非唯一”来定义唯一性。
+
+下面的`BNF`定义了多重性字符串的一般语法，包括支持顺序和唯一性指示符：
+
+```c++
+<multiplicity> ::= <multiplicity-range> [ [ ‘{‘ <order-designator> [‘,’ <uniqueness-designator> ] ‘}’ ] |
+[ ‘{‘ <uniqueness-designator> [‘,’ <order-designator> ] ‘}’ ] ]
+<multiplicity-range> ::= [ <lower> ‘..’ ] <upper>
+<lower> ::= <value-specification>
+<upper> ::= <value-specification>
+<order-designator> ::= ‘ordered’ | ‘unordered’
+<uniqueness-designator> ::= ‘unique’ | ‘nonunique’
+```
+
+#### Examples
+
+下图中，显示两个多重字符串作为类符号中属性规范的一部分。
+
+{% asset_img uml_11.png Multiplicity within a textual specification %}
+
+下图中，显示两个多重字符串作为两个关联端规范的一部分。
+
+{% asset_img uml_12.png Multiplicity as an adornment to a symbol %}
+
+### Constraints
+
+#### Summary
+
+约束是一个断言，指示模型的任何有效实现都必须满足的限制包含约束。 `Constraint` 附加到一组 `constrainedElements`，它表示附加语义有关这些元素的信息。
+
+#### Abstract Syntax
+
+{% asset_img uml_13.png Abstract Syntax of Constraints %}
+
+#### Semantics
+
+约束的规范由布尔类型的 `ValueSpecification`给出。 计算规范可以引用约束的 `constrainedElements` 以及约束的上下文。一般来说，约束有多种可能的上下文。 约束的上下文决定了何时评估约束规范。 例如，作为操作前提条件的约束在操作调用开始时，而作为后置条件的约束在操作结束时评估调用。通过评估其规范来评估约束。 如果规范评估为真，则约束为当时就满足了。 如果规范评估为 `false`，则不满足 `Constraint`，并且实现进行评估的模型无效。
+
+#### Notation
+
+某些类型的约束是在 `UML` 中预定义的，其他类型的约束可以是用户定义的。 用户定义的规范约束通常表示为某种语言中的文本字符串，其语法和解释如下所定义语言。 在某些情况下，形式语言（例如 `OCL`）或编程语言（例如 `Java`）可能是适当的，在其他情况下可以使用自然语言。 这样的规范可以表示为具有适当语言和正文的 `OpaqueExpression`。 可以将约束标记为根据以下 `BNF`，文本在大括号 `({})` 内：
+
+```c++
+<constraint> ::= ‘{‘ [ <name> ‘:’ ] <boolean-expression> ‘ }’
+```
+其中 `<name>` 是约束的名称，`<boolean-expression>` 是约束的适当文本表示法约束规范。最常见的是，约束字符串放置在注释符号中，并附加到每个符号`constrainedElements`由虚线表示。对于应用于单个 `constrainedElement`（例如单个类或关联）的约束，约束字符串可以直接放置在 `constrainedElement` 的符号附近，最好靠近名称（如果有）。 一个工具就能做到可以确定`constrainedElement`。对于表示法是文本字符串（例如属性等）的 `Element`，约束字符串可以跟在 `Element` 后面文本字符串。 这样注释的元素就是约束的单个 `constrainedElement`。
+
+对于适用于两个元素（例如两个类或两个关联）的约束，可以显示约束作为约束字符串标记的元素之间的虚线。如果约束显示为两个元素之间的虚线，则可以在一端放置一个箭头。 这箭头方向是约束内的相关信息。 箭头尾部的 Element 映射到 constrainedElement 中的第一个位置，箭头头部的元素映射到 constrainedElement 中的第二个位置。对于三个或更多相同类型的路径（例如泛化路径或关联路径），约束字符串可以附加到穿过所有路径的虚线。
+
+#### Examples
+
+{% asset_img uml_14.png Constraint in a note symbol %}
+
+下图中，显示附加到属性的约束字符串。
+
+{% asset_img uml_15.png Constraint attached to an attribute %}
+
+下图中，显示两个关联之间的 {xor} 约束
+
+{% asset_img uml_16.png {xor} constraint %}
+
+### Dependencies
+
+#### Summary
+
+依赖关系表示模型元素之间的供应商/客户关系，其中供应商的修改可能影响客户端模型元素。
