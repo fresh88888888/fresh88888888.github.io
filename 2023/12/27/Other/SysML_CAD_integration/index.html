@@ -26,11 +26,35 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta property="og:type" content="article">
+    <meta name="description" content="系统建模语言（SysML）什么是系统建模语言？SysML 是一种用于系统工程应用程序的通用架构建模语言。  SysML 支持各种系统和系统之间的规范、分析、设计、验证和确认。这些系统可能包括硬件、软件、信息、流程、人员和设施。 SysML 是 UML 2.x 的方言，并被定义为 UML 2 Profile。（UML 配置文件是一种 UML 方言，它通过三种机制自定义语言：构造型、标记值和约束。）">
+<meta property="og:type" content="article">
 <meta property="og:title" content="MBSE-SysML与CAD集成">
 <meta property="og:url" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/index.html">
 <meta property="og:site_name" content="UMBRELLA">
+<meta property="og:description" content="系统建模语言（SysML）什么是系统建模语言？SysML 是一种用于系统工程应用程序的通用架构建模语言。  SysML 支持各种系统和系统之间的规范、分析、设计、验证和确认。这些系统可能包括硬件、软件、信息、流程、人员和设施。 SysML 是 UML 2.x 的方言，并被定义为 UML 2 Profile。（UML 配置文件是一种 UML 方言，它通过三种机制自定义语言：构造型、标记值和约束。）">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_3.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_6.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_7.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_4.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_5.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_8.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_9.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_10.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_11.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_12.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_13.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_14.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_15.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_16.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_17.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_14.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_18.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_19.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_20.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_21.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_22.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_23.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_2.png">
 <meta property="article:published_time" content="2023-12-27T02:20:41.000Z">
@@ -38,7 +62,7 @@
 <meta property="article:author" content="umbrella">
 <meta property="article:tag" content="MBSE">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration.png">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_3.png">
 
 
 <link rel="canonical" href="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/">
@@ -139,7 +163,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -152,6 +176,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80%EF%BC%88SysML%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">系统建模语言（SysML）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%B3%BB%E7%BB%9F%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">什么是系统建模语言？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E9%9C%80%E6%B1%82%E5%9B%BE-Requirement-Diagram-%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text">什么是 SysML 需求图(Requirement Diagram)？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E7%94%A8%E4%BE%8B%E5%9B%BE-Use-Case-Diagram-%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">什么是 SysML 用例图(Use Case Diagram)？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E6%B4%BB%E5%8A%A8%E5%9B%BE%EF%BC%88Activity-Diagram%EF%BC%89"><span class="nav-number">1.4.</span> <span class="nav-text">什么是 SysML 活动图（Activity Diagram）?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E6%97%B6%E5%BA%8F%E5%9B%BE-Squence-Diagram-%EF%BC%9F"><span class="nav-number">1.5.</span> <span class="nav-text">什么是 SysML 时序图(Squence Diagram)？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E7%8A%B6%E6%80%81%E6%9C%BA%E5%9B%BE-State-Machine-Diagram-%EF%BC%9F"><span class="nav-number">1.6.</span> <span class="nav-text">什么是 SysML 状态机图(State Machine Diagram)？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E5%9D%97%E5%AE%9A%E4%B9%89%E5%9B%BE-Bolock-Definiation-Diagram-%EF%BC%9F"><span class="nav-number">1.7.</span> <span class="nav-text">什么是 SysML 块定义图(Bolock Definiation Diagram)？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E5%86%85%E9%83%A8%E5%9D%97%E5%9B%BE%EF%BC%9F"><span class="nav-number">1.8.</span> <span class="nav-text">什么是 SysML 内部块图？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E5%8F%82%E6%95%B0%E5%9B%BE-Parametric-Diagram-%EF%BC%9F"><span class="nav-number">1.9.</span> <span class="nav-text">什么是 SysML 参数图(Parametric Diagram)？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E5%8C%85%E5%9B%BE-Package-Diagram-%EF%BC%9F"><span class="nav-number">1.10.</span> <span class="nav-text">什么是 SysML 包图(Package Diagram)？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E5%88%86%E9%85%8D%E8%A1%A8-Allocation-Table-%EF%BC%9F"><span class="nav-number">1.11.</span> <span class="nav-text">什么是 SysML 分配表(Allocation Table)？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MBSE"><span class="nav-number">2.</span> <span class="nav-text">MBSE</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -299,14 +324,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>6</span>
+      <span>3k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>10 分钟</span>
     </span>
 </div>
 
@@ -316,9 +341,122 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration.png" class="">
+    <div class="post-body" itemprop="articleBody"><h2 id="系统建模语言（SysML）"><a href="#系统建模语言（SysML）" class="headerlink" title="系统建模语言（SysML）"></a>系统建模语言（SysML）</h2><h3 id="什么是系统建模语言？"><a href="#什么是系统建模语言？" class="headerlink" title="什么是系统建模语言？"></a>什么是系统建模语言？</h3><p><code>SysML</code> 是一种用于系统工程应用程序的通用架构建模语言。</p>
+<ul>
+<li><code>SysML</code> 支持各种系统和系统之间的规范、分析、设计、验证和确认。这些系统可能包括硬件、软件、信息、流程、人员和设施。</li>
+<li><code>SysML</code> 是 <code>UML 2.x</code> 的方言，并被定义为 <code>UML 2 Profile</code>。（<code>UML</code> 配置文件是一种 <code>UML</code> 方言，它通过三种机制自定义语言：构造型、标记值和约束。）</li>
+<li><code>SysML</code> 是基于模型的系统工程 <code>(MBSE)</code>的一项支持技术。</li>
+</ul>
+<p><code>SysML</code>图分类：</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_3.png" class="">
+
 <span id="more"></span>
+
+<h3 id="什么是-SysML-需求图-Requirement-Diagram-？"><a href="#什么是-SysML-需求图-Requirement-Diagram-？" class="headerlink" title="什么是 SysML 需求图(Requirement Diagram)？"></a>什么是 SysML 需求图(Requirement Diagram)？</h3><p>需求：需求（符号：带有“需求”关键字的矩形）是系统必须（“应”）满足的能力或条件。功能需求（&lt;&lt;功能需求&gt;&gt;关键字）指定系统必须执行的功能，而非功能需求（<code>NFR</code>）指定可用于测试系统功能有效性的质量标准。<code>SysML</code> 预定义了 <code>NFR</code> 的以下构造型特性：</p>
+<ul>
+<li>«performanceRequirement»</li>
+<li>«interfaceRequirement»</li>
+<li>«designConstraint»</li>
+<li>«physicalRequirement»</li>
+</ul>
+<p>需求图（<code>req</code>）：<code>SysML</code>需求图是一个静态结构图，显示需求（“需求”）构造、满足（“满足”依赖性）它们的模型元素以及验证（“验证”依赖性）的测试用例之间的关系）。需求图的目的是指定模型中的功能和非功能需求，以便可以将它们追溯到满足它们的其他模型元素和验证它们的测试用例。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_6.png" class="" title="SysML 需求图：顶级需求">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_7.png" class="" title="SysML 需求图：需求集群模式">
+
+<h3 id="什么是-SysML-用例图-Use-Case-Diagram-？"><a href="#什么是-SysML-用例图-Use-Case-Diagram-？" class="headerlink" title="什么是 SysML 用例图(Use Case Diagram)？"></a>什么是 SysML 用例图(Use Case Diagram)？</h3><p>用例：用例（符号：椭圆形）表示与外部系统用户的系统事务，称为参与者。用例有时被视为高级功能需求。用例图 <code>(uc)</code>：用例图显示系统边界（主题；符号：矩形）上下文中系统事务（用例）和外部用户（参与者）之间的通信。参与者可以代表湿件（人、组织、设施）、软件系统或硬件系统。定义系统主体和系统参与者之间的关系是定义系统范围的有效非正式方法。用例图的目的是提供主题系统的高级视图，并以非技术术语向所有利益相关者（包括客户和项目经理以及架构师和工程师）传达顶级系统需求。需要额外的更严格的 <code>SysML</code> 图来指定可扩展和可模拟的系统架构模型 (<code>SAM</code>)。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_4.png" class="" title="SysML 用例图：顶级用例">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_5.png" class="" title="SysML 用例图：用例分解">
+
+<h3 id="什么是-SysML-活动图（Activity-Diagram）"><a href="#什么是-SysML-活动图（Activity-Diagram）" class="headerlink" title="什么是 SysML 活动图（Activity Diagram）?"></a>什么是 SysML 活动图（Activity Diagram）?</h3><p>活动：活动（符号：圆角矩形或“圆角”）表示功能行为流，可能包括可选的对象（数据）流。根据条件，控制和对象流可以是顺序的（默认）或并行的（由分叉和连接节点指示）。</p>
+<ul>
+<li><code>Action</code> &#x3D;  原子<code>Activity</code>, 这是一个原生的可执行动作.</li>
+<li><code>Control Flow</code> &#x3D; 功能行为流</li>
+<li><code>Object Flow</code>&#x3D; 活动或操作的对象输入&#x2F;输出的数据流.</li>
+</ul>
+<p>活动图（<code>act</code>）：活动图使用组合的控制流和对象（数据）流模型显示系统动态行为。活动（以及间接活动图）可以通过在活动定义和调用行为操作用法之间交替进行递归分解（“嵌套”）活动和动作可以被分配（通过代表控制块的分区（即代表系统、子系统、子子系统……原子结构的块）；数据块（即表示持久数据存储的块）和包含数据块的信号可以分配给活动参数和操作引脚；比较和对比：<code>SA/SD DFD、FFBD、EFFFD、IDEF0；BPMN BPD</code>。活动图的目的是使用控制流和对象（数据）流来指定满足系统功能需求的动态系统行为。如果应用得当，活动图可以递归地扩展和模拟。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_8.png" class="" title="SysML 活动图：顶级函数">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_9.png" class="" title="SysML 活动图：功能分解">
+
+<h3 id="什么是-SysML-时序图-Squence-Diagram-？"><a href="#什么是-SysML-时序图-Squence-Diagram-？" class="headerlink" title="什么是 SysML 时序图(Squence Diagram)？"></a>什么是 SysML 时序图(Squence Diagram)？</h3><p>消息：消息（符号：箭头）表示从一个对象到另一个对象的通信，期望随之而来的是有用的行为。消息可以是同步的（表示法：空心箭头）或异步的（表示法：黑色三角形箭头）。时序图<code>(sd)</code>：序列图是一种动态行为图，它通过交换的消息序列以及相应的（可选）事件显示分布式对象或服务之间的交互（协作）。</p>
+<ul>
+<li>协作对象或服务是被描述为生命线的部件（表示法：下面带有垂直虚线的矩形）</li>
+<li>组合片段运算符支持递归嵌套和图灵完备语义（替代<code>[alt]</code>、可选<code>[opt]</code>、并行<code>[par]</code>、循环<code>[loop]</code> 等）</li>
+<li>比较和对比：消息时序图 (<code>MSC</code>)。</li>
+</ul>
+<p>时序图的目的是将动态系统行为指定为原型块（部件）之间的消息传递协作。如果应用得当，活动图可以递归地扩展和模拟。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_10.png" class="" title="SysML 时序图：顶级时序">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_11.png" class="" title="SysML 时序图：参考分解">
+
+<h3 id="什么是-SysML-状态机图-State-Machine-Diagram-？"><a href="#什么是-SysML-状态机图-State-Machine-Diagram-？" class="headerlink" title="什么是 SysML 状态机图(State Machine Diagram)？"></a>什么是 SysML 状态机图(State Machine Diagram)？</h3><p>状态：状态（符号：圆角矩形又名“圆角”）表示对象生命周期中的条件或情况，在此期间它满足某些条件、执行某些活动或等待某些事件。状态机图 (<code>smd</code>)：状态机图是一种动态行为图，显示对象或交互在其生命周期内响应事件（也称为“触发器”）所经历的状态序列。状态机图的目的是指定时间关键、任务关键、安全关键或财务关键对象的动态系统行为。如果应用得当,状态机图可以递归扩展和模拟。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_12.png" class="" title="SysML 状态机图：顶级状态机">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_13.png" class="" title="SysML 状态机图：子状态机">
+
+<h3 id="什么是-SysML-块定义图-Bolock-Definiation-Diagram-？"><a href="#什么是-SysML-块定义图-Bolock-Definiation-Diagram-？" class="headerlink" title="什么是 SysML 块定义图(Bolock Definiation Diagram)？"></a>什么是 SysML 块定义图(Bolock Definiation Diagram)？</h3><p>块：块（表示法：带有关键字&#x3D;<code>“block”</code>的矩形）表示一个系统组件，一个封装其内容（属性，行为，约束）并支持（即可以在其中绘制和直接操作的模块化结构单元）模型存储库）接口。块封装的行为包括：操作、信号和状态机。用于附加和连接（<code>“connection”</code>）块接口的独特交互点称为端口。</p>
+<ul>
+<li>块可以指定软件、硬件、机械和<code>facilities</code>（人员、组织、设施）组件。</li>
+<li>块支持信息和物理流的提供（实现或实现）和必需（使用）接口。</li>
+<li>块可以递归地分解为部分，其中每个部分也必须由块定义。</li>
+</ul>
+<p>块定义图（<code>bdd</code>）：块定义图是一个静态结构图，显示系统组件、它们的内容（属性、行为、约束）、接口和关系。</p>
+<ul>
+<li>通过在块定义图 (<code>BDD</code>)定义和内部框图 (<code>IBD</code>) 用法之间交替，可以将块递归分解（“嵌套”）为多个部分（请参阅下面的使用说明。）</li>
+<li>行为可以由块（例如，操作、信号和状态机）封装，也可以直接或间接（通过接口）分配（通过“分配”依赖性）到块（例如活动&#x2F;动作）。</li>
+<li>可以通过约束块对块进行数学约束，以生成数学上可模拟的参数图。</li>
+</ul>
+<p>块定义图的目的是指定用于控制对象、数据对象和接口对象的系统静态结构。如果应用得当，块定义图可以递归扩展并在数学上（参数）可模拟。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_14.png" class="" title="SysML 块定义图：系统块剖析">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_15.png" class="" title="SysML 块定义图：系统上下文">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_16.png" class="" title="SysML 块定义图：系统接口">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_17.png" class="" title="SysML 块定义图：系统组件">
+
+<h3 id="什么是-SysML-内部块图？"><a href="#什么是-SysML-内部块图？" class="headerlink" title="什么是 SysML 内部块图？"></a>什么是 SysML 内部块图？</h3><p>块：块（表示法：带有关键字&#x3D;<code>“block”</code>的矩形）表示一个系统组件，一个封装其内容（属性，行为，约束）并支持一流（即可以在其中绘制和直接操作的模块化结构单元）模型存储库）接口。块封装的行为包括：操作、信号和状态机。用于附加和连接（“接线”）块接口的独特交互点称为端口。</p>
+<ul>
+<li>块可以指定软件、硬件、机械和湿件（人员、组织、设施）组件。</li>
+<li>块支持信息和物理流的提供（实现或实现）和必需（使用）接口。</li>
+<li>块可以递归地分解为部分，其中每个部分也必须由块定义。</li>
+</ul>
+<p>内部块图（<code>ibd</code>）：内部框图是特定块拥有的静态结构图，显示其封装的结构内容：部件、属性、连接器、端口和接口。换句话说，<code>IBD</code> 是封装（“黑盒”）块的“白盒”视角。</p>
+<ul>
+<li>通过在块定义图 (<code>BDD</code>)定义和内部块图 (&#96;IBD&#96;&#96;) 用法之间交替，可以将块递归分解（“嵌套”）为多个部分。</li>
+<li>行为可以由块（例如，操作、信号和状态机）封装，也可以直接或间接（通过接口）分配（通过“分配”依赖性）到块（例如活动&#x2F;动作）。</li>
+<li>可以通过约束块对块进行数学约束，以生成数学上可模拟的参数图。</li>
+</ul>
+<p>内部块图（<code>IBD</code>）的目的是显示块的封装结构内容（部件、属性、连接器、端口、接口），以便可以使用基于接口的设计技术递归地分解和“<code>connection</code>”它们。如果正确使用，<code>BDD + IBD</code> 可以递归扩展并且可以在数学上（参数）模拟。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_14.png" class="" title="SysML 内部块图：零件定义">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_18.png" class="" title="SysML 内部块图：零件使用">
+
+<h3 id="什么是-SysML-参数图-Parametric-Diagram-？"><a href="#什么是-SysML-参数图-Parametric-Diagram-？" class="headerlink" title="什么是 SysML 参数图(Parametric Diagram)？"></a>什么是 SysML 参数图(Parametric Diagram)？</h3><p>约束块：约束块（表示法：带有关键字 &#x3D; <code>«constraint»</code> 的矩形）定义数学规则 ( <code>Constraint</code> ) 和规则参数，其中后者绑定到块值属性，以便对一个块值属性的更改将传播到其他块值属性以符合数学规则的方式块值属性。</p>
+<p>参数图 (<code>par</code>)：参数图是内部块图 (&#96;IBD&#96;&#96;) 的特例化，它在受约束块参数约束的内部零件值属性上强制执行由约束块定义的数学规则（约束） 。</p>
+<ul>
+<li>约束块参数和内部零件值属性之间的绑定连接器（关键字 &#x3D; <code>«equal»</code>）会影响约束满足（传播）</li>
+</ul>
+<p>参数图 (<code>PAR</code>) 的目的是在块值属性中强制执行数学规则。如果正确使用，<code>BDD + IBD + PAR</code> 可以递归扩展并且可以进行数学模拟。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_19.png" class="" title="SysML 参数图：约束块定义">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_20.png" class="" title="SysML 参数图：约束块使用">
+
+<h3 id="什么是-SysML-包图-Package-Diagram-？"><a href="#什么是-SysML-包图-Package-Diagram-？" class="headerlink" title="什么是 SysML 包图(Package Diagram)？"></a>什么是 SysML 包图(Package Diagram)？</h3><p>包：包（符号：“文件夹”图标）是一种将模型元素和图表组织成组的通用机制。包为在其范围内定义的模型元素定义了唯一的名称空间。</p>
+<ul>
+<li>命名空间&#x3D;一个声明性区域，为其中包含的标识符提供范围。</li>
+</ul>
+<p>包图（<code>pkg</code>）：包图是一个静态结构图，显示包及其内容之间的关系。包可以被构造型（定制）用于将模型元素组织成模型、视图、模型库和框架。</p>
+<p>包图的目的是支持大型、复杂的系统架构模型（<code>SAM</code>）的组织和管理。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_21.png" class="" title="SysML 包图：视图&amp;视角">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_22.png" class="" title="SysML 包图：系统设计视图">
+
+<h3 id="什么是-SysML-分配表-Allocation-Table-？"><a href="#什么是-SysML-分配表-Allocation-Table-？" class="headerlink" title="什么是 SysML 分配表(Allocation Table)？"></a>什么是 SysML 分配表(Allocation Table)？</h3><p>分配：分配依赖性箭头（带有开放箭头表示法的虚线和关键字 &#x3D; <code>«allocate»</code>）关联或映射不同类型或不同层次结构中的模型元素。分配依赖模式通常对于提高模型架构完整性（也称为格式良好）和一致性很有用。<code>SysML</code> 预定义了以下分配依赖项：</p>
+<ul>
+<li>需求依赖性的分配</li>
+<li>活动到分区的分配（泳道）</li>
+</ul>
+<p>分配表：分配表是分配关系的表格（矩阵）表示法，但 <code>SysML</code> 标准没有规定这些格式的特定格式，因此它们往往是特定于供应商的。</p>
+<p>分配表的目的是定义图表类型内部和之间的关系矩阵，以提高模型架构的完整性和一致性。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_23.png" class="" title="SysML 分配表：示例">
+
+<h2 id="MBSE"><a href="#MBSE" class="headerlink" title="MBSE"></a>MBSE</h2><img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration.png" class="">
+
 <img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_2.png" class="">
+
+
     </div>
 
     
@@ -393,14 +531,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">377k</span>
+    <span title="站点总字数">380k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">20:56</span>
+    <span title="站点阅读时长">21:06</span>
   </span>
 </div>
 <div class="busuanzi-count">
