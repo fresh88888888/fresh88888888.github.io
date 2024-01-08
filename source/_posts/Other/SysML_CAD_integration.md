@@ -156,6 +156,26 @@ category:
 
 ## MBSE
 
+### 什么是基于模型的系统工程 (MBSE) 以及如何使用它？
+
+基于模型的系统工程 (`MBSE`)，又名基于模型的系统开发 (`MBSD`)，是一种系统工程过程范例，强调在整个系统开发生命周期 (`SDLC`) 的系统工程活动中应用严格的架构建模原则和最佳实践。这些系统工程活动包括但不限于需求分析、系统（功能）分析、性能分析（权衡研究）、系统设计、系统架构规范以及系统验证和确认（`V&V`）。
+
+{% asset_img SysML_CAD_integration_24.png MBSE 系统体系架构 %}
+
+### SysML 应如何应用于 MBSE 项目？
+
+随着 `SysML` 成为基于模型的系统工程 (`MBSE`) 方法的事实上的标准，几种渐进严格的 `SysML` 使用模式如下：
+
+- 最不严格且最常见的使用模式— `SysML-as-Pretty-Pictures`：这是最不正式且最不严格的 `SysML` 使用模式。不幸的是，这也是 `SysML` 被滥用的最常见方式。在`SysML-as-Pretty-Pictures` 使用模式中，使用`SysML` 表示法代替临时建模表示法（例如`Visio` 或`PowerPoint` 绘图），但对`SysML` 格式良好性及其底层可模拟和可执行语义的关注相对较少。因此，在 `SysML-as-Pretty-Pictures` 模式下生成的 `SysML` 模型很少能够驱动动态模拟或精确指定系统架构蓝图。
+
+- `SysML-as-Model-Simulation`：这种`SysML`使用模式是对`SysML-as-Pretty-Pictures`模式的重大改进，因为它强调系统动态行为和系统参数约束的模拟。在 `SysML-as-System-Simulation` 模式中，至少一些 `SysML` 行为图（活动、序列、状态机图）由行为模拟引擎执行。此外，一些参数图约束也可以由约束传播引擎（`MATLAB/Simulink、OpenModelica、SysML` 工具专有插件等）执行。对于那些寻求摆脱 `SysML-as-Pretty-Pictures` 语言滥用的人来说，这是一种中间 `SysML` 使用模式。
+
+- `SysML-as-System-Architecture-Blueprint`：此 `SysML` 使用模式是对 `SysML-as-Model-Simulation` 模式的实质性改进，因为它扩展了后者以包含系统架构模型 (`SAM`) 的精确且完整的规范。`SAM` 的目的是足够精确和完整，作为系统项目中涉及的所有工程流程的“系统架构真相”，包括系统工程师 (`SE`)、软件工程师 (`SWE`)、电气工程师 (`EE`)、机械工程师 (`ME`) 等。为了使 `SAM` 成为系统工程项目的系统架构真理，`SAM` 必须满足系统架构质量的所有 5 个 `C`（正确、完整、清晰、简洁和一致）。这是一种比较先进的`SysML`使用模式，通常是 - `SysML-as-System-Simulation`模式的自然演进。
+
+- 最严格的 `SYSML` 使用模式— `SysML-as-Executable-System-Architecture`：此 `SysML`` 使用模式是对 `SysML-as-System-Architecture-Blueprint` 模式的重大改进，因为它扩展了后一种模式以实现 `SAM` 的大部分行为和参数规范可模拟，并且可执行。`MBSE`上下文中的可执行文件通常指的是系统接口、系统测试用例的部分或完全自动生成。
+
+{% asset_img SysML_CAD_integration_25.png MBSE + SysML System Architecture Framework Pattern Example %}
+
 {% asset_img SysML_CAD_integration.png %}
 
 {% asset_img SysML_CAD_integration_2.png %}
