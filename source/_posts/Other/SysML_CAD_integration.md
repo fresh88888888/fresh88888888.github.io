@@ -27,10 +27,10 @@ category:
 
 需求：需求（符号：带有“需求”关键字的矩形）是系统必须（“应”）满足的能力或条件。功能需求（<<功能需求>>关键字）指定系统必须执行的功能，而非功能需求（`NFR`）指定可用于测试系统功能有效性的质量标准。`SysML` 预定义了 `NFR` 的以下构造型特性：
 
-- «performanceRequirement»
-- «interfaceRequirement»
-- «designConstraint»
-- «physicalRequirement»
+- `«performanceRequirement»`
+- `«interfaceRequirement»`
+- `«designConstraint»`
+- `«physicalRequirement»`
 
 需求图（`req`）：`SysML`需求图是一个静态结构图，显示需求（“需求”）构造、满足（“满足”依赖性）它们的模型元素以及验证（“验证”依赖性）的测试用例之间的关系）。需求图的目的是指定模型中的功能和非功能需求，以便可以将它们追溯到满足它们的其他模型元素和验证它们的测试用例。
 
