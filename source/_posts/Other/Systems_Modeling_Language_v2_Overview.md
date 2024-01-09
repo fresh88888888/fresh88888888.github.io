@@ -7,7 +7,7 @@ category:
   - other
 ---
 
-### the future of systems engeering is model-based
+### 基于模型的系统工程(MBSE) 的未来
 
 - 作为数字化转型的一部分。
 - 从SoS到组件级的完整生命周期。
