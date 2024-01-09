@@ -543,3 +543,104 @@ The textual syntax for an ElementImport is:
 ##### Opaque Expressions
 
 `OpaqueExpression` 指定根据 `UML` 行为或基于使用除 `UML` 之外的语言的文本语句。 `OpaqueExpression` 可能有一个由一系列文本字符串组成的主体，这些文本字符串表示替代方法计算 `OpaqueExpression` 的值。 相应的语言字符串序列可用于指定每个正文字符串要解释的语言。 语言按顺序与正文字符串匹配。`UML` 规范没有定义正文字符串相对于任何语言的解释方式，尽管其他语言规范可以定义特定的语言字符串，用于指示对这些语言的解释规范（例如，`“OCL”`表示根据 `OCL` 规范解释的表达式）。 另请注意，它不是需要指定语言。 如果未指定，则必须确定任何正文字符串的解释隐含地来自主体的形式或 `OpaqueExpression` 的使用上下文。
+
+#### Examples
+
+##### Expressions
+```c++
+xor、else、plus(x,1)、x+1
+```
+##### Opaque Expressions
+```c++
+a > 0 {OCL} i > j and self.size > i
+average hours worked per week
+```
+
+### Time
+
+#### Summary
+
+该子条款定义了基于简单时间模型生成值的时间表达式和持续时间。 这简单的时间模型旨在作为时间和时间的更复杂方面的情况的近似值可以安全地忽略测量。 例如，在许多分布式系统中，没有全局的时间概念，只有相对于系统的每个分布式元素的本地时间概念。 时间的相对性没有被考虑在内简单的时间模型，也不是由具有有限分辨率的不完美时钟、溢出、漂移、倾斜等造成的影响。假设与这些特征相关的应用程序将使用更复杂的时间模型由适当的配置文件提供。
+
+#### Abstract Syntax
+
+{% asset_img uml_24.png Time and Duration %}
+
+#### Semantics
+
+##### Time
+
+`UML` 的结构建模用于对特定时间的实体属性进行建模。 在相比之下，行为建模构造用于模拟这些属性如何随时间变化。 一个事件是一个当感兴趣的事情发生时，特定时间点可能发生的事情的规范
+正在建模的属性和行为，例如属性值的变化或开始执行活动。在这个概念中，时间只是一个安排事件发生的坐标。 每个事件的发生都可以给出时间坐标值，基于此，可以说是在另一个事件之前、之后或同时发生。持续时间是两个事件发生之间的时间段，计算为时间坐标的差那些事件。 如果模型元素具有行为效果，则该效果可能会在一段时间内发生。 开始持续时间的事件称为进入元素，结束事件称为退出元素。
+
+##### Observations
+
+`Observation`表示对相对于模型的其他部分可能发生的事件的观察。 一个对模型内的 `NamedElement` 进行观察。 感兴趣的事件是当参考进入和退出`NamedElement`。 如果引用的 `NamedElement` 不是行为元素，则持续时间进入和退出 `NamedElement` 之间的值被认为为零，但本规范不另外规定定义在元素上观察到哪些特定事件。观察有两种，时间观察和持续时间观察。`TimeObservation` 观察进入或退出特定的 `NamedElement`。 如果`firstEvent为true`，则它是条目观察到进入的事件，否则观察到退出事件。 `TimeObservation` 的结果是观察到的事件发生。`DurationObservation` 观察相对于一个或两个 `NamedElement` 的持续时间。 如果单个元素是观察到，则观察到的持续时间是元素的进入和退出事件连续发生之间的时间。 如果观察到两个元素，则持续时间介于第一个元素的进入或退出事件与第二个元素的后续进入或退出事件。 在后一种情况下，两个相应的`firstEvent`值也必须是为 `DurationObservation` 给出，这样，如果观察到的元素的`firstEvent=true`，那么它就是入口事件观察到，否则观察到的是退出事件。
+
+##### TimeExpression
+
+`TimeExpression` 是一个 `ValueSpecification`，它计算出某个时刻的时间坐标，可能是相对的对于某些给定的观察集。如果 `TimeExpression` 有 `expr`，则会对其求值以生成 `TimeExpression` 的结果。 表达式必须评估为单个值，但 `UML` 没有定义该值必须具有的任何特定类型或单位。 表达式可能引用与 `TimeExpression` 相关的观察结果，但没有为此类引用定义标准符号。 如果`TimeExpression` 有一个 `expr` 但没有观测值，那么 `expr` 的计算结果为时间常数。如果 `TimeExpression` 没有 `expr`，那么它必须有一个 `TimeObservation` 及其结果观察值是 `TimeExpression` 的值。
+
+#####  Duration
+
+`Duration` 是一个 `ValueSpecification`，它评估某个持续时间，可能相对于某些给定的一组观察。如果 `Duration` 有一个 expr，则对其求值以生成 `DurationExpression` 的结果。 表达式必须评估为单个值，但 `UML` 没有定义该值必须具有的任何特定类型或单位。 表达式可能参考与持续时间相关的观察结果，但没有为此类参考定义标准符号。 如果`Duration` 有一个 `expr` 但没有观测值，然后 `expr` 计算结果为一个持续时间的常量。如果持续时间没有 `expr`，那么它必须有一个 `DurationObservation` 并且该观察的结果是持续时间的值。
+
+#### Notation
+
+##### Observations
+
+观察可以用一条附加到它所引用的 `NamedElement` 的直线来表示。 给出了观察结果显示在该行未连接端附近的名称。 给出了关于观察的附加符号约定相对于通常使用它们的建模结构的其他地方。
+
+##### Time Expressions and Durations
+
+时间表达式或持续时间由其 `expr` 的文本形式表示（如果有的话）。该表示是用于计算时间或持续时间值的公式，其中可以包括相关的名称观察结果和常数。 如果 `TimeExpression`或 `Duration` 没有 `expr`，则它仅由其表示单一相关观察。持续时间是以特定于实现的文本格式给出的相对时间值。 通常，持续时间是一个非负整数表达式，表示在此持续时间内可能经过的“时间刻度”数。
+
+#### Examples
+
+时间通常使用数字坐标表示，在这种情况下，`TimeExpression` 的 `expr` 应计算为数值，其单位可以按照模型中的惯例假定（例如，时间始终以秒为单位）。或者，数据类型可用于对具有特定单位（例如，秒、日等）的时间值和`expr`进行建模然后，`TimeExpression` 应该具有这些类型中适当的一种。持续时间是相对时间的值，因此通常表示为非负数，例如整数持续时间内参考时钟上经过的“时间滴答”数量的计数。 在这种情况下，`expr`的 `DurationExpression`计算结果应为非负数值。 `Duration` 值也可以用来表示自某个固定的时间“原点”以来，时间坐标值的持续时间。
+
+### Intervals
+
+#### Summary
+
+间隔是两个值之间的范围，主要用于断言某些其他元素具有给定范围内的值。 可以为任何类型的值定义间隔，但它们对于时间特别有用持续时间值作为相应 `TimeConstraints` 和 `DurationConstraints` 的一部分。
+
+### Abstract Syntax
+
+{% asset_img uml_25.png Intervals %}
+
+### Semantics
+
+#### Intervals
+
+间隔是使用其他两个 `ValueSpecification`（最小值和最大值）指定的 `ValueSpecification`。 间隔是通过首先评估其每个组成 `ValueSpecifications` ，每个`ValueSpecifications` 必须评估单个值。`Interval` 的值就是从最小值到最大值的范围，即所有大于或等于的值的集合等于最小值且小于或等于最大值（可能是空集）。 请注意，虽然从语法上讲，任何类型的 `ValueSpecifications` 都允许用于 `Interval` 的最小值和最大值，这是一种标准语义仅针对最小和最大 `ValueSpecifications` 具有相同类型和该类型的间隔给出解释其上定义了排序。`Interval` 有两种特殊形式可用于时间约束。 `TimeInterval` 指定两个时间之间的范围由 `TimeExpressions` 给出的时间值。 `DurationInterval` 指定两个持续时间值之间的范围：持续时间。
+
+#### IntervalConstraint
+
+`IntervalConstraint` 定义了一个 `Constraint`，其规范 `Interval` 给出约束。 `IntervalConstraint` 的 `constrainedElements` 被断言为具有范围内的值由 `IntervalConstraint` 的间隔指定。 如果 `constrainedElement` 的值超出此范围，则违反了 `IntervalConstraint`。 如果任何 `constrainedElement` 无法被解释为值，或者其值不相同类型为 `IntervalConstraint` 给定的范围，则 `IntervalConstraint` 没有标准语义解释。`IntervalConstraint` 有两种专门化用于指定时序约束。 `TimeConstraint` 定义了单个 `constrainedElement` 上的 `IntervalConstraint`，其中约束 `Interval` 是 `TimeInterval`。 `DurationConstraint` 在一个或两个 `constrainedElement` 上定义`IntervalConstraint`。
+
+#### Notation
+
+##### Intervals
+
+间隔在文本上由两个用`“..”`分隔的 `ValueSpecifications` 的文本表示形式表示：
+```c++
+<interval> ::= <min-value> ‘ ..’ <max-value>
+```
+`TimeInterval` 用 `Interval` 表示法显示，其中每个 `ValueSpecification` 元素都是一个 `TimeExpression`。 `DurationInterval` 使用 `Interval` 表示法显示，其中每个 `ValueSpecification` 元素都是一个 `Duration`。
+
+## Classification
+
+### Summary
+
+分类是组织的一项重要技术。 本节规定了与分类相关的概念。 这核心概念是分类器，一个抽象元类，其具体子类用于对不同类型的值进行分类。本节中的其他元类表示分类器的组成部分，以及如何实例化分类器的模型使用 `InstanceSpecifications` 以及所有这些概念之间的各种关系。
+
+### Classifiers
+
+#### Summary
+
+分类器表示根据实例的特征对实例进行分类。 分类器按层次结构组织。 `RedefinableElements` 可以在泛化层次结构的上下文中重新定义。
+
+#### Abstract Syntax
+
+{% asset_img uml_26.png Classifiers %}
