@@ -1,5 +1,5 @@
 ---
-title: UML 统一建模语言
+title: UML2.5 统一建模语言
 date: 2022-05-05 12:34:32
 tags:
   - UML
@@ -188,6 +188,15 @@ UML图经过各种大型工程的实践，被证明是一种极其有用的方�
 
 {% asset_img UML-Class-relationships-aggr-composition.png %}
 
+类图是UML 结构图，它在类和 接口 级别显示设计系统的结构 ，显示它们的特性、 约束 和关系—— 关联、 泛化、 依赖等。常见的类图有：领域模型图、实现类图。
+
+领域模型图:
+{% asset_img class-diagram_1.png %}
+
+实现类图:
+{% asset_img class-diagram_2.png %}
+
+##### 
 
 #### 状态图（State Diagram）
 
