@@ -28,7 +28,7 @@
 
     <meta name="description" content="UML 是一种开放的方法，用于说明、可视化、构建和编写一个正在开发的、面向对象的、软件密集系统的制品的开放方法。UML展现了一系列最佳工程实践，这些最佳实践在对大规模，复杂系统进行建模方面，特别是在软件架构层次已经被验证有效。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="UML 统一建模语言">
+<meta property="og:title" content="UML2.5 统一建模语言">
 <meta property="og:url" content="https://fresh88888888.github.io/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/index.html">
 <meta property="og:site_name" content="UMBRELLA">
 <meta property="og:description" content="UML 是一种开放的方法，用于说明、可视化、构建和编写一个正在开发的、面向对象的、软件密集系统的制品的开放方法。UML展现了一系列最佳工程实践，这些最佳实践在对大规模，复杂系统进行建模方面，特别是在软件架构层次已经被验证有效。">
@@ -52,6 +52,8 @@
 <meta property="og:image" content="https://fresh88888888.github.io/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/UML-Class-relationships-realization.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/UML-Class-relationships-dependency.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/UML-Class-relationships-aggr-composition.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/class-diagram_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/class-diagram_2.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/uml-state-diagram-state.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/uml-state-diagram-state-transmit.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/UML-State.png">
@@ -71,10 +73,10 @@
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/","path":"2022/05/05/Design-Patterns/UML-统一建模语言/","title":"UML 统一建模语言"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/","path":"2022/05/05/Design-Patterns/UML-统一建模语言/","title":"UML2.5 统一建模语言"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>UML 统一建模语言 | UMBRELLA</title>
+<title>UML2.5 统一建模语言 | UMBRELLA</title>
   
 
 
@@ -178,7 +180,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">类图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96"><span class="nav-number">1.1.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E8%81%94"><span class="nav-number">1.2.</span> <span class="nav-text">关联</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%9A%E5%90%88"><span class="nav-number">1.3.</span> <span class="nav-text">聚合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%84%E5%90%88"><span class="nav-number">1.4.</span> <span class="nav-text">组合</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OOP"><span class="nav-number">2.</span> <span class="nav-text">OOP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%BD%E8%B1%A1"><span class="nav-number">2.1.</span> <span class="nav-text">抽象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%81%E8%A3%85"><span class="nav-number">2.2.</span> <span class="nav-text">封装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%A7%E6%89%BF"><span class="nav-number">2.3.</span> <span class="nav-text">继承</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E6%80%81"><span class="nav-number">2.4.</span> <span class="nav-text">多态</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UML"><span class="nav-number">3.</span> <span class="nav-text">UML</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B1%BB%E5%9B%BE%EF%BC%88Class-Diagram%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">类图（Class Diagram）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E5%9B%BE%EF%BC%88State-Diagram%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">状态图（State Diagram）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%8A%B6%E6%80%81"><span class="nav-number">3.2.1.</span> <span class="nav-text">状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2"><span class="nav-number">3.2.2.</span> <span class="nav-text">转换</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E7%8A%B6%E6%80%81"><span class="nav-number">3.2.3.</span> <span class="nav-text">初始状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BB%88%E6%AD%A2%E7%8A%B6%E6%80%81"><span class="nav-number">3.2.4.</span> <span class="nav-text">终止状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%A4%E5%AE%9A"><span class="nav-number">3.2.5.</span> <span class="nav-text">判定</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%9B%BE%EF%BC%88Sequence-Diagram%EF%BC%89"><span class="nav-number">3.3.</span> <span class="nav-text">序列图（Sequence Diagram）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">类图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96"><span class="nav-number">1.1.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E8%81%94"><span class="nav-number">1.2.</span> <span class="nav-text">关联</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%9A%E5%90%88"><span class="nav-number">1.3.</span> <span class="nav-text">聚合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%84%E5%90%88"><span class="nav-number">1.4.</span> <span class="nav-text">组合</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OOP"><span class="nav-number">2.</span> <span class="nav-text">OOP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%BD%E8%B1%A1"><span class="nav-number">2.1.</span> <span class="nav-text">抽象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%81%E8%A3%85"><span class="nav-number">2.2.</span> <span class="nav-text">封装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%A7%E6%89%BF"><span class="nav-number">2.3.</span> <span class="nav-text">继承</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E6%80%81"><span class="nav-number">2.4.</span> <span class="nav-text">多态</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UML"><span class="nav-number">3.</span> <span class="nav-text">UML</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B1%BB%E5%9B%BE%EF%BC%88Class-Diagram%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">类图（Class Diagram）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link"><span class="nav-number">3.1.1.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E5%9B%BE%EF%BC%88State-Diagram%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">状态图（State Diagram）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%8A%B6%E6%80%81"><span class="nav-number">3.2.1.</span> <span class="nav-text">状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2"><span class="nav-number">3.2.2.</span> <span class="nav-text">转换</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E7%8A%B6%E6%80%81"><span class="nav-number">3.2.3.</span> <span class="nav-text">初始状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BB%88%E6%AD%A2%E7%8A%B6%E6%80%81"><span class="nav-number">3.2.4.</span> <span class="nav-text">终止状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%A4%E5%AE%9A"><span class="nav-number">3.2.5.</span> <span class="nav-text">判定</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%9B%BE%EF%BC%88Sequence-Diagram%EF%BC%89"><span class="nav-number">3.3.</span> <span class="nav-text">序列图（Sequence Diagram）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -284,12 +286,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="UML 统一建模语言 | UMBRELLA">
+      <meta itemprop="name" content="UML2.5 统一建模语言 | UMBRELLA">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          UML 统一建模语言
+          UML2.5 统一建模语言
         </h1>
 
         <div class="post-meta-container">
@@ -326,14 +328,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>5.8k</span>
+      <span>5.9k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>19 分钟</span>
+      <span>20 分钟</span>
     </span>
 </div>
 
@@ -444,8 +446,14 @@
 <p>聚合和组合比较相近，都表示一对多的关系，而聚合通常用来表示用类的聚合，而组合表示整体和部分的关系；例如学校有很多老师，这种表示聚合关系；而学校也有很多不同的学院，计算机学院，土木工程等，这种表示组合关系，不同类型；在表示上聚合使用空心菱形箭头，组合使用实心菱形箭头表示。</p>
 <img data-src="/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/UML-Class-relationships-aggr-composition.png" class="">
 
+<p>类图是UML 结构图，它在类和 接口 级别显示设计系统的结构 ，显示它们的特性、 约束 和关系—— 关联、 泛化、 依赖等。常见的类图有：领域模型图、实现类图。</p>
+<p>领域模型图:</p>
+<img data-src="/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/class-diagram_1.png" class="">
 
-<h4 id="状态图（State-Diagram）"><a href="#状态图（State-Diagram）" class="headerlink" title="状态图（State Diagram）"></a>状态图（State Diagram）</h4><p>UML 状态图是图表本身的名称，主要用于描述对象具有的各种状态、状态之间的转换过程以及触发状态转换的各种事件和条件。UML 状态图描述了一个状态机，可以被定义为一台机器，它定义了一个对象，这些状态控制外部或内部事件的不同状态，状态机由状态、转换、事件、活动和动作五部分组成。</p>
+<p>实现类图:</p>
+<img data-src="/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/class-diagram_2.png" class="">
+
+<h5 id=""><a href="#" class="headerlink" title=""></a></h5><h4 id="状态图（State-Diagram）"><a href="#状态图（State-Diagram）" class="headerlink" title="状态图（State Diagram）"></a>状态图（State Diagram）</h4><p>UML 状态图是图表本身的名称，主要用于描述对象具有的各种状态、状态之间的转换过程以及触发状态转换的各种事件和条件。UML 状态图描述了一个状态机，可以被定义为一台机器，它定义了一个对象，这些状态控制外部或内部事件的不同状态，状态机由状态、转换、事件、活动和动作五部分组成。</p>
 <ul>
 <li>状态：状态指的是对象在其生命周期中的一种状况，处于某个特定状态中的对象必然会满足某些条件、执行某些动作或者是等待某些事件。一个状态的生命周期是一个有限的时间阶段；</li>
 <li>转换：转换指的是两个不同状态之间的一种关系，表明对象在第一个状态中执行一定的动作，并且在满足某个特定条件下由某个事件触发进入第二个状态；</li>
@@ -528,7 +536,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://fresh88888888.github.io/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/" title="UML 统一建模语言">https://fresh88888888.github.io/2022/05/05/Design-Patterns/UML-统一建模语言/</a>
+      <a href="https://fresh88888888.github.io/2022/05/05/Design-Patterns/UML-%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80/" title="UML2.5 统一建模语言">https://fresh88888888.github.io/2022/05/05/Design-Patterns/UML-统一建模语言/</a>
   </li>
   <li class="post-copyright-license">
       <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -586,14 +594,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">384k</span>
+    <span title="站点总字数">387k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">21:19</span>
+    <span title="站点阅读时长">21:28</span>
   </span>
 </div>
 <div class="busuanzi-count">
