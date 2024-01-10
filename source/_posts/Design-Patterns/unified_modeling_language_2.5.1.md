@@ -478,9 +478,9 @@ The textual syntax for an ElementImport is:
 
 命名空间是模型中的一个元素，它拥有和/或导入一组可以通过以下方式识别的命名元素姓名。
 
-### Values
+## Values
 
-#### Summary
+### Summary
 
 一般来说，`ValueSpecification` 是一个模型元素，被认为是在语义上产生零个或多个值。 值的类型和数量应适合于上下文使用 `ValueSpecification`（由该上下文中给出的约束确定）。以下子条款描述了 `UML` 中可用的各种 `ValueSpecification`。
 
