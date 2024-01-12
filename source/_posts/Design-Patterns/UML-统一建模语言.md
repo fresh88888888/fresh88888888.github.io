@@ -434,7 +434,7 @@ UML中的类或接口可以用作其他分类器的命名空间。这种分类�
 
 {% asset_img class-diagram_24.png 银行账户分类UML类图示例 %}
 
-我们需要注册一些回调方法，以便在调用`takePicture`方法、打开快门、拍照以及图片数据准备好后，由`Camera`异步调用。`SurfaceHolder`是由持有显示表面的对象实现的接口。它允许我们控制表面大小和格式、编辑表面中的像素、监视表面的更改、直接访问表面对象等。`SurfaceHolder.Callback`接口允许接收有关界面更改的信息。
+我们需要注册一些回调方法，以便在调用`takePicture`方法、打开快门、拍照以及图片数据准备好后，由`Camera`异步调用。`SurfaceHolder`是由持有显示表面的对象实现的接口。它允许我们控制表面大小和格式、编辑表面中的像素、监视表面的更改、直接访问表面对象等。`SurfaceHolder.Callback`接口允许接收有关表面更改的信息。
 
 #### 状态图（State Diagram）
 
