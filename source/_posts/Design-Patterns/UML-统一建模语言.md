@@ -142,7 +142,7 @@ foreach (Animal a : bag)
 
 UML图经过各种大型工程的实践，被证明是一种极其有用的方式来描述可视化系统，数据可系统及其他软件系统，所有的软件开发人员都应该学习并掌握它。从种类上来说，它有以下几种类型：
 
-{% asset_img UML图种类.png UML图种类 %}
+{% asset_img UML图种类.png UML2.5图表概述, 蓝色项目不是UML2.5图官方分类的一部分 %}
 
 
 #### 类图（Class Diagram）
