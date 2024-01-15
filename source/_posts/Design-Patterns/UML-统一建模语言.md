@@ -716,7 +716,7 @@ post-condition ::=  '[' constraint ']'
 
 
 
-### 参考资料`
+### 参考资料
 
 1. [UML Diagrams Full Course (Unified Modeling Language)](https://www.youtube.com/watch?v=WnMQ8HlmeXc)
 2. [UML 2.5](https://www.uml-diagrams.org/)
