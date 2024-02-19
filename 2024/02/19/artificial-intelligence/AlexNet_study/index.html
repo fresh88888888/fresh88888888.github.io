@@ -26,29 +26,28 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="使用 std::sync::Mutex 可以多线程共享可变数据，Mutex、RwLock 和原子类型，即使声明为 non-mut，这些类型也可以修改： 123456789101112131415161718192021222324252627282930use std::borrow::Cow;use std::collections::HashMap;use std::sync::&amp;#123;A">
+    <meta name="description" content="一个基于PyTorch实现的AlexNet神经网络AlexNet类包含了原始AlexNet架构中的卷积层部分（features）以及全部连接层部分（classifier）。在Forward函数中，先通过卷积层和最大池化层提取特征，然后将特征展平并通过全连接层进行分类。在实际应用中，还需要加载预训练权重，定义损失函数、优化器、并编写训练和验证循环等代码来完成整个深度学习流程。 12345678910">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Rust】Mutex 使用示例">
-<meta property="og:url" content="https://fresh88888888.github.io/2022/04/13/%E3%80%90Rust%E3%80%91mutex-multithre-share/index.html">
+<meta property="og:title" content="AlexNet神经网络（PyTorch）">
+<meta property="og:url" content="https://fresh88888888.github.io/2024/02/19/artificial-intelligence/AlexNet_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="使用 std::sync::Mutex 可以多线程共享可变数据，Mutex、RwLock 和原子类型，即使声明为 non-mut，这些类型也可以修改： 123456789101112131415161718192021222324252627282930use std::borrow::Cow;use std::collections::HashMap;use std::sync::&amp;#123;A">
+<meta property="og:description" content="一个基于PyTorch实现的AlexNet神经网络AlexNet类包含了原始AlexNet架构中的卷积层部分（features）以及全部连接层部分（classifier）。在Forward函数中，先通过卷积层和最大池化层提取特征，然后将特征展平并通过全连接层进行分类。在实际应用中，还需要加载预训练权重，定义损失函数、优化器、并编写训练和验证循环等代码来完成整个深度学习流程。 12345678910">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-04-13T03:38:52.000Z">
-<meta property="article:modified_time" content="2022-04-13T03:38:52.000Z">
+<meta property="article:published_time" content="2024-02-19T04:34:32.000Z">
+<meta property="article:modified_time" content="2024-02-19T04:34:32.000Z">
 <meta property="article:author" content="umbrella">
-<meta property="article:tag" content="《Rust 程序设计》">
-<meta property="article:tag" content="mutex">
+<meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://fresh88888888.github.io/2022/04/13/%E3%80%90Rust%E3%80%91mutex-multithre-share/">
+<link rel="canonical" href="https://fresh88888888.github.io/2024/02/19/artificial-intelligence/AlexNet_study/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2022/04/13/%E3%80%90Rust%E3%80%91mutex-multithre-share/","path":"2022/04/13/【Rust】mutex-multithre-share/","title":"【Rust】Mutex 使用示例"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/02/19/artificial-intelligence/AlexNet_study/","path":"2024/02/19/artificial-intelligence/AlexNet_study/","title":"AlexNet神经网络（PyTorch）"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>【Rust】Mutex 使用示例 | UMBRELLA</title>
+<title>AlexNet神经网络（PyTorch） | UMBRELLA</title>
   
 
 
@@ -139,7 +138,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -152,6 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E5%9F%BA%E4%BA%8EPyTorch%E5%AE%9E%E7%8E%B0%E7%9A%84AlexNet%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="nav-number">1.</span> <span class="nav-text">一个基于PyTorch实现的AlexNet神经网络</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -244,7 +244,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/04/13/%E3%80%90Rust%E3%80%91mutex-multithre-share/">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/19/artificial-intelligence/AlexNet_study/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.jpeg">
@@ -257,12 +257,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="【Rust】Mutex 使用示例 | UMBRELLA">
+      <meta itemprop="name" content="AlexNet神经网络（PyTorch） | UMBRELLA">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          【Rust】Mutex 使用示例
+          AlexNet神经网络（PyTorch）
         </h1>
 
         <div class="post-meta-container">
@@ -273,7 +273,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-04-13 11:38:52" itemprop="dateCreated datePublished" datetime="2022-04-13T11:38:52+08:00">2022-04-13</time>
+      <time title="创建时间：2024-02-19 12:34:32" itemprop="dateCreated datePublished" datetime="2024-02-19T12:34:32+08:00">2024-02-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -281,7 +281,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
         </span>
     </span>
 
@@ -299,14 +299,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>183</span>
+      <span>529</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
@@ -316,8 +316,10 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>使用 <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/sync/struct.Mutex.html"><code>std::sync::Mutex</code></a> 可以多线程共享可变数据，<code>Mutex</code>、<code>RwLock</code> 和原子类型，即使声明为 <code>non-mut</code>，这些类型也可以修改：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::borrow::Cow;</span><br><span class="line"><span class="keyword">use</span> std::collections::HashMap;</span><br><span class="line"><span class="keyword">use</span> std::sync::&#123;Arc, Mutex&#125;;</span><br><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"><span class="keyword">use</span> std::time::Duration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">// 用 Arc 来提供并发环境下的共享所有权（使用引用计数）</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">metrics</span>: Arc&lt;Mutex&lt;HashMap&lt;Cow&lt;<span class="symbol">&#x27;static</span>, <span class="type">str</span>&gt;, <span class="type">usize</span>&gt;&gt;&gt; =</span><br><span class="line">        Arc::<span class="title function_ invoke__">new</span>(Mutex::<span class="title function_ invoke__">new</span>(HashMap::<span class="title function_ invoke__">new</span>()));</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">_</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">32</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">m</span> = metrics.<span class="title function_ invoke__">clone</span>();</span><br><span class="line">        thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">g</span> = m.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 此时只有拿到 MutexGuard 的线程可以访问 HashMap</span></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">data</span> = &amp;<span class="keyword">mut</span> *g;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Cow 实现了很多数据结构的 From trait，</span></span><br><span class="line">            <span class="comment">// 所以我们可以用 &quot;hello&quot;.into() 生成 Cow</span></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">value</span> = data.<span class="title function_ invoke__">entry</span>(<span class="string">&quot;hello&quot;</span>.<span class="title function_ invoke__">into</span>()).<span class="title function_ invoke__">or_insert</span>(<span class="number">0</span>);</span><br><span class="line">            *value += <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// MutexGuard 被 Drop，锁被释放</span></span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    thread::<span class="title function_ invoke__">sleep</span>(Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">100</span>));</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;metrics: &#123;:?&#125;&quot;</span>, metrics.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    <div class="post-body" itemprop="articleBody"><h4 id="一个基于PyTorch实现的AlexNet神经网络"><a href="#一个基于PyTorch实现的AlexNet神经网络" class="headerlink" title="一个基于PyTorch实现的AlexNet神经网络"></a>一个基于PyTorch实现的AlexNet神经网络</h4><p>AlexNet类包含了原始AlexNet架构中的卷积层部分（features）以及全部连接层部分（classifier）。在Forward函数中，先通过卷积层和最大池化层提取特征，然后将特征展平并通过全连接层进行分类。在实际应用中，还需要加载预训练权重，定义损失函数、优化器、并编写训练和验证循环等代码来完成整个深度学习流程。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AlexNet</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_classes</span>):</span><br><span class="line">        <span class="built_in">super</span>(AlexNet, self).__init__()</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 定义卷积层块</span></span><br><span class="line">        self.features = nn.Sequential(</span><br><span class="line">            <span class="comment"># 第一个卷积层 + 激活函数（ReLU）</span></span><br><span class="line">            nn.Conv2d(<span class="number">3</span>,<span class="number">64</span>,kernel_size=<span class="number">11</span>, stride=<span class="number">4</span>, padding=<span class="number">2</span>),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>),</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 第二个卷积层 + 激活函数</span></span><br><span class="line">            nn.Conv2d(<span class="number">64</span>, <span class="number">192</span>, kernel_size=<span class="number">5</span>, padding=<span class="number">2</span>),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>),</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 第三个卷积层 + 激活函数</span></span><br><span class="line">            nn.Conv2d(<span class="number">192</span>, <span class="number">384</span>, kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 第四个卷积层 + 激活函数</span></span><br><span class="line">            nn.Conv2d(<span class="number">384</span>, <span class="number">256</span>, kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 第五个卷积层 + 激活函数</span></span><br><span class="line">            nn.Conv2d(<span class="number">256</span>, <span class="number">256</span>, kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>),</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 全连接层</span></span><br><span class="line">        self.classifier = nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">256</span> * <span class="number">6</span> * <span class="number">6</span>, <span class="number">4096</span>),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Dropout(),</span><br><span class="line">            </span><br><span class="line">            nn.Linear(<span class="number">4096</span>, <span class="number">4096</span>),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Dropout(),</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 输出层根据类别数量调整输出节点数</span></span><br><span class="line">            nn.Linear(<span class="number">4096</span>, num_classes),</span><br><span class="line">        )</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.features(x)</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), <span class="number">256</span> * <span class="number">6</span> * <span class="number">6</span>)</span><br><span class="line">        x =self.classifier(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个实例</span></span><br><span class="line">model = AlexNet(num_classes=<span class="number">1000</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看模型结构摘要信息</span></span><br><span class="line"><span class="built_in">print</span>(model)</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">AlexNet(</span><br><span class="line">  (features): Sequential(</span><br><span class="line">    (0): Conv2d(3, 64, kernel_size=(11, 11), stride=(4, 4), padding=(2, 2))</span><br><span class="line">    (1): ReLU(inplace=True)</span><br><span class="line">    (2): MaxPool2d(kernel_size=3, stride=2, padding=0, dilation=1, ceil_mode=False)</span><br><span class="line">    (3): Conv2d(64, 192, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2))</span><br><span class="line">    (4): ReLU(inplace=True)</span><br><span class="line">    (5): MaxPool2d(kernel_size=3, stride=2, padding=0, dilation=1, ceil_mode=False)</span><br><span class="line">    (6): Conv2d(192, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (7): ReLU(inplace=True)</span><br><span class="line">    (8): Conv2d(384, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (9): ReLU(inplace=True)</span><br><span class="line">    (10): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</span><br><span class="line">    (11): ReLU(inplace=True)</span><br><span class="line">    (12): MaxPool2d(kernel_size=3, stride=2, padding=0, dilation=1, ceil_mode=False)</span><br><span class="line">  )</span><br><span class="line">  (classifier): Sequential(</span><br><span class="line">    (0): Linear(in_features=9216, out_features=4096, bias=True)</span><br><span class="line">    (1): ReLU(inplace=True)</span><br><span class="line">    (2): Dropout(p=0.5, inplace=False)</span><br><span class="line">    (3): Linear(in_features=4096, out_features=4096, bias=True)</span><br><span class="line">    (4): ReLU(inplace=True)</span><br><span class="line">    (5): Dropout(p=0.5, inplace=False)</span><br><span class="line">    (6): Linear(in_features=4096, out_features=1000, bias=True)</span><br><span class="line">  )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -334,7 +336,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://fresh88888888.github.io/2022/04/13/%E3%80%90Rust%E3%80%91mutex-multithre-share/" title="【Rust】Mutex 使用示例">https://fresh88888888.github.io/2022/04/13/【Rust】mutex-multithre-share/</a>
+      <a href="https://fresh88888888.github.io/2024/02/19/artificial-intelligence/AlexNet_study/" title="AlexNet神经网络（PyTorch）">https://fresh88888888.github.io/2024/02/19/artificial-intelligence/AlexNet_study/</a>
   </li>
   <li class="post-copyright-license">
       <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -343,22 +345,18 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/%E3%80%8ARust-%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E3%80%8B/" rel="tag"># 《Rust 程序设计》</a>
-              <a href="/tags/mutex/" rel="tag"># mutex</a>
+              <a href="/tags/AI/" rel="tag"># AI</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2022/04/12/%E3%80%90Rust%E3%80%91some-useful-code/" rel="prev" title="【Rust】代码片段">
-                  <i class="fa fa-chevron-left"></i> 【Rust】代码片段
+                <a href="/2024/02/18/artificial-intelligence/AI_Agent/" rel="prev" title="AI Agent">
+                  <i class="fa fa-chevron-left"></i> AI Agent
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2022/04/14/%E3%80%90Rust%E3%80%91implement-smart-pointer/" rel="next" title="【Rust】实现智能指针类型">
-                  【Rust】实现智能指针类型 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -471,7 +469,7 @@
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
-  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2022/04/13/%E3%80%90Rust%E3%80%91mutex-multithre-share/"}</script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2024/02/19/artificial-intelligence/AlexNet_study/"}</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
 <script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
