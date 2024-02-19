@@ -26,29 +26,28 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="垃圾回收垃圾收集是通过销毁未使用的对象，回收运行时未使用的内存的过程。垃圾收集器利用垃圾收集根(GCRoots)的概念来识别活动对象和死亡对象。  有系统类加载器加载的类（不是自定义类加载器） 实时线程 当前执行方法的局部变量和参数 JNI方法的局部变量和参数 全局的JNI参考 用作同步监视器的对象 JVM出于其目的而从垃圾回收中保留的对象">
+    <meta name="description" content="基于PyTorch实现的ResNet-18神经网络ResNet（Residual Network），它是一种深度神经网络架构，有何凯明等人2015年提出。ResNet通过引入残差块（Residual Block）解决了深度神经网络时的梯度消失和爆炸问题，从而使得网络可以构建的更深。 这段代码首先定义了ResNet的基础组件——基础残差块（BasicBlock），然后在ResNet类中根据给定的块类">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java虚拟机&amp;垃圾回收">
-<meta property="og:url" content="https://fresh88888888.github.io/2023/07/12/Java/%E8%99%9A%E6%8B%9F%E6%9C%BA&%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/index.html">
+<meta property="og:title" content="ResNet-18神经网络（PyTorch）">
+<meta property="og:url" content="https://fresh88888888.github.io/2024/02/19/artificial-intelligence/ResNet-18_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="垃圾回收垃圾收集是通过销毁未使用的对象，回收运行时未使用的内存的过程。垃圾收集器利用垃圾收集根(GCRoots)的概念来识别活动对象和死亡对象。  有系统类加载器加载的类（不是自定义类加载器） 实时线程 当前执行方法的局部变量和参数 JNI方法的局部变量和参数 全局的JNI参考 用作同步监视器的对象 JVM出于其目的而从垃圾回收中保留的对象">
+<meta property="og:description" content="基于PyTorch实现的ResNet-18神经网络ResNet（Residual Network），它是一种深度神经网络架构，有何凯明等人2015年提出。ResNet通过引入残差块（Residual Block）解决了深度神经网络时的梯度消失和爆炸问题，从而使得网络可以构建的更深。 这段代码首先定义了ResNet的基础组件——基础残差块（BasicBlock），然后在ResNet类中根据给定的块类">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-07-12T06:20:44.000Z">
-<meta property="article:modified_time" content="2023-07-12T06:20:44.000Z">
+<meta property="article:published_time" content="2024-02-19T04:34:32.000Z">
+<meta property="article:modified_time" content="2024-02-19T04:34:32.000Z">
 <meta property="article:author" content="umbrella">
-<meta property="article:tag" content="虚拟机">
-<meta property="article:tag" content="垃圾回收">
+<meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://fresh88888888.github.io/2023/07/12/Java/%E8%99%9A%E6%8B%9F%E6%9C%BA&%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">
+<link rel="canonical" href="https://fresh88888888.github.io/2024/02/19/artificial-intelligence/ResNet-18_study/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2023/07/12/Java/%E8%99%9A%E6%8B%9F%E6%9C%BA&%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/","path":"2023/07/12/Java/虚拟机&垃圾回收/","title":"Java虚拟机&垃圾回收"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/02/19/artificial-intelligence/ResNet-18_study/","path":"2024/02/19/artificial-intelligence/ResNet-18_study/","title":"ResNet-18神经网络（PyTorch）"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Java虚拟机&垃圾回收 | UMBRELLA</title>
+<title>ResNet-18神经网络（PyTorch） | UMBRELLA</title>
   
 
 
@@ -152,7 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">1.</span> <span class="nav-text">垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Java%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%9A%84%E5%90%84%E4%B8%AA%E9%98%B6%E6%AE%B5"><span class="nav-number">1.1.</span> <span class="nav-text">Java垃圾收集的各个阶段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java%E5%88%86%E4%BB%A3%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86"><span class="nav-number">1.2.</span> <span class="nav-text">Java分代垃圾收集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%80%81%E5%B9%B4%E4%BB%A3"><span class="nav-number">1.3.</span> <span class="nav-text">老年代</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B0%B8%E4%B9%85%E4%BB%A3"><span class="nav-number">1.4.</span> <span class="nav-text">永久代</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%83%E7%A9%BA%E9%97%B4"><span class="nav-number">1.5.</span> <span class="nav-text">元空间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.6.</span> <span class="nav-text">垃圾收集器的类型</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8EPyTorch%E5%AE%9E%E7%8E%B0%E7%9A%84ResNet-18%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="nav-number">1.</span> <span class="nav-text">基于PyTorch实现的ResNet-18神经网络</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -245,7 +244,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2023/07/12/Java/%E8%99%9A%E6%8B%9F%E6%9C%BA&%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/19/artificial-intelligence/ResNet-18_study/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.jpeg">
@@ -258,12 +257,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Java虚拟机&垃圾回收 | UMBRELLA">
+      <meta itemprop="name" content="ResNet-18神经网络（PyTorch） | UMBRELLA">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Java虚拟机&垃圾回收
+          ResNet-18神经网络（PyTorch）
         </h1>
 
         <div class="post-meta-container">
@@ -274,7 +273,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2023-07-12 14:20:44" itemprop="dateCreated datePublished" datetime="2023-07-12T14:20:44+08:00">2023-07-12</time>
+      <time title="创建时间：2024-02-19 12:34:32" itemprop="dateCreated datePublished" datetime="2024-02-19T12:34:32+08:00">2024-02-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -282,7 +281,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
         </span>
     </span>
 
@@ -300,14 +299,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.7k</span>
+      <span>443</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>6 分钟</span>
+      <span>1 分钟</span>
     </span>
 </div>
 
@@ -317,51 +316,9 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h3 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h3><p>垃圾收集是通过销毁未使用的对象，回收运行时未使用的内存的过程。垃圾收集器利用垃圾收集根(<code>GCRoots</code>)的概念来识别活动对象和死亡对象。</p>
-<ul>
-<li>有系统类加载器加载的类（不是自定义类加载器）</li>
-<li>实时线程</li>
-<li>当前执行方法的局部变量和参数</li>
-<li><code>JNI</code>方法的局部变量和参数</li>
-<li>全局的<code>JNI</code>参考</li>
-<li>用作同步监视器的对象</li>
-<li><code>JVM</code>出于其目的而从垃圾回收中保留的对象</li>
-</ul>
-<span id="more"></span>
-
-<h4 id="Java垃圾收集的各个阶段"><a href="#Java垃圾收集的各个阶段" class="headerlink" title="Java垃圾收集的各个阶段"></a><code>Java</code>垃圾收集的各个阶段</h4><ul>
-<li><p>将对象标记为活动状态。 当 GC 访问一个对象时，它会将其标记为可访问并因此处于活动状态。垃圾收集器访问的每个对象都被标记为活动对象。所有无法从 GC Root 到达的对象都是垃圾，并被视为垃圾收集的候选对象。</p>
-</li>
-<li><p>扫描死亡对象。 标记阶段之后，我们就有了由活（已访问）对象和死（未访问）对象占用的内存空间。清除阶段释放包含这些死对象的内存碎片。</p>
-</li>
-<li><p>压缩内存剩余的对象。 在扫描阶段移除的死对象不一定彼此相邻。因此，您最终可能会拥有碎片化的内存空间。垃圾收集器删除死对象后可以压缩内存，以便剩余对象位于堆开头的连续块中。压缩过程使按顺序为新对象分配内存变得更容易。</p>
-</li>
-</ul>
-<h4 id="Java分代垃圾收集"><a href="#Java分代垃圾收集" class="headerlink" title="Java分代垃圾收集"></a><code>Java</code>分代垃圾收集</h4><p>JVM中的堆内存区域分为三部分：</p>
-
-
-<h4 id="老年代"><a href="#老年代" class="headerlink" title="老年代"></a>老年代</h4><p>当幸存的对象在幸存者空间中移动达到一定阈值时，它们就会被移动到老年代。您可以使用该-<code>Xmn</code>标志来设置年轻代的大小。</p>
-<p>为对象的任期定义了一个阈值，该阈值决定了在将其移至老一代之前可以存活多少个垃圾收集周期。当对象从老年代被垃圾回收时，它是一个主要的垃圾回收事件。您可以使用-<code>Xms</code>和-<code>Xmx</code>标志来设置堆内存的初始大小和最大大小。</p>
-<p>总结一下：当一个对象被创建时，它首先被放入年轻代的Eden空间 中。一旦发生较小的垃圾回收，来自Eden 的活动对象就会被提升到FromSpace。当下一次次要垃圾回收发生时，Eden和FromSpace中的活动对象都会移动到ToSpace中。这个循环持续特定的次数。如果该对象在此之后仍然被使用，则下一个垃圾收集周期会将其移动到老年代空间。</p>
-<h4 id="永久代"><a href="#永久代" class="headerlink" title="永久代"></a>永久代</h4><p>类和方法等元数据存储在永久代中。它由 JVM 在运行时根据应用程序使用的类进行填充。您可以使用-<code>XX:PermGen</code>和-<code>XX:MaxPermGen</code>标志来设置永久代的初始大小和最大大小。</p>
-<h4 id="元空间"><a href="#元空间" class="headerlink" title="元空间"></a>元空间</h4><p>从 Java 8 开始，<code>MetaSpace</code>内存空间取代了<code>PermGen</code>空间。该实现与 &#96;PermGen 不同，元空间的堆大小也会自动调整。</p>
-<h4 id="垃圾收集器的类型"><a href="#垃圾收集器的类型" class="headerlink" title="垃圾收集器的类型"></a>垃圾收集器的类型</h4><ul>
-<li><p>串行垃圾收集器的jvm参数是：-<code>XX:+UseSerialGC</code>。整个应用程序暂停。由于整个应用程序在垃圾收集期间被冻结，因此在需要低延迟的现实场景中不建议这样做。</p>
-</li>
-<li><p>并行垃圾收集器的JVM 参数是-<code>XX:+UseParallelGC</code>。由于它更适合多线程环境，因此可以在需要完成大量工作并且可以接受长时间暂停的情况下使用它，例如运行批处理作业。</p>
-</li>
-<li><p><code>CMS</code>(并发标记清除) <code>GC</code> 这也称为并发低暂停收集器的JVM 参数是-<code>XX:+UseConcMarkSweepGC</code>。多个线程用于次要垃圾回收，使用与并行相同的算法。主要垃圾收集是多线程的，就像并行旧 <code>GC</code> 一样，但 &#96;CMS&#96;&#96; 与应用程序进程同时运行，以最大限度地减少停止事件。因此，CMS 收集器比其他 GC 使用更多的 CPU。如果您可以分配更多的CPU以获得更好的性能，那么CMS垃圾收集器是比并行收集器更好的选择。CMS GC 中不执行压缩。</p>
-</li>
-<li><p><code>G1</code>(垃圾优先) G1 垃圾收集器的<code>JVM</code>参数是-<code>XX:+UseG1GC</code>。GC 专为具有较大可用堆大小（超过 4GB）的多线程应用程序而设计。它像 CMS 一样是并行和并发的，但与旧的垃圾收集器相比，它的工作原理完全不同。虽然G1也是分代的，但是它没有单独的年轻代和老年代的区域。相反，每一代都是一组区域，这允许以灵活的方式调整年轻代的大小。由于G1GC会识别出垃圾最多的区域，并首先对该区域进行垃圾收集，因此称为垃圾优先。</p>
-</li>
-<li><p><code>Epsilon</code> 垃圾收集器的 JVM 参数是-<code>XX:+UnlockExperimentalVMOptions</code> -<code>XX:+UseEpsilonGC</code> Epsilon 是一个不执行任何操作（no-op）的垃圾收集器，作为 JDK 11 的一部分发布。它处理内存分配，但不实现任何实际的内存回收机制。一旦可用的 Java 堆耗尽，JVM 将关闭。</p>
-</li>
-<li><p><code>Shenandoah</code> 垃圾收集器的 JVM 参数是-<code>XX:+UnlockExperimentalVMOptions</code> -<code>XX:+UseShenandoahGC</code> 它与应用程序线程同时执行更多垃圾收集周期工作。G1 仅在应用程序暂停时才能清空其堆区域，而 Shenandoah 可以与应用程序同时重新定位对象。Shenandoah 可以在检测到可用内存后立即压缩活动对象、清理垃圾并将 RAM 释放回操作系统。由于所有这些都是在应用程序运行时同时发生的，Shenandoah 的 CPU 密集度更高。</p>
-</li>
-<li><p>ZGC 是另一种 GC垃圾收集器的 <code>JVM</code> 参数是-<code>XX:+UnlockExperimentalVMOptions</code> -<code>XX:+UseZGC</code>，作为 <code>JDK 11</code> 的一部分发布，并在 <code>JDK 12</code> 中进行了改进。它适用于需要低延迟（少于 10 毫秒暂停）和&#x2F;或使用非常大的堆（数 TB）的应用程序。<code>ZGC</code> 的主要目标是低延迟、可扩展性和易用性。为了实现这一点，<code>ZGC</code> 允许 Java 应用程序在执行所有垃圾收集操作时继续运行。默认情况下，<code>ZGC</code>取消提交未使用的内存并将其返回给操作系统。因此，<code>ZGC</code> 通过提供极低的暂停时间（通常在 2 毫秒内），比其他传统 GC 带来了显着改进。</p>
-</li>
-</ul>
-
+    <div class="post-body" itemprop="articleBody"><h4 id="基于PyTorch实现的ResNet-18神经网络"><a href="#基于PyTorch实现的ResNet-18神经网络" class="headerlink" title="基于PyTorch实现的ResNet-18神经网络"></a>基于PyTorch实现的ResNet-18神经网络</h4><p><code>ResNet（Residual Network）</code>，它是一种深度神经网络架构，有何凯明等人<code>2015</code>年提出。<code>ResNet</code>通过引入残差块（<code>Residual Block</code>）解决了深度神经网络时的梯度消失和爆炸问题，从而使得网络可以构建的更深。</p>
+<p>这段代码首先定义了<code>ResNet</code>的基础组件——基础残差块（<code>BasicBlock</code>），然后在<code>ResNet</code>类中根据给定的块类型和层数构建整个<code>ResNet</code>模型。其中，每个残差块有多个基础残差块堆叠而成，而整个网络则由四个这样的残差块组成。最后创建了一个<code>ResNet-18</code>实例并打印其模型结构摘要信息。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义基础残差块</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">BasicBlock</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, in_channels, out_channels, stride=<span class="number">1</span>, downsample=<span class="literal">None</span></span>) :</span><br><span class="line">        <span class="built_in">super</span>(BasicBlock, self).__init__()</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 第一个卷积层即归一化层</span></span><br><span class="line">        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=<span class="number">3</span>, stride=stride, padding=<span class="number">1</span>, bias=<span class="literal">False</span>)</span><br><span class="line">        self.bn1 = nn.BatchNorm2d(out_channels)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># ReLU激活函数</span></span><br><span class="line">        self.relu = nn.ReLU(inplace=<span class="literal">True</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 第二个卷积层及归一化层</span></span><br><span class="line">        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=<span class="number">3</span>, stride=<span class="number">1</span>, padding=<span class="number">1</span>, bias=<span class="literal">False</span>)</span><br><span class="line">        self.bn2 = nn.BatchNorm2d(out_channels)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 采样操作</span></span><br><span class="line">        self.downsample = downsample</span><br><span class="line">        <span class="comment"># 存储当前块的步长信息</span></span><br><span class="line">        self.stride = stride</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="comment"># 记录原始输入以用于残差计算</span></span><br><span class="line">        residual = x</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ResNet</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, block, layers, num_classes = <span class="number">1000</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(ResNet, self).__init__()</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 初始化通道数</span></span><br><span class="line">        self.in_channels  = <span class="number">64</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 首先定义网络的第一层：7 x 7卷积、BN、ReLU和最大池化层</span></span><br><span class="line">        self.conv1 = nn.Conv2d(<span class="number">3</span>, <span class="number">64</span>, kernel_size=<span class="number">7</span>, stride=<span class="number">2</span>, padding=<span class="number">3</span>, bias=<span class="literal">False</span>)</span><br><span class="line">        self.relu = nn.ReLU(inplace=<span class="literal">True</span>)</span><br><span class="line">        self.maxpool = nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 创建各个阶段的残差模块</span></span><br><span class="line">        self.layer1 = self.make_layer(block, <span class="number">64</span>, layers[<span class="number">0</span>])</span><br><span class="line">        self.layer2 = self.make_layer(block, <span class="number">128</span>, layers[<span class="number">1</span>], stride=<span class="number">2</span>)</span><br><span class="line">        self.layer3 = self.make_layer(block, <span class="number">256</span>, layers[<span class="number">2</span>], stride=<span class="number">2</span>)</span><br><span class="line">        self.layer4 = self.make_layer(block, <span class="number">512</span>, layers[<span class="number">3</span>], stride=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 平均池化层，将特征图转换为单个值</span></span><br><span class="line">        self.avgpool = nn.AdaptiveAvgPool2d((<span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -378,7 +335,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://fresh88888888.github.io/2023/07/12/Java/%E8%99%9A%E6%8B%9F%E6%9C%BA&%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" title="Java虚拟机&amp;垃圾回收">https://fresh88888888.github.io/2023/07/12/Java/虚拟机&垃圾回收/</a>
+      <a href="https://fresh88888888.github.io/2024/02/19/artificial-intelligence/ResNet-18_study/" title="ResNet-18神经网络（PyTorch）">https://fresh88888888.github.io/2024/02/19/artificial-intelligence/ResNet-18_study/</a>
   </li>
   <li class="post-copyright-license">
       <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -387,21 +344,20 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/" rel="tag"># 虚拟机</a>
-              <a href="/tags/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" rel="tag"># 垃圾回收</a>
+              <a href="/tags/AI/" rel="tag"># AI</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2023/07/09/Other/multipass/" rel="prev" title="【multipass】一个好用的跨平台虚拟机">
-                  <i class="fa fa-chevron-left"></i> 【multipass】一个好用的跨平台虚拟机
+                <a href="/2024/02/18/artificial-intelligence/AI_Agent/" rel="prev" title="AI Agent">
+                  <i class="fa fa-chevron-left"></i> AI Agent
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2023/07/17/Quantitative/grid-trading-strategy-explained/" rel="next" title="【量化】网格交易策略详解">
-                  【量化】网格交易策略详解 <i class="fa fa-chevron-right"></i>
+                <a href="/2024/02/19/artificial-intelligence/AlexNet_study/" rel="next" title="AlexNet神经网络（PyTorch）">
+                  AlexNet神经网络（PyTorch） <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -515,7 +471,7 @@
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
-  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2023/07/12/Java/%E8%99%9A%E6%8B%9F%E6%9C%BA&%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/"}</script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2024/02/19/artificial-intelligence/ResNet-18_study/"}</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
 <script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
