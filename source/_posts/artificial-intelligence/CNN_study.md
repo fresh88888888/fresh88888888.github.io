@@ -21,7 +21,7 @@ class ImageClassifier(nn.Module):
     def __init__(self,num_classes):
         super(ImageClassifier, self).__init__()
         
-        # 卷积层快
+        # 卷积层块
         self.conv_layers = nn.Sequential(
             nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, padding=1),
             nn.ReLU(),
