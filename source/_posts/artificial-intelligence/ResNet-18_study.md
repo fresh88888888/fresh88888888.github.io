@@ -12,6 +12,7 @@ categories:
 `ResNet（Residual Network）`，它是一种深度神经网络架构，有何凯明等人`2015`年提出。`ResNet`通过引入残差块（`Residual Block`）解决了深度神经网络时的梯度消失和爆炸问题，从而使得网络可以构建的更深。
 
 这段代码首先定义了`ResNet`的基础组件——基础残差块（`BasicBlock`），然后在`ResNet`类中根据给定的块类型和层数构建整个`ResNet`模型。其中，每个残差块有多个基础残差块堆叠而成，而整个网络则由四个这样的残差块组成。最后创建了一个`ResNet-18`实例并打印其模型结构摘要信息。
+<!-- more -->
 
 ```python
 import torch
