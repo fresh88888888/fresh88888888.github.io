@@ -26,26 +26,28 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="没事就多看看书">
-<meta property="og:type" content="website">
-<meta property="og:title" content="UMBRELLA">
-<meta property="og:url" content="https://fresh88888888.github.io/categories/Nginx/index.html">
+    <meta name="description" content="损失函数损失函数（Loss Function）：通俗来讲，就像是一个衡量工具或者说‘打分老师’，在机器学习和深度学习中用来评价模型的预测结果有多接近或者说符合实际的真实答案。想象以下，你正在教一个小孩做数学题，每做完一道题，你会检查他的答案与正确答案之间的差距，并且基于这个差距给出反馈。如果完全答对了，那就给满分；如果答错了，错的越多得分就越低。 在模型训练的过程中，损失函数就是一个”打分机制“。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="损失函数（PyTorch）">
+<meta property="og:url" content="https://fresh88888888.github.io/2024/02/20/artificial-intelligence/loss_function_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="没事就多看看书">
+<meta property="og:description" content="损失函数损失函数（Loss Function）：通俗来讲，就像是一个衡量工具或者说‘打分老师’，在机器学习和深度学习中用来评价模型的预测结果有多接近或者说符合实际的真实答案。想象以下，你正在教一个小孩做数学题，每做完一道题，你会检查他的答案与正确答案之间的差距，并且基于这个差距给出反馈。如果完全答对了，那就给满分；如果答错了，错的越多得分就越低。 在模型训练的过程中，损失函数就是一个”打分机制“。">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-02-20T12:34:32.000Z">
+<meta property="article:modified_time" content="2024-02-20T12:34:32.000Z">
 <meta property="article:author" content="umbrella">
-<meta property="article:tag" content="umbrella">
+<meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://fresh88888888.github.io/categories/Nginx/">
+<link rel="canonical" href="https://fresh88888888.github.io/2024/02/20/artificial-intelligence/loss_function_study/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"categories/Nginx/index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/02/20/artificial-intelligence/loss_function_study/","path":"2024/02/20/artificial-intelligence/loss_function_study/","title":"损失函数（PyTorch）"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>分类: Nginx | UMBRELLA</title>
+<title>损失函数（PyTorch） | UMBRELLA</title>
   
 
 
@@ -136,7 +138,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -149,6 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">损失函数</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -230,51 +233,147 @@
 
     </div>
 
-    <div class="main-inner category posts-collapse">
+    <div class="main-inner post posts-expand">
 
 
   
+
+
+<div class="post-block">
   
   
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
-        <h1 class="collection-header">Nginx
-          <small>分类</small>
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/20/artificial-intelligence/loss_function_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="损失函数（PyTorch） | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          损失函数（PyTorch）
         </h1>
-      </div>
 
-      
-    <div class="collection-year">
-      <span class="collection-header">2023</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-02-20 20:34:32" itemprop="dateCreated datePublished" datetime="2024-02-20T20:34:32+08:00">2024-02-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>586</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h4><p>损失函数（<code>Loss Function</code>）：通俗来讲，就像是一个衡量工具或者说‘打分老师’，在机器学习和深度学习中用来评价模型的预测结果有多接近或者说符合实际的真实答案。想象以下，你正在教一个小孩做数学题，每做完一道题，你会检查他的答案与正确答案之间的差距，并且基于这个差距给出反馈。如果完全答对了，那就给满分；如果答错了，错的越多得分就越低。</p>
+<p>在模型训练的过程中，损失函数就是一个”打分机制“。比如模型预测房价、识别图像或翻译句子时，他会生成一个预测值，然后损失函数会对这个预测值与已知真实值，计算出一个误差值（也就是损失）。模型的目标就是通过不断调整内部参数，使得每次预测后的损失尽可能小，即预测结果越来越贴近真实结果。损失函数的主要作用：</p>
+<ul>
+<li>评估模型性能：量化模型预测的好坏，损失越小表示预测越准确。</li>
+<li>指导优化过程：在训练的过程中，通过梯度下降等优化算法，依据损失函数计算出模型参数应如何更新，从而改进模型预测能力。</li>
+<li>模型选择与调参：不同的任务会选择不同的损失函数，合适的损失函数有助于提升模型在特定问题上的表现。<span id="more"></span></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">mport torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个简单的线性模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SimpleModel</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(SimpleModel, self).__init__()</span><br><span class="line">        </span><br><span class="line">        self.linear = nn.Linear(<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">return</span> self.linear(x)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 初始化模型，优化器以及损失函数</span></span><br><span class="line">model = SimpleModel()</span><br><span class="line">optimizer = torch.optim.SGD(model.parameters(), lr=<span class="number">0.01</span>)</span><br><span class="line">loss_fn = nn.MSELoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设我们有一些输入数据和对应的标签</span></span><br><span class="line">inputs = torch.tensor([[<span class="number">1.0</span>],[<span class="number">2.0</span>], [<span class="number">3.0</span>]], dtype=torch.float32)</span><br><span class="line">targets = torch.tensor([[<span class="number">2.0</span>], [<span class="number">4.0</span>], [<span class="number">6.0</span>]], dtype=torch.float32)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将数据送入模型并计算预测值</span></span><br><span class="line">predictions = model(inputs)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算损失</span></span><br><span class="line">loss = loss_fn(predictions, targets)  <span class="comment">#MSE损失是预测值和目标值之间的平方差的平均</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 打印当前损失</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Current loss: &#123;loss.item():.4f&#125;&#x27;</span>, loss.item())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 反向传播即参数更新</span></span><br><span class="line">optimizer.zero_grad()  <span class="comment"># 清零梯度缓冲区</span></span><br><span class="line">loss.backward()        <span class="comment"># 计算梯度</span></span><br><span class="line">optimizer.step()       <span class="comment"># 根据梯度更新模型参数</span></span><br></pre></td></tr></table></figure>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2023-02-26T23:03:57+08:00"
-              content="2023-02-26">
-          02-26
-        </time>
-      </div>
+    
+    
+    
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/02/26/Nginx/Nginx/" itemprop="url">
-            <span itemprop="name">Nginx</span>
-          </a>
-      </div>
+    <footer class="post-footer">
+          
 
-      
-    </header>
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>umbrella
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fresh88888888.github.io/2024/02/20/artificial-intelligence/loss_function_study/" title="损失函数（PyTorch）">https://fresh88888888.github.io/2024/02/20/artificial-intelligence/loss_function_study/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/02/20/artificial-intelligence/Residual_Block_study/" rel="prev" title="残缺块（PyTorch）">
+                  <i class="fa fa-chevron-left"></i> 残缺块（PyTorch）
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
   </article>
+</div>
 
-    </div>
-  </div>
-  
-  
-  
 
+
+
+
+
+    <div class="comments utterances-container"></div>
 </div>
   </main>
 
@@ -375,7 +474,7 @@
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
-  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/categories/Nginx/"}</script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2024/02/20/artificial-intelligence/loss_function_study/"}</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
 <script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
