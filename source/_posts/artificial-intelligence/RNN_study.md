@@ -1,5 +1,5 @@
 ---
-title: 循环神经网络（PyTorch）
+title: 双向/循环神经网络（PyTorch）
 date: 2024-02-20 15:34:32
 tags:
   - AI
