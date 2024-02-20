@@ -1,5 +1,5 @@
 ---
-title: 一个简单的图像识别示例（PyTorch）
+title: 张量（PyTorch）
 date: 2024-02-20 10:34:32
 tags:
   - AI
