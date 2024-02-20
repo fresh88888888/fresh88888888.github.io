@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">70</span>
+          <span class="site-state-item-count">71</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -299,7 +299,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>252</span>
+      <span>253</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -317,6 +317,8 @@
     
     
     <div class="post-body" itemprop="articleBody"><h4 id="揭秘”张量“"><a href="#揭秘”张量“" class="headerlink" title="揭秘”张量“"></a>揭秘”张量“</h4><p>在深度学习和机器学习中，张量（<code>Tensor</code>）是一个充满魔法的多维数组。它能够包容各种数据类型，包括整数、浮点数、布尔值等，展现出强大的包容性和灵活性。在<code>Python</code>的深度学习库<code>PyTorch</code>中，我们能够轻松创建一维、二维和三维张量。值得注意的是，张量的维度也被称为秩（<code>rank</code>），一维张量就是我们口中常说的向量，二维张量即是矩阵高，而更高维度的张量对应于高阶数组。通过张量，我们能够开启深度学习的无限可能，探索机器智慧的奥秘。</p>
+<span id="more"></span>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个一维张量（向量）</span></span><br><span class="line">tensor1 = torch.tensor([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个二维张量（矩阵）</span></span><br><span class="line">tensor2 = torch.tensor([[<span class="number">1</span>,<span class="number">2</span>],[<span class="number">3</span>,<span class="number">4</span>],[<span class="number">5</span>,<span class="number">6</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个三维张量</span></span><br><span class="line">tensor3 = torch.tensor([[[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>]],[[<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>],[<span class="number">10</span>,<span class="number">11</span>,<span class="number">12</span>]]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看张量的形状</span></span><br><span class="line"><span class="built_in">print</span>(tensor1.shape)</span><br><span class="line"><span class="built_in">print</span>(tensor2.shape)</span><br><span class="line"><span class="built_in">print</span>(tensor3.shape)</span><br></pre></td></tr></table></figure>
 <p>输出结果为：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">torch.Size([4])</span><br><span class="line">torch.Size([3, 2])</span><br><span class="line">torch.Size([2, 2, 3])</span><br></pre></td></tr></table></figure>
@@ -358,6 +360,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2024/02/20/artificial-intelligence/Autograd_study/" rel="next" title="自动求导（PyTorch）">
+                  自动求导（PyTorch） <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
@@ -399,7 +404,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">23:23</span>
+    <span title="站点阅读时长">23:24</span>
   </span>
 </div>
 <div class="busuanzi-count">
