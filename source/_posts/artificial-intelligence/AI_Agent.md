@@ -341,3 +341,43 @@ categories:
 
 因此，在实际应用中，我们经常会在新项目初期加载预训练模型，并根据具体任务需求对其进行调整和微调，以达到理想的效果。
 
+#### 40个AI大模型基本概念（PyTorch）
+
+- 张量（Tensors）：PyTorch的基本数据结构，用于存储和处理多维数据。
+- 自动求导（Autograd）：PyTorch的核心功能，实现反向传播进行梯度计算。
+- 神经网络模块（nn.Module）：定义自定义网络层和模型的基类。
+- Sequential容器：线性堆叠多个网络层。
+- 卷积神经网络（CNN）：包括卷积层（nn.Conv2d）、池化层（nn.MaxPool2d）即各种激活函数（nn.ReLU等）的使用。
+- 循环神经网络（RNN）：包括LSTM、GRU等单元的实现（nn.LSTM、nn.GRU）。
+- 双向RNN：在序列中双向传递信息。
+- 变分自编码器（VAE）：构建与训练过程。
+- 生成对抗网络（GAN）：包括判别器和生成器的搭建和训练。
+- 注意力机制（Attention Mechanisms）：应用于Transformer等模型中的关键组。
+- 残差块（Residual Blocks）：在ResNet模型中的应用。
+- 批归一化（Batch Normalization）：加速训练收敛，提高泛化能力。
+- Dropout正则化：防止过拟合的方法。
+- 优化器（Optimzers）：如SGD、Adam等选择与配置。
+- 损失函数（Loss Functions）：包括CrossEntropyLoss、MSELoss等的使用场景。
+- 数据加载器（DataLoader）：配合DataSet实现数据预处理和迭代加载。
+- GPU并行计算：将模型和数据转移到GPU上运行。
+- 动态计算图：PyTorch特有的即时模式编程方式。
+- 保存于加载模型：torch.save与torch.load方法的应用。
+- 模型参数初始化：权重初始化策略。
+- 自定义层（Customer Layers）：如何创建和使用自定义神经网络。
+- 梯度裁剪（Gradient Clipping）：防止梯度过大导致训练不稳定。
+- 学习率调度器（Learning Rate scheduler）：动态调整学习率已优化训练过程。
+- 模型集成（Ensemble Methods）：如平均多个模型预测结果以提高性能。
+- 正则化（Regularization）：L1、L2正则项理解与应用。
+- 序列到序列模式（Seq2Seq）：在机器翻译等任务重应用。
+- 注意力机制在Transformer中的实现：Multi-Head Attention的设计原理。
+- One-hot编码与Embedding层：将离散特征转化为连续向量表示。
+- 对抗训练（Adversarial Training）：增强...。
+- 图像增广（Data Augmentation）：提升模型泛化能力的方法。
+- 激活函数选择与比较：ReLU、Leaky、ELU等。
+- 指数移动平均（EMA）权重更新：用于模型训练时的稳定性和泛化能力。
+- 计算图冻结（Freezing Graph）：在迁移学习中固定预训练模型部分参数。
+- PyTorchLighting库：简化训练循环和分布式训练。
+- 混合精度训练与Apex库：加速训练并减少内存占用。
+- ONNX模型导出：将PyTorch模型转换为其他框架兼容格式。
+- 模型压缩和知识蒸馏：减小模型大小同时保持性能。
+- 强化学习环境接口封装（gym）:...
