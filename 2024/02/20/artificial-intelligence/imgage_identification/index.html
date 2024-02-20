@@ -26,12 +26,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="如何使用PyTorch识别一张图片，并输出这张图的描述思路如下：  模型选择：首先，我们需要一个已经训练好的模型来识别图片。这可以是预训练的模型，例如用于图像分类的模型。 加载模型：使用PyTorch加载预训练模型。 图像预处理：将输入图像调整为模型所需的格式和大小。 模型推理：将预处理后的图像输入到模型中已获得输出。 后处理：理解模型的输出以获得描述。  12345678910111213141">
+    <meta name="description" content="如何使用PyTorch识别一张图片，并输出这张图的描述思路如下：  模型选择：首先，我们需要一个已经训练好的模型来识别图片。这可以是预训练的模型，例如用于图像分类的模型。 加载模型：使用PyTorch加载预训练模型。 图像预处理：将输入图像调整为模型所需的格式和大小。 模型推理：将预处理后的图像输入到模型中已获得输出。 后处理：理解模型的输出以获得描述。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一个简单的图像识别示例（PyTorch）">
 <meta property="og:url" content="https://fresh88888888.github.io/2024/02/20/artificial-intelligence/imgage_identification/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="如何使用PyTorch识别一张图片，并输出这张图的描述思路如下：  模型选择：首先，我们需要一个已经训练好的模型来识别图片。这可以是预训练的模型，例如用于图像分类的模型。 加载模型：使用PyTorch加载预训练模型。 图像预处理：将输入图像调整为模型所需的格式和大小。 模型推理：将预处理后的图像输入到模型中已获得输出。 后处理：理解模型的输出以获得描述。  12345678910111213141">
+<meta property="og:description" content="如何使用PyTorch识别一张图片，并输出这张图的描述思路如下：  模型选择：首先，我们需要一个已经训练好的模型来识别图片。这可以是预训练的模型，例如用于图像分类的模型。 加载模型：使用PyTorch加载预训练模型。 图像预处理：将输入图像调整为模型所需的格式和大小。 模型推理：将预处理后的图像输入到模型中已获得输出。 后处理：理解模型的输出以获得描述。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-02-20T01:34:32.000Z">
 <meta property="article:modified_time" content="2024-02-20T01:34:32.000Z">
@@ -299,7 +299,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>650</span>
+      <span>651</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -322,7 +322,7 @@
 <li>加载模型：使用<code>PyTorch</code>加载预训练模型。</li>
 <li>图像预处理：将输入图像调整为模型所需的格式和大小。</li>
 <li>模型推理：将预处理后的图像输入到模型中已获得输出。</li>
-<li>后处理：理解模型的输出以获得描述。</li>
+<li>后处理：理解模型的输出以获得描述。<span id="more"></span></li>
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">from</span> torchvision.models <span class="keyword">import</span> resnet50</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载预训练模型ResNet-50</span></span><br><span class="line">model = resnet50(weights=<span class="literal">True</span>)</span><br><span class="line">model = model.<span class="built_in">eval</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载并预处理图像</span></span><br><span class="line">image_path = <span class="string">&#x27;18771871.jpg&#x27;</span></span><br><span class="line"></span><br><span class="line">image = Image.<span class="built_in">open</span>(image_path)</span><br><span class="line">transform = transforms.Compose([</span><br><span class="line">                transforms.Resize(<span class="number">256</span>),</span><br><span class="line">                <span class="comment"># 根据模型需求调整大小</span></span><br><span class="line">                transforms.CenterCrop(<span class="number">224</span>),</span><br><span class="line">                transforms.ToTensor(),</span><br><span class="line">                transforms.Normalize(mean=[<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std=[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>]),</span><br><span class="line">            ])</span><br><span class="line"></span><br><span class="line">image = transform(img=image).unsqueeze(<span class="number">0</span>)</span><br><span class="line"><span class="comment"># 模型推理</span></span><br><span class="line">outputs = model(image)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取最大概率的类别索引</span></span><br><span class="line">_, predicted_idx = torch.<span class="built_in">max</span>(outputs, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出描述</span></span><br><span class="line"><span class="built_in">print</span>(predicted_idx)</span><br></pre></td></tr></table></figure>
 <p>输出结果为：</p>
@@ -415,7 +415,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">23:20</span>
+    <span title="站点阅读时长">23:22</span>
   </span>
 </div>
 <div class="busuanzi-count">
