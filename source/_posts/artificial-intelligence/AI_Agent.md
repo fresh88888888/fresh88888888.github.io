@@ -343,41 +343,62 @@ categories:
 
 #### 40个AI大模型基本概念（PyTorch）
 
-- 张量（Tensors）：PyTorch的基本数据结构，用于存储和处理多维数据。
-- 自动求导（Autograd）：PyTorch的核心功能，实现反向传播进行梯度计算。
-- 神经网络模块（nn.Module）：定义自定义网络层和模型的基类。
-- Sequential容器：线性堆叠多个网络层。
-- 卷积神经网络（CNN）：包括卷积层（nn.Conv2d）、池化层（nn.MaxPool2d）即各种激活函数（nn.ReLU等）的使用。
-- 循环神经网络（RNN）：包括LSTM、GRU等单元的实现（nn.LSTM、nn.GRU）。
-- 双向RNN：在序列中双向传递信息。
-- 变分自编码器（VAE）：构建与训练过程。
-- 生成对抗网络（GAN）：包括判别器和生成器的搭建和训练。
-- 注意力机制（Attention Mechanisms）：应用于Transformer等模型中的关键组。
-- 残差块（Residual Blocks）：在ResNet模型中的应用。
-- 批归一化（Batch Normalization）：加速训练收敛，提高泛化能力。
-- Dropout正则化：防止过拟合的方法。
-- 优化器（Optimzers）：如SGD、Adam等选择与配置。
-- 损失函数（Loss Functions）：包括CrossEntropyLoss、MSELoss等的使用场景。
-- 数据加载器（DataLoader）：配合DataSet实现数据预处理和迭代加载。
-- GPU并行计算：将模型和数据转移到GPU上运行。
-- 动态计算图：PyTorch特有的即时模式编程方式。
-- 保存于加载模型：torch.save与torch.load方法的应用。
+- 张量（`Tensors`）：`PyTorch`的基本数据结构，用于存储和处理多维数据。
+- 自动求导（`Autograd`）：`PyTorch`的核心功能，实现反向传播进行梯度计算。
+- 神经网络模块（`nn.Module`）：定义自定义网络层和模型的基类。
+- `Sequential`容器：线性堆叠多个网络层。
+- 卷积神经网络（`CNN`）：包括卷积层（`nn.Conv2d`）、池化层（`nn.MaxPool2d`）即各种激活函数（`nn.ReLU`等）的使用。
+- 循环神经网络（`RNN`）：包括`LSTM、GRU`等单元的实现（`nn.LSTM、nn.GRU`）。
+- 双向`RNN`：在序列中双向传递信息。
+- 变分自编码器（`VAE`）：构建与训练过程。
+- 生成对抗网络（`GAN`）：包括判别器和生成器的搭建和训练。
+- 注意力机制（`Attention Mechanisms`）：应用于`Transformer`等模型中的关键组。
+- 残差块（`Residual Blocks`）：在`ResNet`模型中的应用。
+- 批归一化（`Batch Normalization`）：加速训练收敛，提高泛化能力。
+- `Dropout`正则化：防止过拟合的方法。
+- 优化器（`Optimzers`）：如`SGD、Adam`等选择与配置。
+- 损失函数（`Loss Functions`）：包括`CrossEntropyLoss、MSELoss`等的使用场景。
+- 数据加载器（`DataLoader`）：配合`DataSet`实现数据预处理和迭代加载。
+- `GPU`并行计算：将模型和数据转移到GPU上运行。
+- 动态计算图：`PyTorch`特有的即时模式编程方式。
+- 保存于加载模型：`torch.save`与`torch.load`方法的应用。
 - 模型参数初始化：权重初始化策略。
-- 自定义层（Customer Layers）：如何创建和使用自定义神经网络。
-- 梯度裁剪（Gradient Clipping）：防止梯度过大导致训练不稳定。
-- 学习率调度器（Learning Rate scheduler）：动态调整学习率已优化训练过程。
-- 模型集成（Ensemble Methods）：如平均多个模型预测结果以提高性能。
-- 正则化（Regularization）：L1、L2正则项理解与应用。
-- 序列到序列模式（Seq2Seq）：在机器翻译等任务重应用。
-- 注意力机制在Transformer中的实现：Multi-Head Attention的设计原理。
-- One-hot编码与Embedding层：将离散特征转化为连续向量表示。
-- 对抗训练（Adversarial Training）：增强...。
-- 图像增广（Data Augmentation）：提升模型泛化能力的方法。
-- 激活函数选择与比较：ReLU、Leaky、ELU等。
-- 指数移动平均（EMA）权重更新：用于模型训练时的稳定性和泛化能力。
-- 计算图冻结（Freezing Graph）：在迁移学习中固定预训练模型部分参数。
-- PyTorchLighting库：简化训练循环和分布式训练。
-- 混合精度训练与Apex库：加速训练并减少内存占用。
-- ONNX模型导出：将PyTorch模型转换为其他框架兼容格式。
+- 自定义层（`Customer Layers`）：如何创建和使用自定义神经网络。
+- 梯度裁剪（`Gradient Clipping`）：防止梯度过大导致训练不稳定。
+- 学习率调度器（`Learning Rate scheduler`）：动态调整学习率已优化训练过程。
+- 模型集成（`Ensemble Methods`）：如平均多个模型预测结果以提高性能。
+- 正则化（`Regularization`）：`L1、L2`正则项理解与应用。
+- 序列到序列模式（`Seq2Seq`）：在机器翻译等任务重应用。
+- 注意力机制在`Transformer`中的实现：`Multi-Head Attention`的设计原理。
+- `One-hot`编码与`Embedding`层：将离散特征转化为连续向量表示。
+- 对抗训练（`Adversarial Training`）：增强...。
+- 图像增广（`Data Augmentation`）：提升模型泛化能力的方法。
+- 激活函数选择与比较：`ReLU、Leaky、ELU`等。
+- 指数移动平均（`EMA`）权重更新：用于模型训练时的稳定性和泛化能力。
+- 计算图冻结（`Freezing Graph`）：在迁移学习中固定预训练模型部分参数。
+- `PyTorchLighting`库：简化训练循环和分布式训练。
+- 混合精度训练与`Apex`库：加速训练并减少内存占用。
+- `ONNX`模型导出：将`PyTorch`模型转换为其他框架兼容格式。
 - 模型压缩和知识蒸馏：减小模型大小同时保持性能。
-- 强化学习环境接口封装（gym）:...
+- 强化学习环境接口封装（`gym`）:...
+
+#### 20个常用的PyTorch模型
+
+掌握以上模型的工作原理、结构特点以及应用案例，将为你深入学习大型复杂模型（`GPT-3、GPT-3.5、GPT-4`等）打下了坚实的基础。
+- 线性回归模型（`Linear Regression`）：基础统计建模工具，用于处理连续数值预测问题。
+- 逻辑回归模型（`Logistics Regression`）：分类任务的基础模型，在深度学习框架中，它可以作为多层神经网络的最后一层实现二分类或`softmax`回归进行多分类。
+- 卷积神经网络（`Convolution Neural Networks， CNN`）：如经典的`LeNet、AlexNet、VGG、ResNet`等，广泛应用于图像识别、目标检测等领域。
+- 循环神经网络（`Recurrent Neural Network，RNN`）：包括简单的`RNN`、长短记忆网络（`LSTM`）、门控循环单元（`GRU`）等，适用于序列数据处理，如文本生成，语音识别、机器翻译等。
+- 双向循环神经网络（`Bidirectional RNN`）：结合过去与未来的上下文信息，对序列数据的处理更全面。
+- 变分自编码器（`Variational Autoencoder，VAE`）：无监督学习模型，用于`Transformer`的核心组件，能够捕捉到输入序列内部的长程依赖关系。
+- `U-Net`：在医学图像分割领域非常流行的全卷积网络架构，具有跳跃连接的设计。
+- `YOLO`系列：实时目标检测模型，如`YOLOv3/4/5`，速度快且准确度高。
+- `MobileNet和EfficientNet`：轻量级的`CNN`模型，适用于移动端和嵌入式设备上的计算机视觉任务。
+- `PointNet和PointConv`：针对点云数据设计的深度学习模型，用于三维场景理解。
+- `Deep Q-Network（DQN）`：强化学习算法，在游戏环境中做决策，如`Atari`游戏`AI`。
+- `Policy Gradient Methods`：如`REINFORCE`和`Actor-Critic`，用于解决强化学习中的策略优化问题。
+- `Graph Neural Network（GNN）`：如`GCN、GAT`等，用于处理图像数据结构的学习任务。
+- `Capsule Network：Hinton`提出的新型神经网络结构，尝试模拟人类视觉系统中对象部分有整体的关系。
+- `Multi-task Learning Models`：能够在多个相关任务上共享知识和参数，提高模型泛化能力。
+- `AutoML`模型：如基于`PyTorch`的`AutoGluon`库模型搜索和自动化超参数调整模块。
+- 集成学习模型：例如`PyTorch Lighting`等库中实现的模型平均技术，如`bagging、boosting`和`stacking`等。
