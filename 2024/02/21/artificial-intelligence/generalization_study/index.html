@@ -26,26 +26,28 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="没事就多看看书">
-<meta property="og:type" content="website">
-<meta property="og:title" content="UMBRELLA">
-<meta property="og:url" content="https://fresh88888888.github.io/archives/2023/08/index.html">
+    <meta name="description" content="模型的泛化能力模型的泛化能力（generalization capability）是指一个机器学习和深度学习模型在未见过的新数据上的表现如何，即他能否有效地将从训练集学到的知识迁移到测试集或实际应用中去。如果一个模型对训练数据拟合的非常好，但在新的未知数据上表现糟糕，我们说这个模型过拟合了，它的泛化能力较弱；反之如果模型在保持训练数据良好拟合的同时，在新数据上也能保持较好的性能，则说明具有良好的泛">
+<meta property="og:type" content="article">
+<meta property="og:title" content="模型的泛化能力（PyTorch）">
+<meta property="og:url" content="https://fresh88888888.github.io/2024/02/21/artificial-intelligence/generalization_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="没事就多看看书">
+<meta property="og:description" content="模型的泛化能力模型的泛化能力（generalization capability）是指一个机器学习和深度学习模型在未见过的新数据上的表现如何，即他能否有效地将从训练集学到的知识迁移到测试集或实际应用中去。如果一个模型对训练数据拟合的非常好，但在新的未知数据上表现糟糕，我们说这个模型过拟合了，它的泛化能力较弱；反之如果模型在保持训练数据良好拟合的同时，在新数据上也能保持较好的性能，则说明具有良好的泛">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-02-21T08:34:32.000Z">
+<meta property="article:modified_time" content="2024-02-21T08:34:32.000Z">
 <meta property="article:author" content="umbrella">
-<meta property="article:tag" content="umbrella">
+<meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://fresh88888888.github.io/archives/2023/08/">
+<link rel="canonical" href="https://fresh88888888.github.io/2024/02/21/artificial-intelligence/generalization_study/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"archives/2023/08/index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/02/21/artificial-intelligence/generalization_study/","path":"2024/02/21/artificial-intelligence/generalization_study/","title":"模型的泛化能力（PyTorch）"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>归档 | UMBRELLA</title>
+<title>模型的泛化能力（PyTorch） | UMBRELLA</title>
   
 
 
@@ -82,7 +84,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">UMBRELLA</h1>
+      <p class="site-title">UMBRELLA</p>
       <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">未雨绸缪，举重若轻</p>
@@ -136,7 +138,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -149,6 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B3%9B%E5%8C%96%E8%83%BD%E5%8A%9B"><span class="nav-number">1.</span> <span class="nav-text">模型的泛化能力</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -230,234 +233,144 @@
 
     </div>
 
-    <div class="main-inner archive posts-collapse">
+    <div class="main-inner post posts-expand">
 
 
   
+
+
+<div class="post-block">
   
   
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/21/artificial-intelligence/generalization_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="模型的泛化能力（PyTorch） | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          模型的泛化能力（PyTorch）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-02-21 16:34:32" itemprop="dateCreated datePublished" datetime="2024-02-21T16:34:32+08:00">2024-02-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>526</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="模型的泛化能力"><a href="#模型的泛化能力" class="headerlink" title="模型的泛化能力"></a>模型的泛化能力</h4><p>模型的泛化能力（<code>generalization capability</code>）是指一个机器学习和深度学习模型在未见过的新数据上的表现如何，即他能否有效地将从训练集学到的知识迁移到测试集或实际应用中去。如果一个模型对训练数据拟合的非常好，但在新的未知数据上表现糟糕，我们说这个模型过拟合了，它的泛化能力较弱；反之如果模型在保持训练数据良好拟合的同时，在新数据上也能保持较好的性能，则说明具有良好的泛化能力。下面的代码是通过P一个基于<code>PyTorch</code>框架的简单线性回归模型示例来直观展示模型泛化能力的概念。</p>
+<span id="more"></span>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader, TensorDataset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设我们有一些模拟的数据点，训练集和验证集各一半</span></span><br><span class="line">x_train = torch.randn(<span class="number">1000</span>, <span class="number">1</span>)</span><br><span class="line">y_train = <span class="number">2</span> * x_train + <span class="number">1</span> + torch.randn(<span class="number">1000</span>, <span class="number">1</span>)  <span class="comment"># 训练数据目标值，模拟线性关系并增加噪声</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 划分训练集和验证集</span></span><br><span class="line">x_val = x_train[:<span class="number">500</span>]</span><br><span class="line">y_val = y_train[:<span class="number">500</span>]</span><br><span class="line">x_train = x_train[:<span class="number">500</span>]</span><br><span class="line">y_train = y_train[:<span class="number">500</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建TensorDataset并将数据转化为DataLoader以便批量处理</span></span><br><span class="line">train_data = TensorDataset(x_train, y_train)</span><br><span class="line">val_data = TensorDataset(x_val, y_val)</span><br><span class="line">train_loader = DataLoader(train_data, batch_size=<span class="number">32</span>)</span><br><span class="line">val_loader = DataLoader(val_data, batch_size=<span class="number">32</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个简单的线性回归模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LinearModel</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(LinearModel, self).__init__()</span><br><span class="line"></span><br><span class="line">        self.linear = nn.Linear(<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">return</span> self.linear(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 模型实例化</span></span><br><span class="line">model = LinearModel()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用均方误差损失函数和SGD优化器</span></span><br><span class="line">criterion = nn.MSELoss()</span><br><span class="line">optimizer = optim.SGD(model.parameters(), lr=<span class="number">0.01</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 循环训练，这里简化未单个epoch</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    <span class="keyword">for</span> inputs, targets <span class="keyword">in</span> train_loader:</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        <span class="comment"># 正向传递计算预测值</span></span><br><span class="line">        prediction = model(inputs)</span><br><span class="line">        loss = criterion(prediction, targets)</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">        val_loss = <span class="number">0.0</span></span><br><span class="line">        <span class="keyword">for</span> inputs, targets <span class="keyword">in</span> val_loader:</span><br><span class="line">            preds = model(inputs)</span><br><span class="line">            val_loss = criterion(preds, targets).item() * <span class="built_in">len</span>(inputs)</span><br><span class="line">            </span><br><span class="line">        val_loss /= <span class="built_in">len</span>(val_data)</span><br><span class="line">        </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;Epoch <span class="subst">&#123;epoch + <span class="number">1</span>&#125;</span>, validation Loss: <span class="subst">&#123;val_loss:<span class="number">.4</span>f&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Epoch 1, validation Loss: 0.2673</span><br><span class="line">Epoch 2, validation Loss: 0.1716</span><br><span class="line">Epoch 3, validation Loss: 0.1200</span><br><span class="line">Epoch 4, validation Loss: 0.0916</span><br><span class="line">Epoch 5, validation Loss: 0.0755</span><br><span class="line">Epoch 6, validation Loss: 0.0661</span><br><span class="line">Epoch 7, validation Loss: 0.0605</span><br><span class="line">Epoch 8, validation Loss: 0.0570</span><br><span class="line">Epoch 9, validation Loss: 0.0548</span><br><span class="line">Epoch 10, validation Loss: 0.0534</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>umbrella
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fresh88888888.github.io/2024/02/21/artificial-intelligence/generalization_study/" title="模型的泛化能力（PyTorch）">https://fresh88888888.github.io/2024/02/21/artificial-intelligence/generalization_study/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
         
-        <span class="collection-header">很好! 目前共计 85 篇日志。 继续努力。</span>
-      </div>
 
-      
-    <div class="collection-year">
-      <span class="collection-header">2023</span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2023-08-30T16:23:01+08:00"
-              content="2023-08-30">
-          08-30
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/" itemprop="url">
-            <span itemprop="name">基于业务驱动设计方法</span>
-          </a>
-      </div>
-
-      
-    </header>
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/02/21/artificial-intelligence/gpt_study/" rel="prev" title="GPT与传统模型的区别（PyTorch）">
+                  <i class="fa fa-chevron-left"></i> GPT与传统模型的区别（PyTorch）
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
   </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2023-08-30T12:23:01+08:00"
-              content="2023-08-30">
-          08-30
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/08/30/Design-Patterns/multi-runtime-architecture/" itemprop="url">
-            <span itemprop="name">多运行时微服务架构</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2023-08-30T10:23:01+08:00"
-              content="2023-08-30">
-          08-30
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/08/30/Other/authentication/" itemprop="url">
-            <span itemprop="name">认证、授权、凭证</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2023-08-29T12:23:01+08:00"
-              content="2023-08-29">
-          08-29
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/08/29/Design-Patterns/dev-invest-ops/" itemprop="url">
-            <span itemprop="name">开发、运维、投资模式</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2023-08-22T10:23:01+08:00"
-              content="2023-08-22">
-          08-22
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/08/22/Cloud-Native/service-mesh/" itemprop="url">
-            <span itemprop="name">Service Mesh 架构</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2023-08-14T10:23:01+08:00"
-              content="2023-08-14">
-          08-14
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/08/14/Cloud-Native/%E3%80%90Docker%E3%80%91%E6%9E%84%E5%BB%BA%E5%9F%BA%E7%A1%80%E9%95%9C%E5%83%8F/" itemprop="url">
-            <span itemprop="name">【Docker】构建基础镜像</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2023-08-07T10:23:01+08:00"
-              content="2023-08-07">
-          08-07
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/08/07/Cloud-Native/%E3%80%90%E6%B7%B7%E6%B2%8C%E5%B7%A5%E7%A8%8B%E3%80%91%E4%BB%8B%E7%BB%8D%E5%92%8C%E5%AD%A6%E4%B9%A0/" itemprop="url">
-            <span itemprop="name">【混沌工程】介绍</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2023-08-03T20:23:01+08:00"
-              content="2023-08-03">
-          08-03
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/08/03/Cloud-Native/%E3%80%90Bash%20%E7%BC%96%E7%A8%8B%E3%80%91tests-conditionals/" itemprop="url">
-            <span itemprop="name">【Bash 编程】Tests And Conditionals</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2023-08-02T20:23:01+08:00"
-              content="2023-08-02">
-          08-02
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/08/02/Cloud-Native/%E3%80%90Bash%20%E7%BC%96%E7%A8%8B%E3%80%91variable-expand/" itemprop="url">
-            <span itemprop="name">【Bash 编程】变量和扩展</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2023-08-01T20:23:01+08:00"
-              content="2023-08-01">
-          08-01
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/08/01/Cloud-Native/%E3%80%90Bash%20%E7%BC%96%E7%A8%8B%E3%80%91command-parameter/" itemprop="url">
-            <span itemprop="name">【Bash 编程】命令行和参数</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
+</div>
 
 
-    </div>
-  </div>
-  
-  
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/archives/2023/08/page/2/">2</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/archives/2023/08/page/2/"><i class="fa fa-angle-right"></i></a>
-  </nav>
 
+
+
+
+    <div class="comments utterances-container"></div>
 </div>
   </main>
 
@@ -558,7 +471,7 @@
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
-  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/archives/2023/08/"}</script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2024/02/21/artificial-intelligence/generalization_study/"}</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
 <script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
