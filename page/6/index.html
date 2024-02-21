@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">78</span>
+          <span class="site-state-item-count">79</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -231,6 +231,113 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/06/27/%E3%80%90Rust%E3%80%91%E6%89%80%E6%9C%89%E6%9D%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/06/27/%E3%80%90Rust%E3%80%91%E6%89%80%E6%9C%89%E6%9D%83/" class="post-title-link" itemprop="url">【Rust】所有权</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-06-27 23:57:30" itemprop="dateCreated datePublished" datetime="2022-06-27T23:57:30+08:00">2022-06-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>在编程语言的内存使用中，我们经常遇到什么时候释放内存以及如何确定访问的内存是否已被释放等问题。对于内存管理方式，存在着两大阵营：</p>
+<ul>
+<li><p>一种是以 <code>Python</code>，<code>JavaScript</code>， <code>Ruby</code>，<code>Java</code>， <code>C#</code>，以及 <code>Go</code> 等为代表的拥有垃圾回收器的语言，垃圾回收器在对象不再被访问时，会释放对象所持有的内存。这种方式对开发者友好，因为我们不用太多关心内存的申请和释放，但是这意味着将对象释放的权利交给了垃圾回收器，对于理解什么时候释放内存会是一个较大的挑战。</p>
+</li>
+<li><p>另一种是以 <code>C</code> 和 <code>C++</code> 为代表的语言，它们将内存的申请和回收完全交给了开发者，这造成过很多致命的问题，悬垂指针，访问已释放内存以及多重释放等问题；</p>
+</li>
+</ul>
+<p><code>Rust</code>旨在既安全又高效，因此这两种方案都不能接受，但如果有更好的方案，估计早就有人做了。<code>Rust</code> 通过限制程序使用指针的方式打破了这种非得妥协的僵局。<code>Rust</code>的做法激进，但这成了它成功的基础，尽管有诸多限制，但使用起来依然足够灵活。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/27/%E3%80%90Rust%E3%80%91%E6%89%80%E6%9C%89%E6%9D%83/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1263,114 +1370,6 @@ Process finished with exit code 101
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/" class="post-title-link" itemprop="url">【Rust】迭代器</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-05-28 20:20:44" itemprop="dateCreated datePublished" datetime="2022-05-28T20:20:44+08:00">2022-05-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>6.9k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>23 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>迭代器是产生一系列值的值，通常用于循环操作。<code>Rust</code> 的标准库提供了遍历<code>vector</code>、字符串、哈希表和其他集合的迭代器，还提供了从输入流生成文本行、网络连接、用于多线程之间值传递的迭代器，<code>Rust</code> 的迭代器灵活、富有表现力且高效。</p>
-<p>在 <code>Rust</code> 中，<a target="_blank" rel="noopener" href="https://doc.rust-lang.org/stable/std/iter/trait.Iterator.html"><code>std::iter::Iterator</code></a> 和 <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/stable/std/iter/trait.IntoIterator.html"><code>std::iter::IntoIterator</code></a> 是实现迭代器的基础。</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">Iterator</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Item</span>;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">next</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;<span class="keyword">Self</span>::Item&gt;;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>迭代器可以是任何实现了 <code>Iterator</code> 的值，<code>Item</code> 是每次迭代产生的值，<code>next</code> 要么返回 <code>Some(v)</code>，<code>v</code> 是下一个值，要么返回 <code>None</code> 表示迭代结束。</p>
-<p>想要被迭代的类型也可以实现 <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/stable/std/iter/trait.IntoIterator.html"><code>std::iter::IntoIterator</code></a>，它的 <code>into_iter</code> 返回一个迭代器：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">IntoIterator</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Item</span>;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">IntoIter</span>: <span class="built_in">Iterator</span>;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">into_iter</span>(<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span>::IntoIter;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们常用的 <code>for</code> 循环仅仅是先调用 <code>into_iter</code> 生成一个迭代器，然后重复调用迭代器的 <code>next</code> 方法，直到 <code>next</code> 返回 <code>None</code>，预示着迭代结束。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/05/28/%E3%80%90Rust%E3%80%91%E8%BF%AD%E4%BB%A3%E5%99%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/7/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1404,7 +1403,7 @@ Process finished with exit code 101
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">23:39</span>
+    <span title="站点阅读时长">23:41</span>
   </span>
 </div>
 <div class="busuanzi-count">
