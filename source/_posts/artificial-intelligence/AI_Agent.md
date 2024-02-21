@@ -402,3 +402,12 @@ categories:
 - `Multi-task Learning Models`：能够在多个相关任务上共享知识和参数，提高模型泛化能力。
 - `AutoML`模型：如基于`PyTorch`的`AutoGluon`库模型搜索和自动化超参数调整模块。
 - 集成学习模型：例如`PyTorch Lighting`等库中实现的模型平均技术，如`bagging、boosting`和`stacking`等。
+
+#### 学习AI大模型的开原资料
+
+- `transforms`：一个用于训练、微调、加载和使用`transformers`的库。
+- `huggingface/transformers`：一个用于加载、训练和部署多种预训练模型（例如`BERT、GPT、T5`等）的开源库。
+- `pytorch/text/nmt`：一个用于自然语言处理的开源NMT模型库。
+- `tensorflow/models`：`TensorFlow`框架下的各种模型库，包括图像分类、语音识别、`NLP`等。
+- `keras/keras`：一个高级神经网络API，可以运行`TensorFlow、Theano`和`Caffe`后端之上。
+- `fasterai/fastai`：一个用于深度学习的库，提供易于使用的`API`和训练模型，可以运行在`PyTorch`之上
