@@ -18,6 +18,7 @@ categories:
     - 还有额外的小贴士（`info`）
 
 简而言之，`Gym`简化了环境交互，让你专心训练`AI`算法，无需研究背后的实现。
+<!-- more -->
 
 ```python
 import torch
