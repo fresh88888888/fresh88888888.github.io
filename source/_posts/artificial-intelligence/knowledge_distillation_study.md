@@ -60,5 +60,5 @@ for images, labels in data_loader:
     loss.backward()
     optimizer.step()
     
-# 这里省略了实际训练过程中循环、学习了调整和验证等细节
+# 这里省略了实际训练过程中循环、学习率调整和验证等细节
 ```
