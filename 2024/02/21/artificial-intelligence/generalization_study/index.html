@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-count">86</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -299,7 +299,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>526</span>
+      <span>525</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -316,7 +316,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h4 id="模型的泛化能力"><a href="#模型的泛化能力" class="headerlink" title="模型的泛化能力"></a>模型的泛化能力</h4><p>模型的泛化能力（<code>generalization capability</code>）是指一个机器学习和深度学习模型在未见过的新数据上的表现如何，即他能否有效地将从训练集学到的知识迁移到测试集或实际应用中去。如果一个模型对训练数据拟合的非常好，但在新的未知数据上表现糟糕，我们说这个模型过拟合了，它的泛化能力较弱；反之如果模型在保持训练数据良好拟合的同时，在新数据上也能保持较好的性能，则说明具有良好的泛化能力。下面的代码是通过P一个基于<code>PyTorch</code>框架的简单线性回归模型示例来直观展示模型泛化能力的概念。</p>
+    <div class="post-body" itemprop="articleBody"><h4 id="模型的泛化能力"><a href="#模型的泛化能力" class="headerlink" title="模型的泛化能力"></a>模型的泛化能力</h4><p>模型的泛化能力（<code>generalization capability</code>）是指一个机器学习和深度学习模型在未见过的新数据上的表现如何，即他能否有效地将从训练集学到的知识迁移到测试集或实际应用中去。如果一个模型对训练数据拟合的非常好，但在新的未知数据上表现糟糕，我们说这个模型过拟合了，它的泛化能力较弱；反之如果模型在保持训练数据良好拟合的同时，在新数据上也能保持较好的性能，则说明具有良好的泛化能力。下面的代码是通过一个基于<code>PyTorch</code>框架的简单线性回归模型示例来直观展示模型泛化能力的概念。</p>
 <span id="more"></span>
 
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader, TensorDataset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设我们有一些模拟的数据点，训练集和验证集各一半</span></span><br><span class="line">x_train = torch.randn(<span class="number">1000</span>, <span class="number">1</span>)</span><br><span class="line">y_train = <span class="number">2</span> * x_train + <span class="number">1</span> + torch.randn(<span class="number">1000</span>, <span class="number">1</span>)  <span class="comment"># 训练数据目标值，模拟线性关系并增加噪声</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 划分训练集和验证集</span></span><br><span class="line">x_val = x_train[:<span class="number">500</span>]</span><br><span class="line">y_val = y_train[:<span class="number">500</span>]</span><br><span class="line">x_train = x_train[:<span class="number">500</span>]</span><br><span class="line">y_train = y_train[:<span class="number">500</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建TensorDataset并将数据转化为DataLoader以便批量处理</span></span><br><span class="line">train_data = TensorDataset(x_train, y_train)</span><br><span class="line">val_data = TensorDataset(x_val, y_val)</span><br><span class="line">train_loader = DataLoader(train_data, batch_size=<span class="number">32</span>)</span><br><span class="line">val_loader = DataLoader(val_data, batch_size=<span class="number">32</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个简单的线性回归模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LinearModel</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(LinearModel, self).__init__()</span><br><span class="line"></span><br><span class="line">        self.linear = nn.Linear(<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">return</span> self.linear(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 模型实例化</span></span><br><span class="line">model = LinearModel()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用均方误差损失函数和SGD优化器</span></span><br><span class="line">criterion = nn.MSELoss()</span><br><span class="line">optimizer = optim.SGD(model.parameters(), lr=<span class="number">0.01</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 循环训练，这里简化未单个epoch</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    <span class="keyword">for</span> inputs, targets <span class="keyword">in</span> train_loader:</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        <span class="comment"># 正向传递计算预测值</span></span><br><span class="line">        prediction = model(inputs)</span><br><span class="line">        loss = criterion(prediction, targets)</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">        val_loss = <span class="number">0.0</span></span><br><span class="line">        <span class="keyword">for</span> inputs, targets <span class="keyword">in</span> val_loader:</span><br><span class="line">            preds = model(inputs)</span><br><span class="line">            val_loss = criterion(preds, targets).item() * <span class="built_in">len</span>(inputs)</span><br><span class="line">            </span><br><span class="line">        val_loss /= <span class="built_in">len</span>(val_data)</span><br><span class="line">        </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;Epoch <span class="subst">&#123;epoch + <span class="number">1</span>&#125;</span>, validation Loss: <span class="subst">&#123;val_loss:<span class="number">.4</span>f&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
@@ -359,6 +359,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2024/02/21/artificial-intelligence/knowledge_distillation_study/" rel="next" title="模型压缩与知识蒸馏（PyTorch）">
+                  模型压缩与知识蒸馏（PyTorch） <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
@@ -400,7 +403,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">23:52</span>
+    <span title="站点阅读时长">23:55</span>
   </span>
 </div>
 <div class="busuanzi-count">

@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-count">86</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -240,6 +240,106 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/21/artificial-intelligence/knowledge_distillation_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/02/21/artificial-intelligence/knowledge_distillation_study/" class="post-title-link" itemprop="url">模型压缩与知识蒸馏（PyTorch）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-02-21 19:34:32" itemprop="dateCreated datePublished" datetime="2024-02-21T19:34:32+08:00">2024-02-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>760</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="模型压缩与知识蒸馏"><a href="#模型压缩与知识蒸馏" class="headerlink" title="模型压缩与知识蒸馏"></a>模型压缩与知识蒸馏</h4><p>模型压缩技术就像就像经验丰富的老师教学生的过程。大而复杂的教师模型已经学到了很多“知识”，包括不仅限于准确预测的能力，还包括对输入数据细微差别的敏感度。学生模型则相对简单，通过模仿教师模型的输出以及中间层特征分布来学习这些知识，这样即使学生模型结构简单、参数少，也能达到接近甚至超越教师模型的表现。模型压缩就像给模型做“断舍离”，它通过剪枝（丢掉不那么重要的参数）、量化（把复杂的数字变简单）、智能结构设计（<code>NAS</code>帮你找最优架构）和模块替换（换上高效的小部件），巧妙的缩小模型体积，还不影响表现力。</p>
+<p>知识蒸馏则是师傅带徒弟的好戏。大而强的教师模型传授经验给小而精的学生模型，教会学生模仿自己识别图像、做决策的能力，结果小模型也能接近甚至超越师傅的水平，但体积却迷你的多。为什么这两种技术非常重要呢？</p>
+<ul>
+<li>资源效率<code>UP</code>：大大减少计算、存储和传输数据的需求，在手机，物联网设备这些地方超实用。</li>
+<li>实时响应<code>GET</code>：压缩后的模型推理速度更快，满足各种实时应用需求。</li>
+<li>理解力&amp;适应性<code>PLUS</code>：只是蒸馏可以提炼关键特征，让模型更好解释且能更好应对新情况。</li>
+<li>轻松部署无压力：小模型轻轻松松在各种硬件平台上安家落户，尤其适合资源有限的环境。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torchvision.models <span class="keyword">import</span> resnet18, resnet50</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义教师模型（复杂模型）</span></span><br><span class="line">teacher_model = resnet50(weights=<span class="literal">True</span>) <span class="comment"># 使用预训练好的resnet50作为教师模型</span></span><br><span class="line">teacher_model.<span class="built_in">eval</span>()                   <span class="comment"># 设置为评估模式，因为这里我们不需要进一步训练教师模型</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义学生模型（较小模型）</span></span><br><span class="line">student_model = resnet18(num_classes = teacher_model.fc.out_features) <span class="comment"># 学生模型的输出类别数与教师模型相同</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义损失函数（只是蒸馏通常用KL散度作为损失）</span></span><br><span class="line">loss_fn = nn.KLDivLoss(reduction=<span class="string">&#x27;batchmean&#x27;</span>)  <span class="comment"># Kullback-Leibler Divergence用于比较两个概率分布</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设我们有一个数据加载器data_loader</span></span><br><span class="line">data_loader = []</span><br><span class="line">tempperature = <span class="number">1.0</span></span><br><span class="line"></span><br><span class="line">optimizer = optim.SGD(student_model.parameters(), lr=<span class="number">0.01</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> images, labels <span class="keyword">in</span> data_loader:</span><br><span class="line">    <span class="comment"># 将图像输入到教师和学生模型中得到预测结果</span></span><br><span class="line">    <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">        <span class="comment"># 教师模型不更新参数，所以关闭梯度计算</span></span><br><span class="line">        teacher_outputs = teacher_model(images)</span><br><span class="line">        <span class="comment"># 软化教师模型的输出（tempperature时刻调节的温度参数）</span></span><br><span class="line">        teacher_probs = torch.softmax(teacher_outputs / tempperature, dim=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    student_outputs = student_model(images)</span><br><span class="line">    <span class="comment"># 对学生模型的输出同样进行软化</span></span><br><span class="line">    student_probs = torch.softmax(student_outputs / tempperature, dim=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 计算KL散度损失</span></span><br><span class="line">    loss = loss_fn(student_probs, teacher_probs)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 反向传播并优化学生模型</span></span><br><span class="line">    optimizer.zero_grad()</span><br><span class="line">    loss.backward()</span><br><span class="line">    optimizer.step()</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 这里省略了实际训练过程中循环、学习了调整和验证等细节</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/21/artificial-intelligence/generalization_study/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -288,7 +388,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>526</span>
+      <span>525</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -306,7 +406,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h4 id="模型的泛化能力"><a href="#模型的泛化能力" class="headerlink" title="模型的泛化能力"></a>模型的泛化能力</h4><p>模型的泛化能力（<code>generalization capability</code>）是指一个机器学习和深度学习模型在未见过的新数据上的表现如何，即他能否有效地将从训练集学到的知识迁移到测试集或实际应用中去。如果一个模型对训练数据拟合的非常好，但在新的未知数据上表现糟糕，我们说这个模型过拟合了，它的泛化能力较弱；反之如果模型在保持训练数据良好拟合的同时，在新数据上也能保持较好的性能，则说明具有良好的泛化能力。下面的代码是通过P一个基于<code>PyTorch</code>框架的简单线性回归模型示例来直观展示模型泛化能力的概念。</p>
+          <h4 id="模型的泛化能力"><a href="#模型的泛化能力" class="headerlink" title="模型的泛化能力"></a>模型的泛化能力</h4><p>模型的泛化能力（<code>generalization capability</code>）是指一个机器学习和深度学习模型在未见过的新数据上的表现如何，即他能否有效地将从训练集学到的知识迁移到测试集或实际应用中去。如果一个模型对训练数据拟合的非常好，但在新的未知数据上表现糟糕，我们说这个模型过拟合了，它的泛化能力较弱；反之如果模型在保持训练数据良好拟合的同时，在新数据上也能保持较好的性能，则说明具有良好的泛化能力。下面的代码是通过一个基于<code>PyTorch</code>框架的简单线性回归模型示例来直观展示模型泛化能力的概念。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2024/02/21/artificial-intelligence/generalization_study/#more" rel="contents">
@@ -1147,106 +1247,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/20/artificial-intelligence/Residual_Block_study/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/02/20/artificial-intelligence/Residual_Block_study/" class="post-title-link" itemprop="url">残缺块（PyTorch）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-02-20 19:34:32" itemprop="dateCreated datePublished" datetime="2024-02-20T19:34:32+08:00">2024-02-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>277</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="残缺块"><a href="#残缺块" class="headerlink" title="残缺块"></a>残缺块</h4><p>残缺块是深度学习中一个重要的概念，尤其在卷积神经网络中。它的主要目的是帮助网络更好地学习输入和输出之间的差异，从而提高模型的性能。残差块通过引入跳跃连接，是网络能直接学习输入和输出之间的差异，从而避免了梯度消失或梯度爆炸的问题。这种设计有助于网络更好地学习输入和输出之间的差异，从而提高模型的性能和泛化能力。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/02/20/artificial-intelligence/Residual_Block_study/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1280,7 +1280,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">23:52</span>
+    <span title="站点阅读时长">23:55</span>
   </span>
 </div>
 <div class="busuanzi-count">
