@@ -18,7 +18,7 @@ categories:
 <!-- more -->
 
 ```python
-mport torch
+import torch
 import torch.nn as nn
 
 
