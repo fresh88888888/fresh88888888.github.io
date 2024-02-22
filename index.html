@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-count">91</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -231,6 +231,107 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/22/artificial-intelligence/cnn_mlp_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/02/22/artificial-intelligence/cnn_mlp_study/" class="post-title-link" itemprop="url">CNN与MLP的区别（PyTorch）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-02-22 16:34:32" itemprop="dateCreated datePublished" datetime="2024-02-22T16:34:32+08:00">2024-02-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>885</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="CNN与MLP的区别"><a href="#CNN与MLP的区别" class="headerlink" title="CNN与MLP的区别"></a>CNN与MLP的区别</h4><p><code>CNN</code>与<code>MLP</code>的区别：</p>
+<ul>
+<li><code>CNN</code>（卷积神经网络）：就像一个厉害的画家，它通过扫描局部特征（比如边缘、纹理）来识别图片。特备擅长看图说话，由“局部观察员”卷积层找到关键线索，接着用池化层浓缩信息，最后全连接层整合所有线索判断画中内容类别。<code>CNN</code>的强项在于处理图像和视频这类局部细节丰富的数据。</li>
+<li><code>MLP</code>（多层感知机）：则仿佛是一位音乐大师，专注于倾听旋律与节奏的全局特征，从而识别音乐风格。<code>MLP</code>在处理文本和声音这类整体模式重要的数据时独具匠心。它的结构就像层层堆叠的乐团，每层神经元都跟前一层相连，共同构建复杂映射关系。总结一下，<code>CNN</code>是图像处理专家，专攻局部特征；<code>MLP</code>则是文本和音频的理解高手，聚焦全局特征。</li>
+</ul>
+<p><code>CNN</code>模型：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> datasets, transforms</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义超参数</span></span><br><span class="line">input_size = <span class="number">784</span>       <span class="comment"># 输入图像的维度</span></span><br><span class="line">hidden_size = <span class="number">500</span>      <span class="comment"># 隐藏层神经元数量</span></span><br><span class="line">num_classes = <span class="number">10</span>       <span class="comment"># 输出类别的数量（0~9）</span></span><br><span class="line">num_epochs = <span class="number">5</span>         <span class="comment"># 训练轮数</span></span><br><span class="line">batch_sise = <span class="number">100</span>       <span class="comment"># 批处理大小</span></span><br><span class="line">learning_rate = <span class="number">0.001</span>  <span class="comment"># 学习率</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据预处理: 将图像转化为张量，并归一化到[0，1]区间</span></span><br><span class="line">transform = transforms.Compose([</span><br><span class="line">    transforms.ToTensor(),</span><br><span class="line">    transforms.Normalize((<span class="number">0.5</span>,), (<span class="number">0.5</span>,)),</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载MNIST数据集</span></span><br><span class="line">train_dataset = datasets.MNIST(root=<span class="string">&#x27;./data&#x27;</span>, train=<span class="literal">True</span>, transform=transform)</span><br><span class="line">test_dataset = datasets.MNIST(root=<span class="string">&#x27;./data&#x27;</span>, train=<span class="literal">False</span>, transform=transform)</span><br><span class="line"></span><br><span class="line">tarin_loader = torch.utils.data.DataLoader(</span><br><span class="line">    train_dataset, batch_size=batch_sise, shuffle=<span class="literal">True</span>)</span><br><span class="line">test_loader = torch.utils.data.DataLoader(</span><br><span class="line">    test_dataset, batch_size=batch_sise, shuffle=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义CNN模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CNN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_size, hidden_size, num_classes</span>):</span><br><span class="line">        <span class="built_in">super</span>(CNN, self).__init__()</span><br><span class="line">        self.fc1 = nn.Linear(input_size, hidden_size)</span><br><span class="line">        self.relu = nn.ReLU()</span><br><span class="line"></span><br><span class="line">        self.fc2 = nn.Linear(hidden_size, num_classes)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forwar</span>(<span class="params">self, x</span>):</span><br><span class="line">        out = self.fc1(x)</span><br><span class="line">        out = self.relu(out)</span><br><span class="line">        out = self.fc2(out)</span><br><span class="line">        <span class="keyword">return</span> out</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例化模型、损失函数和优化器</span></span><br><span class="line">model = CNN(input_size, hidden_size, num_classes)</span><br><span class="line"><span class="comment"># 交叉熵损失函数</span></span><br><span class="line">criterion = nn.CrossEntropyLoss()</span><br><span class="line"><span class="comment"># SGD优化器</span></span><br><span class="line">optimizer = optim.SGD(model.parameters(), lr=learning_rate)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练模型</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">    <span class="keyword">for</span> i, (images, labels) <span class="keyword">in</span> <span class="built_in">enumerate</span>(tarin_loader):</span><br><span class="line">        <span class="comment"># 前向传播，得到预测输出</span></span><br><span class="line">        outputs = model(images)</span><br><span class="line">        <span class="comment"># 计算损失值</span></span><br><span class="line">        loss = criterion(outputs, labels)</span><br><span class="line">        <span class="comment"># 清空梯度缓存（因为PyTorch会累积梯度）</span></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        <span class="comment"># 反向传播，计算梯度值</span></span><br><span class="line">        loss.backward()</span><br><span class="line">        <span class="comment"># 根据梯度执行权重（执行优化步骤）</span></span><br><span class="line">        optimizer.step()</span><br><span class="line">        <span class="keyword">if</span> (i + <span class="number">1</span>) % <span class="number">100</span> == <span class="number">0</span>:</span><br><span class="line">            <span class="comment"># 每100个Batch打印一次损失值和准确率</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&#x27;Epoch [<span class="subst">&#123;epoch + <span class="number">1</span>&#125;</span>/<span class="subst">&#123;num_epochs&#125;</span>], Step [<span class="subst">&#123;i + <span class="number">1</span>&#125;</span>/<span class="subst">&#123;<span class="built_in">len</span>(tarin_loader)&#125;</span>], Loss: <span class="subst">&#123;loss.item():<span class="number">.4</span>f&#125;</span>&#x27;</span>)</span><br><span class="line">            </span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试模型</span></span><br><span class="line">model.<span class="built_in">eval</span>()</span><br><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    correct = <span class="number">0</span></span><br><span class="line">    total = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> images, labels <span class="keyword">in</span> test_loader:</span><br><span class="line">        outputs = model(images)</span><br><span class="line">        _, predicted = torch.<span class="built_in">max</span>(outputs.data, <span class="number">1</span>)</span><br><span class="line">        total += labels.size(<span class="number">0</span>)</span><br><span class="line">        correct += (predicted == labels).<span class="built_in">sum</span>().item()</span><br><span class="line">        </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;Accuracy of the network on the 10000 test images: <span class="subst">&#123;<span class="number">100</span> * correct / total&#125;</span>%&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Training finshied.&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>MLP模型：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torchtext <span class="keyword">import</span> data, datasets</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义MLP模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MLP</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_dim, hidden_dim, output_dim</span>):</span><br><span class="line">        <span class="built_in">super</span>(MLP, self).__init__()</span><br><span class="line">        self.fc1 = nn.Linear(input_dim, hidden_dim)</span><br><span class="line">        self.relu = nn.ReLU()</span><br><span class="line"></span><br><span class="line">        self.fc2 = nn.Linear(hidden_dim, output_dim)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forwar</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = torch.relu(self.fc1(x))</span><br><span class="line">        x = self.fc2(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据预处理</span></span><br><span class="line">TEXT = data.Field(tokenize=<span class="string">&#x27;spacy&#x27;</span>, lower=<span class="literal">True</span>)</span><br><span class="line">LABEL = data.LabelField(dtype= torch.<span class="built_in">float</span>)</span><br><span class="line"></span><br><span class="line">train_data, test_data = datasets.IMDB.splits(TEXT, LABEL)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建词汇表</span></span><br><span class="line">MAX_VOCAB_SIZE = <span class="number">64</span></span><br><span class="line">TEXT.build_vocab(train_data, MAX_VOCAB_SIZE)</span><br><span class="line">LABEL.build_vocab(train_data)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据加载器</span></span><br><span class="line">batch_size = <span class="number">64</span></span><br><span class="line">train_iterator, test_iterator = data.BucketIterator.splits(</span><br><span class="line">    (train_data, test_data),</span><br><span class="line">    batch_size = batch_size,</span><br><span class="line">    device = device,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化模型、损失函数和优化器</span></span><br><span class="line">model = MLP(input_dim=TEXT.vocab.vectors.shape[<span class="number">1</span>], hidden_dim=<span class="number">512</span>, output_dim=<span class="number">1</span>)</span><br><span class="line">criterion = nn.BCEWithLogitsLoss()</span><br><span class="line">optimizer = optim.Adam(model.parameters())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练模型</span></span><br><span class="line">num_epochs = <span class="number">5</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(num_epochs):</span><br><span class="line">    model.train()</span><br><span class="line">    <span class="keyword">for</span> texts, labels <span class="keyword">in</span> <span class="built_in">enumerate</span>(train_iterator):</span><br><span class="line">        <span class="comment"># 清空梯度缓存（因为PyTorch会累积梯度）</span></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        outputs = model(texts)</span><br><span class="line">        loss = criterion(outputs.squeeze(), labels.<span class="built_in">float</span>())</span><br><span class="line">        <span class="comment"># 反向传播，计算梯度值</span></span><br><span class="line">        loss.backward()</span><br><span class="line">        <span class="comment"># 根据梯度执行权重（执行优化步骤）</span></span><br><span class="line">        optimizer.step()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27;Epoch [<span class="subst">&#123;epoch + <span class="number">1</span>&#125;</span>/<span class="subst">&#123;num_epochs&#125;</span>], Loss: <span class="subst">&#123;loss.item():<span class="number">.4</span>f&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试模型</span></span><br><span class="line">model.<span class="built_in">eval</span>()</span><br><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    correct = <span class="number">0</span></span><br><span class="line">    total = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> texts, labels <span class="keyword">in</span> test_iterator:</span><br><span class="line">        outputs = model(texts)</span><br><span class="line">        _, predicted = torch.<span class="built_in">max</span>(outputs.data, <span class="number">1</span>)</span><br><span class="line">        total += labels.size(<span class="number">0</span>)</span><br><span class="line">        correct += (predicted == labels).<span class="built_in">sum</span>().item()</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;Accuracy of the network on the 10000 test images: <span class="subst">&#123;<span class="number">100</span> * correct / total&#125;</span>%&#x27;</span>)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1154,108 +1255,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/21/artificial-intelligence/store_load_study/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/02/21/artificial-intelligence/store_load_study/" class="post-title-link" itemprop="url">保存和加载模型（PyTorch）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-02-21 11:34:32" itemprop="dateCreated datePublished" datetime="2024-02-21T11:34:32+08:00">2024-02-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>387</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="保存和加载模型"><a href="#保存和加载模型" class="headerlink" title="保存和加载模型"></a>保存和加载模型</h4><p>当我们在训练深度学习模型时，经常会遇到训练周期较长的情况，或者我们需要对模型进行反复调整和优化。为了节省时间，提高效率，我们可以将训练好的模型保存下来，然后在需要时加载模型进行推理和继续训练。在<code>PyTorch</code>中，保存和加载模型的过程非常简单，我们可以使用<code>torch.save()</code>和<code>torch.load()</code>函数来实现。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/02/21/artificial-intelligence/store_load_study/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
@@ -1280,14 +1281,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">435k</span>
+    <span title="站点总字数">436k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">24:09</span>
+    <span title="站点阅读时长">24:12</span>
   </span>
 </div>
 <div class="busuanzi-count">
