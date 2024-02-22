@@ -60,6 +60,7 @@ if __name__ == '__main__':
     # 计算融合后的特征
     fused_representations = model(visual_data, textual_data)
 ```
+#### Transformer介绍
 
 而`Transformer`就像是一个超级智能的读者，它能同时看到整本书的所有词句，并且知道哪些词句之间最重要、最相关。它通过“自注意力机制”来实现这一点，这种机制让模型可以聚焦于文本的不同部分，并考虑整体上下文信息，而不是顺序地一次处理一个词。简单来说，`Transformer`能够更高效并行地处理整个句子和段落，决定每个词在生成最终结果时的重要程度。由于这个特性，`Transformer`在翻译、问答系统、文本分类等各种自然语言处理任务中表现出色，并且是`BERT、GPT`等众多NLP模型的基础架构。
 
@@ -145,4 +146,71 @@ model = SimpleTransformerEncoderLayer(embed_dim, num_heads)
 # 假设我们有10个样本，每个样本包含20个特征的512维嵌入向量
 inputs = torch.randn(10, 20, embed_dim)
 output = model(inputs)
+```
+
+#### Transformer的编/解码器
+
+`Transformer`模型的编码器和解码器是用来处理序列数据（比如自然语言文本）的核心组件。
+- 编码器：想象一下你正在阅读一本外文书，你需要把它翻译成你的母语。编码器就像是一个非常聪妈且能同时理解整段话含义的读者。它会逐个读取输入句子中的每个单词，并生成一个“上下文感知”的向量表示。这个过程不是顺序但不执行的，而是让每个单词都能关注到句子中其他所有单词，从而获得整个句子的全局信息。具体来说，编码器通过多头自注意力机制实现这一点，即每个单词都计算与它单词之间的权重关系，然后综合这些关系形成自己的表示。
+- 解码器：接收到编码器输出的整个源语言句子的山下文向量后，解码器的任务就像一个能够根据上下预测下一个单词的翻译者。但它不能看到完成的待翻译目标句子，而是在生成每个目标词时及参考已生成的部分和源语言的上下文信息。解码器也有一个多头自注意力层，它不仅考虑了已生成的目标词汇，还通过所谓的“编码器-解码器注意力”机制获取源语言的信息。这样，解码器可以逐步生成翻译后的目标句子。
+
+```python
+import torch
+import torch.nn as nn
+
+class TransformerEncoderLayer(nn.Module):
+    def __init__(self, d_model, n_heads, dropout = 0.1):
+        super(TransformerEncoderLayer, self).__init__()
+        
+        self.self_attn= MultiHeadAttention(d_model, n_heads)
+
+        self.norm1 = nn.LayerNorm(d_model)
+        self.dropout1 = nn.Dropout(dropout)
+        self_fc = nn.Linear(d_model, d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+        self_dropout2 = nn.Dropout(dropout)
+        
+    def forward(self, src, src_mask=None):
+        # 输入src是经过位置编码后的词嵌入序列
+        attn_output = self.self_attntion(src, src, src, attn_mask=atten_mask)
+        attn_output = self.norm1(src + attn_output)
+        out1 = self.norm1(src + attn_output)   # 残差连接归一化
+        
+        fc_out = self.fc(out1)
+        fc_out = self.dropout2(fc_out)
+        out2 = self.norm2(out1 + fc_out)       # 再次残差连接归一化
+        
+        return out2
+
+class TransformerDecoderLayer(nn.Module):
+    def __init__(self, d_model, n_heads, dropout = 0.1):
+        super(TransformerDecoderLayer, self).__init__()
+
+        self.self_attn= MultiHeadAttention(d_model, n_heads)
+        self.enc_dec_attn = MultiHeadAttention(d_model, n_heads)
+        # 注意力后的残差层和归一化
+        self.norm1 = nn.LayerNorm(d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+        self.norm3 = nn.LayerNorm(d_model)
+        
+        self.dropout1 = nn.Dropout(dropout)
+        self.dropout2 = nn.Dropout(dropout)
+        self.dropout3 = nn.Dropout(dropout)
+        self_fc = nn.Linear(d_model, d_model)
+
+    def forward(self, tgt, memory, tgt_mask=None):
+        # tgt 是待解码的目标序列词嵌入memory是编码器的输出，包含源语言的上下文信息
+        self_attn_output, _ = self.self_attntion(tgt, tgt, tgt, attn_mask=tgt_mask)
+        self_attn_output = self.dropout1(self_attn_output)
+        out1 = self.norm1(tgt + self_attn_output)   # 目标自注意力部分的残差连接和归一化
+
+        enc_dec_attn_output, _ = self.enc_dec_attn(out1, memory, attn_mask = memory_mask)
+        enc_dec_attn_output = self.dropout2(enc_dec_attn_output)
+        out2 = self.norm2(out1 + enc_dec_attn_output)  # 编码器-解码器注意力部分的残差连接和归一化
+        
+        fc_out = self.fc(out2)
+        fc_out = self.dropout3(fc_out)
+        out3 = self.norm3(out2 + fc_out)  # 全连接层后的残差连接和归一化
+
+        return out3
 ```
