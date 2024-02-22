@@ -385,3 +385,115 @@ input_tensor = torch.randn(1,3,32,32)
 # 通过网络前向传播输入张量
 output_tensor = model(input_tensor)
 ```
+
+#### 多模态融合学习
+
+多模态融合学习，就是让计算机向我们一样，用多种感官理解世界。不再是单一的图片或文字，而是文字、图片、声音、视频等多种数据一起上。`AI`通过学习这些不同感官输入的关联，能够更全面、更准确的理解事物。比如，`AI`可以一边分析图片，一边阅读描述，更准确地识别图片里的物体；或者结合视频图像和音频，理解视频内容，这种技术能大大提升机器学习性能，让`AI`更好地理解我们的语言、情感和环境，交互体验更智能、更自然。实现多模态融合学习只需几步：
+- 准备多种类型的数据，比如图片和文本
+- 设计一个能处理多种数据的模型架构
+- 用多模态数据训练模型，定义损失函数，优化算法
+- 用新数据评估模型性能
+- 应用模型，比如自动标记图片物体，理解视频场景
+
+`Pytorch`提供了丰富的内置功能和扩展库，让多模态模型的构建、训练和部署变得轻松简单。
+<!-- more -->
+
+```python
+import torch
+import torchvision
+import pandas as pd
+from torchvision import datasets,transforms
+from torch.utils.data import DataLoader
+from torch import nn, optim
+
+# 定义数据预处理
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.5,), (0.5,)),
+])
+
+# 定义图像数据集
+image_data = datasets.ImageFolder('/path/to/image_data', transform=transform)
+image_loader = DataLoader(image_data, batch_size=64, shuffle=True)
+
+# 定义文本数据集（这里假设文本数据已经是一个Pandas DataFrame, 列名为'text'和'label'）
+text_data= pd.read_csv('/path/to/text_data.csv')
+text_loader = DataLoader(text_data, batch_size=64, shuffle=True)
+
+# 定义一个多模态模型
+
+
+class MultimodalModel(nn.Module):
+    def __init__(self):
+        super(MultimodalModel, self).__init__()
+        
+        # 定义文本模型
+        self.tex_model = nn.Sequential(
+            nn.Linear(100, 64),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(64, 32),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            
+            nn.Linear(32, 16),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(16, 8),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(8, 1),
+            nn.Sigmoid()
+        )
+        
+        # 定义图像模型
+        self.image_model = nn.Sequential(
+            nn.Linear(28*28, 128),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(128, 64),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+
+            nn.Linear(64, 32),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(32, 16),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(16, 8),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(8, 1),
+            nn.Sigmoid()
+        )
+    def forward(self, text_data, image_data):
+        # 文本模型前向传播
+        text_output = self.tex_model(text_data)
+        
+        # 图像模型前向传播
+        image_output = self.image_model(image_data)
+        
+        # 输出拼接
+        output = torch.cat((text_data, image_data), 1)
+        
+        return output
+    
+# 实例化模型、损失函数和优化器
+model = MultimodalModel()
+criterion = nn.BCEWithLogitsLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# 训练模型
+for epoch in range(10):
+    for text_batch, image_batch, labels in zip(text_loader, image_loader , labels):
+        # 前向传播
+        outputs = model(text_batch, image_batch)
+        
+        # 计算损失
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+        
+        print(f'Epoch[{epoch + 1}/10], Loss: {loss.item():.4f}')
+```
