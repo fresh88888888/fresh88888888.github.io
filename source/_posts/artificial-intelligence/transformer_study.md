@@ -214,3 +214,113 @@ class TransformerDecoderLayer(nn.Module):
 
         return out3
 ```
+
+#### 自注意力机制
+
+自注意力机制，你可以把它理解为一种“内部关注”机制。在处理复杂的信息时，比如机器翻译、文本生成等任务，模型需要理解并权衡输入信息中的不同部分。想象一下，你在阅读一句话或一段文章时，会根据当前的语境，对某些词语或短语给予更多关注，这些往往对理解整体意思至关重要。自注意力机制就是让机器模仿这种“关注”能力。具体来说，在神经网络模型中，每个输入元素（如一个单词）不仅可以获得自身的编码信息，还可以通过自注意力机制了解到其他所有输入元素的信息，并根据它们的重要性分配不同的权重，从而更好地理解和处理整个序列信息。
+
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class SelfAttention(nn.Module):
+    def __init(self, embed_size):
+        super(SelfAttention, self).__init__()
+        
+        self.embed_size = embed_size
+        self.liner = nn.Linear(embed_size, embed_size)
+        self.gmma = nn.Parameter(torch.tensor(0.), requires_grad=True)
+        self.softmax = nn.Softmax(dim=1)
+        
+    def forward(self, inputs):
+        # 计算query、key、value
+        query = self.liner(inputs);
+        key = inputs
+        value = inputs
+        
+        # 计算query和Key之间的相关性得分
+        scores = torch.bmm(query, key.transpose(1, 2))
+        scores = self.gmma + scores    # 添加gmma用于缩放，使其落在合适的范围内
+        
+        # 对相关性得分应用softmax函数，得到Attention权重
+        attention_weights = self.softmax(scores)
+        
+        # 使用attention权重和value计算输出
+        output = torch.bmm(value, attention_weights.transpose(1, 2))
+        
+        return output  # 返回注意力机制的输出结果
+```
+
+#### 多头注意力
+
+想象一下有个超级助手，它不只有一双眼睛，而是有好几双，每双眼睛都负责从不同视角解读一段话。在AI界，Transformer就像这个超级助手，用“多头注意力”来处理文本。简单来说，就是模型不再单一视角分析句子，而是分成多个小分队（即“头”），每个小分队专门研究句子的不同方面，比如一个关注词与词之间的语法关系，另一个则关注于词语背后的意思。这样一来，不仅能够多样化的理解输入信息，还因为这些小分队可以并行工作，大大提高了计算速度和学习效率，让模型更能把握住复杂的语言结构。
+
+#### 微调常用方法
+- 冻结参数：相当于只换家具，房屋框架不变，也就是只更新最后几层参数，让模型快速适应新任务，同时留住通用智慧
+- 精选训练层：有选择性地翻新部分楼层（比如顶层房间）针对性更新这些层的参数，确保模型贴合特定任务需求
+- 差异化学习率：不同楼层施工进度各异，顶层动作快一些（大学习率）。底层稳扎稳打（小学习率）。这样既能稳住大局，又能迅速学会新技能。
+
+#### 为什么大模型采用decoder-only结构
+
+如果我们要训练一个机器翻译模型，解码器-独占结构只需要输入原文，然后输出目标语言的译文。整个过程就是一个解码的过程，非常直接。相比之下，其他结构可能需要更多的训练数据和计算资源。而且解码器-独占结构只需要对输入的句子一次处理，就能得到完整的译文。这样在处理大量数据时，它的效率会更高。总的来说，解码器-独占结构之所以被广泛应用于大模型中，是因为它简单、高效，而且能够处理多种语言任务。
+
+```python
+import torch
+import torch.nn as nn
+
+# 假设我们有一个词表，大小(vocab_size)
+vocab_size = 10000
+
+# 定义Decoder隐藏层维度
+hidden_size = 512
+
+# 定义自注意力机制所需要的参数
+num_attention_heads = 8
+attention_dropout = 0.1
+
+#Decoder类定义
+class Decoder(nn.Module):
+    def __init__(self):
+        super(Decoder, self).__init__()
+        
+        # 自注意力子层
+        self.self_attention = nn.MultiheadAttention(hidden_size, num_attention_heads, dropout=attention_dropout)
+        
+        # 前馈神经网络子层
+        self.feedforward_network = nn.Sequential(
+            nn.Linear(hidden_size, hidden_size * 4),
+            nn.ReLU(),
+            nn.Linear(hidden_size * 4, hidden_size),
+        )
+        
+        # 层归一化和残差连接
+        self.norm1 = nn.LayerNorm(hidden_size)
+        self.norm2 = nn.LayerNorm(hidden_size)
+        
+        # Dropout用于减少过拟合
+        self.dropout = nn.Dropout(0.1)
+        
+        def forward(self, input_tokens):
+            # 自注意力步骤
+            query, key, value = input_tokens, input_tokens, input_tokens
+            attention_output, _= self.self_attention(query, key, value, mask)
+            attention_output, _ =self.dropout(attention_output)
+            out1 = self.norm1(attention_output + input_tokens)       # 残差连接
+            
+            # 前馈神经网络处理
+            ff_output = self.feedforward_network(out1)
+            out2 = self.norm2(ff_output + out1)
+
+            return out2
+
+# 创建一个decoder实例
+decoder = Decoder()
+
+# 假设我们有随机初始化的输入
+input_seq = torch.randn(32, 64, hidden_size)
+
+# 运行Decoder
+output_seq = decoder(input_seq)
+
+```
