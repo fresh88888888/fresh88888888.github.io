@@ -629,7 +629,7 @@ class TransformerModel(nn.Module):
 
 #### 如何将Transformer模型应用到语音合成领域
 
-Transformer在自动语音识别（ASR）、语音翻译（ST）、和文本转语音（TTS）等任务中表现出色，特别是在文本转语音（TTS）方面，Transformer模型通过气自注意力机制和多层结构，能够更有效地捕捉语言的复杂模式和情感色彩，从而生成更自然、更丰富的语音。
+`Transformer`在自动语音识别（`ASR`）、语音翻译（`ST`）、和文本转语音（`TTS`）等任务中表现出色，特别是在文本转语音（`TTS`）方面，`Transformer`模型通过气自注意力机制和多层结构，能够更有效地捕捉语言的复杂模式和情感色彩，从而生成更自然、更丰富的语音。
 
 ```python
 # 定义Transformer模型
