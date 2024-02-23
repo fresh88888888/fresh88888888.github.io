@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">93</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -231,6 +231,224 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2023/07/23/Cloud-Native/%E3%80%90Docker%E3%80%91%E6%A6%82%E8%BF%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/07/23/Cloud-Native/%E3%80%90Docker%E3%80%91%E6%A6%82%E8%BF%B0/" class="post-title-link" itemprop="url">【Docker】概述</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-07-23 15:23:01" itemprop="dateCreated datePublished" datetime="2023-07-23T15:23:01+08:00">2023-07-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>31 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="什么是容器？"><a href="#什么是容器？" class="headerlink" title="什么是容器？"></a>什么是容器？</h3><p>简而言之，容器是计算机的沙盒进程，与主机上的所有其他进程隔离，这种隔离利用了<code>内核命名空间和cgroup</code>，这些功能在<code>linux</code>中已经存在很长时间了。<code>Docker</code>正是利用了这些能力。总而言之，容器包括以下这些能力：</p>
+<ul>
+<li>是一个可运行的镜像实例，你可以使用<code>Docker API</code>或<code>CLI</code>创建、启动、停止、移动或删除容器。</li>
+<li>可以在本地机器、虚拟机、云上部署和运行。</li>
+<li>是跨平台并且可移植的。</li>
+<li>与其他容器隔离运行自己的应用、二进制文件以及配置。</li>
+</ul>
+<h3 id="什么是容器镜像？"><a href="#什么是容器镜像？" class="headerlink" title="什么是容器镜像？"></a>什么是容器镜像？</h3><p>运行容器时，它使用隔离的文件系统。该自定义文件系统由容器镜像提供。由于镜像包含容器的文件系统，因此它必须包含运行应用程序所需的所有内容-所有依赖项、配置、脚本、二进制文件等。镜像还包含容器的其它配置，例如环境变量、要运行的默认命令和其它元数据。</p>
+<h3 id="将应用程序在容器中部署"><a href="#将应用程序在容器中部署" class="headerlink" title="将应用程序在容器中部署"></a>将应用程序在容器中部署</h3><h4 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h4><ul>
+<li>在机器上下载&amp;安装<code>Docker</code></li>
+<li>在机器上下载&amp;安装<code>git</code>客户端</li>
+<li>在机器上安装一个编辑文件的IDE或文本编辑器，这里建议下载&amp;安装<code>Visual Studio Code</code></li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/07/23/Cloud-Native/%E3%80%90Docker%E3%80%91%E6%A6%82%E8%BF%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2023/07/21/%E3%80%90Rust%E3%80%91cross/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/07/21/%E3%80%90Rust%E3%80%91cross/" class="post-title-link" itemprop="url">【Rust】使用Cross进行跨平台编译</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-07-21 22:16:13" itemprop="dateCreated datePublished" datetime="2023-07-21T22:16:13+08:00">2023-07-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><code>Rust</code> 的编译速度和跨平台编译相比 <code>Go</code> 语言就要难用很多，但这也是语言特点，当你从中受益时，必然要付出一些代价，本文主要介绍如何实现跨平台编译，使用 <a target="_blank" rel="noopener" href="https://github.com/cross-rs/cross"><code>cross</code></a> 这个工具。</p>
+<p>我的工作台是 <code>Mac M2</code>，想编译出 <code>Linux</code> 和 <code>Windows</code> 的可执行文件，使用的代码很简单，就是 <code>Hello World</code> 示例程序，这个不是重点。</p>
+<p>使用 <code>cross</code> 首先当然是安装，按照官方的描述，可以使用下面的命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo install cross --git https://github.com/cross-rs/cross</span><br></pre></td></tr></table></figure>
+
+<p>然后是安装 <code>docker</code> 或者 <code>podman</code>，本文以 <code>docker</code> 为例，讲述使用过程中遇到的问题及其解决方案。<code>cross</code> 的使用很简单，例如，如果我要编译 <code>target</code> 为 <code>aarch64-unknown-linux-gnu</code>，执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cross build  --target aarch64-unknown-linux-gnu</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/07/21/%E3%80%90Rust%E3%80%91cross/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1050,233 +1268,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2023/02/26/Nginx/Nginx/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/02/26/Nginx/Nginx/" class="post-title-link" itemprop="url">Nginx</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-02-26 23:03:57" itemprop="dateCreated datePublished" datetime="2023-02-26T23:03:57+08:00">2023-02-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Nginx/" itemprop="url" rel="index"><span itemprop="name">Nginx</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>10 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h3><p>以下使用 <code>docker</code> 准备学习环境。</p>
-<ol>
-<li>先拉取<code>centos</code>的最新镜像：<code>docker image pull centos</code></li>
-<li>创建一个数据卷用于存放容器中产生的文件：<code>docker volume create centos</code></li>
-<li>启动我们的容器：<code>docker run -d -it -v centos:/workdir --name centos  centos /bin/bash</code></li>
-<li>进入我们的容器：<code>docker exec -it centos /bin/bash</code></li>
-</ol>
-<h3 id="Nginx-的主要应用场景"><a href="#Nginx-的主要应用场景" class="headerlink" title="Nginx 的主要应用场景"></a>Nginx 的主要应用场景</h3><ol>
-<li>静态资源服务，即通过本地文件系统提供服务；</li>
-<li>反向代理服务，提供缓存，负载均衡功能；</li>
-<li><code>API</code>服务，通过<code>Openresty</code>直接访问数据库；</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/02/26/Nginx/Nginx/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/06/30/%E3%80%90Rust%E3%80%91Rustup%20%E4%BB%8B%E7%BB%8D/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/06/30/%E3%80%90Rust%E3%80%91Rustup%20%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">【Rust】Rustup 介绍</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-06-30 14:46:32" itemprop="dateCreated datePublished" datetime="2022-06-30T14:46:32+08:00">2022-06-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.7k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>9 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>学习 <code>rust</code> 的第一步当然是安装，在 <code>rust</code> 中，工具链的安装，升级版本切换都是由 <code>rustup</code> 来完成的。<code>rust</code> 的工具链分布在三个不同的 <code>channel</code> ：<code>stable</code>，<code>beta</code> 和 <code>nightly</code>。</p>
-<p>可以将 <code>rustup</code> 看做 <code>rust</code> 的版本管理器，方便我们在不同的 <code>channel</code> 之间进行切换。 在国内 <code>rust</code> 的相关网站是没有被 <code>GFW</code> 屏蔽的，但是访问速度还是很慢。好在国内有很多镜像源，例如，我这里使用的是中国科学技术大学的镜像，配置的话只需要添加两个环境变量：</p>
-<ul>
-<li><code>export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static</code></li>
-<li><code>export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup</code></li>
-</ul>
-<p><code>rustup</code> 的安装我们依然使用官方的方式：</p>
-<blockquote>
-<p>curl –proto ‘&#x3D;https’ –tlsv1.2 -sSf <a target="_blank" rel="noopener" href="https://sh.rustup.rs/">https://sh.rustup.rs</a> | sh</p>
-</blockquote>
-<p>执行结束之后，应该能看到下面这样的信息，而且会默认安装 <code>nightly</code>（每日构建）版本：</p>
-<img data-src="/2022/06/30/%E3%80%90Rust%E3%80%91Rustup%20%E4%BB%8B%E7%BB%8D/install-success.png" class="">
-
-<p>我们可以顺手配置以下 <code>cargo</code> 的镜像地址，参考自 <a target="_blank" rel="noopener" href="https://lug.ustc.edu.cn/wiki/mirrors/help/rust-crates/">中科大 <code>Rust Crates</code> 镜像使用帮助</a></p>
-<figure class="highlight yaml"><figcaption><span>~/.cargo/config</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">source.crates-io</span>]</span><br><span class="line"><span class="string">registry</span> <span class="string">=</span> <span class="string">&quot;https://github.com/rust-lang/crates.io-index&quot;</span></span><br><span class="line"><span class="string">replace-with</span> <span class="string">=</span> <span class="string">&#x27;ustc&#x27;</span></span><br><span class="line"></span><br><span class="line">[<span class="string">source.ustc</span>]</span><br><span class="line"><span class="string">registry</span> <span class="string">=</span> <span class="string">&quot;git://mirrors.ustc.edu.cn/crates.io-index&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>也推荐的字节跳动的 <code>Rustup</code> 镜像和 <code>crates.io</code> 镜像，具体请看 <a target="_blank" rel="noopener" href="https://rsproxy.cn/"><code>https://rsproxy.cn/</code></a>。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/06/30/%E3%80%90Rust%E3%80%91Rustup%20%E4%BB%8B%E7%BB%8D/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/7/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1303,14 +1294,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">437k</span>
+    <span title="站点总字数">438k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">24:16</span>
+    <span title="站点阅读时长">24:18</span>
   </span>
 </div>
 <div class="busuanzi-count">
