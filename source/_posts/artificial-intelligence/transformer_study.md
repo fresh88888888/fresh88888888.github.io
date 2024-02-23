@@ -497,3 +497,51 @@ for epoch in range(10):
         
         print(f'Epoch[{epoch + 1}/10], Loss: {loss.item():.4f}')
 ```
+
+# Transformer的核心
+
+首先，我们需要需要理解Transformer模型的核心构造。该模型主要包括两部分：自注意力机制和位置编码。这两部分的设计，是的模型可以理解和处理输入数据中的长距离依赖关系，这在传统模型中是一个挑战。
+- 自注意力机制：让每个输入的位置都能够考虑全局的信息，从而更好滴理解上下文信息。这意味着，当我们要识别一个词的含义时，它不仅仅考虑前面的词，还会考虑到后面的词，甚至是远离他的词，这样使得整体的信息被全面捕获。
+- 位置编码：则解决了Transformer模型中的一个问题，由于没有明确的层级结构，它如何理解词语顺序和位置信息？通过给每个位置一个独特的编码，模型可以知道每个词语在句子中的位置，从而更准确地处理和理解输入数据。
+
+在各个领域中，这种强大的理解和处理能力使得Transformer模型表现得非常出色。例如，在自然语言处理任务中，他可以更好地理解和生成语言；在语音识别中，它可以更好地捕捉语音的节奏和音高；在图像识别中，他可以更好地理解图像中的场景和物体。所以，简单来说，Transformer模型之所以先进，是通过自注意力和位置编码的设计，实现了对输入数据的强大理解和处理能力，从而在各个领域中都表现出了卓越的性能。
+
+```python
+class TransformerModel(nn.Module):
+    def __init__(self, vocabulary_size, embedding_dim, num_classes, nhead, nhid, nlayers, dropout):
+        super(TransformerModel, self).__init__()
+        
+        # 嵌入层，将词汇表中的词转换为固定维度的向量
+        self.encoder = nn.Embedding(vocabulary_size, embedding_dim=embedding_dim)
+        # Transformer结构， 包含自注意力机制和位置编码
+        self.transformer = nn.Transformer(d_model=embedding_dim, nhead=nhead, num_encoder_layers =nlayers, num_encoder_layers=nlayers, dropout=dropout)
+        # 输出层，将Transformer的输出转化为类别概率分布
+        self.decoder = nn.Linear(embedding_dim, num_classes)
+        
+        # 初始化权重参数
+        self.init_weights()
+    
+    def init_weights(self):
+        '''
+        初始化权重参数
+        '''
+        initrange = 0.1
+        self.encoder.weight.data.uniform_(-initrange, initrange)
+        self.decoder.bias.data.zero_()
+        self.decoder.weight.data.uniform_(-initrange, initrange)
+        
+    def forward(self, src):
+        '''
+        前向传播过程
+        '''
+        # 将输入数据嵌入到固定维度的向量中
+        embedded = self.encoder(src)
+        
+        # 通过Transformer结构进行自注意力和位置编码处理
+        output = self.transformer(embedded)
+        
+        # 将Transformer的输出转化为类别概率分布
+        output = self.decoder(output)
+        
+        return output   # [batch_size, num_classes]
+```
