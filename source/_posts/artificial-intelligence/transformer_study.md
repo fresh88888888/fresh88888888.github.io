@@ -147,6 +147,13 @@ model = SimpleTransformerEncoderLayer(embed_dim, num_heads)
 inputs = torch.randn(10, 20, embed_dim)
 output = model(inputs)
 ```
+#### Transformer的结构
+
+`Transformer`主要分为两个主要部分，编码器（`Encoder`）和解码器（`Decoder`）:
+- 编码器（`Encoder`）：这部分就像一个超级聪明的阅读者，他能够一次性阅读整个输入句子，并理解每个词的重要性和他们之间的关系，编码器会将这些词转换成一系列包含丰富信息的向量，这些向量能够捕捉到词在句子中的意义和它们之间的联系。
+- 解码器（`Decoder`）：这部分就像是一位熟练的写作者，他根据编码器提供的信息，逐个词地生成翻译后的句子。解码器在生成每个词的时候会考虑到已经生成的词和编码器提供的信息，确保翻译的准确性和流畅性。
+
+`Transformer`的核心特点是自注意力机制（`Self-Attention`），这就像是编码器和解码器都具有的超能力，让他们处理句子时能关注到最重要的部分。这种机制使得`Transformer`模型在处理语言翻译等任务时非常有效。
 
 #### Transformer的编/解码器
 
@@ -250,6 +257,67 @@ class SelfAttention(nn.Module):
         output = torch.bmm(value, attention_weights.transpose(1, 2))
         
         return output  # 返回注意力机制的输出结果
+```
+
+自注意力机制是`Transformer`模型中一个非常重要的概念，它使得模型能够理解输入序列中的词与词之间的关系。想象一下，如果你有一段文字，比如“我喜欢苹果”，每个词都有其特定含义，但更重要的是词与词之间的关系。例如，“我”和“喜欢”之间的关系，或者“喜欢”与“吃”之间的关系。自注意力机制就是让模型能够关注这些关系。
+
+具体来说，自注意力机制的工作原理是这样的：键值对（`Key-Value Pairs`）的生成：首先，我们给输入序列中的每个词生成一个“键”和一个“值”。这些键值对都是通过线性变换生成的，也就是说我们有一个矩阵，将输入的词嵌入向量和这个矩阵相乘，就可以得到键和值的向量。
+- 注意力权重的计算：我们用“查询”向量去和所有的“键”向量进行点积运算。然后对这些结果应用softmax函数，得到每个位置的注意力权重。这个权重表示的是当前词与所有其它词的关注程度。
+- 输出向量计算：最后，我们用每个位置的“值”向量和相应的注意力权重相乘，然后将这些结果相加，得到最终的输出向量。这个输出向量就包含了输入序列中所有位置的信息。
+
+所以，通过自注意力机制，模型可以理解并记住输入序列中词与词之间的关系从而更好地理解和生成序列数据。这就是自注意力机制在`Transformer`模型中的作用。
+
+```python
+class TransformerModel(nn.Module):
+    def __init__(self, vocabulary_size, embedding_dim, num_classes, nhead, nhid, nlayers, dropout):
+        """
+        初始化Transformer模型
+        
+        参数:
+            vocabulary_size (int): 词汇表大小
+            embedding_dim (int): 
+            num_classes (int: 输出类别数
+            nhead (int): 多头自注意力机制中的头数
+            nhid (int): 隐藏层维度
+            nlayers (int): Transformer编码器和解码器层的数量
+            dropout (float): dropout 概率
+        """
+        super(TransformerModel, self).__init__()
+
+        # 嵌入层，将词汇表中的词转换为固定维度的向量
+        self.encoder = nn.Embedding(
+            vocabulary_size, embedding_dim=embedding_dim)
+        # Transformer结构， 包含自注意力机制和位置编码
+        self.transformer = nn.Transformer(d_model=embedding_dim, nhead=nhead, num_encoder_layers=nlayers, num_encoder_layers=nlayers, dropout=dropout)
+        # 输出层，将Transformer的输出转化为类别概率分布
+        self.decoder = nn.Linear(embedding_dim, num_classes)
+
+        # 初始化权重参数
+        self.init_weights()
+        
+    def init_weights(self):
+        '''
+        初始化权重参数
+        '''
+        initrange = 0.1
+        self.encoder.weight.data.uniform_(-initrange, initrange)
+        self.decoder.bias.data.zero_()
+        self.decoder.weight.data.uniform_(-initrange, initrange)
+
+    def forward(self, src):
+        '''
+        前向传播过程
+        '''
+        # 将输入数据嵌入到固定维度的向量中
+        embedded = self.encoder(src)
+
+        # 通过Transformer结构进行自注意力和位置编码处理
+        output = self.transformer(embedded)
+
+        # 将Transformer的输出转化为类别概率分布
+        output = self.decoder(output)
+
+        return output   # [batch_size, num_classes]
 ```
 
 #### 多头注意力
@@ -509,18 +577,31 @@ for epoch in range(10):
 ```python
 class TransformerModel(nn.Module):
     def __init__(self, vocabulary_size, embedding_dim, num_classes, nhead, nhid, nlayers, dropout):
-        super(TransformerModel, self).__init__()
+        """
+        初始化Transformer模型
         
+        参数:
+            vocabulary_size (int): 词汇表大小
+            embedding_dim (int): 
+            num_classes (int: 输出类别数
+            nhead (int): 多头自注意力机制中的头数
+            nhid (int): 隐藏层维度
+            nlayers (int): Transformer编码器和解码器层的数量
+            dropout (float): dropout 概率
+        """
+        super(TransformerModel, self).__init__()
+
         # 嵌入层，将词汇表中的词转换为固定维度的向量
-        self.encoder = nn.Embedding(vocabulary_size, embedding_dim=embedding_dim)
+        self.encoder = nn.Embedding(
+            vocabulary_size, embedding_dim=embedding_dim)
         # Transformer结构， 包含自注意力机制和位置编码
-        self.transformer = nn.Transformer(d_model=embedding_dim, nhead=nhead, num_encoder_layers =nlayers, num_encoder_layers=nlayers, dropout=dropout)
+        self.transformer = nn.Transformer(d_model=embedding_dim, nhead=nhead, num_encoder_layers=nlayers, num_encoder_layers=nlayers, dropout=dropout)
         # 输出层，将Transformer的输出转化为类别概率分布
         self.decoder = nn.Linear(embedding_dim, num_classes)
-        
+
         # 初始化权重参数
         self.init_weights()
-    
+        
     def init_weights(self):
         '''
         初始化权重参数
@@ -529,19 +610,19 @@ class TransformerModel(nn.Module):
         self.encoder.weight.data.uniform_(-initrange, initrange)
         self.decoder.bias.data.zero_()
         self.decoder.weight.data.uniform_(-initrange, initrange)
-        
+
     def forward(self, src):
         '''
         前向传播过程
         '''
         # 将输入数据嵌入到固定维度的向量中
         embedded = self.encoder(src)
-        
+
         # 通过Transformer结构进行自注意力和位置编码处理
         output = self.transformer(embedded)
-        
+
         # 将Transformer的输出转化为类别概率分布
         output = self.decoder(output)
-        
+
         return output   # [batch_size, num_classes]
 ```
