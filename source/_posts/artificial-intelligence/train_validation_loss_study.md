@@ -9,7 +9,7 @@ categories:
 
 #### 训练/验证损失
 
-关于训练损失（train Loss）和验证损失（validation Loss），想象你在教一只狗做算术。你有一堆卡片，每张卡片都有一个数学问题，比如“2 + 3 =？”和答案。小狗的任务看着问题，然后找出正确答案。
+关于训练损失（`train Loss`）和验证损失（`validation Loss`），想象你在教一只狗做算术。你有一堆卡片，每张卡片都有一个数学问题，比如“`2 + 3 =？`”和答案。小狗的任务看着问题，然后找出正确答案。
 - 训练损失：就像你叫小狗时，它回答错误的那些问题的数量。你希望这个数字越小越好，因为这意味着小狗在训练时学的越好。
 - 验证损失：就像你在训练一段时间后，拿出一些新的卡片来测试小狗。这些卡片上的问题小狗之前没见过。验证损失就是小狗在这些新问题上回答错误的数量。这个数字也很重要。证明小狗学到的知识是否能够应用到新的问上，也就是它泛化能力如何。
 
@@ -19,7 +19,7 @@ categories:
 ```python
 import torch
 import torch.nn as nn
-import torch.optim as optim
+import torch.optim as optimxw
 from torch.utils.data import DataLoader, TensorDataset
 
 # 假设我们有一些随机数据来模拟训练过程，这里我们创建一些随机数据作为示例
