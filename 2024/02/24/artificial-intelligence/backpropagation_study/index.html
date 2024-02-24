@@ -26,29 +26,28 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="一、网格交易的原理二、最低价&amp;最高价三、等差或等比四、网格数量五、网格交易适合怎样的市场六、总结">
+    <meta name="description" content="反向传播当我们构建一个机器学习模型，例如神经网络，我们需要告诉模型如何根据输入的数据得到正确的输出。这个过程通常涉及到向前传播（或者说前向传播）：输入数据进入模型的输入层，然后经过一系列的数学运算和变换，最终得到输出结果。然而，仅仅向前传播是不够的。因为我们不仅想知道输出是什么，更想知道如果输入稍微改变一下，输出会如何变化。就需要反向传播发挥作用了。简单来说，反向传播就是一种计算误差的方法，它通过">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【量化】网格交易策略详解">
-<meta property="og:url" content="https://fresh88888888.github.io/2023/07/17/Quantitative/grid-trading-strategy-explained/index.html">
+<meta property="og:title" content="反向传播（PyTorch）">
+<meta property="og:url" content="https://fresh88888888.github.io/2024/02/24/artificial-intelligence/backpropagation_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="一、网格交易的原理二、最低价&amp;最高价三、等差或等比四、网格数量五、网格交易适合怎样的市场六、总结">
+<meta property="og:description" content="反向传播当我们构建一个机器学习模型，例如神经网络，我们需要告诉模型如何根据输入的数据得到正确的输出。这个过程通常涉及到向前传播（或者说前向传播）：输入数据进入模型的输入层，然后经过一系列的数学运算和变换，最终得到输出结果。然而，仅仅向前传播是不够的。因为我们不仅想知道输出是什么，更想知道如果输入稍微改变一下，输出会如何变化。就需要反向传播发挥作用了。简单来说，反向传播就是一种计算误差的方法，它通过">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-07-17T06:34:14.000Z">
-<meta property="article:modified_time" content="2023-07-17T06:34:14.000Z">
+<meta property="article:published_time" content="2024-02-24T12:34:32.000Z">
+<meta property="article:modified_time" content="2024-02-24T12:34:32.000Z">
 <meta property="article:author" content="umbrella">
-<meta property="article:tag" content="Quantitative Trading">
-<meta property="article:tag" content="量化交易">
+<meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://fresh88888888.github.io/2023/07/17/Quantitative/grid-trading-strategy-explained/">
+<link rel="canonical" href="https://fresh88888888.github.io/2024/02/24/artificial-intelligence/backpropagation_study/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2023/07/17/Quantitative/grid-trading-strategy-explained/","path":"2023/07/17/Quantitative/grid-trading-strategy-explained/","title":"【量化】网格交易策略详解"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/02/24/artificial-intelligence/backpropagation_study/","path":"2024/02/24/artificial-intelligence/backpropagation_study/","title":"反向传播（PyTorch）"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>【量化】网格交易策略详解 | UMBRELLA</title>
+<title>反向传播（PyTorch） | UMBRELLA</title>
   
 
 
@@ -152,7 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%BD%91%E6%A0%BC%E4%BA%A4%E6%98%93%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">一、网格交易的原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%9C%80%E4%BD%8E%E4%BB%B7-%E6%9C%80%E9%AB%98%E4%BB%B7"><span class="nav-number">2.</span> <span class="nav-text">二、最低价&amp;最高价</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E7%AD%89%E5%B7%AE%E6%88%96%E7%AD%89%E6%AF%94"><span class="nav-number">3.</span> <span class="nav-text">三、等差或等比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E7%BD%91%E6%A0%BC%E6%95%B0%E9%87%8F"><span class="nav-number">4.</span> <span class="nav-text">四、网格数量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E7%BD%91%E6%A0%BC%E4%BA%A4%E6%98%93%E9%80%82%E5%90%88%E6%80%8E%E6%A0%B7%E7%9A%84%E5%B8%82%E5%9C%BA"><span class="nav-number">5.</span> <span class="nav-text">五、网格交易适合怎样的市场</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">六、总结</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="nav-number">1.</span> <span class="nav-text">反向传播</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -245,7 +244,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2023/07/17/Quantitative/grid-trading-strategy-explained/">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/24/artificial-intelligence/backpropagation_study/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.jpeg">
@@ -258,12 +257,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="【量化】网格交易策略详解 | UMBRELLA">
+      <meta itemprop="name" content="反向传播（PyTorch） | UMBRELLA">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          【量化】网格交易策略详解
+          反向传播（PyTorch）
         </h1>
 
         <div class="post-meta-container">
@@ -274,7 +273,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2023-07-17 14:34:14" itemprop="dateCreated datePublished" datetime="2023-07-17T14:34:14+08:00">2023-07-17</time>
+      <time title="创建时间：2024-02-24 20:34:32" itemprop="dateCreated datePublished" datetime="2024-02-24T20:34:32+08:00">2024-02-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -282,7 +281,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Quantitative-Trading/" itemprop="url" rel="index"><span itemprop="name">Quantitative Trading</span></a>
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
         </span>
     </span>
 
@@ -300,14 +299,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>41</span>
+      <span>657</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
@@ -317,7 +316,11 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h3 id="一、网格交易的原理"><a href="#一、网格交易的原理" class="headerlink" title="一、网格交易的原理"></a>一、网格交易的原理</h3><h3 id="二、最低价-最高价"><a href="#二、最低价-最高价" class="headerlink" title="二、最低价&amp;最高价"></a>二、最低价&amp;最高价</h3><h3 id="三、等差或等比"><a href="#三、等差或等比" class="headerlink" title="三、等差或等比"></a>三、等差或等比</h3><h3 id="四、网格数量"><a href="#四、网格数量" class="headerlink" title="四、网格数量"></a>四、网格数量</h3><h3 id="五、网格交易适合怎样的市场"><a href="#五、网格交易适合怎样的市场" class="headerlink" title="五、网格交易适合怎样的市场"></a>五、网格交易适合怎样的市场</h3><h3 id="六、总结"><a href="#六、总结" class="headerlink" title="六、总结"></a>六、总结</h3>
+    <div class="post-body" itemprop="articleBody"><h4 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h4><p>当我们构建一个机器学习模型，例如神经网络，我们需要告诉模型如何根据输入的数据得到正确的输出。这个过程通常涉及到向前传播（或者说前向传播）：输入数据进入模型的输入层，然后经过一系列的数学运算和变换，最终得到输出结果。然而，仅仅向前传播是不够的。因为我们不仅想知道输出是什么，更想知道如果输入稍微改变一下，输出会如何变化。就需要反向传播发挥作用了。简单来说，反向传播就是一种计算误差的方法，它通过比较模型的输出结果和真实结果之间的差异（即误差），来决定如何调整模型的参数（例如权重和偏置项）以便在下一次前向传播时得到更接近真实结果的输出。为什么每个算法模型都有一个反向传播函数呢？因为只有通过反向传播，我们才知道模型在哪方面做得好，哪些方面需要改进。换句话说，反向传播是模型训练过程中不可或缺的一环。它不仅帮助我们评估模型的性能，还指导我们调整模型的参数使模型在未知的数据上表现得更好。想象以下，如果我们有一个模型但是不知道如何调整它的参数，那么无论怎么使用这个模型，它的性能都很难得到提升。而有了反向传播，我们就像有了一双“指南针”，知道该如何引导模型向更好的方向发展。</p>
+<p>所以，反向传播是机器学习和深度学习的一项核心技术。它不仅帮助我们构建更强大的模型，还使得我们可以理解和解释模型的决策过程。</p>
+<span id="more"></span>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"></span><br><span class="line"><span class="comment"># 顶一个简单的神经网络</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SimpleNN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(SimpleNN, self).__init__()</span><br><span class="line">        </span><br><span class="line">        self.layer1 = nn.Linear(in_features=<span class="number">10</span>, out_features=<span class="number">5</span>)</span><br><span class="line">        self.layer2 = nn.Linear(in_features=<span class="number">5</span>, out_features=<span class="number">2</span>)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = torch.relu(self.layer1(x))</span><br><span class="line">        x = self.layer2(x)</span><br><span class="line">         </span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个模型实例</span></span><br><span class="line">model = SimpleNN()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义损失函数和优化器</span></span><br><span class="line">criterion = nn.CrossEntropyLoss()</span><br><span class="line">optimizer = optim.SGD(model.parameters(), lr=<span class="number">0.01</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成一些随机数据作为输入和目标</span></span><br><span class="line">inputs = torch.randn(<span class="number">64</span>, <span class="number">10</span>)</span><br><span class="line">targets = torch.randint(<span class="number">0</span>,<span class="number">2</span>, (<span class="number">64</span>,))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 前向传播</span></span><br><span class="line">ouputs = model(inputs)</span><br><span class="line">loss = criterion(ouputs, targets)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 反向传播</span></span><br><span class="line">optimizer.zero_grad()  <span class="comment"># 清楚之前的梯度</span></span><br><span class="line">loss.backward()        <span class="comment"># 反向传播计算梯度</span></span><br><span class="line">optimizer.step()       <span class="comment"># 更新模型参数</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Loss after backward propagation: &#x27;</span>, loss.item())</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -334,7 +337,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://fresh88888888.github.io/2023/07/17/Quantitative/grid-trading-strategy-explained/" title="【量化】网格交易策略详解">https://fresh88888888.github.io/2023/07/17/Quantitative/grid-trading-strategy-explained/</a>
+      <a href="https://fresh88888888.github.io/2024/02/24/artificial-intelligence/backpropagation_study/" title="反向传播（PyTorch）">https://fresh88888888.github.io/2024/02/24/artificial-intelligence/backpropagation_study/</a>
   </li>
   <li class="post-copyright-license">
       <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -343,22 +346,18 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/Quantitative-Trading/" rel="tag"># Quantitative Trading</a>
-              <a href="/tags/%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93/" rel="tag"># 量化交易</a>
+              <a href="/tags/AI/" rel="tag"># AI</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2023/07/12/Java/%E8%99%9A%E6%8B%9F%E6%9C%BA&%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" rel="prev" title="Java虚拟机&垃圾回收">
-                  <i class="fa fa-chevron-left"></i> Java虚拟机&垃圾回收
+                <a href="/2024/02/24/artificial-intelligence/Recommendation_engine/" rel="prev" title="推荐引擎（PyTorch）">
+                  <i class="fa fa-chevron-left"></i> 推荐引擎（PyTorch）
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2023/07/19/Design-Patterns/system-design-blueprint/" rel="next" title="系统设计蓝图">
-                  系统设计蓝图 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -471,7 +470,7 @@
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
-  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2023/07/17/Quantitative/grid-trading-strategy-explained/"}</script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2024/02/24/artificial-intelligence/backpropagation_study/"}</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
 <script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
