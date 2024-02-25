@@ -151,7 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E6%A8%A1%E6%80%81%E8%9E%8D%E5%90%88"><span class="nav-number">1.</span> <span class="nav-text">多模态融合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Transformer%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">Transformer介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Transformer%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">Transformer的结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Transformer%E7%9A%84%E7%BC%96-%E8%A7%A3%E7%A0%81%E5%99%A8"><span class="nav-number">4.</span> <span class="nav-text">Transformer的编&#x2F;解码器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6"><span class="nav-number">5.</span> <span class="nav-text">自注意力机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%8C%E6%88%90%E5%8D%95%E8%AF%8D%E6%9D%83%E9%87%8D%E8%AE%A1%E7%AE%97%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">自注意力机制是如何完成单词权重计算？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E5%A4%B4%E6%B3%A8%E6%84%8F%E5%8A%9B"><span class="nav-number">7.</span> <span class="nav-text">多头注意力</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%AE%E8%B0%83%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">8.</span> <span class="nav-text">微调常用方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%87%87%E7%94%A8decoder-only%E7%BB%93%E6%9E%84"><span class="nav-number">9.</span> <span class="nav-text">为什么大模型采用decoder-only结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%8F%AF%E5%88%86%E7%A6%BB%E5%8D%B7%E7%A7%AF"><span class="nav-number">10.</span> <span class="nav-text">深度可分离卷积</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E6%A8%A1%E6%80%81%E8%9E%8D%E5%90%88%E5%AD%A6%E4%B9%A0"><span class="nav-number">11.</span> <span class="nav-text">多模态融合学习</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Transformer%E7%9A%84%E6%A0%B8%E5%BF%83"><span class="nav-number">12.</span> <span class="nav-text">Transformer的核心</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%B0%86Transformer%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%E5%88%B0%E8%AF%AD%E9%9F%B3%E5%90%88%E6%88%90%E9%A2%86%E5%9F%9F"><span class="nav-number">13.</span> <span class="nav-text">如何将Transformer模型应用到语音合成领域</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E6%A8%A1%E6%80%81%E8%9E%8D%E5%90%88"><span class="nav-number">1.</span> <span class="nav-text">多模态融合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Transformer%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">Transformer介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Transformer%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">Transformer的结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Transformer%E7%9A%84%E7%BC%96-%E8%A7%A3%E7%A0%81%E5%99%A8"><span class="nav-number">4.</span> <span class="nav-text">Transformer的编&#x2F;解码器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6"><span class="nav-number">5.</span> <span class="nav-text">自注意力机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%8C%E6%88%90%E5%8D%95%E8%AF%8D%E6%9D%83%E9%87%8D%E8%AE%A1%E7%AE%97%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">自注意力机制是如何完成单词权重计算？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E5%A4%B4%E6%B3%A8%E6%84%8F%E5%8A%9B"><span class="nav-number">7.</span> <span class="nav-text">多头注意力</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%AE%E8%B0%83%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">8.</span> <span class="nav-text">微调常用方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%87%87%E7%94%A8decoder-only%E7%BB%93%E6%9E%84"><span class="nav-number">9.</span> <span class="nav-text">为什么大模型采用decoder-only结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%8F%AF%E5%88%86%E7%A6%BB%E5%8D%B7%E7%A7%AF"><span class="nav-number">10.</span> <span class="nav-text">深度可分离卷积</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E6%A8%A1%E6%80%81%E8%9E%8D%E5%90%88%E5%AD%A6%E4%B9%A0"><span class="nav-number">11.</span> <span class="nav-text">多模态融合学习</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Transformer%E7%9A%84%E6%A0%B8%E5%BF%83"><span class="nav-number">12.</span> <span class="nav-text">Transformer的核心</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%B0%86Transformer%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%E5%88%B0%E8%AF%AD%E9%9F%B3%E5%90%88%E6%88%90%E9%A2%86%E5%9F%9F"><span class="nav-number">13.</span> <span class="nav-text">如何将Transformer模型应用到语音合成领域</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AB%E4%B8%AA%E6%B5%81%E8%A1%8C%E7%9A%84%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96%E5%99%A8"><span class="nav-number">14.</span> <span class="nav-text">八个流行的大模型优化器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%92%8C%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E6%AF%94%E8%BE%83"><span class="nav-number">15.</span> <span class="nav-text">深度学习和强化学习比较</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">98</span>
+          <span class="site-state-item-count">99</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -299,14 +299,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>6.6k</span>
+      <span>7.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>22 分钟</span>
+      <span>25 分钟</span>
     </span>
 </div>
 
@@ -389,6 +389,75 @@
 
 <h4 id="如何将Transformer模型应用到语音合成领域"><a href="#如何将Transformer模型应用到语音合成领域" class="headerlink" title="如何将Transformer模型应用到语音合成领域"></a>如何将Transformer模型应用到语音合成领域</h4><p><code>Transformer</code>在自动语音识别（<code>ASR</code>）、语音翻译（<code>ST</code>）、和文本转语音（<code>TTS</code>）等任务中表现出色，特别是在文本转语音（<code>TTS</code>）方面，<code>Transformer</code>模型通过气自注意力机制和多层结构，能够更有效地捕捉语言的复杂模式和情感色彩，从而生成更自然、更丰富的语音。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义Transformer模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Transformer</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_dim, output_dim, hidden_dim, num_layers, num_heads</span>):</span><br><span class="line"></span><br><span class="line">        <span class="built_in">super</span>(Transformer, self).__init__()</span><br><span class="line">        self.embedding = nn.Embedding(input_dim, hidden_dim)</span><br><span class="line">        self.transformer_layers = nn.ModuleList([nn.TransformerEncoderLayer(hidden_dim, num_heads) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(num_layers)])</span><br><span class="line">        self.fc = nn.Linear(hidden_dim, output_dim)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.embedding(x)</span><br><span class="line">        <span class="keyword">for</span> layer <span class="keyword">in</span> self.transformer_layers:</span><br><span class="line">            x = layer(x)</span><br><span class="line">            x = self.fc(x)</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 超参数设置</span></span><br><span class="line">input_dim = <span class="number">1000</span></span><br><span class="line">output_dim = <span class="number">1000</span></span><br><span class="line">hidden_dim = <span class="number">512</span></span><br><span class="line">num_layers = <span class="number">3</span></span><br><span class="line">num_heads = <span class="number">8</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例化参数</span></span><br><span class="line">model = Transformer(input_dim, output_dim, hidden_dim, num_layers, num_heads)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义损失函数和优化器</span></span><br><span class="line">criterion = nn.CrossEntropyLoss()</span><br><span class="line">optimizer = optim.Adam(model.parameters(), lr=<span class="number">0.001</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 模拟输入数据</span></span><br><span class="line">input_data = torch.randint(<span class="number">0</span>,input_dim, (<span class="number">32</span>, <span class="number">128</span>))  <span class="comment"># 32个样本，每个样本128个特征</span></span><br><span class="line">output_data = torch.randint(<span class="number">0</span>, output_dim, (<span class="number">32</span>, <span class="number">128</span>))  <span class="comment"># 32个样本，每个样本长度为128</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 前向传播</span></span><br><span class="line">outputs = model(input_data)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算损失</span></span><br><span class="line">loss = criterion(outputs.view(-<span class="number">1</span>, output_dim), output_data.view(-<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 反向传播和优化</span></span><br><span class="line">optimizer.zero_grad()</span><br><span class="line">loss.backward()</span><br><span class="line">optimizer.step()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Loss: &quot;</span>, loss.item())</span><br></pre></td></tr></table></figure>
+
+<h4 id="八个流行的大模型优化器"><a href="#八个流行的大模型优化器" class="headerlink" title="八个流行的大模型优化器"></a>八个流行的大模型优化器</h4><p>训练大型深度学习模型时，优化器是至关重要的组成部分，他们帮助调整模型参数以最小化损失函数。</p>
+<ul>
+<li>随机梯度下降（<code>SGD</code>）：<ul>
+<li>优点：原理简单，容易实现。</li>
+<li>缺点：收敛速度可能较慢，需要仔细调整学习率</li>
+</ul>
+</li>
+<li>动量（<code>Momentum</code>）：<ul>
+<li>优点：引入了动量概念，可以帮助加速学习，并减少震荡。</li>
+<li>缺点：需要额外调整动量系数。</li>
+</ul>
+</li>
+<li><code>Nesterov</code> 加速梯度（<code>NAG</code>）：<ul>
+<li>优点：在动量的基础上进一步优化，通常可以更快地收敛。</li>
+<li>缺点：需要更多的调试来找到最佳动量系数。</li>
+</ul>
+</li>
+<li>自适应矩估计（<code>Adam</code>）：<ul>
+<li>优点：自动的调整每个参数的学习率，适合处理非平稳目标，收敛速度快。</li>
+<li>缺点：在某些情况下会早熟收敛，且在某些复杂问题上性能可能不如<code>SGD</code>。</li>
+</ul>
+</li>
+<li>自适应梯度（<code>Adagrad</code>）:<ul>
+<li>优点：根据参数更新历史自动调整学习率，适合稀疏数据。</li>
+<li>缺点：学习率可能会过早减小，导致训练过早停止。</li>
+</ul>
+</li>
+<li>均方根传播（<code>RMSprop</code>）：<ul>
+<li>优点：引入衰减系数，减少了<code>Adagrad</code>中学习率过早下降的问题。</li>
+<li>缺点：需要调整额外的超参数</li>
+</ul>
+</li>
+<li><code>Adamax</code>：<ul>
+<li>优点：是<code>Adam</code>的一种变种，更加稳定，适用于某些特定问题。</li>
+<li>缺点：可能不如<code>Adam</code>通用。</li>
+</ul>
+</li>
+<li><code>Nadam</code>:<ul>
+<li>优点：结合了<code>Nesterov</code>加速梯度和<code>Adam</code>的优势，通常收敛更快。</li>
+<li>缺点：需要更多的调试来找到最佳超参数。</li>
+</ul>
+</li>
+</ul>
+<h4 id="深度学习和强化学习比较"><a href="#深度学习和强化学习比较" class="headerlink" title="深度学习和强化学习比较"></a>深度学习和强化学习比较</h4><p>深度学习就像是用复杂的神经网络从数据中找出规律，用于识别图像、语音等。而强化学习则是让机器通过不断尝试和环境的反馈来学习最佳行动策略，适用于需要连续决策的任务，比如下棋或控制机器人。深度学习模型复杂，需要大量计算资源；强化学习模型简单，但学习过程更迭次数多。两者结合，能让AI更强大。</p>
+<ul>
+<li>定义和目标：<ul>
+<li>深度学习：是一种利用深层神经网络进行特征学习的方法。它的主要目的是通过学习数据中的复杂模式来提高预测准确性。深度学习通常用于图像识别、语音识别、自然语言处理等任务。</li>
+<li>强化学习：是一种机器通过与环境的交互学习达到目标的方法。它的主要目的是学习一种策略，使得智能体（Agent）能够在给定的环境中采取最优的行动。</li>
+</ul>
+</li>
+<li>学习方式：<ul>
+<li>深度学习：通常需要大量的标注数据进行监督学习，或者使用无监督学习来发现数据中的结构。</li>
+<li>强化学习：通过与环境的交互，根据反馈（奖励或惩罚）来调整行动策略，不需要大量的标注数据。</li>
+</ul>
+</li>
+<li>应用场景：<ul>
+<li>深度学习：适用于那些有大量数据，但决策过程不太复杂的任务，如图像和语音识别。</li>
+<li>强化学习：适用于那些需要做出一系列决策，并且决策之间有依赖关系的任务，如游戏、机器人控制等。</li>
+</ul>
+</li>
+<li>模型复杂性：<ul>
+<li>深度学习：模型通常比较复杂，需要大量的计算资源来训练。</li>
+<li>强化学习：模型相对简单，但需要大量的迭代来探索环境并进行学习。</li>
+</ul>
+</li>
+</ul>
+<p>总的来说，深度学习更侧重于静态数据中学习特征，而强化学习更侧重于在与环境的交互中学习行为策略。例如，强化学习可以使用深度学习来处理感知数据，而深度学习可以使用强化学习来进行决策。</p>
+
     </div>
 
     
@@ -463,14 +532,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">446k</span>
+    <span title="站点总字数">447k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">24:46</span>
+    <span title="站点阅读时长">24:50</span>
   </span>
 </div>
 <div class="busuanzi-count">
