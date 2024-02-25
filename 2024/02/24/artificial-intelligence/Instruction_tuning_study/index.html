@@ -151,7 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8C%87%E4%BB%A4%E5%BE%AE%E8%B0%83"><span class="nav-number">1.</span> <span class="nav-text">大模型指令微调</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8C%87%E4%BB%A4%E5%BE%AE%E8%B0%83"><span class="nav-number">1.</span> <span class="nav-text">大模型指令微调</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%B0%83%E5%8F%82"><span class="nav-number">2.</span> <span class="nav-text">大模型调参</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -299,14 +299,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.1k</span>
+      <span>1.7k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
+      <span>6 分钟</span>
     </span>
 </div>
 
@@ -342,6 +342,22 @@
 <li>模型架构：选择合适的模型架构对模型效果至关重要。预训练模型可以提供良好的初始化参数，有助于模型在特定任务上的表现。</li>
 </ul>
 <p>总之选择和优化超参数使提高模型效果的关键步骤。可以尝试不同的超参数组合，并使用适当的优化方法来找到最佳超参数。同时，了解超参数对模型效果的影响，有助于更好地调整模型。 </p>
+<h4 id="大模型调参"><a href="#大模型调参" class="headerlink" title="大模型调参"></a>大模型调参</h4><ul>
+<li>理解模型架构：首先，你需要对模型的架构有深入的理解，包括它有哪些可调整的参数，以及这些参数是如何影响模型的行为的。</li>
+<li>初始化参数：再开始调参之前，你需要为模型选择一组初始参数。这些参数可以基于经验的选择，或者是参考相关文献和最佳实践。</li>
+<li>训练验证测试：将数据分为训练集、验证集和测试集。训练集用于训练模型，验证集用于调参过程中评估模型性能，测试集用于最终评估模型性能。</li>
+<li>选择评价指标：根据任务类型选择合适的评价指标，如准确率、召回率、<code>F1</code>分数、均方误差等。</li>
+<li>调整学习率：学习率是深度学习模型中最重要的超参数之一。通常，学习率太小会导致训练过程缓慢，太大可能导致不稳定。可以尝试学习率衰减策略。</li>
+<li>优化器选择：选择合适的优化器，如<code>SGD</code>、<code>Adam</code>、<code>RMSprop</code>等，每种优化器都有其特点和适用场景。</li>
+<li>正则化技术：为了防止过拟合，可以采用正则化技术，如<code>L1/L2正则化、dropout</code>等。</li>
+<li>批量大小：批量大小也会影响模型的收敛速度和性能。通常批量大小需要根据内存容量和数据集大小来调整。</li>
+<li>网络深度和宽度：调整网络的层数和每层的神经元数量，已找到模型复杂度和性能之间的平衡。</li>
+<li>超参数搜索：可以使用网格搜索、随机搜索或贝叶斯优化等方法来系统地搜索超参数空间。</li>
+<li>模型集成：训练多个模型并将它们的预测结果结合起来，通常可以进一步提升性能。</li>
+<li>调试和监控：在训练过程中监控损失函数值和评价指标，以便及时发现和解决问题。</li>
+<li>记录和重现：详细记录每次实验的参数设置和结果，以便能够重现最佳模型和进行分析</li>
+</ul>
+<p>调参是一个迭代的过程需要耐心和细心。通过不断的实验和调整，你可以找到一组适合特定问题的最佳参数。</p>
 
     </div>
 
@@ -414,14 +430,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">444k</span>
+    <span title="站点总字数">445k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">24:39</span>
+    <span title="站点阅读时长">24:43</span>
   </span>
 </div>
 <div class="busuanzi-count">
