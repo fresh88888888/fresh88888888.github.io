@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">104</span>
+          <span class="site-state-item-count">105</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -231,6 +231,113 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/26/artificial-intelligence/ResNet_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/02/26/artificial-intelligence/ResNet_study/" class="post-title-link" itemprop="url">ResNet神经网络（PyTorch）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-02-26 15:20:32" itemprop="dateCreated datePublished" datetime="2024-02-26T15:20:32+08:00">2024-02-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>940</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="ResNet神经网络"><a href="#ResNet神经网络" class="headerlink" title="ResNet神经网络"></a>ResNet神经网络</h4><p><code>ResNet</code> 全名<code>Residual Network</code>，诞生于<code>2015</code>年，由微软研究院的研究者提出，为解决随着神经网络深度加深而出现的梯度消失和网络退化问题提供了颠覆性的解决方案。其核心思想是引入“残差块”构造深层网络，让信息直接由浅层传递到深层，绕过复杂的非线性变换，从而使得模型能够训练更深且更有效的层级结构。想象一下，你正在攀登一座陡峭的山峰，但是山路崎岖难行，每走一步都异常艰辛。这时，如果山路上每隔一段距离就有一个休息平台，你是不是会觉得轻松很多？<code>ResNet</code>就是这样的“超级楼梯”，它通过在神经网络中添加“休息平台”（残差块），让网络在学习的过程中能够轻松“喘气”，从而能够构建更深、更强大的模型。残差块就是一个小小的“助推器”，帮助神经网络的在训练的过程中更好地学习数据的特征。这种设计使得<code>ResNet</code>能够轻松应对深度神经网络中的“梯度消失”和“梯度爆炸”问题，让我们能够构建出更深层次的模型，实现更精准，更高效的预测。实际工程应用场景：</p>
+<ul>
+<li>图像分类：<code>ResNet</code>应用于大估摸图像数据集（如<code>ImageNet</code>）上的物体识别和分类任务。</li>
+<li>目标检测：在<code>Faster R-CNN、YOLOv3</code>等目标检测框架中，<code>ResNet</code>作为特征提取器用于定位和识别图像中的不同对象。</li>
+<li>语义分割：结合全卷积网络（<code>FCN</code>），<code>ResNet</code>被用来从图像中精确划分出每个像素所属的类别。</li>
+<li>实例分割：在<code>Mask R-CNN</code>等模型中，<code>ResNet</code>助力区分图像中单个物体的边界进行实例级别的标注。</li>
+<li>迁移学习：预训练的<code>ResNet</code>模型广泛用于医疗影响分析、遥感图像识别等领域，通过微调适应特定任务。</li>
+<li>行为识别和人体姿态估计：<code>ResNet</code>在视频分析和理解人类行为以及估计人体关节位置方面提供有效的特征表示。
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/02/26/artificial-intelligence/ResNet_study/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1151,112 +1258,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/24/artificial-intelligence/Recommendation_engine/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/02/24/artificial-intelligence/Recommendation_engine/" class="post-title-link" itemprop="url">推荐引擎（PyTorch）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-02-24 19:34:32" itemprop="dateCreated datePublished" datetime="2024-02-24T19:34:32+08:00">2024-02-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.2k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="推荐引擎-逻辑回归"><a href="#推荐引擎-逻辑回归" class="headerlink" title="推荐引擎-逻辑回归"></a>推荐引擎-逻辑回归</h4><p>基于逻辑回归模型就是根据用户的行为和喜好，为用户推荐心仪的内容或产品。而基于逻辑回归模型的推荐算法，简单来说，就是利用逻辑回归模型预测用户对物品的特征翻译成机器能懂的语言，预测评分。这个算法分为五个步骤：</p>
-<ul>
-<li>数据清洗：把原始数据整理干净，提取出用户的行为和物品的特征。</li>
-<li>特征大作战：根据需求和数据特点，设计并提取有效的特征，让用户和物品更立体。</li>
-<li>模型训练营：用历史数据训练逻辑回归模型，建立输入和输出的关系。</li>
-<li>评分预测期：用训练好的模型预测用户对未知物品的评分或偏好。</li>
-<li>推荐生成器：根据预测评分和其他规则，生成个性化的推荐列表。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/02/24/artificial-intelligence/Recommendation_engine/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1283,14 +1284,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">449k</span>
+    <span title="站点总字数">450k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">24:58</span>
+    <span title="站点阅读时长">25:01</span>
   </span>
 </div>
 <div class="busuanzi-count">
