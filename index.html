@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-count">102</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -231,6 +231,107 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/26/artificial-intelligence/vector_retrieval_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/02/26/artificial-intelligence/vector_retrieval_study/" class="post-title-link" itemprop="url">向量检索（PyTorch）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-02-26 11:14:32" itemprop="dateCreated datePublished" datetime="2024-02-26T11:14:32+08:00">2024-02-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>443</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="向量检索"><a href="#向量检索" class="headerlink" title="向量检索"></a>向量检索</h4><p>举个例子，想象一下，每一条数据（比如一张图片、一段文字和一首歌曲）都被转化成了一个高维空间里的一个小箭头（我们这称之为向量）。这些向量根据他们所携带的信息分布在不同的位置。向量检索就像是给定一个向量，帮你在这个多维迷宫中解开这个相似向量（比如一张图片、一段文字或一首歌）。向量检索的应用场景：</p>
+<ul>
+<li>图搜商品：在购物平台上，只需要上传照片，系统就能通过向量检索到几乎相同的商品。</li>
+<li>语音识别后处理：将用户的语音转换为特征向量，然后在数据库中找到最匹配的语句或命令。</li>
+<li>推荐系统：用户的历史行为被编码成向量，通过检索找出最相关的电影、音乐或新闻推荐给你。</li>
+<li>生物信息学：基因序列转化为向量，用于寻找相似基因片段或预测蛋白质功能。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设我们有两个向量a和b</span></span><br><span class="line">a = torch.tensor([<span class="number">1.0</span>, <span class="number">2.0</span>, <span class="number">3.0</span>])</span><br><span class="line">b = torch.tensor([<span class="number">4.0</span>, <span class="number">5.0</span>, <span class="number">6.0</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算两个向量的余弦相似度</span></span><br><span class="line">consine_similarity = F.cosine_similarity(a.unsqueeze(<span class="number">0</span>), b.unsqueeze(<span class="number">0</span>), dim=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;The cosine similarity between a and b is: <span class="subst">&#123;consine_similarity.item()&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设我们有一个向量集合，我们想找到与向量a最相似的向量</span></span><br><span class="line">vector_collection = torch.tensor([[<span class="number">7.0</span>, <span class="number">8.0</span>, <span class="number">9.0</span>], [<span class="number">1.5</span>, <span class="number">2.5</span>, <span class="number">3.5</span>], [<span class="number">0.5</span>, <span class="number">1.5</span>, <span class="number">2.5</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算向量a与向量集合中每个向量的余璇相似度</span></span><br><span class="line">similarities = F.cosine_similarity(a.unsqueeze(<span class="number">0</span>), vector_collection, dim=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 找到最相似的向量</span></span><br><span class="line">most_similar_vector_idex = torch.argmax(similarities).item()</span><br><span class="line">most_similar_vector = vector_collection[most_similar_vector_idex]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;The most similar vector to a is: <span class="subst">&#123;most_similar_vector&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The most similar vector to a is: tensor([1.5000, 2.5000, 3.5000])</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1147,115 +1248,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/22/artificial-intelligence/nlp_study/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/02/22/artificial-intelligence/nlp_study/" class="post-title-link" itemprop="url">NLP（PyTorch）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-02-22 20:34:32" itemprop="dateCreated datePublished" datetime="2024-02-22T20:34:32+08:00">2024-02-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>715</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="NLP"><a href="#NLP" class="headerlink" title="NLP"></a>NLP</h4><p>自然语言处理（<code>NLP</code>）：就是轻松教会计算机理解人类的语言，像阅读、回答问题、识别语音这些日常操作，都离不开他。这其中，有几大关键算法功不可没：</p>
-<ul>
-<li>词袋模型：像数豆子一样统计每个词出现的次数，虽然不考虑顺序，却能帮计算机快速分类文本情绪。</li>
-<li>循环神经网络（<code>RNN</code>）：专门对付一连串信息，比如做翻译和预测下一句，只是对长句子力不从心。</li>
-<li>长短时记忆网络（<code>LSTM</code>）：升级版的<code>RNN</code>，解决了记忆差的问题，擅长学习语言中的长距离关联。</li>
-<li>支持向量机（<code>SVM</code>）：经典分类器，在区分不同类别文本上有一手。</li>
-<li>生成对抗网络（<code>GAN</code>）：一边生成文本一边鉴别真伪。用于生成逼真的对话内容</li>
-<li>注意力机制：让模型懂得抓重点，像机器翻译和摘要提炼，就用上了这一招。</li>
-<li>预训练语言模型：<code>BRET、GPT</code>等明星模型先在海量文本里“修炼”，然后应用于各种场景。</li>
-<li><code>Transformer</code>：自注意力机制的核心，编码解码一手抓，翻译和生成任务轻松搞定。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/02/22/artificial-intelligence/nlp_study/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1289,7 +1281,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">24:53</span>
+    <span title="站点阅读时长">24:54</span>
   </span>
 </div>
 <div class="busuanzi-count">
