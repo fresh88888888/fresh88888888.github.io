@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">102</span>
+          <span class="site-state-item-count">103</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -299,7 +299,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>443</span>
+      <span>444</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -321,7 +321,7 @@
 <li>图搜商品：在购物平台上，只需要上传照片，系统就能通过向量检索到几乎相同的商品。</li>
 <li>语音识别后处理：将用户的语音转换为特征向量，然后在数据库中找到最匹配的语句或命令。</li>
 <li>推荐系统：用户的历史行为被编码成向量，通过检索找出最相关的电影、音乐或新闻推荐给你。</li>
-<li>生物信息学：基因序列转化为向量，用于寻找相似基因片段或预测蛋白质功能。</li>
+<li>生物信息学：基因序列转化为向量，用于寻找相似基因片段或预测蛋白质功能。<span id="more"></span></li>
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设我们有两个向量a和b</span></span><br><span class="line">a = torch.tensor([<span class="number">1.0</span>, <span class="number">2.0</span>, <span class="number">3.0</span>])</span><br><span class="line">b = torch.tensor([<span class="number">4.0</span>, <span class="number">5.0</span>, <span class="number">6.0</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算两个向量的余弦相似度</span></span><br><span class="line">consine_similarity = F.cosine_similarity(a.unsqueeze(<span class="number">0</span>), b.unsqueeze(<span class="number">0</span>), dim=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;The cosine similarity between a and b is: <span class="subst">&#123;consine_similarity.item()&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设我们有一个向量集合，我们想找到与向量a最相似的向量</span></span><br><span class="line">vector_collection = torch.tensor([[<span class="number">7.0</span>, <span class="number">8.0</span>, <span class="number">9.0</span>], [<span class="number">1.5</span>, <span class="number">2.5</span>, <span class="number">3.5</span>], [<span class="number">0.5</span>, <span class="number">1.5</span>, <span class="number">2.5</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算向量a与向量集合中每个向量的余璇相似度</span></span><br><span class="line">similarities = F.cosine_similarity(a.unsqueeze(<span class="number">0</span>), vector_collection, dim=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 找到最相似的向量</span></span><br><span class="line">most_similar_vector_idex = torch.argmax(similarities).item()</span><br><span class="line">most_similar_vector = vector_collection[most_similar_vector_idex]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;The most similar vector to a is: <span class="subst">&#123;most_similar_vector&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <p>输出结果为：</p>
@@ -363,6 +363,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2024/02/26/artificial-intelligence/RLHF_study/" rel="next" title="向量检索（PyTorch）">
+                  向量检索（PyTorch） <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
@@ -397,14 +400,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">448k</span>
+    <span title="站点总字数">449k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">24:54</span>
+    <span title="站点阅读时长">24:56</span>
   </span>
 </div>
 <div class="busuanzi-count">
