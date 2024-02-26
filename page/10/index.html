@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">106</span>
+          <span class="site-state-item-count">107</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -231,6 +231,113 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/05/03/Design-Patterns/solid-design-principles/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/05/03/Design-Patterns/solid-design-principles/" class="post-title-link" itemprop="url">SOLID 设计原则</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-05-03 22:15:12" itemprop="dateCreated datePublished" datetime="2022-05-03T22:15:12+08:00">2022-05-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/" itemprop="url" rel="index"><span itemprop="name">设计原则</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>32 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><code>SOLID</code> 设计原则并非单纯的一个原则，它实际上包含5个设计原则：单一职责原则、开闭原则、里氏替换替换原则，接口隔离原则和依赖反转原则。</p>
+<h3 id="单一职责原则（SRP）"><a href="#单一职责原则（SRP）" class="headerlink" title="单一职责原则（SRP）"></a>单一职责原则（<code>SRP</code>）</h3><p><code>SRP(Single Responsibility Principle)</code> 这个原则的意思是一个类或者一个模块只负责完成一个功能。所以，这里有两种理解方式，一种理解是把模块看做比类更加抽象的概念，类也可以看做是模块。另一种理解是把类看做是比类更加粗粒度的代码块，模块中包含多个类。</p>
+<p>单一职责原则定义非常简单，不难理解。一个类只负责完成一个职责或者功能，也就是说，不要设计大而全的类，要设计粒度小、功能单一的类。换个角度来讲就是，一个雷包含了两个或者两个以上业务不相干的功能，那我们就说它职责不够单一，应该将它拆分成多个功能更加单一、粒度更细的类。举例来讲，如果一个类包含了用户和订单的一些操作，而用户和订单又是独立的业务领域模型，我们将它们放到一起就违反了单一职责原则，我们就需要进行拆分。</p>
+<p>不同的应用场景、不同阶段的需求背景、不同的业务层面，对于同一个类的职责是否单一，可能会有不用的判定结果。实际上，一些侧面的判断指标更具有指导意义和可执行性，比如，代码行数过度，函数或者属性过多都可能是违反单一职责原则的表象。</p>
+<p>例如，下面的 <code>UserInfo</code> 类，这个类里面除了用户的基本信息，还有地址信息。或许一个观点是都属于用户的基本信息应该放在一起，另一个观点是可以拆分出 <code>UserAddress</code> 类，<code>UserInfo</code> 只保留除 <code>Address</code> 之外的其他信息，拆分之后两个类的职责更加单一。是否应该拆分，取决于具体情况，如果实际中地址信息和基本信息总是同时出现，那放在一起没有问题。但是如果地址信息单独在其他模块中使用，就应该单独抽象成 <code>UserAddress</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserInfo</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">long</span> userId;</span><br><span class="line">  <span class="keyword">private</span> String username;</span><br><span class="line">  <span class="keyword">private</span> String email;</span><br><span class="line">  <span class="keyword">private</span> String telephone;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">long</span> createTime;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">long</span> lastLoginTime;</span><br><span class="line">  <span class="keyword">private</span> String avatarUrl;</span><br><span class="line">  <span class="keyword">private</span> String provinveOfAddress;</span><br><span class="line">  <span class="keyword">private</span> String cityOfAddress;</span><br><span class="line">  <span class="keyword">private</span> String regionOfAddress;</span><br><span class="line">  <span class="keyword">private</span> String detailedAddress;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>单一职责原则指导设计粒度较小的类，职责清晰的类，类的依赖以及被依赖的其他类也很会变少，从而降低代码的耦合性，实现高内聚、低耦合。但是如果拆分的过细，可能会适得其反，影响代码的可维护性。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/05/03/Design-Patterns/solid-design-principles/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1261,108 +1368,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/04/17/%E3%80%90Rust%E3%80%91foreign-function/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/04/17/%E3%80%90Rust%E3%80%91foreign-function/" class="post-title-link" itemprop="url">【Rust】Foreign Function</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-04-17 18:09:25" itemprop="dateCreated datePublished" datetime="2022-04-17T18:09:25+08:00">2022-04-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>11k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>36 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>世界上的每个程序并非都是用 <code>Rust</code> 编写的，我们希望能够在我们的 <code>Rust</code> 程序中使用许多用其他语言实现的关键库和接口。<code>Rust</code> 的外部函数接口 (<code>FFI</code>) 允许 <code>Rust</code> 代码调用用 <code>C</code> 编写的函数，也可以是 <code>C++</code>。由于大多数操作系统都提供 <code>C</code> 接口，<code>Rust</code> 的外部函数接口允许立即访问各种低级功能。</p>
-<p>在本章中，我们将编写一个与 <code>libgit2</code> 链接的程序，<code>libgit2</code> 是一个用于与 <code>Git</code> 版本控制系统一起工作的 <code>C</code> 库。首先，我们使用前一章中展示的 <code>unsafe</code> 特性展示直接从 <code>Rust</code> 使用 <code>C</code> 函数的例子，然后，我们将展示如何构建 <code>libgit2</code> 的安全接口，灵感来自开源 <code>git2-rs</code>。本文假设你熟悉 <code>C</code> 以及编译和链接 <code>C</code> 程序的机制，还假设熟悉 <code>Git</code> 版本控制系统。</p>
-<p>现实中确实存在用于与许多其他语言进行通信的 <code>Rust</code> 包，包括 <code>Python</code>、<code>JavaScript</code>、<code>Lua</code> 和 <code>Java</code>。这里没有篇幅介绍它们，但归根结底，所有这些接口都是使用 <code>C</code> 外来函数接口构建的。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/04/17/%E3%80%90Rust%E3%80%91foreign-function/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/9/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/11/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1389,14 +1394,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">451k</span>
+    <span title="站点总字数">452k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">25:03</span>
+    <span title="站点阅读时长">25:05</span>
   </span>
 </div>
 <div class="busuanzi-count">
