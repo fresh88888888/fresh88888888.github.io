@@ -25,7 +25,7 @@ categories:
 
 通常从在线学习资源中看到的内容，在将`pandas DataFrame`转换为`Pytorch`张量之后，他们下一步会告诉你是创建一个`torch.utils.data.Dataset`用于批量梯度下降，也是为了管理内存。最常见的方法是`torch.utils.data.Dataset`独立输出每个特征，然后我们用它来创建模型：
 
-Torch Dataset：
+`Torch Dataset`：
 ```python
 import pandas as pd
 import torch
@@ -60,7 +60,7 @@ train_dataloader = DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE, shuf
 
 next(iter(train_dataloader))
 ```
-Torch Model：
+`Torch Model`：
 ```python
 class Model(nn.Module):
     def __init__(self, emb_dim=16):
