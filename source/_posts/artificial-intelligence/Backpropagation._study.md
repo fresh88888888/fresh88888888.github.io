@@ -19,7 +19,6 @@ import torch.optim as optim
 
 # 定义一个简单的神经网络
 
-
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
@@ -30,7 +29,6 @@ class Net(nn.Module):
         x = self.fc1(x)
 
         return x
-
 
 # 创建一个模型实例
 model = Net()
