@@ -93,7 +93,7 @@ $\color{gray}{灰色}$,   $\color{purple}{紫色}$
 |$\frac{\text{d}x}{\text{d}y}$|`$\frac{\text{d}x}{\text{d}y}$`|
 |$\lim_{a \rightarrow b}$|`$\lim_{a \rightarrow b}$`|
 
-{% asset_img math_7.png %}
+{% asset_img math_6.png %}
 
 ##### 高级数学公式
 
@@ -126,7 +126,7 @@ $\color{gray}{灰色}$,   $\color{purple}{紫色}$
 |$\lim_{x \to \infty} \exp(-x) = 0$|`$\lim_{x \to \infty} \exp(-x) = 0$`|
 |$\cos (2\theta) = \cos^2 \theta - \sin^2 \theta$|`$\cos (2\theta) = \cos^2 \theta - \sin^2 \theta$`|
 
-{% asset_img math_6.png %}
+{% asset_img math_7.png %}
 
 #### 数学符号
 
