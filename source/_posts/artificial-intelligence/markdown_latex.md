@@ -31,6 +31,7 @@ $$y = x\beta + \varepsilon$$
 ##### 加粗和斜体
 
 $$\mathit{公式}: \mathbf{y} = \mathbf{x}\beta + u$$
+{% asset_img math_13.png %}
 
 ##### 大小
 
@@ -42,6 +43,8 @@ $\large Markdown常用LaTex数学公式\\$
 $\Large Markdown常用LaTex数学公式\\$
 $\huge Markdown常用LaTex数学公式\\$
 $\Huge Markdown常用LaTex数学公式\\$
+
+{% asset_img math_12.png %}
 
 ##### 颜色
 
