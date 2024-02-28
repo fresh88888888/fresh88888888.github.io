@@ -236,9 +236,9 @@ feature_positions
 
 ##### 7.基于pandasDataFrame构建Pytorch张量feature_columns
 
-- 请注意上面代码中的 feature_columns =稀疏特征 + 密集特征。这本质上意味着分类特征位于列表的左侧，数字列位于列表的右侧。
-- 在上面的 build_input_features 中，与分类或数值特征对应的 Pytorch 张量的开始和结束索引是根据 feature_columns 中的顺序创建的，这可能与 pd.DataFrame 中列的排列方式完全不同。
-- 为了解决这个问题，我们根据 feature_columns 中特征的顺序创建 Pytorch 张量。这确保了 Pytorch 张量的开始和结束索引对应于我们通过 build_input_features 创建的 feature_positions。
+- 请注意上面代码中的 `feature_columns` = 稀疏特征 `+` 密集特征。这本质上意味着分类特征位于列表的左侧，数字列位于列表的右侧。
+- 在上面的 `build_input_features` 中，与分类或数值特征对应的 `Pytorch` 张量的开始和结束索引是根据 `feature_columns` 中的顺序创建的，这可能与 `pd.DataFrame`中列的排列方式完全不同。
+- 为了解决这个问题，我们根据 `feature_columns` 中特征的顺序创建 `Pytorch` 张量。这确保了 `Pytorch `张量的开始和结束索引对应于我们通过 `build_input_features` 创建的 `feature_positions`。
 ```python
 def build_torch_dataset(df: pd.DataFrame, feature_columns: List):
     """ Create a torch tensor from the pandas dataframe according to the order of the features in feature_columns
@@ -267,10 +267,10 @@ torch_df
 
 ##### 8.创建一个函数来查找分类嵌入
 
-- 我们首先创建一个字典，其中 key 作为 feature_name，value 作为初始化的 nn.Embedding。
+- 我们首先创建一个字典，其中 `key` 作为 `feature_name，value` 作为初始化的 `nn.Embedding`。
 - 我们创建函数，以便我们只能获得所选分类特征的嵌入。
-- 在下面的示例中，您可以看到获取 [‘uid’, ‘genre’] 的嵌入是多么容易，我们不必手动考虑‘uid’或‘genre’属于哪个位置索引。
-- 如果我们有 1000 个特征，只需将分类特征列表传递给 return_feat_list。
+- 在下面的示例中，您可以看到获取 [`‘uid’, ‘genre’`] 的嵌入是多么容易，我们不必手动考虑‘`uid`’或‘`genre`’属于哪个位置索引。
+- 如果我们有 `1000` 个特征，只需将分类特征列表传递给 `return_feat_list`。
 ```python
 def build_embedding_dict(all_sparse_feature_columns, init_std=0.001):
     embedding_dict = nn.ModuleDict(
@@ -330,7 +330,7 @@ categorical_embeddings
 
 ##### 9.同样，创建一个函数来查找数值特征
 
-- 在下面的示例中，您可以再次看到获取 [‘score’] 的张量是多么容易，我们不必手动考虑‘score’属于哪个位置索引。
+- 在下面的示例中，您可以再次看到获取 [‘`score`’] 的张量是多么容易，我们不必手动考虑‘`score`’属于哪个位置索引。
 ```python
 def dense_lookup(X, feature_positions, dense_features, return_feat_list=()):
     dense_list = []
