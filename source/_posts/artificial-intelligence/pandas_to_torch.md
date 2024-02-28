@@ -102,24 +102,254 @@ class Model(nn.Module):
 
 他们将利用`Python`数据结构来帮助他们有效地管理代码。
 
-##### 1.创建一个字典来存储词汇总数
+##### 1.创建一个字典来存储所有词汇
+
+- 当初始化分类特征的`nn.Embedding`时，需要所有词汇量大小。
+- 为了不手动跟踪每个分类特征的词汇大小，我们创建一个包含每个分类列的词汇大小的字典。
+
+```python
+def get_vocabularies(df: pd.DataFrame, categorical_columns: list):
+    vocab_size = {}
+    for cat in categorical_columns:
+        vocab_size[cat] = df[cat].max() + 1
+    
+    return vocab_size
+
+categorical_features = ['uid', 'ugender', 'iid', 'igenre']
+vocab_sizes = get_vocabularies(df, categorical_features)
+vocab_sizes
+# {'uid': 3, 'ugender': 2, 'iid': 4, 'igenre': 3}
+```
 
 ##### 2.创建字典来存储嵌入维度
 
+- 初始化`nn.Embedding`时，我们需要嵌入维度。
+- 通常，每个分类特征的嵌入维度是相同的，因此我们可以对多个分类特征执行`Pytorch`操作。
+
+```python
+embedding_dim_dict = get_embedding_dim_dict(categorical_features, 6)
+embedding_dim_dict
+# {'uid': 6, 'ugender': 6, 'iid': 6, 'igenre': 6}
+```
+
 ##### 3.创建一个类来存储分类特征元数据
+
+- 现在我们有了词汇量大小字典和嵌入维度字典，我们创建一个数据类来存储分类特征的元数据。
+- 我们用这个类来创建一个简单的“`API`”，让我们了解分类特征，获取词汇量大小、名称、`nn.Embedding()`的嵌入维度。
+- 我们将此类称为`SparseFeat`，因为`nn.Embedding`本质上是一个查找表，就像`One-Hot`编码一样，它本质上是一个稀疏特征，因为`one-hot`编码的特征除了“`1`”就是“`0`”
+
+```python
+@dataclass
+class SparseFeat:
+    name: str
+    vocabulary_size: int
+    embedding_dim: int
+    embedding_name: str = None
+    dtype: str = torch.long
+    
+    def __post_init__(self):
+        """Auto fill embedding_name"""
+        if self.embedding_name is None:
+            self.embedding_name = self.name
+
+embedding_dim = 8
+uid_sparse_feat = SparseFeat(name='uid', vocabulary_size=vocab_size['uid'], embedding_dim=embedding_dim)
+# get vocabulary size for uid
+uid_sparse_feat.vocabulary_size
+# get embedding dim for uid
+uid_sparse_feat.embedding_dim
+```
 
 ##### 4.将分类列的列表存储为SparseFeat
 
+- 如果我们有`1,000`个分类特征，那么我们只需要迭代整个列表即可。
+```python
+sparse_features = [SparseFeat(name=cat,
+            vocabulary_size=vocab_sizes[cat],
+            embedding_dim=embedding_dim_dict) for cat in categorical_features]
+
+# [SparseFeat(name='uid', vocabulary_size=3, embedding_dim={'uid': 6, 'ugender': 6, 'iid': 6, 'igenre': 6}, embedding_name='uid', group_name='default_group', dtype=torch.int64),
+#  SparseFeat(name='ugender', vocabulary_size=2, embedding_dim={'uid': 6, 'ugender': 6, 'iid': 6, 'igenre': 6}, embedding_name='ugender', group_name='default_group', dtype=torch.int64),
+#  SparseFeat(name='iid', vocabulary_size=4, embedding_dim={'uid': 6, 'ugender': 6, 'iid': 6, 'igenre': 6}, embedding_name='iid', group_name='default_group', dtype=torch.int64),
+#  SparseFeat(name='igenre', vocabulary_size=3, embedding_dim={'uid': 6, 'ugender': 6, 'iid': 6, 'igenre': 6}, embedding_name='igenre', group_name='default_group', dtype=torch.int64)]
+```
+
 ##### 5.同样，创建一个类来存储数据集的数值特征，并将数值特征列表存储为DenseFeat
+
+- 处理完分类元数据后，我们还创建一个类来存储数字特征的元数据。
+- 这也是为了制作一个简单的“`API`”，让我们知道一个数字特征，它的名称是什么以及对应的维度（默认=`1`）
+```python
+dense_feat = DenseFeat(name='score', dimension=1)
+dense_feat
+# DenseFeat(name='score', dimension=1, dtype=torch.float32)
+
+# create list of numerical features
+numerical_features = ['score']
+dense_features = [DenseFeat(name=col, dimension=1) for col in numerical_features]
+```
 
 ##### 6.创建与分类或数值特征对应的 Pytorch 张量的开始和结束索引
 
+- 请记住，将 `pandas DataFrame` 转换为 `Pytorch` 数据集后，我们失去了能够通过名称轻松查找功能的优势。
+- 为了帮助我们解决这个问题，我们创建了一个函数来告诉我们每个特征，`Pytorch` 张量中的开始和结束索引是什么。
+- 如果我们没有元数据类，我们必须继续引用`vocabulary_size`字典和`embedding_dim_dict`。起始索引是包含的，而结束索引是排除的，类似于张量切片。
+```python
+categorical_features = ['uid', 'ugender', 'iid', 'igenre']
+sparse_features = [SparseFeat(name=cat,
+                              vocabulary_size=vocab_sizes[cat],
+                              embedding_dim=embedding_dim_dict[cat]) for cat in categorical_features]
+
+numerical_features = ['score']
+# create list of numerical features
+dense_features = [DenseFeat(name=col, dimension=1)
+                  for col in numerical_features]
+
+feature_columns = sparse_features + dense_features
+
+
+def build_input_features(feature_columns):
+
+    features = OrderedDict()
+    start = 0
+    for feat in feature_columns:
+        if isinstance(feat, DenseFeat):
+            features[feat.name] = (start, start + feat.dimension)
+            start += feat.dimension
+
+        elif isinstance(feat, SparseFeat):
+            features[feat.name] = (start, start + 1)
+            start += 1
+
+        else:
+            raise TypeError('Invalid feature columns type, got', type(feat))
+    return features
+
+
+feature_positions = build_input_features(feature_columns)
+feature_positions
+# OrderedDict([('uid', (0, 1)),
+#              ('ugender', (1, 2)),
+#              ('iid', (2, 3)),
+#              ('igenre', (3, 4)),
+#              ('score', (4, 5))])
+```
+
 ##### 7.基于pandasDataFrame构建Pytorch张量feature_columns
+
+- 请注意上面代码中的 feature_columns =稀疏特征 + 密集特征。这本质上意味着分类特征位于列表的左侧，数字列位于列表的右侧。
+- 在上面的 build_input_features 中，与分类或数值特征对应的 Pytorch 张量的开始和结束索引是根据 feature_columns 中的顺序创建的，这可能与 pd.DataFrame 中列的排列方式完全不同。
+- 为了解决这个问题，我们根据 feature_columns 中特征的顺序创建 Pytorch 张量。这确保了 Pytorch 张量的开始和结束索引对应于我们通过 build_input_features 创建的 feature_positions。
+```python
+def build_torch_dataset(df: pd.DataFrame, feature_columns: List):
+    """ Create a torch tensor from the pandas dataframe according to the order of the features in feature_columns
+    Cannot just use torch.tensor(df.values) because for variable length columns, it contains a list.
+    Args:
+        df (pandas.DataFrame): dataframe containing the features
+        feature_columns (List)
+    Returns:
+        (torch.Tensor): pytorch tensor from df according to the order of feature_columns
+    """
+    tensors = []
+    df = df.copy()
+    feature_length_names = []
+    for feat in feature_columns:
+        tensor = torch.tensor(df[feat.name].values, dtype=feat.dtype)
+        tensors.append(tensor.reshape(-1, 1))
+    return torch.concat(tensors, dim=1)
+
+
+torch_df = build_torch_dataset(df, feature_columns)
+torch_df
+# tensor([[0.0000, 0.0000, 1.0000, 1.0000, 0.1000],
+#         [1.0000, 1.0000, 2.0000, 2.0000, 0.2000],
+#         [2.0000, 0.0000, 3.0000, 1.0000, 0.3000]])
+```
 
 ##### 8.创建一个函数来查找分类嵌入
 
+- 我们首先创建一个字典，其中 key 作为 feature_name，value 作为初始化的 nn.Embedding。
+- 我们创建函数，以便我们只能获得所选分类特征的嵌入。
+- 在下面的示例中，您可以看到获取 [‘uid’, ‘genre’] 的嵌入是多么容易，我们不必手动考虑‘uid’或‘genre’属于哪个位置索引。
+- 如果我们有 1000 个特征，只需将分类特征列表传递给 return_feat_list。
+```python
+def build_embedding_dict(all_sparse_feature_columns, init_std=0.001):
+    embedding_dict = nn.ModuleDict(
+        {feat.name: nn.Embedding(feat.vocabulary_size,
+                                 feat.embedding_dim) for feat in all_sparse_feature_columns})
+    if init_std is not None:
+        for tensor in embedding_dict.values():
+            # nn.init is in_place
+            nn.init.normal_(tensor.weight, mean=0, std=init_std)
+
+    return embedding_dict
+
+
+embedding_dict = build_embedding_dict(sparse_features)
+embedding_dict
+# ModuleDict(
+#   (uid): Embedding(3, 6)
+#   (ugender): Embedding(2, 6)
+#   (iid): Embedding(4, 6)
+#   (igenre): Embedding(3, 6)
+# )
+
+
+def embedding_lookup(X,
+                     feature_positions,
+                     embedding_dict,
+                     sparse_feature_columns,
+                     return_feat_list=()):
+
+    embeddings_list = []
+    for feat in sparse_feature_columns:
+        feat_name = feat.name
+        embedding_name = feat.embedding_name
+        if feat_name in return_feat_list or len(return_feat_list) == 0:
+            lookup_idx = feature_positions[feat_name]
+            input_tensor = X[:, lookup_idx[0]:lookup_idx[1]].long()
+            embedding = embedding_dict[embedding_name](input_tensor)
+            embeddings_list.append(embedding)
+    return embeddings_list
+
+
+categorical_embeddings = embedding_lookup(torch_df,
+                                          feature_positions,
+                                          embedding_dict,
+                                          sparse_features,
+                                          return_feat_list=['uid', 'genre'])
+categorical_embeddings
+# [tensor([[[-9.1713e-04,  6.5061e-05, -8.2737e-04, -6.2794e-04,  3.2218e-04,
+#            -9.5998e-04]],
+
+#          [[-3.6192e-04, -7.2849e-04, -4.4335e-04,  5.4883e-04, -6.2344e-04,
+#            -5.5105e-04]],
+
+#          [[ 4.9634e-04,  2.3615e-04, -1.2853e-03, -2.9909e-04,  1.2274e-03,
+#            -2.2752e-04]]], grad_fn=<EmbeddingBackward0>)]
+```
+
 ##### 9.同样，创建一个函数来查找数值特征
 
+- 在下面的示例中，您可以再次看到获取 [‘score’] 的张量是多么容易，我们不必手动考虑‘score’属于哪个位置索引。
+```python
+def dense_lookup(X, feature_positions, dense_features, return_feat_list=()):
+    dense_list = []
+    for feat in dense_features:
+        feat_name = feat.name
+        lookup_idx = feature_positions[feat_name]
+        tensor = X[:, lookup_idx[0]:lookup_idx[1]]
+        dense_list.append(tensor)
+    return dense_list
+
+dense_feats = dense_lookup(torch_df,
+                           feature_positions,
+                           dense_features,
+                           return_feat_list=['score'])
+dense_feats
+# [tensor([[0.1000],
+#          [0.2000],
+#          [0.3000]])]
+```
 #### 总结
 
 更有经验的数据科学家将利用`Python`数据结构来使他/她的工作变得更轻松，当使用`Pytorch`处理数千个特征时，这些技能在现实世界中极其重要。
