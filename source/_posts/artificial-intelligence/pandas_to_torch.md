@@ -1,5 +1,5 @@
 ---
-title: 有效地处理从pandas到Pytorch的表格数据集中的数千个特征（PyTorch）
+title: 有效地处理从pandas到Pytorch的表格数据集中的数千个特征
 date: 2024-02-27 21:20:32
 tags:
   - AI
