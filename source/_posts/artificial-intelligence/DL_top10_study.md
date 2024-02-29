@@ -67,7 +67,7 @@ categories:
 
 ##### Deeplearning4j 
 
-[`Deeplearning4j (DL4J)`](https://deeplearning4j.konduit.ai/) 是一个开源深度学习框架，适用于`Java`语言和`Java`虚拟机生态系统。它为企业应用程序提供高效且可扩展的深度学习功能。DL4J 支持分布式计算环境，允许跨多台机器或集群进行高效的模型训练。它具有使用`Java`训练模型的独特功能，同时允许与`Python`生态系统集成。`DL4J`还兼容`TensorFlow、Keras`和其他深度学习框架。
+[`Deeplearning4j (DL4J)`](https://deeplearning4j.konduit.ai/) 是一个开源深度学习框架，适用于`Java`语言和`Java`虚拟机生态系统。它为企业应用程序提供高效且可扩展的深度学习功能。`DL4J`支持分布式计算环境，允许跨多台机器或集群进行高效的模型训练。它具有使用`Java`训练模型的独特功能，同时允许与`Python`生态系统集成。`DL4J`还兼容`TensorFlow、Keras`和其他深度学习框架。
 
 ##### Chainer
 
