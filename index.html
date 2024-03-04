@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">112</span>
+          <span class="site-state-item-count">113</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -231,6 +231,143 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/04/artificial-intelligence/machine_learning_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/03/04/artificial-intelligence/machine_learning_study/" class="post-title-link" itemprop="url">机器学习</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-03-04 18:20:32" itemprop="dateCreated datePublished" datetime="2024-03-04T18:20:32+08:00">2024-03-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="基础数据探索"><a href="#基础数据探索" class="headerlink" title="基础数据探索"></a>基础数据探索</h4><h5 id="Pandas"><a href="#Pandas" class="headerlink" title="Pandas"></a>Pandas</h5><p>任何机器学习项目的第一步都是熟悉数据。 为此，您将使用<code>Pandas</code>库。 <code>Pandas</code>是数据科学家用于探索和操作数据的主要工具。大多数人在代码中将<code>pandas</code>缩写为<code>pd</code>。我们用命令来做到这一点。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br></pre></td></tr></table></figure>
+<p><code>Pandas</code>库最重要的部分是<code>DataFrame</code>。 <code>DataFrame</code>保存您可能认为是表格的数据类型。这类似于<code>Excel</code>中的工作表或<code>SQL</code>数据库中的表。<code>Pandas</code>拥有强大的方法来处理您想要对此类数据执行的大多数操作。例如，我们将查看澳大利亚墨尔本的房价数据。在实践练习中，您将向新数据集应用相同的过程，该数据集包含爱荷华州的房价。示例（墨尔本）数据位于文件路径 <code>../input/melbourne-housing-snapshot/melb_data.csv</code>，我们使用以下命令加载并探索数据：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> oandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"><span class="comment"># save filepath to variable for easier access</span></span><br><span class="line">melbourne_file_path = <span class="string">&#x27;../input/melbourne-housing-snapshot/melb_data.csv&#x27;</span></span><br><span class="line"><span class="comment"># read the data and store data in DataFrame titled melbourne_data</span></span><br><span class="line">melbourne_data = pd.read_csv(melbourne_file_path) </span><br><span class="line"><span class="comment"># print a summary of the data in Melbourne data</span></span><br><span class="line">melbourne_data.describe()</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<img data-src="/2024/03/04/artificial-intelligence/machine_learning_study/ml_1.png" class="">
+
+<h5 id="解释数据描述"><a href="#解释数据描述" class="headerlink" title="解释数据描述"></a>解释数据描述</h5><p>结果显示原始数据集中每列<code>8</code>个数字。第一个数字是计数，显示有多少行具有非缺失值。缺失值的产生有多种原因。例如，在测量一卧室房屋时，不会收集第二卧室的尺寸。我们将回到丢失数据的主题。第二个值是<code>mean</code>，即平均值。其中，<code>std</code>是标准差，它衡量值在数值上的分布情况。要解释最小值、<code>25%、50%、75%</code>和最大值，请想象将每列从最低值到最高值排序。 第一个（最小）值是最小值。 如果您浏览列表的四分之一，您会发现一个大于值的<code>25%</code>且小于值的<code>75%</code>的数字。即<code>25%</code>的值。 第<code>50</code>个百分位数和第<code>75</code>个百分位数的定义类似，其中<code>max</code>是最大的数字。</p>
+<h4 id="您的第一个机器学习模型"><a href="#您的第一个机器学习模型" class="headerlink" title="您的第一个机器学习模型"></a>您的第一个机器学习模型</h4><h5 id="选择建模数据"><a href="#选择建模数据" class="headerlink" title="选择建模数据"></a>选择建模数据</h5><p>您的数据集有太多变量，难以理解，甚至无法很好地打印出来。如何将如此大量的数据简化为您可以理解的内容？我们将首先根据直觉选择一些变量。后面的课程将向您展示自动对变量进行优先级排序的统计技术。要选择变量&#x2F;列，我们需要查看数据集中所有列的列表。这是通过<code>DataFrame</code>的<code>columns</code>属性完成的（下面的代码的底行）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">melbourne_file_path = <span class="string">&#x27;../input/melbourne-housing-snapshot/melb_data.csv&#x27;</span></span><br><span class="line">melbourne_data = pd.read_csv(melbourne_file_path) </span><br><span class="line">melbourne_data.columns</span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Index([<span class="string">&#x27;Suburb&#x27;</span>, <span class="string">&#x27;Address&#x27;</span>, <span class="string">&#x27;Rooms&#x27;</span>, <span class="string">&#x27;Type&#x27;</span>, <span class="string">&#x27;Price&#x27;</span>, <span class="string">&#x27;Method&#x27;</span>, <span class="string">&#x27;SellerG&#x27;</span>,</span><br><span class="line">       <span class="string">&#x27;Date&#x27;</span>, <span class="string">&#x27;Distance&#x27;</span>, <span class="string">&#x27;Postcode&#x27;</span>, <span class="string">&#x27;Bedroom2&#x27;</span>, <span class="string">&#x27;Bathroom&#x27;</span>, <span class="string">&#x27;Car&#x27;</span>,</span><br><span class="line">       <span class="string">&#x27;Landsize&#x27;</span>, <span class="string">&#x27;BuildingArea&#x27;</span>, <span class="string">&#x27;YearBuilt&#x27;</span>, <span class="string">&#x27;CouncilArea&#x27;</span>, <span class="string">&#x27;Lattitude&#x27;</span>,</span><br><span class="line">       <span class="string">&#x27;Longtitude&#x27;</span>, <span class="string">&#x27;Regionname&#x27;</span>, <span class="string">&#x27;Propertycount&#x27;</span>],</span><br><span class="line">      dtype=<span class="string">&#x27;object&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># The Melbourne data has some missing values (some houses for which some variables weren&#x27;t recorded.)</span></span><br><span class="line"><span class="comment"># We&#x27;ll learn to handle missing values in a later tutorial.  </span></span><br><span class="line"><span class="comment"># Your Iowa data doesn&#x27;t have missing values in the columns you use. </span></span><br><span class="line"><span class="comment"># So we will take the simplest option for now, and drop houses from our data. </span></span><br><span class="line"><span class="comment"># Don&#x27;t worry about this much for now, though the code is:</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># dropna drops missing values (think of na as &quot;not available&quot;)</span></span><br><span class="line">melbourne_data = melbourne_data.dropna(axis=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>有多种方法可以选择数据子集。但我们现在将重点关注两种方法:</p>
+<ul>
+<li>点表示法，我们用它来选择“<code>prediction target</code>”</li>
+<li>使用列列表进行选择，我们用它来选择“<code>features</code>”</li>
+</ul>
+<h5 id="选择预测目标"><a href="#选择预测目标" class="headerlink" title="选择预测目标"></a>选择预测目标</h5><p>您可以使用点符号提取变量。这个单列存储在一个<code>Series</code>中，它大致就像一个只有单列数据的<code>DataFrame</code>。我们将使用点符号来选择我们想要预测的列，这称为预测目标。按照惯例，预测目标称为<code>y</code>。所以我们需要保存墨尔本数据中的房价的代码是:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y = melbourne_data.Price</span><br></pre></td></tr></table></figure>
+
+<h5 id="选择“Features”"><a href="#选择“Features”" class="headerlink" title="选择“Features”"></a>选择“Features”</h5><p>输入到我们的模型中（随后用于进行预测）的列称为“特征”。在我们的例子中，这些列将用于确定房价。有时，您将使用除目标之外的所有列作为特征。其他时候，使用更少的功能会更好。现在，我们将构建一个仅包含几个特征的模型。稍后您将了解如何迭代和比较使用不同功能构建的模型。我们通过在括号内提供列名称列表来选择多个功能。该列表中的每个项目都应该是一个字符串（带引号）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">melbourne_features = [<span class="string">&#x27;Rooms&#x27;</span>, <span class="string">&#x27;Bathroom&#x27;</span>, <span class="string">&#x27;Landsize&#x27;</span>, <span class="string">&#x27;Lattitude&#x27;</span>, <span class="string">&#x27;Longtitude&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<p>按照惯例，该数据称为<code>X</code>:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X = melbourne_data[melbourne_features]</span><br></pre></td></tr></table></figure>
+<p>让我们快速回顾一下我们将使用describe方法和head方法来预测房价的数据，该方法显示了前几行。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X.describe()</span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<img data-src="/2024/03/04/artificial-intelligence/machine_learning_study/ml_2.png" class="">
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X.head()</span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<img data-src="/2024/03/04/artificial-intelligence/machine_learning_study/ml_3.png" class="">
+<p>使用这些命令直观地检查数据是数据科学家工作的重要组成部分。您经常会在数据集中发现值得进一步检查的惊喜。</p>
+<h5 id="建立你的模型"><a href="#建立你的模型" class="headerlink" title="建立你的模型"></a>建立你的模型</h5><p>您将使用<code>scikit-learn</code>库来创建模型。编码时，该库被编写为<code>sklearn</code>，正如您将在示例代码中看到的那样。<code>Scikit-learn</code>无疑是最流行的库，用于对通常存储在<code>DataFrame</code>中的数据类型进行建模。构建和使用模型的步骤是：</p>
+<ul>
+<li>定义：它将是什么类型的模型？决策树？其他类型的模型？还指定了模型类型的一些其他参数。</li>
+<li>拟合：从提供的数据中捕获模式。这是建模的核心。</li>
+<li>预测：正如听起来的那样。</li>
+<li>评估：确定模型预测的准确性。<br>以下是使用<code>scikit-learn</code>定义决策树模型并将其与特征和目标变量进行拟合的示例。<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeRegressor</span><br><span class="line"></span><br><span class="line"><span class="comment"># Define model. Specify a number for random_state to ensure same results each run</span></span><br><span class="line">melbourne_model = DecisionTreeRegressor(random_state=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Fit model</span></span><br><span class="line">melbourne_model.fit(X, y)</span><br></pre></td></tr></table></figure>
+输出结果为：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DecisionTreeRegressor(random_state=1)</span><br></pre></td></tr></table></figure>
+许多机器学习模型允许模型训练具有一定的随机性。为random_state指定一个数字可确保您在每次运行中获得相同的结果。 这被认为是一个很好的做法。您使用任何数字，模型质量不会完全取决于您选择的值。我们现在有了一个可以用来进行预测的拟合模型。在实践中，您需要对市场上即将上市的新房屋进行预测，而不是对我们已经有价格的房屋进行预测。 但我们将对训练数据的前几行进行预测，以了解预测函数的工作原理。<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Making predictions for the following 5 houses:&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(X.head())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;The predictions are&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(melbourne_model.predict(X.head()))</span><br></pre></td></tr></table></figure>
+输出结果为：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Making predictions <span class="keyword">for</span> the following 5 houses:</span><br><span class="line">   Rooms  Bathroom  Landsize  Lattitude  Longtitude</span><br><span class="line">1      2       1.0     156.0   -37.8079    144.9934</span><br><span class="line">2      3       2.0     134.0   -37.8093    144.9944</span><br><span class="line">4      4       1.0     120.0   -37.8072    144.9941</span><br><span class="line">6      3       2.0     245.0   -37.8024    144.9993</span><br><span class="line">7      2       1.0     256.0   -37.8060    144.9954</span><br><span class="line">The predictions are</span><br><span class="line">[1035000. 1465000. 1600000. 1876000. 1636000.]</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1144,112 +1281,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/26/artificial-intelligence/RLHF_study/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/02/26/artificial-intelligence/RLHF_study/" class="post-title-link" itemprop="url">基于人类反馈的强化学习（PyTorch）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-02-26 12:24:32" itemprop="dateCreated datePublished" datetime="2024-02-26T12:24:32+08:00">2024-02-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>540</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="基于人类反馈的强化学习（RLHF）"><a href="#基于人类反馈的强化学习（RLHF）" class="headerlink" title="基于人类反馈的强化学习（RLHF）"></a>基于人类反馈的强化学习（RLHF）</h4><p><code>RLHF</code>是“<code>Reinforcement Learning from Human Feedback</code>”的缩写，中文意思是“基于人类反馈的强化学习”。简单来说，它是利用人类的反馈来训练和优化人工智能模型的方法。<code>RLHF</code>的核心思想是让人类参与到模型的训练过程中，通过人类的反馈来指导模型的学习。这样，模型就可以更好地理解人类的需求和期望，从而更加精准的完成各种任务。<code>RLHF</code>的过程可以分为三个步骤：</p>
-<ul>
-<li>第一步，预训练：在这个阶段，我们使用大量的数据来训练模型，让模型学习到一些基础的知识和技能。</li>
-<li>第二步，人类反馈：在这个阶段，我们让人类参与到模型训练的过程中，通过人类的反馈来指导模型的学习。这些反馈可以是正面的，也可以是负面的，模型会根据反馈来调整和优化。</li>
-<li>第三步，强化学习：在这个阶段，我们使用强化学习算法来优化模型，让模型更加精准的完成各种任务。</li>
-</ul>
-<p><code>RLHF</code>在人工智能领域有着广泛的应用，比如自然语言处理，计算机视觉、语音识别等等。通过<code>RLHF</code>，可门可以让模型行更好地理解人类的需求和期望，从而提供更加智能、精准和有力的服务。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/02/26/artificial-intelligence/RLHF_study/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1276,14 +1307,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">460k</span>
+    <span title="站点总字数">461k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">25:32</span>
+    <span title="站点阅读时长">25:38</span>
   </span>
 </div>
 <div class="busuanzi-count">
