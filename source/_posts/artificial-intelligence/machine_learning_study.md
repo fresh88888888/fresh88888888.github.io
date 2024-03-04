@@ -15,6 +15,7 @@ categories:
 ```python
 import pandas as pd
 ```
+<!-- more -->
 `Pandas`库最重要的部分是`DataFrame`。 `DataFrame`保存您可能认为是表格的数据类型。这类似于`Excel`中的工作表或`SQL`数据库中的表。`Pandas`拥有强大的方法来处理您想要对此类数据执行的大多数操作。例如，我们将查看澳大利亚墨尔本的房价数据。在实践练习中，您将向新数据集应用相同的过程，该数据集包含爱荷华州的房价。示例（墨尔本）数据位于文件路径 `../input/melbourne-housing-snapshot/melb_data.csv`，我们使用以下命令加载并探索数据：
 ```python
 import oandas as pd
@@ -139,3 +140,6 @@ Making predictions for the following 5 houses:
 The predictions are
 [1035000. 1465000. 1600000. 1876000. 1636000.]
 ```
+
+#### 模型验证
+
