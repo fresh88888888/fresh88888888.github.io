@@ -7,4 +7,4 @@ comments: false
 
 #### 一位开发人员
 
-{% asset_img david_zcj_MachineLearning.png %}
+![](images/david_zcj_MachineLearning.png)
