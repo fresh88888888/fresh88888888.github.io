@@ -5,6 +5,6 @@ type: about
 comments: false
 ---
 
-#### 一位开发人员
+#### 一位技术架构师
 
 ![](images/david_zcj_MachineLearning.png)
