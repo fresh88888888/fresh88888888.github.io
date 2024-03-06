@@ -116,3 +116,103 @@ Weight	Feature
 ##### 解释排列重要性
 
 顶部的值是最重要的特征，而底部的值最不重要。每行的第一个数字显示随机改组后模型性能下降的程度（在本例中，使用“准确性”作为性能指标）。与数据科学中的大多数事情一样，洗牌列带来的确切性能变化存在一定的随机性。我们通过多次洗牌重复该过程来测量排列重要性计算中的随机性。`±`后面的数字衡量从一次重组到下一次重组的性能变化情况。您偶尔会看到排列重要性的负值。在这些情况下，对混洗（或噪声）数据的预测恰好比真实数据更准确。当特征无关紧要（重要性应该接近`0`）但随机导致对混洗数据的预测更加准确时，就会发生这种情况。这种情况在小数据集（如本例中的数据集）中更为常见，因为运气/机会的空间更大。在我们的示例中，最重要的特征是进球数。这似乎是明智的。足球迷可能对其他变量的排序是否令人惊讶有一些直觉。
+
+#### 每个特征如何影响您的预测？
+
+##### 部分相关图
+
+这对于回答以下问题很有用:
+- 控制所有其他房屋特征后，经度和纬度对房价有何影响？重申一下，类似大小的房屋在不同地区的定价如何？
+- 两组之间的预测健康差异是由于饮食差异还是其他因素造成的？
+
+如果您熟悉线性或逻辑回归模型，则可以像这些模型中的系数一样解释部分相关图。不过，复杂模型的部分依赖图可以捕获比简单模型的系数更复杂的模式。如果您不熟悉线性或逻辑回归，请不要担心这种比较。我们将展示几个示例，解释这些图，然后查看创建这些图的代码。
+
+##### 怎么运行的?
+
+与排列重要性一样，部分依赖图是在模型拟合后计算的。该模型适合未经以任何方式人为操纵的真实数据。在我们的足球示例中，球队可能在很多方面有所不同。他们的传球次数、射门次数、进球数等等。乍一看，似乎很难理清这些特征的影响。为了了解部分图如何区分每个特征的影响，我们首先考虑单行数据。例如，该行数据可能代表一支球队，控球率为`50%`，传球`100`次，射门`10`次，进球`1`个。我们将使用拟合模型来预测我们的结果（他们的球员赢得“比赛最佳球员”的概率）。但我们反复改变一个变量的值来做出一系列预测。如果球队只有`40%`的控球率，我们就可以预测结果。然后我们预测他们有`50%`的机会拥有球权。然后再次预测`60%`。等等。当我们从较小的控球权值转向较大的控球权值（在水平轴上）时，我们会追踪出预测结果（在垂直轴上）。在本描述中，我们仅使用单行数据。 特征之间的相互作用可能会导致单行的绘图不典型。因此，我们使用原始数据集中的多行重复该心理实验，并在垂直轴上绘制平均预测结果。
+
+##### 代码示例
+
+```python
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+
+data = pd.read_csv('../input/fifa-2018-match-statistics/FIFA 2018 Statistics.csv')
+y = (data['Man of the Match'] == "Yes")  # Convert from string "Yes"/"No" to binary
+feature_names = [i for i in data.columns if data[i].dtype in [np.int64]]
+X = data[feature_names]
+train_X, val_X, train_y, val_y = train_test_split(X, y, random_state=1)
+tree_model = DecisionTreeClassifier(random_state=0, max_depth=5, min_samples_split=5).fit(train_X, train_y)
+```
+我们的第一个示例使用决策树，您可以在下面看到。在实践中，您将针对实际应用程序使用更复杂的模型。
+```python
+from sklearn import tree
+import graphviz
+
+tree_graph = tree.export_graphviz(tree_model, out_file=None, feature_names=feature_names)
+graphviz.Source(tree_graph)
+```
+输出结果为：
+{% asset_img mlk_3.png %}
+
+作为阅读树的指导：
+- 有孩子的叶子在顶部显示他们的分裂标准。
+- 底部的一对值分别显示树的该节点中的数据点的目标的`False`值和`True`值的计数。
+
+以下是使用`scikit-learn`库创建部分依赖图的代码。
+```python
+from matplotlib import pyplot as plt
+from sklearn.inspection import PartialDependenceDisplay
+
+# Create and plot the data
+disp1 = PartialDependenceDisplay.from_estimator(tree_model, val_X, ['Goal Scored'])
+plt.show()
+```
+输出结果为：
+{% asset_img mlk_4.png %}
+
+`y`轴被解释为预测相对于基线或最左边值的预测变化。从这个特定的图表中，我们看到进球大大增加了您赢得“全场最佳球员”的机会。但除此之外的额外目标似乎对预测影响不大。这是另一个示例图：
+```python
+feature_to_plot = 'Distance Covered (Kms)'
+disp2 = PartialDependenceDisplay.from_estimator(tree_model, val_X, [feature_to_plot])
+plt.show()
+```
+输出结果为：
+{% asset_img mlk_5.png %}
+
+该图似乎太简单，无法代表现实。但那是因为模型太简单了。您应该能够从上面的决策树中看到，这准确地代表了模型的结构。您可以轻松比较不同模型的结构或含义。这是随机森林模型的相同图。
+```python
+# Build Random Forest model
+rf_model = RandomForestClassifier(random_state=0).fit(train_X, train_y)
+
+disp3 = PartialDependenceDisplay.from_estimator(rf_model, val_X, [feature_to_plot])
+plt.show()
+```
+输出结果为：
+{% asset_img mlk_6.png %}
+
+该模型认为，如果您的球员在比赛过程中总共跑了`100`公里，您更有可能赢得全场最佳球员。尽管运行更多会导致预测降低。一般来说，这条曲线的平滑形状似乎比决策树模型的阶跃函数更合理。尽管这个数据集足够小，但我们在解释任何模型时都会小心。
+
+##### 二维部分相关图
+
+如果您对特征之间的相互作用感到好奇，二维部分依赖图也很有用。我们将再次对该图使用决策树模型。它将创建一个极其简单的图，但您应该能够将图中看到的内容与树本身相匹配。
+```python
+fig, ax = plt.subplots(figsize=(8, 6))
+f_names = [('Goal Scored', 'Distance Covered (Kms)')]
+# Similar to previous PDP plot except we use tuple of features instead of single feature
+disp4 = PartialDependenceDisplay.from_estimator(tree_model, val_X, f_names, ax=ax)
+plt.show()
+```
+输出结果为：
+{% asset_img mlk_7.png %}
+
+该图显示了对进球数和距离的任意组合的预测。例如，当一支球队至少进`1`球且跑动总距离接近`100`公里时，我们会看到最高的预测。如果他们进了`0`球，那么走过的距离就无关紧要了。通过追踪目标为`0`的决策树，您能看到这一点吗？但如果他们进球，距离会影响预测。确保您可以从二维部分相关图中看到这一点。你能在决策树中看到这种模式吗？
+
+#### SHAP值
+
+##### 介绍
+
+
