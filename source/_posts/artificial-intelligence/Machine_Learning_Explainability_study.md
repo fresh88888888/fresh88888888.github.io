@@ -215,4 +215,113 @@ plt.show()
 
 ##### 介绍
 
+您已经了解（并使用）了从机器学习模型中提取一般见解的技术。但是，如果您想分解模型如何用于单个预测，该怎么办？`SHAP`值（`SHApley Additive exPlanations`的缩写）分解预测以显示每个特征的影响。你可以在哪里使用这个？
+- 一个模型表明银行不应该借钱给某人，法律要求银行解释每笔拒绝贷款的依据。
+- 医疗保健提供者希望确定哪些因素导致每位患者患某种疾病的风险增加，以便他们可以通过有针对性的健康干预措施直接解决这些风险因素。
 
+##### 它们是如何工作的？
+
+`SHAP`值解释了给定特征具有特定值与我们在该特征采用某个基线值时所做的预测相比的影响。我们将继续排列重要性和部分依赖图课程中的足球/橄榄球示例。在这个课程中，我们预测了一支球队是否会有一名球员赢得全场最佳球员奖。我们可以问：
+- 球队进了`3`个球这一事实在多大程度上推动了预测？
+但如果我们将其重述为：
+- 多少是由球队进了`3`个进球这一事实驱动的预测，而不是一些基线进球数。
+当然，每个团队都有很多特点。因此，如果我们回答目标数量的问题，我们可以对所有其他特征重复该过程。`SHAP`值以保证良好属性的方式做到这一点。具体来说，您可以使用以下等式分解预测：
+```
+sum(SHAP values for all features) = pred_for_team - pred_for_baseline_values
+```
+也就是说，所有特征的`SHAP`值相加可以解释为什么我的预测与基线不同。这使我们能够分解图表中的预测，如下所示：
+{% asset_img mlx_8.png %}
+
+我们预测为`0.7`，而`base_value`为`0.4979`。导致预测增加的特征值是粉红色的，它们的视觉大小显示了特征影响的大小。降低预测的特征值呈蓝色。最大的影响来自进球数为`2`。尽管控球权值对降低预测有显着影响。如果用粉红色条的长度减去蓝色条的长度，则它等于从基值到输出的距离。该技术存在一定的复杂性，以确保基线加上各个效应的总和达到预测（这并不像听起来那么简单）。我们不会在这里讨论这个细节，因为它对于使用该技术并不重要。这篇博文有更长的理论解释。
+
+##### 计算SHAP值的代码
+
+我们使用完美的`Shap`库计算`SHAP`值。在此示例中，我们将重用您已经在足球数据中看到的模型。
+```python
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+
+data = pd.read_csv('../input/fifa-2018-match-statistics/FIFA 2018 Statistics.csv')
+y = (data['Man of the Match'] == "Yes")  # Convert from string "Yes"/"No" to binary
+feature_names = [i for i in data.columns if data[i].dtype in [np.int64, np.int64]]
+X = data[feature_names]
+train_X, val_X, train_y, val_y = train_test_split(X, y, random_state=1)
+my_model = RandomForestClassifier(random_state=0).fit(train_X, train_y)
+```
+我们将查看数据集单行的`SHAP`值（我们任意选择第`5`行）。对于上下文，我们将在查看`SHA`值之前查看原始预测。
+```python
+row_to_show = 5
+data_for_prediction = val_X.iloc[row_to_show]  # use 1 row of data here. Could use multiple rows if desired
+data_for_prediction_array = data_for_prediction.values.reshape(1, -1)
+
+my_model.predict_proba(data_for_prediction_array)
+```
+输出结果为：
+```bash
+array([[0.29, 0.71]])
+```
+该队有`70%`的可能性让一名球员获奖。现在，我们将继续编写代码来获取该单个预测的`SHAP`值。
+```python
+import shap  # package used to calculate Shap values
+
+# Create object that can calculate shap values
+explainer = shap.TreeExplainer(my_model)
+
+# Calculate Shap values
+shap_values = explainer.shap_values(data_for_prediction)
+```
+上面的`shap_values`对象是一个包含两个数组的列表。第一个数组是负面结果（未获奖）的`SHAP`值，第二个数组是正面结果（获奖）的`SHAP`值列表。我们通常根据积极结果的预测来考虑预测，因此我们将提取积极结果的`SHAP`值（提取`shap_values[1]`）。查看原始数组很麻烦，但是`shap`包有一个很好的方法来可视化结果。
+```python
+shap.initjs()
+shap.force_plot(explainer.expected_value[1], shap_values[1], data_for_prediction)
+```
+输出结果为：
+{% asset_img mlx_9.png %}
+
+如果您仔细查看我们创建`SHAP`值的代码，您会注意到我们在`shap.TreeExplainer(my_model)`中引用了树。但`SHAP`包为每种类型的模型提供了解释。
+- `shap.DeepExplainer`适用于深度学习模型。
+- `shap.KernelExplainer`适用于所有模型，尽管它比其他解释器慢，并且它提供近似值而不是精确的`Shap`值。
+
+下面是一个使用`KernelExplainer`获得类似结果的示例。结果并不相同，因为`KernelExplainer`给出了近似结果。但结果却讲述了同样的故事。
+```python
+# use Kernel SHAP to explain test set predictions
+k_explainer = shap.KernelExplainer(my_model.predict_proba, train_X)
+k_shap_values = k_explainer.shap_values(data_for_prediction)
+shap.force_plot(k_explainer.expected_value[1], k_shap_values[1], data_for_prediction)
+```
+
+```
+X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+The default of 'normalize' will be set to False in version 1.2 and deprecated in version 1.4.
+If you wish to scale the data, use Pipeline with a StandardScaler in a preprocessing stage. To reproduce the previous behavior:
+
+from sklearn.pipeline import make_pipeline
+
+model = make_pipeline(StandardScaler(with_mean=False), LassoLarsIC())
+
+If you wish to pass a sample_weight parameter, you need to pass it as a fit parameter to each step of the pipeline as follows:
+
+kwargs = {s[0] + '__sample_weight': sample_weight for s in model.steps}
+model.fit(X, y, **kwargs)
+
+Set parameter alpha to: original_alpha * np.sqrt(n_samples). 
+The default of 'normalize' will be set to False in version 1.2 and deprecated in version 1.4.
+If you wish to scale the data, use Pipeline with a StandardScaler in a preprocessing stage. To reproduce the previous behavior:
+
+from sklearn.pipeline import make_pipeline
+
+model = make_pipeline(StandardScaler(with_mean=False), LassoLarsIC())
+
+If you wish to pass a sample_weight parameter, you need to pass it as a fit parameter to each step of the pipeline as follows:
+
+kwargs = {s[0] + '__sample_weight': sample_weight for s in model.steps}
+model.fit(X, y, **kwargs)
+
+Set parameter alpha to: original_alpha * np.sqrt(n_samples). 
+```
+输出结果为：
+{% asset_img mlx_10.png %}
