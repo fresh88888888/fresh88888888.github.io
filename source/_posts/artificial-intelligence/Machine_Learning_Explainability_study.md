@@ -54,10 +54,10 @@ categories:
 ##### 他是如何工作的？
 
 排列重要性使用的模型与您迄今为止看到的任何模型都不同，许多人一开始会觉得它令人困惑。因此，我们将从一个示例开始，使其更加具体。考虑具有以下格式的数据：
-{% asset_img mlk_1.png %}
+{% asset_img mlx_1.png %}
 
 我们希望使用`10`岁时的数据来预测一个人`20`岁时的身高。我们的数据包括有用的特征（`10`岁时的身高）、几乎没有预测能力的特征（拥有的袜子）以及我们在本说明中不会重点关注的一些其他特征。排列重要性是在模型拟合后计算的。因此，我们不会更改模型或更改对于给定的身高、袜子数量等值的预测。相反，我们会问以下问题：如果我随机打乱验证数据的单列，而将目标和所有其他列留在原处，这将如何影响现在打乱的数据中的预测准确性？
-{% asset_img mlk_2.png %}
+{% asset_img mlx_2.png %}
 
 随机重新排序单个列会导致预测不太准确，因为结果数据不再对应于现实世界中观察到的任何内容。如果我们对模型严重依赖于预测的列进行洗牌，模型的准确性尤其会受到影响。在这种情况下，调整`10`岁时的身高会导致糟糕的预测。如果我们对拥有的袜子进行洗牌，那么最终的预测就不会受到那么大的影响。
 
@@ -156,7 +156,7 @@ tree_graph = tree.export_graphviz(tree_model, out_file=None, feature_names=featu
 graphviz.Source(tree_graph)
 ```
 输出结果为：
-{% asset_img mlk_3.png %}
+{% asset_img mlx_3.png %}
 
 作为阅读树的指导：
 - 有孩子的叶子在顶部显示他们的分裂标准。
@@ -172,7 +172,7 @@ disp1 = PartialDependenceDisplay.from_estimator(tree_model, val_X, ['Goal Scored
 plt.show()
 ```
 输出结果为：
-{% asset_img mlk_4.png %}
+{% asset_img mlx_4.png %}
 
 `y`轴被解释为预测相对于基线或最左边值的预测变化。从这个特定的图表中，我们看到进球大大增加了您赢得“全场最佳球员”的机会。但除此之外的额外目标似乎对预测影响不大。这是另一个示例图：
 ```python
@@ -181,7 +181,7 @@ disp2 = PartialDependenceDisplay.from_estimator(tree_model, val_X, [feature_to_p
 plt.show()
 ```
 输出结果为：
-{% asset_img mlk_5.png %}
+{% asset_img mlx_5.png %}
 
 该图似乎太简单，无法代表现实。但那是因为模型太简单了。您应该能够从上面的决策树中看到，这准确地代表了模型的结构。您可以轻松比较不同模型的结构或含义。这是随机森林模型的相同图。
 ```python
@@ -192,7 +192,7 @@ disp3 = PartialDependenceDisplay.from_estimator(rf_model, val_X, [feature_to_plo
 plt.show()
 ```
 输出结果为：
-{% asset_img mlk_6.png %}
+{% asset_img mlx_6.png %}
 
 该模型认为，如果您的球员在比赛过程中总共跑了`100`公里，您更有可能赢得全场最佳球员。尽管运行更多会导致预测降低。一般来说，这条曲线的平滑形状似乎比决策树模型的阶跃函数更合理。尽管这个数据集足够小，但我们在解释任何模型时都会小心。
 
@@ -207,7 +207,7 @@ disp4 = PartialDependenceDisplay.from_estimator(tree_model, val_X, f_names, ax=a
 plt.show()
 ```
 输出结果为：
-{% asset_img mlk_7.png %}
+{% asset_img mlx_7.png %}
 
 该图显示了对进球数和距离的任意组合的预测。例如，当一支球队至少进`1`球且跑动总距离接近`100`公里时，我们会看到最高的预测。如果他们进了`0`球，那么走过的距离就无关紧要了。通过追踪目标为`0`的决策树，您能看到这一点吗？但如果他们进球，距离会影响预测。确保您可以从二维部分相关图中看到这一点。你能在决策树中看到这种模式吗？
 
