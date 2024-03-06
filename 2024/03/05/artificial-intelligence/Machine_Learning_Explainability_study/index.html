@@ -33,11 +33,19 @@
 <meta property="og:site_name" content="UMBRELLA">
 <meta property="og:description" content="模型见解的用例许多人说机器学习模型是“黑匣子”，从某种意义上说，它们可以做出很好的预测，但你无法理解这些预测背后的逻辑。这种说法是正确的，因为大多数数据科学家还不知道如何从模型中提取见解。  模型认为数据中哪些特征最重要？ 对于模型的任何单个预测，数据中的每个特征如何影响该特定预测？ 每个特征如何从大的角度影响模型的预测（考虑大量可能的预测时，其典型效果是什么）？">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/mlx_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/mlx_2.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/mlx_3.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/mlx_4.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/mlx_5.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/mlx_6.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/mlx_7.png">
 <meta property="article:published_time" content="2024-03-05T12:20:32.000Z">
 <meta property="article:modified_time" content="2024-03-05T12:20:32.000Z">
 <meta property="article:author" content="umbrella">
 <meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/mlx_1.png">
 
 
 <link rel="canonical" href="https://fresh88888888.github.io/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/">
@@ -342,10 +350,10 @@
 <li>与我们希望特征重要性度量具有的属性一致</li>
 </ul>
 <h5 id="他是如何工作的？"><a href="#他是如何工作的？" class="headerlink" title="他是如何工作的？"></a>他是如何工作的？</h5><p>排列重要性使用的模型与您迄今为止看到的任何模型都不同，许多人一开始会觉得它令人困惑。因此，我们将从一个示例开始，使其更加具体。考虑具有以下格式的数据：</p>
-
+<img data-src="/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/mlx_1.png" class="">
 
 <p>我们希望使用<code>10</code>岁时的数据来预测一个人<code>20</code>岁时的身高。我们的数据包括有用的特征（<code>10</code>岁时的身高）、几乎没有预测能力的特征（拥有的袜子）以及我们在本说明中不会重点关注的一些其他特征。排列重要性是在模型拟合后计算的。因此，我们不会更改模型或更改对于给定的身高、袜子数量等值的预测。相反，我们会问以下问题：如果我随机打乱验证数据的单列，而将目标和所有其他列留在原处，这将如何影响现在打乱的数据中的预测准确性？</p>
-
+<img data-src="/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/mlx_2.png" class="">
 
 <p>随机重新排序单个列会导致预测不太准确，因为结果数据不再对应于现实世界中观察到的任何内容。如果我们对模型严重依赖于预测的列进行洗牌，模型的准确性尤其会受到影响。在这种情况下，调整<code>10</code>岁时的身高会导致糟糕的预测。如果我们对拥有的袜子进行洗牌，那么最终的预测就不会受到那么大的影响。</p>
 <p>有了这种认识，流程如下：</p>
@@ -373,7 +381,7 @@
 <p>我们的第一个示例使用决策树，您可以在下面看到。在实践中，您将针对实际应用程序使用更复杂的模型。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> tree</span><br><span class="line"><span class="keyword">import</span> graphviz</span><br><span class="line"></span><br><span class="line">tree_graph = tree.export_graphviz(tree_model, out_file=<span class="literal">None</span>, feature_names=feature_names)</span><br><span class="line">graphviz.Source(tree_graph)</span><br></pre></td></tr></table></figure>
 <p>输出结果为：</p>
-
+<img data-src="/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/mlx_3.png" class="">
 
 <p>作为阅读树的指导：</p>
 <ul>
@@ -383,23 +391,23 @@
 <p>以下是使用<code>scikit-learn</code>库创建部分依赖图的代码。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> sklearn.inspection <span class="keyword">import</span> PartialDependenceDisplay</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create and plot the data</span></span><br><span class="line">disp1 = PartialDependenceDisplay.from_estimator(tree_model, val_X, [<span class="string">&#x27;Goal Scored&#x27;</span>])</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
 <p>输出结果为：</p>
-
+<img data-src="/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/mlx_4.png" class="">
 
 <p><code>y</code>轴被解释为预测相对于基线或最左边值的预测变化。从这个特定的图表中，我们看到进球大大增加了您赢得“全场最佳球员”的机会。但除此之外的额外目标似乎对预测影响不大。这是另一个示例图：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">feature_to_plot = <span class="string">&#x27;Distance Covered (Kms)&#x27;</span></span><br><span class="line">disp2 = PartialDependenceDisplay.from_estimator(tree_model, val_X, [feature_to_plot])</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
 <p>输出结果为：</p>
-
+<img data-src="/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/mlx_5.png" class="">
 
 <p>该图似乎太简单，无法代表现实。但那是因为模型太简单了。您应该能够从上面的决策树中看到，这准确地代表了模型的结构。您可以轻松比较不同模型的结构或含义。这是随机森林模型的相同图。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Build Random Forest model</span></span><br><span class="line">rf_model = RandomForestClassifier(random_state=<span class="number">0</span>).fit(train_X, train_y)</span><br><span class="line"></span><br><span class="line">disp3 = PartialDependenceDisplay.from_estimator(rf_model, val_X, [feature_to_plot])</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
 <p>输出结果为：</p>
-
+<img data-src="/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/mlx_6.png" class="">
 
 <p>该模型认为，如果您的球员在比赛过程中总共跑了<code>100</code>公里，您更有可能赢得全场最佳球员。尽管运行更多会导致预测降低。一般来说，这条曲线的平滑形状似乎比决策树模型的阶跃函数更合理。尽管这个数据集足够小，但我们在解释任何模型时都会小心。</p>
 <h5 id="二维部分相关图"><a href="#二维部分相关图" class="headerlink" title="二维部分相关图"></a>二维部分相关图</h5><p>如果您对特征之间的相互作用感到好奇，二维部分依赖图也很有用。我们将再次对该图使用决策树模型。它将创建一个极其简单的图，但您应该能够将图中看到的内容与树本身相匹配。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fig, ax = plt.subplots(figsize=(<span class="number">8</span>, <span class="number">6</span>))</span><br><span class="line">f_names = [(<span class="string">&#x27;Goal Scored&#x27;</span>, <span class="string">&#x27;Distance Covered (Kms)&#x27;</span>)]</span><br><span class="line"><span class="comment"># Similar to previous PDP plot except we use tuple of features instead of single feature</span></span><br><span class="line">disp4 = PartialDependenceDisplay.from_estimator(tree_model, val_X, f_names, ax=ax)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
 <p>输出结果为：</p>
-
+<img data-src="/2024/03/05/artificial-intelligence/Machine_Learning_Explainability_study/mlx_7.png" class="">
 
 <p>该图显示了对进球数和距离的任意组合的预测。例如，当一支球队至少进<code>1</code>球且跑动总距离接近<code>100</code>公里时，我们会看到最高的预测。如果他们进了<code>0</code>球，那么走过的距离就无关紧要了。通过追踪目标为<code>0</code>的决策树，您能看到这一点吗？但如果他们进球，距离会影响预测。确保您可以从二维部分相关图中看到这一点。你能在决策树中看到这种模式吗？</p>
 <h4 id="SHAP值"><a href="#SHAP值" class="headerlink" title="SHAP值"></a>SHAP值</h4><h5 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h5>
