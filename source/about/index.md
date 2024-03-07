@@ -7,4 +7,6 @@ comments: false
 
 #### 一位技术架构师
 
-![](images/david_zcj_MachineLearning.png)
+![](Intro_to_Programming.png)
+![](images/Machine_Learning.png)
+![](images/Machine_Learning_Explainability.png)
