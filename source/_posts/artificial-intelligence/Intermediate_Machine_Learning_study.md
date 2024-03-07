@@ -184,3 +184,192 @@ dtype: int64
 ##### 结论
 
 通常，相对于我们简单地删除包含缺失值的列（在方法`1`中），估算缺失值（在方法`2`和方法`3`中）会产生更好的结果。
+
+#### 分类变量（Categorical Variables）
+
+##### 介绍
+
+分类变量仅采用有限数量的值。
+- 考虑一项调查，询问您吃早餐的频率，并提供四个选项：“从不”、“很少”、“大多数天”或“每天”。在这种情况下，数据是分类的，因为响应属于一组固定的类别。
+- 如果人们回答关于他们拥有什么品牌的汽车的调查，那么回答将分为“本田”、“丰田”和“福特”等类别。在这种情况下，数据也是分类的。
+
+如果您尝试将这些变量插入到`Python`中的大多数机器学习模型中而不首先对其进行预处理，则会出现错误。我们将比较可用于准备分类数据的三种方法。
+
+##### 三种方法
+
+###### 删除分类变量
+
+处理分类变量的最简单方法是将它们从数据集中删除。仅当列不包含有用信息时，此方法才有效。
+
+###### 序数编码
+
+序数编码将每个唯一值分配给不同的整数。
+{% asset_img iml_4.png %}
+
+此方法假设类别的顺序为：“从不”`(0)`<“很少”`(1)`<“大多数天”`(2)`<“每天”`(3)`。这个假设在这个例子中是有意义的，因为类别有无可争议的排名。并非所有类别变量的值都有明确的排序，但我们将那些具有明确排序的变量称为序数变量。对于基于树的模型（例如决策树和随机森林），您可以期望序数编码能够很好地处理序数变量。
+
+###### 一次性编码
+
+`One-hot`编码创建新列，指示原始数据中每个可能值的存在（或不存在）。为了理解这一点，我们将通过一个示例来进行操作。
+{% asset_img iml_5.png %}
+
+在原始数据集中，“颜色”是一个分类变量，具有三个类别：“红色”、“黄色”和“绿色”。相应的`one-hot`编码包含原始数据集中每个可能值的一列和每一行的一行。只要原始值为“`Red`”，我们就在“`Red`”列中输入`1`； 如果原始值为“黄色”，我们在“黄色”列中输入`1`，依此类推。与序数编码相反，`one-hot`编码不假设类别的顺序。因此，如果分类数据中没有明确的排序（例如，“红色”既不大于也不小于“黄色”），您可以预期这种方法会特别有效。我们将没有内在排名的分类变量称为名义变量。如果分类变量采用大量值（即，您通常不会将其用于采用超过`15`个不同值的变量），`One-hot`编码通常表现不佳。
+
+###### 举例
+
+我们将使用墨尔本住房数据集。我们不会关注数据加载步骤。相反，您可以想象您已经在`X_train、X_valid、y_train`和`y_valid`中拥有训练和验证数据。
+```python
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+# Read the data
+data = pd.read_csv('../input/melbourne-housing-snapshot/melb_data.csv')
+
+# Separate target from predictors
+y = data.Price
+X = data.drop(['Price'], axis=1)
+
+# Divide data into training and validation subsets
+X_train_full, X_valid_full, y_train, y_valid = train_test_split(X, y, train_size=0.8, test_size=0.2,
+                                                                random_state=0)
+
+# Drop columns with missing values (simplest approach)
+cols_with_missing = [col for col in X_train_full.columns if X_train_full[col].isnull().any()] 
+X_train_full.drop(cols_with_missing, axis=1, inplace=True)
+X_valid_full.drop(cols_with_missing, axis=1, inplace=True)
+
+# "Cardinality" means the number of unique values in a column
+# Select categorical columns with relatively low cardinality (convenient but arbitrary)
+low_cardinality_cols = [cname for cname in X_train_full.columns if X_train_full[cname].nunique() < 10 and 
+                        X_train_full[cname].dtype == "object"]
+
+# Select numerical columns
+numerical_cols = [cname for cname in X_train_full.columns if X_train_full[cname].dtype in ['int64', 'float64']]
+
+# Keep selected columns only
+my_cols = low_cardinality_cols + numerical_cols
+X_train = X_train_full[my_cols].copy()
+X_valid = X_valid_full[my_cols].copy()
+```
+我们使用下面的`head()`方法查看训练数据。
+```python
+X_train.head()
+```
+{% asset_img iml_6.png %}
+
+接下来，我们获得训练数据中所有分类变量的列表。我们通过检查每列的数据类型（或`dtype`）来做到这一点。对象数据类型指示列有文本（理论上它还可以是其他东西，但这对我们的目的来说并不重要）。对于此数据集，带有文本的列表示分类变量。
+```python
+# Get list of categorical variables
+s = (X_train.dtypes == 'object')
+object_cols = list(s[s].index)
+
+print("Categorical variables:")
+print(object_cols)
+```
+结果输出为：
+```bash
+Categorical variables:
+['Type', 'Method', 'Regionname']
+```
+###### 定义衡量每种方法质量的函数
+
+我们定义一个函数`Score_dataset()`来比较处理`calcategori`变量的三种不同方法。此函数报告随机森林模型的平均绝对误差(`MAE`)。一般来说，我们希望`MAE`尽可能低！
+```python
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error
+
+# Function for comparing different approaches
+def score_dataset(X_train, X_valid, y_train, y_valid):
+    model = RandomForestRegressor(n_estimators=100, random_state=0)
+    model.fit(X_train, y_train)
+    preds = model.predict(X_valid)
+    return mean_absolute_error(y_valid, preds)
+```
+###### 方法一的得分（删除类别变量）
+
+我们使用`select_dtypes()`方法删除对象列。
+```python
+drop_X_train = X_train.select_dtypes(exclude=['object'])
+drop_X_valid = X_valid.select_dtypes(exclude=['object'])
+
+print("MAE from Approach 1 (Drop categorical variables):")
+print(score_dataset(drop_X_train, drop_X_valid, y_train, y_valid))
+```
+输出结果为：
+```bash
+MAE from Approach 1 (Drop categorical variables):
+175703.48185157913
+```
+###### 方法二的得分（序数编码）
+
+`Scikit-learn`有一个`OrdinalEncoder`类，可用于获取序数编码。我们循环分类变量并将序数编码器分别应用于每一列。
+```python
+from sklearn.preprocessing import OrdinalEncoder
+
+# Make copy to avoid changing original data 
+label_X_train = X_train.copy()
+label_X_valid = X_valid.copy()
+
+# Apply ordinal encoder to each column with categorical data
+ordinal_encoder = OrdinalEncoder()
+label_X_train[object_cols] = ordinal_encoder.fit_transform(X_train[object_cols])
+label_X_valid[object_cols] = ordinal_encoder.transform(X_valid[object_cols])
+
+print("MAE from Approach 2 (Ordinal Encoding):") 
+print(score_dataset(label_X_train, label_X_valid, y_train, y_valid))
+```
+输出结果为：
+```bash
+MAE from Approach 2 (Ordinal Encoding):
+165936.40548390493
+```
+在上面的代码单元中，对于每一列，我们将每个唯一值随机分配给不同的整数 这是一种常见的方法，比提供自定义标签更简单；然而，如果我们为所有序数变量提供更明智的标签，我们可以期待性能的进一步提升。
+
+###### 方法三的得分（One-Hot 编码）
+
+我们使用`scikit-learn`中的`OneHotEncoder`类来获取`one-hot`编码。有许多参数可用于自定义其行为。
+- 我们设置handle_unknown ='ignore'以避免当验证数据包含训练数据中未表示的类时出现错误。
+- 设置稀疏 = False 确保编码列作为 numpy 数组（而不是稀疏矩阵）返回。
+
+为了使用编码器，我们只提供我们想要进行`one-hot`编码的分类列。例如，为了对训练数据进行编码，我们提供`X_train[object_cols]`。（下面代码单元中的`object_cols`是包含分类数据的列名称列表，因此`X_train[object_cols]`包含训练集中的所有分类数据。）
+```python
+from sklearn.preprocessing import OneHotEncoder
+
+# Apply one-hot encoder to each column with categorical data
+OH_encoder = OneHotEncoder(handle_unknown='ignore', sparse=False)
+OH_cols_train = pd.DataFrame(OH_encoder.fit_transform(X_train[object_cols]))
+OH_cols_valid = pd.DataFrame(OH_encoder.transform(X_valid[object_cols]))
+
+# One-hot encoding removed index; put it back
+OH_cols_train.index = X_train.index
+OH_cols_valid.index = X_valid.index
+
+# Remove categorical columns (will replace with one-hot encoding)
+num_X_train = X_train.drop(object_cols, axis=1)
+num_X_valid = X_valid.drop(object_cols, axis=1)
+
+# Add one-hot encoded columns to numerical features
+OH_X_train = pd.concat([num_X_train, OH_cols_train], axis=1)
+OH_X_valid = pd.concat([num_X_valid, OH_cols_valid], axis=1)
+
+# Ensure all columns have string type
+OH_X_train.columns = OH_X_train.columns.astype(str)
+OH_X_valid.columns = OH_X_valid.columns.astype(str)
+
+print("MAE from Approach 3 (One-Hot Encoding):") 
+print(score_dataset(OH_X_train, OH_X_valid, y_train, y_valid))
+```
+输出结果为：
+```bash
+MAE from Approach 3 (One-Hot Encoding):
+166089.4893009678
+```
+##### 哪种方法最好？
+
+在这种情况下，删除分类列（方法`1`）效果最差，因为它的`MAE`得分最高。至于其他两种方法，由于返回的`MAE`分数的值非常接近，因此其中一种方法似乎没有比另一种方法有任何有意义的好处。一般来说，`one-hot`编码（方法`3`）通常会表现最佳，而删除分类列（方法`1`）通常表现最差，但具体情况会有所不同。
+
+##### 总结
+
+世界充满了分类数据。如果您知道如何使用这种常见数据类型，您将成为一名更高效的数据科学家！
+
+
