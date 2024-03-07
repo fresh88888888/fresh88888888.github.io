@@ -7,6 +7,6 @@ comments: false
 
 #### 一位技术架构师
 
-![](Intro_to_Programming.png)
+![](images/Intro_to_Programming.png)
 ![](images/Machine_Learning.png)
 ![](images/Machine_Learning_Explainability.png)
