@@ -352,5 +352,83 @@ $$𝑦=4∗𝑥1+2∗𝑥2$$
 {% asset_img mlx_12.png %}
 
 该图由许多点组成。每个点具有三个特征：
+- 垂直位置显示它所描绘的特征。
+- 颜色显示该特征对于数据集的该行是高还是低。
+- 水平位置显示该值的影响是否导致更高或更低的预测。
 
+例如，左上角的点代表进球较少的球队，使预测值降低`0.25`。
+- 该模型忽略了红色和黄色`&`红色特征。
+- 通常黄牌不会影响预测，但有一个极端的情况，即高值导致预测低得多。
+- 目标得分高值导致较高预测，低值导致低预测。
 
+如果你观察得足够长，这张图中就会包含很多信息。
+
+##### 代码中的摘要图
+
+您已经看过加载足球/橄榄球数据的代码：
+```python
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+
+data = pd.read_csv('../input/fifa-2018-match-statistics/FIFA 2018 Statistics.csv')
+y = (data['Man of the Match'] == "Yes")  # Convert from string "Yes"/"No" to binary
+feature_names = [i for i in data.columns if data[i].dtype in [np.int64, np.int64]]
+X = data[feature_names]
+train_X, val_X, train_y, val_y = train_test_split(X, y, random_state=1)
+my_model = RandomForestClassifier(random_state=0).fit(train_X, train_y)
+```
+我们使用以下代码获取所有验证数据的`SHAP`值。它足够短，我们可以在评论中进行解释。
+```python
+import shap  # package used to calculate Shap values
+
+# Create object that can calculate shap values
+explainer = shap.TreeExplainer(my_model)
+
+# calculate shap values. This is what we will plot.
+# Calculate shap_values for all of val_X rather than a single row, to have more data for plot.
+shap_values = explainer.shap_values(val_X)
+
+# Make plot. Index of [1] is explained in text below.
+shap.summary_plot(shap_values[1], val_X)
+```
+输出结果为：
+{% asset_img mlx_13.png %}
+
+代码并不太复杂。但有一些注意事项。
+- 绘图时，我们调用`shap_values[1]`。对于分类问题，每个可能的结果都有一个单独的`SHAP`数组值。在本例中，我们索引以获取预测“`True`”的`SHA`值。
+- 计算`SHAP`值可能会很慢。在这里不是问题，因为这个数据集很小。但是，在运行它们以使用合理大小的数据集进行绘图时，您需要小心。 例外情况是使用`xgboost`模型时，`SHAP`对其进行了一些优化，因此速度要快得多。
+
+这提供了模型的一个很好的概述，但我们可能想深入研究单个特征。这就是`SHAP`依赖图发挥作用的地方。
+
+##### SHAP依赖性贡献图
+
+我们之前使用部分依赖图来显示单个特征如何影响预测。这些内容富有洞察力，并且与许多现实世界的用例相关。另外，只需付出一点努力，就可以向非技术受众解释它们。但有很多东西他们没有表现出来。例如，效果的分布是什么？具有某个值的效果是相当恒定的，还是根据其他特征的值而变化很大。`SHAP`依赖贡献图提供了与`PDP`类似的见解，但它们添加了更多细节。
+{% asset_img mlx_14.png %}
+
+首先关注形状，稍后我们将回到颜色。 每个点代表一行数据。水平位置是数据集中的实际值，垂直位置显示该值对预测的影响。这个向上倾斜的事实表明，你拥有的球越多，模型对赢得全场最佳球员奖的预测就越高。分布表明其他特征必须与控球率相互作用。例如，在这里我们突出显示了具有相似控球权值的两个点。 该值导致一个预测增加，并导致另一个预测减少。
+{% asset_img mlx_15.png %}
+
+为了进行比较，简单的线性回归将生成完美的线图，而无需这种扩展。这表明我们要深入研究相互作用，并且绘图中包含颜色编码以帮助实现这一点。虽然主要趋势是向上，但您可以目视检查它是否因点颜色而变化。为了具体起见，请考虑以下非常狭窄的示例。
+{% asset_img mlx_16.png %}
+
+这两点在空间上突出，远离上升趋势。它们都是紫色的，表明球队进了一球。您可以将其解释为：**一般来说，控球会增加球队让其球员赢得奖项的机会。但如果他们只进一球，这种趋势就会逆转，如果他们进球那么少，评委可能会因为他们控球太多而惩罚他们**。除了这几个异常值之外，颜色表示的相互作用在这里并不是很引人注目。但有时它会跳入你的视线。
+
+##### 代码中的依赖贡献图
+
+我们用下面的代码得到依赖贡献图。与`summary_plot`唯一不同的行是最后一行。
+```python
+# Create object that can calculate shap values
+explainer = shap.TreeExplainer(my_model)
+
+# calculate shap values. This is what we will plot.
+shap_values = explainer.shap_values(X)
+
+# make plot.
+shap.dependence_plot('Ball Possession %', shap_values[1], X, interaction_index="Goal Scored")
+```
+输出结果为：
+{% asset_img mlx_17.png %}
+
+如果您没有为`interaction_index`提供参数，`Shapley`会使用一些逻辑来选择一个可能有趣的参数。这不需要编写大量代码。但这些技术的技巧在于批判性地思考结果，而不是编写代码本身。
