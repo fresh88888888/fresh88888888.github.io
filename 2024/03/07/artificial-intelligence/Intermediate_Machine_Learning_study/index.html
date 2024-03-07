@@ -26,12 +26,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="介绍 处理现实世界数据集中常见的数据类型（缺失值、分类变量）。 设计管道以提高机器学习代码的质量。 使用先进的技术进行模型验证（交叉验证）。 构建最先进的模型，广泛用于赢得Kaggle比赛(XGBoost)。 避免常见且重要的数据科学错误（泄漏）。  缺失值（Missing Values）您将学习三种处理缺失值的方法。然后，您将在现实数据集上比较这些方法的有效性。 介绍数据最终可能会出现缺失值的情">
+    <meta name="description" content="介绍 处理现实世界数据集中常见的数据类型（缺失值、分类变量）。 设计管道以提高机器学习代码的质量。 使用先进的技术进行模型验证（交叉验证）。 构建最先进的模型，广泛用于赢得Kaggle比赛(XGBoost)。 避免常见且重要的数据科学错误（泄漏）。  缺失值（Missing Values）您将学习三种处理缺失值的方法。然后，您将在现实数据集上比较这些方法的有效性。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="机器学习（中级）">
 <meta property="og:url" content="https://fresh88888888.github.io/2024/03/07/artificial-intelligence/Intermediate_Machine_Learning_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="介绍 处理现实世界数据集中常见的数据类型（缺失值、分类变量）。 设计管道以提高机器学习代码的质量。 使用先进的技术进行模型验证（交叉验证）。 构建最先进的模型，广泛用于赢得Kaggle比赛(XGBoost)。 避免常见且重要的数据科学错误（泄漏）。  缺失值（Missing Values）您将学习三种处理缺失值的方法。然后，您将在现实数据集上比较这些方法的有效性。 介绍数据最终可能会出现缺失值的情">
+<meta property="og:description" content="介绍 处理现实世界数据集中常见的数据类型（缺失值、分类变量）。 设计管道以提高机器学习代码的质量。 使用先进的技术进行模型验证（交叉验证）。 构建最先进的模型，广泛用于赢得Kaggle比赛(XGBoost)。 避免常见且重要的数据科学错误（泄漏）。  缺失值（Missing Values）您将学习三种处理缺失值的方法。然后，您将在现实数据集上比较这些方法的有效性。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/03/07/artificial-intelligence/Intermediate_Machine_Learning_study/iml_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/03/07/artificial-intelligence/Intermediate_Machine_Learning_study/iml_2.png">
@@ -328,6 +328,8 @@
 <li>避免常见且重要的数据科学错误（泄漏）。</li>
 </ul>
 <h4 id="缺失值（Missing-Values）"><a href="#缺失值（Missing-Values）" class="headerlink" title="缺失值（Missing Values）"></a>缺失值（Missing Values）</h4><p>您将学习三种处理缺失值的方法。然后，您将在现实数据集上比较这些方法的有效性。</p>
+<span id="more"></span>
+
 <h5 id="介绍-1"><a href="#介绍-1" class="headerlink" title="介绍"></a>介绍</h5><p>数据最终可能会出现缺失值的情况有很多。例如：</p>
 <ul>
 <li>两居室的房子不包括第三间卧室的尺寸值。</li>
