@@ -568,3 +568,180 @@ Average MAE score (across experiments):
 
 使用交叉验证可以更好地衡量模型质量，并具有清理代码的额外好处：请注意，我们不再需要跟踪单独的训练集和验证集。因此，特别是对于小型数据集，这是一个很好的改进！
 
+#### XGBoost
+
+您将学习如何使用**梯度提升**来构建和优化模型。该方法在许多`Kaggle`竞赛中占据主导地位，并在各种数据集上取得了成果。
+
+##### 介绍
+
+您已经使用随机森林方法进行了预测，该方法通过对许多决策树的预测进行平均来实现比单个决策树更好的性能。我们将随机森林方法称为“集成方法”。根据定义，集成方法结合了多个模型的预测（例如，在随机森林的情况下是多个树）。接下来，我们将学习另一种称为梯度提升的集成方法。
+
+##### 梯度提升（Gradient boosting）
+
+**梯度提升**是一种通过循环迭代将模型添加到集成中的方法。它首先使用单个模型初始化集成，该模型的预测可能非常幼稚。（即使它的预测非常不准确，随后对集合的添加也将解决这些错误。）然后，我们开始循环：
+- 首先，我们使用当前的集合来为数据集中的每个观察生成预测。为了进行预测，我们将集合中所有模型的预测相加。
+- 这些预测用于计算损失函数（例如均方误差）。
+- 然后，我们使用损失函数来拟合将添加到集成中的新模型。具体来说，我们确定模型参数，以便将这个新模型添加到集成中将减少损失。（旁注：“梯度提升”中的“梯度”指的是我们将在损失函数上使用梯度下降来确定这个新模型中的参数。）。
+- 最后，我们将新模型添加到集成中。
+- 重复迭代。
+{% asset_img iml_9.png %}
+
+##### 举例
+
+我们首先在 X_train、X_valid、y_train 和 y_valid 中加载训练和验证数据。
+```python
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+# Read the data
+data = pd.read_csv('../input/melbourne-housing-snapshot/melb_data.csv')
+
+# Select subset of predictors
+cols_to_use = ['Rooms', 'Distance', 'Landsize', 'BuildingArea', 'YearBuilt']
+X = data[cols_to_use]
+
+# Select target
+y = data.Price
+
+# Separate data into training and validation sets
+X_train, X_valid, y_train, y_valid = train_test_split(X, y)
+```
+在此示例中，您将使用`XGBoost`库。`XGBoost`代表极限梯度提升，它是梯度提升的一种实现，具有一些注重性能和速度的附加功能。（`Scikit-learn`有另一个版本的梯度提升，但`XGBoost`有一些技术优势。）在下一个代码单元中，我们导入`XGBoost`的`scikit-learn API(xgboost.XGBRegressor)`。这使我们能够像在`scikit-learn`中一样构建和拟合模型。正如您将在输出中看到的，`XGBRegressor`类有许多可调参数——您很快就会了解这些！
+```python
+from xgboost import XGBRegressor
+
+my_model = XGBRegressor(random_state=0)
+my_model.fit(X_train, y_train)
+```
+结果输出为：
+```bash
+XGBRegressor(base_score=0.5, booster='gbtree', callbacks=None,
+             colsample_bylevel=1, colsample_bynode=1, colsample_bytree=1,
+             early_stopping_rounds=None, enable_categorical=False,
+             eval_metric=None, gamma=0, gpu_id=-1, grow_policy='depthwise',
+             importance_type=None, interaction_constraints='',
+             learning_rate=0.300000012, max_bin=256, max_cat_to_onehot=4,
+             max_delta_step=0, max_depth=6, max_leaves=0, min_child_weight=1,
+             missing=nan, monotone_constraints='()', n_estimators=100, n_jobs=0,
+             num_parallel_tree=1, predictor='auto', random_state=0, reg_alpha=0,
+             reg_lambda=1, ...)
+```
+我们还进行预测并评估模型。
+```python
+from sklearn.metrics import mean_absolute_error
+
+predictions = my_model.predict(X_valid)
+print("Mean Absolute Error: " + str(mean_absolute_error(predictions, y_valid)))
+```
+输出结果为：
+```bash
+Mean Absolute Error: 241041.5160392121
+```
+###### 参数调整
+
+`XGBoost`有一些参数可以显着影响准确性和训练速度。您应该了解的第一个参数是：`n_estimators`指定经历上述建模周期的次数。它等于我们包含在集成中的模型数量。
+- 值太低会导致欠拟合，从而导致训练数据和测试数据的预测不准确。
+- 太高的值会导致过拟合，从而导致对训练数据的预测准确，但对测试数据的预测不准确（这是我们关心的）。
+
+典型值范围为`100-1000`，但这在很大程度上取决于下面讨论的`learning_rate`参数。以下是设置集成中模型数量的代码：
+```python
+my_model = XGBRegressor(n_estimators=500)
+my_model.fit(X_train, y_train)
+```
+输出结果为：
+```bash
+XGBRegressor(base_score=0.5, booster='gbtree', callbacks=None,
+             colsample_bylevel=1, colsample_bynode=1, colsample_bytree=1,
+             early_stopping_rounds=None, enable_categorical=False,
+             eval_metric=None, gamma=0, gpu_id=-1, grow_policy='depthwise',
+             importance_type=None, interaction_constraints='',
+             learning_rate=0.300000012, max_bin=256, max_cat_to_onehot=4,
+             max_delta_step=0, max_depth=6, max_leaves=0, min_child_weight=1,
+             missing=nan, monotone_constraints='()', n_estimators=500, n_jobs=0,
+             num_parallel_tree=1, predictor='auto', random_state=0, reg_alpha=0,
+             reg_lambda=1, ...)
+```
+`Early_stopping_rounds`提供了一种自动查找`n_estimators`理想值的方法。当验证分数停止提高时，提前停止会导致模型停止迭代，即使我们没有处于`n_estimators`的硬停止状态。明智的做法是为`n_estimators`设置一个较高的值，然后使用`Early_stopping_rounds`来找到停止迭代的最佳时间。由于随机机会有时会导致单轮验证分数没有提高，因此您需要指定一个数字，表示在停止之前允许进行多少轮直接恶化。设置`early_stopping_rounds=5`是一个合理的选择。在这种情况下，我们在连续`5`轮验证分数恶化后停止。使用`early_stopping_rounds时`，您还需要留出一些数据来计算验证分数 - 这是通过设置`eval_set`参数来完成的。
+
+我们可以修改上面的示例以包括提前停止：
+```python
+my_model = XGBRegressor(n_estimators=500)
+my_model.fit(X_train, y_train, 
+             early_stopping_rounds=5, 
+             eval_set=[(X_valid, y_valid)],
+             verbose=False)
+```
+结果输出为：
+```bash
+XGBRegressor(base_score=0.5, booster='gbtree', callbacks=None,
+             colsample_bylevel=1, colsample_bynode=1, colsample_bytree=1,
+             early_stopping_rounds=None, enable_categorical=False,
+             eval_metric=None, gamma=0, gpu_id=-1, grow_policy='depthwise',
+             importance_type=None, interaction_constraints='',
+             learning_rate=0.300000012, max_bin=256, max_cat_to_onehot=4,
+             max_delta_step=0, max_depth=6, max_leaves=0, min_child_weight=1,
+             missing=nan, monotone_constraints='()', n_estimators=500, n_jobs=0,
+             num_parallel_tree=1, predictor='auto', random_state=0, reg_alpha=0,
+             reg_lambda=1, ...)
+```
+如果您稍后想要使用所有数据来拟合模型，请将`n_estimators`设置为您在早期停止运行时发现的最佳值。我们不是通过简单地将每个组件模型的预测相加来获得预测，而是可以将每个模型的预测乘以一个小数（称为**学习率**），然后再添加它们。这意味着我们添加到集合中的每棵树对我们的帮助都会减少。因此，我们可以为`n_estimators`设置更高的值而不会过度拟合。如果我们使用提前停止，则会自动确定适当的树木数量。
+
+一般来说，较小的学习率和大量的估计器将产生更准确的`XGBoost`模型，但模型的训练时间也会更长，因为它在循环中进行了更多的迭代。默认情况下，`XGBoost`设置`learning_rate=0.1`。修改上面的示例以更改学习率会产生以下代码：
+```python
+my_model = XGBRegressor(n_estimators=1000, learning_rate=0.05)
+my_model.fit(X_train, y_train, 
+             early_stopping_rounds=5, 
+             eval_set=[(X_valid, y_valid)], 
+             verbose=False)
+```
+结果输出为：
+```
+XGBRegressor(base_score=0.5, booster='gbtree', callbacks=None,
+             colsample_bylevel=1, colsample_bynode=1, colsample_bytree=1,
+             early_stopping_rounds=None, enable_categorical=False,
+             eval_metric=None, gamma=0, gpu_id=-1, grow_policy='depthwise',
+             importance_type=None, interaction_constraints='',
+             learning_rate=0.05, max_bin=256, max_cat_to_onehot=4,
+             max_delta_step=0, max_depth=6, max_leaves=0, min_child_weight=1,
+             missing=nan, monotone_constraints='()', n_estimators=1000,
+             n_jobs=0, num_parallel_tree=1, predictor='auto', random_state=0,
+             reg_alpha=0, reg_lambda=1, ...)
+```
+在考虑运行时间的较大数据集上，您可以使用并行性来更快地构建模型。通常将参数`n_jobs`设置为等于计算机上的核心数。对于较小的数据集，这没有帮助。生成的模型不会更好，因此对拟合时间进行微观优化通常只会分散注意力。但是，它在大型数据集中非常有用，否则您将在`fit`命令期间等待很长时间。这是修改后的示例：
+```python
+my_model = XGBRegressor(n_estimators=1000, learning_rate=0.05, n_jobs=4)
+my_model.fit(X_train, y_train, 
+             early_stopping_rounds=5, 
+             eval_set=[(X_valid, y_valid)], 
+             verbose=False)
+```
+结果输出为：
+```bash
+XGBRegressor(base_score=0.5, booster='gbtree', callbacks=None,
+             colsample_bylevel=1, colsample_bynode=1, colsample_bytree=1,
+             early_stopping_rounds=None, enable_categorical=False,
+             eval_metric=None, gamma=0, gpu_id=-1, grow_policy='depthwise',
+             importance_type=None, interaction_constraints='',
+             learning_rate=0.05, max_bin=256, max_cat_to_onehot=4,
+             max_delta_step=0, max_depth=6, max_leaves=0, min_child_weight=1,
+             missing=nan, monotone_constraints='()', n_estimators=1000,
+             n_jobs=4, num_parallel_tree=1, predictor='auto', random_state=0,
+             reg_alpha=0, reg_lambda=1, ...)
+```
+
+##### 结论
+
+`XGBoost`是一个领先的软件库，用于处理标准表格数据（存储在`Pandas DataFrame`中的数据类型，而不是图像和视频等更奇特的数据类型）。通过仔细调整参数，您可以训练高度准确的模型。
+
+#### 数据泄露（Data Leakage）
+
+您将了解什么是数据泄漏以及如何防止数据泄漏。如果您不知道如何预防，泄漏就会频繁发生，并且会以微妙而危险的方式毁掉您的模型。因此，这是数据科学家实践中最重要的概念之一。
+
+##### 介绍
+
+当你的训练数据包含有关目标的信息，但当模型用于预测时，类似的数据将不可用时，就会发生**数据泄漏**（或泄漏）。这会导致训练集（甚至可能是验证数据）上的高性能，但模型在生产中表现不佳。换句话说，泄漏会导致模型看起来很准确，直到您开始使用模型做出决策，然后模型就会变得非常不准确。泄漏主要有两种类型：**目标泄漏**和**列车测试污染**。
+
+当您的预测变量包含在您进行预测时不可用的数据时，就会发生**目标泄漏**。重要的是要根据数据可用的时间或时间顺序来考虑目标泄漏，而不仅仅是某个功能是否有助于做出良好的预测。一个例子会有所帮助。 想象一下，您想要预测谁会患上肺炎。原始数据的前几行如下所示：
+{% asset_img iml_10.png %}
+
+人们在患肺炎后服用抗生素药物才能康复。原始数据显示这些列之间存在很强的关系，但在确定`got_pneumonia`的值后，`take_antibiotic_medicine`经常发生更改。这就是目标泄漏。该模型会发现，任何`take_antibiotic_medicine`值为`False`的人都没有患有肺炎。由于验证数据与训练数据来自同一来源，因此该模式将在验证中重复，并且模型将具有很高的验证（或交叉验证）分数。但当随后在现实世界中部署时，该模型将非常不准确，因为当我们需要预测他们未来的健康状况时，即使是患有肺炎的患者也不会接受抗生素治疗。为了防止这种类型的数据泄漏，应排除在实现目标值后更新（或创建）的任何变量。
