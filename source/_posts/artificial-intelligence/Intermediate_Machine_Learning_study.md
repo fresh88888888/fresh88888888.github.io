@@ -741,7 +741,105 @@ XGBRegressor(base_score=0.5, booster='gbtree', callbacks=None,
 
 当你的训练数据包含有关目标的信息，但当模型用于预测时，类似的数据将不可用时，就会发生**数据泄漏**（或泄漏）。这会导致训练集（甚至可能是验证数据）上的高性能，但模型在生产中表现不佳。换句话说，泄漏会导致模型看起来很准确，直到您开始使用模型做出决策，然后模型就会变得非常不准确。泄漏主要有两种类型：**目标泄漏**和**列车测试污染**。
 
+###### 目标泄漏
+
 当您的预测变量包含在您进行预测时不可用的数据时，就会发生**目标泄漏**。重要的是要根据数据可用的时间或时间顺序来考虑目标泄漏，而不仅仅是某个功能是否有助于做出良好的预测。一个例子会有所帮助。 想象一下，您想要预测谁会患上肺炎。原始数据的前几行如下所示：
 {% asset_img iml_10.png %}
 
 人们在患肺炎后服用抗生素药物才能康复。原始数据显示这些列之间存在很强的关系，但在确定`got_pneumonia`的值后，`take_antibiotic_medicine`经常发生更改。这就是目标泄漏。该模型会发现，任何`take_antibiotic_medicine`值为`False`的人都没有患有肺炎。由于验证数据与训练数据来自同一来源，因此该模式将在验证中重复，并且模型将具有很高的验证（或交叉验证）分数。但当随后在现实世界中部署时，该模型将非常不准确，因为当我们需要预测他们未来的健康状况时，即使是患有肺炎的患者也不会接受抗生素治疗。为了防止这种类型的数据泄漏，应排除在实现目标值后更新（或创建）的任何变量。
+{% asset_img iml_11.png %}
+
+###### 列车测试污染
+
+当您不小心区分训练数据和验证数据时，就会发生另一种类型的泄漏。回想一下，验证旨在衡量模型如何处理之前未考虑过的数据。如果验证数据影响预处理行为，您可能会以微妙的方式破坏此过程。这有时称为**列车测试污染**。例如，假设您在调用`train_test_split()`之前运行预处理（例如为缺失值拟合输入器）。您的模型可能会获得良好的验证分数，让您对它充满信心，但在部署它来做出决策时却表现不佳。毕竟，您将验证或测试数据中的数据合并到预测中，因此即使无法推广到新数据，也可能在该特定数据上表现良好。当您进行更复杂的特征工程时，这个问题变得更加微妙（也更危险）。如果您的验证基于简单的训练测试分割，请从任何类型的拟合中排除验证数据，包括预处理步骤的拟合。如果您使用`scikit-learn`管道，这会更容易。使用交叉验证时，在管道内进行预处理更为重要！
+
+##### 举例
+
+在本示例中，您将学习一种检测和消除目标泄漏的方法。我们将使用有关信用卡申请的数据集并跳过基本数据设置代码。最终结果是有关每个信用卡申请的信息都存储在`DataFrame X`中。我们将使用它来预测系列`y`中接受了哪些申请。
+```python
+import pandas as pd
+
+# Read the data
+data = pd.read_csv('../input/aer-credit-card-data/AER_credit_card_data.csv', 
+                   true_values = ['yes'], false_values = ['no'])
+
+# Select target
+y = data.card
+
+# Select predictors
+X = data.drop(['card'], axis=1)
+
+print("Number of rows in the dataset:", X.shape[0])
+X.head()
+```
+{% asset_img iml_12.png %}
+
+由于这是一个小数据集，我们将使用交叉验证来确保模型质量的准确测量。
+```python
+from sklearn.pipeline import make_pipeline
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+# Since there is no preprocessing, we don't need a pipeline (used anyway as best practice!)
+my_pipeline = make_pipeline(RandomForestClassifier(n_estimators=100))
+cv_scores = cross_val_score(my_pipeline, X, y, 
+                            cv=5,
+                            scoring='accuracy')
+
+print("Cross-validation accuracy: %f" % cv_scores.mean())
+```
+结果输出为：
+```bash
+Cross-validation accuracy: 0.981052
+```
+根据经验，您会发现很难找到准确率达到`98%`的模型。这种情况确实发生过，但这种情况并不常见，因此我们应该更仔细地检查数据是否存在目标泄漏。以下是数据摘要，您也可以在数据选项卡下找到：
+- `card: 1 if credit card application accepted, 0 if not`
+- `reports: Number of major derogatory reports`
+- `age: Age n years plus twelfths of a year`
+- `income: Yearly income (divided by 10,000)`
+- `share: Ratio of monthly credit card expenditure to yearly income`
+- `expenditure: Average monthly credit card expenditure`
+- `owner: 1 if owns home, 0 if rents`
+- `selfempl: 1 if self-employed, 0 if not`
+- `dependents: 1 + number of dependents`
+- `months: Months living at current address`
+- `majorcards: Number of major credit cards held`
+- `active: Number of active credit accounts`
+
+一些变量看起来很可疑。例如，支出是指这张卡上的支出还是申请前使用过的卡上的支出？此时，基本数据比较会非常有帮助：
+```python
+expenditures_cardholders = X.expenditure[y]
+expenditures_noncardholders = X.expenditure[~y]
+
+print('Fraction of those who did not receive a card and had no expenditures: %.2f' \
+      %((expenditures_noncardholders == 0).mean()))
+print('Fraction of those who received a card and had no expenditures: %.2f' \
+      %(( expenditures_cardholders == 0).mean()))
+```
+结果输出为：
+```bash
+Fraction of those who did not receive a card and had no expenditures: 1.00
+Fraction of those who received a card and had no expenditures: 0.02
+```
+如上所示，所有没有收到卡的人都没有支出，而只有`2%`的收到卡的人没有支出。我们的模型似乎具有很高的准确性，这并不奇怪。但这似乎也是一种目标泄漏的情况，其中支出可能意味着他们申请的卡上的支出。由于份额部分由支出决定，因此也应排除在外。 变量`active`和`Majorcards`不太清楚，但从描述来看，它们听起来令人担忧。在大多数情况下，如果您无法追踪创建数据的人以了解更多信息，那么安全总比后悔好。我们将运行一个没有目标泄漏的模型，如下所示：
+```python
+# Drop leaky predictors from dataset
+potential_leaks = ['expenditure', 'share', 'active', 'majorcards']
+X2 = X.drop(potential_leaks, axis=1)
+
+# Evaluate the model with leaky predictors removed
+cv_scores = cross_val_score(my_pipeline, X2, y, 
+                            cv=5,
+                            scoring='accuracy')
+
+print("Cross-val accuracy: %f" % cv_scores.mean())
+```
+结果输出为：
+```bash
+Cross-val accuracy: 0.830919
+```
+这个准确度相当低，这可能会令人失望。然而，我们可以预期，当在新应用程序中使用时，它的正确率约为`80%`，而泄漏模型的表现可能会比这差得多（尽管其在交叉验证中的明显得分更高）。
+
+##### 结论
+
+在许多数据科学应用中，数据泄漏可能会造成数百万美元的错误。仔细分离训练和验证数据可以防止训练测试污染，而管道可以帮助实现这种分离。同样，谨慎、常识和数据探索的结合可以帮助识别目标泄漏。
