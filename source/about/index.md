@@ -8,6 +8,7 @@ comments: false
 #### 一位技术架构师
 
 ![](images/Intro_to_Programming.png)
+![](images/Data_Visualization.png)
 ![](images/Machine_Learning.png)
 ![](images/Machine_Learning_Explainability.png)
 ![](images/Intermediate_Machine_Learning.png)
