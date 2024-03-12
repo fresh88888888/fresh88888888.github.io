@@ -86,6 +86,9 @@ print("Setup Complete")
 iris_filepath = 'iris.csv'
 iris_data = pd.read_csv(iris_filepath, index_col='Id')
 
+# Change the style of the figure
+sns.set_style("ticks")
+
 plt.figure(figsize=(10, 6))
 # sns.histplot(data=iris_data['Petal Length (cm)'])
 # sns.kdeplot(data=iris_data['Petal Length (cm)'], shade=True)
