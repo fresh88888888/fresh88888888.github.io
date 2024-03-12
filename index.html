@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-count">116</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -240,6 +240,123 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/12/artificial-intelligence/data_visual_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/03/12/artificial-intelligence/data_visual_study/" class="post-title-link" itemprop="url">数据可视化（Seaborn）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-03-12 10:20:32" itemprop="dateCreated datePublished" datetime="2024-03-12T10:20:32+08:00">2024-03-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>682</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>如何最好地讲述数据背后的故事并不总是那么容易，因此我们将图表类型分为三大类来帮助解决这一问题。</p>
+<ul>
+<li>**Trends(趋势)**：趋势被定义为变化的模式。<ul>
+<li><code>sns.lineplot</code> - <strong>折线图</strong>最能显示一段时间内的趋势，并且可以使用多条线来显示多个组中的趋势。</li>
+</ul>
+</li>
+<li>**Relationship(关系)**：您可以使用许多不同的图表类型来了解数据中变量之间的关系。<ul>
+<li><code>sns.barplot</code> - <strong>条形图</strong>可用于比较不同组对应的数量。</li>
+<li><code>sns.heatmap</code> - <strong>热图</strong>可用于在数字表中查找颜色编码模式。</li>
+<li><code>sns.scatterplot</code> - <strong>散点图</strong>显示两个连续变量之间的关系；如果用颜色编码，我们还可以显示与第三个分类变量的关系。</li>
+<li><code>sns.regplot</code> - 在散点图中包含回归线可以更轻松地查看两个变量之间的任何线性关系。</li>
+<li><code>sns.lmplot</code> - 如果散点图包含多个颜色编码组，则此命令对于绘制多条回归线非常有用。</li>
+<li><code>sns.swarmplot</code> - 分类散点图显示连续变量和分类变量之间的关系。</li>
+</ul>
+</li>
+<li>**Distribution(分布)**：我们将分布可视化以显示我们期望在变量中看到的可能值以及它们的可能性。<ul>
+<li><code>sns.histplot</code> - <strong>直方图</strong>显示单个数值变量的分布。</li>
+<li><code>sns.kdeplot</code> - <strong>KDE图</strong>（或<code>2D KDE</code>图）显示单个数值变量（或两个数值变量）的估计平滑分布。</li>
+<li><code>sns.jointplot</code> - 此命令对于同时显示<code>2D KDE</code>图和每个单独变量的相应<code>KDE</code>图。</li>
+</ul>
+</li>
+</ul>
+<img data-src="/2024/03/12/artificial-intelligence/data_visual_study/dv_1.png" class="">
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">pd.plotting.register_matplotlib_converters()</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Setup Complete&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Path of the file to read</span></span><br><span class="line"><span class="comment"># spotify_filepath = &quot;../input/spotify.csv&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Read the file into a variable spotify_data</span></span><br><span class="line"><span class="comment"># spotify_data = pd.read_csv(spotify_filepath, index_col=&quot;Date&quot;, parse_dates=True)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Line chart </span></span><br><span class="line"><span class="comment"># plt.figure(figsize=(12,6))</span></span><br><span class="line"><span class="comment"># sns.lineplot(data=spotify_data)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># # Path of the file to read</span></span><br><span class="line"><span class="comment"># fifa_filepath = &#x27;fifa.csv&#x27;</span></span><br><span class="line"><span class="comment"># # Read the file into a variablefaia_data</span></span><br><span class="line"><span class="comment"># fifa_data = pd.read_csv(fifa_filepath, index_col=&#x27;Date&#x27;, parse_dates=True)</span></span><br><span class="line"><span class="comment"># # print(fifa_data.head())</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># # Set the width and weight of the figure</span></span><br><span class="line"><span class="comment"># plt.figure(figsize=(16, 6))</span></span><br><span class="line"><span class="comment"># # Line chart showing how FIFA rankings evoloed over time</span></span><br><span class="line"><span class="comment"># print(list(fifa_data.columns))</span></span><br><span class="line"><span class="comment"># # Add title</span></span><br><span class="line"><span class="comment"># plt.title(&quot;FIFA ranking evoloed over time&quot;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># sns.lineplot(data=fifa_data[&#x27;ARG&#x27;])</span></span><br><span class="line"><span class="comment"># sns.lineplot(data=fifa_data[&#x27;BRA&#x27;])</span></span><br><span class="line"><span class="comment"># plt.xlabel(&#x27;Date&#x27;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># flight_filepath = &#x27;flight_delays.csv&#x27;</span></span><br><span class="line"><span class="comment"># flight_data = pd.read_csv(flight_filepath, index_col=&#x27;Month&#x27;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># plt.figure(figsize=(10, 6))</span></span><br><span class="line"><span class="comment"># plt.title(&quot;Average Arrival Delay for Spirit Airlines Flights, by Month&quot;)</span></span><br><span class="line"><span class="comment"># sns.barplot(x=flight_data.index, y=flight_data[&#x27;NK&#x27;])</span></span><br><span class="line"><span class="comment"># plt.ylabel(&quot;Arrival delay (in minutes)&quot;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># plt.figure(figsize=(14, 7))</span></span><br><span class="line"><span class="comment"># plt.title(&quot;Average Arrival Delay for Each Airline, by Month&quot;)</span></span><br><span class="line"><span class="comment"># sns.heatmap(flight_data, annot=True)</span></span><br><span class="line"><span class="comment"># plt.xlabel(&quot;Airline&quot;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># insurance_filepath = &#x27;insurance.csv&#x27;</span></span><br><span class="line"><span class="comment"># insurance_data = pd.read_csv(insurance_filepath)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># plt.figure(figsize=(10, 6))</span></span><br><span class="line"><span class="comment"># sns.scatterplot(x=insurance_data[&#x27;bmi&#x27;], y=insurance_data[&#x27;charges&#x27;])</span></span><br><span class="line"><span class="comment"># sns.regplot(x=insurance_data[&#x27;bmi&#x27;], y=insurance_data[&#x27;charges&#x27;])</span></span><br><span class="line"><span class="comment"># sns.scatterplot(x=insurance_data[&#x27;bmi&#x27;], y=insurance_data[&#x27;charges&#x27;], hue=insurance_data[&#x27;smoker&#x27;])</span></span><br><span class="line"><span class="comment"># sns.lmplot(x=&#x27;bmi&#x27;, y=&#x27;charges&#x27;, hue=&#x27;smoker&#x27;, data=insurance_data)</span></span><br><span class="line"><span class="comment"># sns.swarmplot(x=insurance_data[&#x27;smoker&#x27;], y=insurance_data[&#x27;charges&#x27;])</span></span><br><span class="line"></span><br><span class="line">iris_filepath = <span class="string">&#x27;iris.csv&#x27;</span></span><br><span class="line">iris_data = pd.read_csv(iris_filepath, index_col=<span class="string">&#x27;Id&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">10</span>, <span class="number">6</span>))</span><br><span class="line"><span class="comment"># sns.histplot(data=iris_data[&#x27;Petal Length (cm)&#x27;])</span></span><br><span class="line"><span class="comment"># sns.kdeplot(data=iris_data[&#x27;Petal Length (cm)&#x27;], shade=True)</span></span><br><span class="line"><span class="comment"># sns.jointplot(x=iris_data[&#x27;Petal Length (cm)&#x27;], y=iris_data[&#x27;Sepal Width (cm)&#x27;], kind=&#x27;kde&#x27;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># plt.title(&#x27;Histogram of Petal Lengths, by Species&#x27;)</span></span><br><span class="line"><span class="comment"># sns.histplot(data=iris_data, x=&#x27;Petal Length (cm)&#x27;, hue=&#x27;Species&#x27;)</span></span><br><span class="line">plt.title(<span class="string">&#x27;Distribution of Petal Lengths, by Species&#x27;</span>)</span><br><span class="line">sns.kdeplot(data=iris_data, x=<span class="string">&#x27;Petal Length (cm)&#x27;</span>, hue=<span class="string">&#x27;Species&#x27;</span>, shade=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/07/artificial-intelligence/Intermediate_Machine_Learning_study/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -288,14 +405,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>29k</span>
+      <span>9.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>24 分钟</span>
+      <span>31 分钟</span>
     </span>
 </div>
 
@@ -395,14 +512,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>15k</span>
+      <span>7k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>12 分钟</span>
+      <span>23 分钟</span>
     </span>
 </div>
 
@@ -499,14 +616,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>12k</span>
+      <span>4.7k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>10 分钟</span>
+      <span>16 分钟</span>
     </span>
 </div>
 
@@ -600,14 +717,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>3.1k</span>
+      <span>2.3k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
+      <span>8 分钟</span>
     </span>
 </div>
 
@@ -700,14 +817,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>12k</span>
+      <span>2.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>10 分钟</span>
+      <span>9 分钟</span>
     </span>
 </div>
 
@@ -800,14 +917,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>10k</span>
+      <span>1.7k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>9 分钟</span>
+      <span>6 分钟</span>
     </span>
 </div>
 
@@ -904,7 +1021,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.3k</span>
+      <span>339</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -1006,14 +1123,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.5k</span>
+      <span>487</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
@@ -1106,14 +1223,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.5k</span>
+      <span>1.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>5 分钟</span>
     </span>
 </div>
 
@@ -1128,106 +1245,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2024/02/26/artificial-intelligence/Pathway_study/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/02/26/artificial-intelligence/openai_sora_study/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/02/26/artificial-intelligence/openai_sora_study/" class="post-title-link" itemprop="url">OpenAI Sora扩散模型（PyTorch）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-02-26 16:20:32" itemprop="dateCreated datePublished" datetime="2024-02-26T16:20:32+08:00">2024-02-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.9k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="OpenAI-Sora扩散模型"><a href="#OpenAI-Sora扩散模型" class="headerlink" title="OpenAI Sora扩散模型"></a>OpenAI Sora扩散模型</h4><p><code>Sora</code>扩散模型，想象一下，你正在尝试理解一个复杂的机器如何运作，而这个机器有无数个相互连接的零件组成的。这些零件就像神经网络中的神经元，他们通过传递信息来共同完成一个任务。但是，这些神经元是如何协同工作的呢？这就是<code>Sora</code>扩散模型要解决的问题。<code>Sora</code>是一种独特神经网络架构，它的核心思想是通过模拟物理中的扩散过程来优化神经网络的性能。在扩散过程中，物质会从高浓度区域向低浓度区域扩散，直到达到均匀分布的状态。类似地，<code>Sora</code>扩散模型通过调整神经元之间的连接权重，是的信息能够在神经网络中更加顺畅的传递，从而提高网络的性能。这个过程就像是你在一个黑暗的房间里摸索，逐渐找到了开关的位置，点亮了整个房间。虽然开始时你可能感到迷茫无助，但随着对<code>Sora</code>扩散模型的理解加深，你会逐渐发现神经网络背后奥秘。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/02/26/artificial-intelligence/openai_sora_study/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1276,14 +1293,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">1.3m</span>
+    <span title="站点总字数">482k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">18:30</span>
+    <span title="站点阅读时长">26:45</span>
   </span>
 </div>
 <div class="busuanzi-count">
