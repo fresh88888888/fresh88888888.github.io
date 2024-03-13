@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+  <meta name="google-site-verification" content="lk2gSYFP_NyLNFob-fFnt7fm-I_n1ZYws-WZll7mshg">
+  <meta name="msvalidate.01" content="6Jdc01DjYOLguhS5">
+  <meta name="baidu-site-verification" content="code-NR10G09zww">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic%7Ccursive:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+
+    <meta name="description" content="介绍特征工程的目标特征工程的目标很简单，就是让您的数据更适合当前的问题。考虑“表观温度”测量，例如炎热指数和风寒。这些量试图根据我们可以直接测量的气温、湿度和风速来测量人类感知的温度。您可以将表观温度视为一种特征工程的结果，试图使观察到的数据与我们真正关心的内容更相关。你可以使用特征工程来实现：  提高模型的预测性能。 减少计算或数据需求。 提高结果的可解释性。  特征工程的指导原则为了使某个功能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="特征工程（Python）">
+<meta property="og:url" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/index.html">
+<meta property="og:site_name" content="UMBRELLA">
+<meta property="og:description" content="介绍特征工程的目标特征工程的目标很简单，就是让您的数据更适合当前的问题。考虑“表观温度”测量，例如炎热指数和风寒。这些量试图根据我们可以直接测量的气温、湿度和风速来测量人类感知的温度。您可以将表观温度视为一种特征工程的结果，试图使观察到的数据与我们真正关心的内容更相关。你可以使用特征工程来实现：  提高模型的预测性能。 减少计算或数据需求。 提高结果的可解释性。  特征工程的指导原则为了使某个功能">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_2.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_3.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_4.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_5.png">
+<meta property="article:published_time" content="2024-03-13T07:20:32.000Z">
+<meta property="article:modified_time" content="2024-03-13T07:20:32.000Z">
+<meta property="article:author" content="umbrella">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_1.png">
+
+
+<link rel="canonical" href="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/","path":"2024/03/13/artificial-intelligence/Feature_Engineering_study/","title":"特征工程（Python）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>特征工程（Python） | UMBRELLA</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">UMBRELLA</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">未雨绸缪，举重若轻</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-算法"><a href="/Algorithm/" rel="section"><i class="fa fa-calendar fa-fw"></i>算法</a></li><li class="menu-item menu-item-c++-&nbsp;编程"><a href="/Programming-C++/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>C++ &nbsp;编程</a></li><li class="menu-item menu-item-rust-编程"><a href="/Programming-Rust/" rel="section"><i class="fa fa-cat fa-fw"></i>Rust 编程</a></li><li class="menu-item menu-item-go-&nbsp;&nbsp;&nbsp;编程"><a href="/Programming-Go/" rel="section"><i class="fa fa-hippo fa-fw"></i>Go &nbsp;&nbsp;&nbsp;编程</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B%E7%9A%84%E7%9B%AE%E6%A0%87"><span class="nav-number">1.1.</span> <span class="nav-text">特征工程的目标</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B%E7%9A%84%E6%8C%87%E5%AF%BC%E5%8E%9F%E5%88%99"><span class="nav-number">1.2.</span> <span class="nav-text">特征工程的指导原则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%BE%E4%BE%8B-%E6%B7%B7%E5%87%9D%E5%9C%9F%E9%85%8D%E6%96%B9"><span class="nav-number">1.3.</span> <span class="nav-text">举例 - 混凝土配方</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%92%E4%BF%A1%E6%81%AF-Mutual-Information"><span class="nav-number">2.</span> <span class="nav-text">互信息(Mutual Information)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D-1"><span class="nav-number">2.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BA%92%E4%BF%A1%E6%81%AF%E5%8F%8A%E5%85%B6%E8%A1%A1%E9%87%8F%E7%9A%84%E5%86%85%E5%AE%B9"><span class="nav-number">2.2.</span> <span class="nav-text">互信息及其衡量的内容</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E9%87%8A%E4%BA%92%E4%BF%A1%E6%81%AF%E5%88%86%E6%95%B0"><span class="nav-number">2.3.</span> <span class="nav-text">解释互信息分数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%BE%E4%BE%8B-1985-%E5%B9%B4%E6%B1%BD%E8%BD%A6"><span class="nav-number">2.4.</span> <span class="nav-text">举例 - 1985 年汽车</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="umbrella"
+      src="/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">umbrella</p>
+  <div class="site-description" itemprop="description">没事就多看看书</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fresh88888888" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fresh88888888" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fresh888888@foxmail.com" title="E-Mail → mailto:fresh888888@foxmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.rust-lang.org/zh-CN/" title="https:&#x2F;&#x2F;www.rust-lang.org&#x2F;zh-CN&#x2F;" rel="noopener" target="_blank">Rust</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://go.dev/" title="https:&#x2F;&#x2F;go.dev&#x2F;" rel="noopener" target="_blank">Golang</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://isocpp.org/" title="https:&#x2F;&#x2F;isocpp.org&#x2F;" rel="noopener" target="_blank">C++</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.python.org/" title="https:&#x2F;&#x2F;www.python.org&#x2F;" rel="noopener" target="_blank">Python</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://doc.rust-lang.org/cargo/index.html" title="https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;cargo&#x2F;index.html" rel="noopener" target="_blank">Cargo</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://gist.github.com/rxaviers/7360908" title="https:&#x2F;&#x2F;gist.github.com&#x2F;rxaviers&#x2F;7360908" rel="noopener" target="_blank">Emoji</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="特征工程（Python） | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          特征工程（Python）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-03-13 15:20:32" itemprop="dateCreated datePublished" datetime="2024-03-13T15:20:32+08:00">2024-03-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><h5 id="特征工程的目标"><a href="#特征工程的目标" class="headerlink" title="特征工程的目标"></a>特征工程的目标</h5><p>特征工程的目标很简单，<strong>就是让您的数据更适合当前的问题</strong>。考虑“表观温度”测量，例如炎热指数和风寒。这些量试图根据我们可以直接测量的气温、湿度和风速来测量人类感知的温度。您可以将表观温度视为一种特征工程的结果，试图使观察到的数据与我们真正关心的内容更相关。你可以使用特征工程来实现：</p>
+<ul>
+<li>提高模型的预测性能。</li>
+<li>减少计算或数据需求。</li>
+<li>提高结果的可解释性。</li>
+</ul>
+<h5 id="特征工程的指导原则"><a href="#特征工程的指导原则" class="headerlink" title="特征工程的指导原则"></a>特征工程的指导原则</h5><p>为了使某个功能有用，它必须与模型能够学习的目标有关系。例如，线性模型只能学习线性关系。因此，当使用线性模型时，您的目标是转换特征以使它们与目标的关系呈线性。这里的关键思想是，应用于特征的转换本质上成为模型本身的一部分。假设您试图根据一侧的长度来预测方形地块的价格。将线性模型直接拟合到长度会产生较差的结果：关系不是线性的。</p>
+<img data-src="/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_1.png" class="">
+
+<p>然而，如果我们对长度特征进行平方以获得“面积”，我们就会创建线性关系。将<code>Area</code>添加到特征集中意味着该线性模型现在可以拟合抛物线。换句话说，对特征进行平方使线性模型能够拟合平方特征。</p>
+<img data-src="/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_2.png" class="">
+
+<p>这应该向您展示为什么在特征工程上投入的时间可以获得如此高的回报。无论您的模型无法学习什么关系，您都可以通过转换来提供。在开发功能集时，请考虑您的模型可以使用哪些信息来实现其最佳性能。</p>
+<h5 id="举例-混凝土配方"><a href="#举例-混凝土配方" class="headerlink" title="举例 - 混凝土配方"></a>举例 - 混凝土配方</h5><p>为了说明这些想法，我们将了解如何向数据集添加一些合成特征来提高随机森林模型的预测性能。混凝土数据集包含各种混凝土配方和最终产品的抗压强度，这是衡量该种混凝土可以承受多少载荷的指标。该数据集的任务是预测给定配方的混凝土的抗压强度。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestRegressor</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> cross_val_score</span><br><span class="line"></span><br><span class="line">df = pd.read_csv(<span class="string">&quot;../input/fe-course-data/concrete.csv&quot;</span>)</span><br><span class="line">df.head()</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<img data-src="/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_3.png" class="">
+
+<p>您可以在这里看到各种混凝土的各种成分。稍后我们将看到添加从这些特征派生的一些额外的综合特征如何帮助模型学习它们之间的重要关系。我们首先通过在未增强的数据集上训练模型来建立基线。这将帮助我们确定我们的新功能是否真正有用。在特征工程过程开始时建立这样的基线是一个很好的做法。基线分数可以帮助您决定您的新功能是否值得保留，或者您是否应该放弃它们并可能尝试其他功能。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">X = df.copy()</span><br><span class="line">y = X.pop(<span class="string">&quot;CompressiveStrength&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Train and score baseline model</span></span><br><span class="line">baseline = RandomForestRegressor(criterion=<span class="string">&quot;absolute_error&quot;</span>, random_state=<span class="number">0</span>)</span><br><span class="line">baseline_score = cross_val_score(</span><br><span class="line">    baseline, X, y, cv=<span class="number">5</span>, scoring=<span class="string">&quot;neg_mean_absolute_error&quot;</span></span><br><span class="line">)</span><br><span class="line">baseline_score = -<span class="number">1</span> * baseline_score.mean()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;MAE Baseline Score: <span class="subst">&#123;baseline_score:<span class="number">.4</span>&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MAE Baseline Score: 8.232</span><br></pre></td></tr></table></figure>
+<p>如果您曾经在家做饭，您可能知道食谱中成分的比例通常比其绝对数量更能预测食谱的结果。我们可能会推断，上述特征的比率将是压缩强度的良好预测指标。下面的单元格向数据集添加了三个新的比率特征。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">X = df.copy()</span><br><span class="line">y = X.pop(<span class="string">&quot;CompressiveStrength&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create synthetic features</span></span><br><span class="line">X[<span class="string">&quot;FCRatio&quot;</span>] = X[<span class="string">&quot;FineAggregate&quot;</span>] / X[<span class="string">&quot;CoarseAggregate&quot;</span>]</span><br><span class="line">X[<span class="string">&quot;AggCmtRatio&quot;</span>] = (X[<span class="string">&quot;CoarseAggregate&quot;</span>] + X[<span class="string">&quot;FineAggregate&quot;</span>]) / X[<span class="string">&quot;Cement&quot;</span>]</span><br><span class="line">X[<span class="string">&quot;WtrCmtRatio&quot;</span>] = X[<span class="string">&quot;Water&quot;</span>] / X[<span class="string">&quot;Cement&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># Train and score model on dataset with additional ratio features</span></span><br><span class="line">model = RandomForestRegressor(criterion=<span class="string">&quot;absolute_error&quot;</span>, random_state=<span class="number">0</span>)</span><br><span class="line">score = cross_val_score(</span><br><span class="line">    model, X, y, cv=<span class="number">5</span>, scoring=<span class="string">&quot;neg_mean_absolute_error&quot;</span></span><br><span class="line">)</span><br><span class="line">score = -<span class="number">1</span> * score.mean()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;MAE Score with Ratio Features: <span class="subst">&#123;score:<span class="number">.4</span>&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MAE Score with Ratio Features: 7.948</span><br></pre></td></tr></table></figure>
+<p>果然，性能提高了！这证明这些新的比率特征向模型暴露了之前未检测到的重要信息。</p>
+<h4 id="互信息-Mutual-Information"><a href="#互信息-Mutual-Information" class="headerlink" title="互信息(Mutual Information)"></a>互信息(Mutual Information)</h4><h5 id="介绍-1"><a href="#介绍-1" class="headerlink" title="介绍"></a>介绍</h5><p>第一次遇到新的数据集有时会让人感到不知所措。您可能会看到成百上千个特征，甚至没有任何说明。你从哪里开始呢？重要的第一步是使用特征效用指标构建排名，该指标是衡量特征与目标之间关联性的函数。然后，您可以选择一小部分最有用的特征进行最初开发。我们将使用的指标称为“互信息”。互信息很像相关性，因为它衡量两个量之间的关系。互信息的优点是可以检测任何类型的关系，而相关性只能检测线性关系。互信息是一个很好的通用指标，在功能开发开始时（当您可能还不知道要使用什么模型时）特别有用。 </p>
+<p>互信息：</p>
+<ul>
+<li>易于使用和解释。</li>
+<li>计算效率高。</li>
+<li>理论上是有根据的。</li>
+<li>抵抗过度拟合。</li>
+<li>能够检测任何类型的关系。</li>
+</ul>
+<h5 id="互信息及其衡量的内容"><a href="#互信息及其衡量的内容" class="headerlink" title="互信息及其衡量的内容"></a>互信息及其衡量的内容</h5><p>互信息用不确定性来描述关系。两个量之间的互信息(<code>MI</code>)衡量一个量的知识减少另一个量的不确定性的程度。如果您知道某个特征的价值，您对目标的信心会有多大？这是艾姆斯住房数据的一个示例。该图显示了房屋的外部质量与其售价之间的关系。每个点代表一座房子。</p>
+<img data-src="/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_4.png" class="">
+
+<p>从图中我们可以看出，知道了<code>ExterQual</code>的值应该可以让你更加确定对应的<code>SalePrice——ExterQual</code>的每个类别都倾向于将<code>SalePrice</code>集中在一定的范围内。<code>ExterQual</code>与<code>SalePrice</code>的相互信息是<code>SalePrice</code>的不确定性对<code>ExterQual</code>的四个值的平均减少量。例如，由于“公平”出现的频率低于“典型”，因此“公平”在<code>MI</code>分数中的权重较小。（技术说明：我们所说的不确定性是使用信息论中称为“熵”的量来测量的。变量的熵大致意味着：“您需要多少是或否问题来描述该情况的发生。”您要问的问题越多，您对变量的不确定性就越大。互信息是您期望该功能回答有关目标的多少问题。）</p>
+<h5 id="解释互信息分数"><a href="#解释互信息分数" class="headerlink" title="解释互信息分数"></a>解释互信息分数</h5><p>数量之间的最小可能互信息为<code>0.0</code>。当<code>MI</code>为零时，这些量是独立的：两者都无法告诉您有关对方的任何信息。相反，理论上<code>MI</code>没有上限。但实际上，高于<code>2.0</code>左右的值并不常见。（互信息是一对数量，因此增长非常缓慢。）下图将让您了解<code>MI</code>值如何对应于特征与目标的关联类型和程度。</p>
+<img data-src="/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_5.png" class="">
+
+<p>应用互信息时需要记住以下几点：</p>
+<ul>
+<li><code>MI</code>可以帮助您了解某个特征作为目标预测因子（单独考虑）的相对潜力。</li>
+<li>一个特征在与其他特征交互时可能会提供非常丰富的信息，但单独使用时可能不会提供如此丰富的信息。<code>MI</code>无法检测特征之间的交互。它是一个单变量度量。</li>
+<li>某个特征的实际用途取决于您使用该特征的型号。一项特征仅在其与目标的关系是您的模型可以学习的范围内才有用。仅仅因为某个特征具有高<code>MI</code>分数并不意味着您的模型能够利用该信息执行任何操作。您可能需要首先转换特征才能公开关联。</li>
+</ul>
+<h5 id="举例-1985-年汽车"><a href="#举例-1985-年汽车" class="headerlink" title="举例 - 1985 年汽车"></a>举例 - 1985 年汽车</h5><p>汽车数据集包含<code>1985</code>年车型的<code>193</code>辆汽车。该数据集的目标是根据汽车的<code>23</code>个特征（例如品牌、车身样式和马力）来预测汽车的价格（目标）。在此示例中，我们将利用互信息对特征进行排序，并通过数据可视化研究结果。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>umbrella
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/" title="特征工程（Python）">https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/03/12/artificial-intelligence/data_visual_study/" rel="prev" title="数据可视化（Seaborn）">
+                  <i class="fa fa-chevron-left"></i> 数据可视化（Seaborn）
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">辽ICP备15012817号-2 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2022 – 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">umbrella</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">484k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">26:52</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/fresh88888888" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.0.8/medium-zoom.min.js" integrity="sha256-7PhEpEWEW0XXQ0k6kQrPKwuoIomz8R8IYyuU1Qew4P8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/comments.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/motion.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/next-boot.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/pjax.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/search/local-search.min.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.12/pdfobject.min.js","integrity":"sha256-g2xji1rlE3KsGVClvuxTbcR0Kn2+wtQADSff2Tbb4zA="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/tags/pdf.min.js"></script>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/fancybox.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/pace.min.js"></script>
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
+
+</body>
+</html>
