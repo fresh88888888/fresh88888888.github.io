@@ -12,4 +12,4 @@ comments: false
 ![](images/Machine_Learning.png)
 ![](images/Machine_Learning_Explainability.png)
 ![](images/Intermediate_Machine_Learning.png)
-
+![](images/Pandas.png)
