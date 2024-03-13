@@ -26,12 +26,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="介绍特征工程的目标特征工程的目标很简单，就是让您的数据更适合当前的问题。考虑“表观温度”测量，例如炎热指数和风寒。这些量试图根据我们可以直接测量的气温、湿度和风速来测量人类感知的温度。您可以将表观温度视为一种特征工程的结果，试图使观察到的数据与我们真正关心的内容更相关。你可以使用特征工程来实现：  提高模型的预测性能。 减少计算或数据需求。 提高结果的可解释性。  特征工程的指导原则为了使某个功能">
+    <meta name="description" content="介绍特征工程的目标特征工程的目标很简单，就是让您的数据更适合当前的问题。考虑“表观温度”测量，例如炎热指数和风寒。这些量试图根据我们可以直接测量的气温、湿度和风速来测量人类感知的温度。您可以将表观温度视为一种特征工程的结果，试图使观察到的数据与我们真正关心的内容更相关。你可以使用特征工程来实现：  提高模型的预测性能。 减少计算或数据需求。 提高结果的可解释性。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="特征工程（Python）">
 <meta property="og:url" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="介绍特征工程的目标特征工程的目标很简单，就是让您的数据更适合当前的问题。考虑“表观温度”测量，例如炎热指数和风寒。这些量试图根据我们可以直接测量的气温、湿度和风速来测量人类感知的温度。您可以将表观温度视为一种特征工程的结果，试图使观察到的数据与我们真正关心的内容更相关。你可以使用特征工程来实现：  提高模型的预测性能。 减少计算或数据需求。 提高结果的可解释性。  特征工程的指导原则为了使某个功能">
+<meta property="og:description" content="介绍特征工程的目标特征工程的目标很简单，就是让您的数据更适合当前的问题。考虑“表观温度”测量，例如炎热指数和风寒。这些量试图根据我们可以直接测量的气温、湿度和风速来测量人类感知的温度。您可以将表观温度视为一种特征工程的结果，试图使观察到的数据与我们真正关心的内容更相关。你可以使用特征工程来实现：  提高模型的预测性能。 减少计算或数据需求。 提高结果的可解释性。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_2.png">
@@ -326,7 +326,7 @@
 <ul>
 <li>提高模型的预测性能。</li>
 <li>减少计算或数据需求。</li>
-<li>提高结果的可解释性。</li>
+<li>提高结果的可解释性。<span id="more"></span></li>
 </ul>
 <h5 id="特征工程的指导原则"><a href="#特征工程的指导原则" class="headerlink" title="特征工程的指导原则"></a>特征工程的指导原则</h5><p>为了使某个功能有用，它必须与模型能够学习的目标有关系。例如，线性模型只能学习线性关系。因此，当使用线性模型时，您的目标是转换特征以使它们与目标的关系呈线性。这里的关键思想是，应用于特征的转换本质上成为模型本身的一部分。假设您试图根据一侧的长度来预测方形地块的价格。将线性模型直接拟合到长度会产生较差的结果：关系不是线性的。</p>
 <img data-src="/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_1.png" class="">
