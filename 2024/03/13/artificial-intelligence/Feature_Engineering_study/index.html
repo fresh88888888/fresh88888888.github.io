@@ -38,6 +38,9 @@
 <meta property="og:image" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_3.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_4.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_5.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_6.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_7.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_8.png">
 <meta property="article:published_time" content="2024-03-13T07:20:32.000Z">
 <meta property="article:modified_time" content="2024-03-13T07:20:32.000Z">
 <meta property="article:author" content="umbrella">
@@ -305,14 +308,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.1k</span>
+      <span>2.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
+      <span>9 分钟</span>
     </span>
 </div>
 
@@ -328,7 +331,7 @@
 <li>减少计算或数据需求。</li>
 <li>提高结果的可解释性。<span id="more"></span></li>
 </ul>
-<h5 id="特征工程的指导原则"><a href="#特征工程的指导原则" class="headerlink" title="特征工程的指导原则"></a>特征工程的指导原则</h5><p>为了使某个功能有用，它必须与模型能够学习的目标有关系。例如，线性模型只能学习线性关系。因此，当使用线性模型时，您的目标是转换特征以使它们与目标的关系呈线性。这里的关键思想是，应用于特征的转换本质上成为模型本身的一部分。假设您试图根据一侧的长度来预测方形地块的价格。将线性模型直接拟合到长度会产生较差的结果：关系不是线性的。</p>
+<h5 id="特征工程的指导原则"><a href="#特征工程的指导原则" class="headerlink" title="特征工程的指导原则"></a>特征工程的指导原则</h5><p>为了使某个特征有用，它必须与模型能够学习的目标有关系。例如，线性模型只能学习线性关系。因此，当使用线性模型时，您的目标是转换特征以使它们与目标的关系呈线性。这里的关键思想是，应用于特征的转换本质上成为模型本身的一部分。假设您试图根据一侧的长度来预测方形地块的价格。将线性模型直接拟合到长度会产生较差的结果：关系不是线性的。</p>
 <img data-src="/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_1.png" class="">
 
 <p>然而，如果我们对长度特征进行平方以获得“面积”，我们就会创建线性关系。将<code>Area</code>添加到特征集中意味着该线性模型现在可以拟合抛物线。换句话说，对特征进行平方使线性模型能够拟合平方特征。</p>
@@ -372,6 +375,25 @@
 <li>某个特征的实际用途取决于您使用该特征的型号。一项特征仅在其与目标的关系是您的模型可以学习的范围内才有用。仅仅因为某个特征具有高<code>MI</code>分数并不意味着您的模型能够利用该信息执行任何操作。您可能需要首先转换特征才能公开关联。</li>
 </ul>
 <h5 id="举例-1985-年汽车"><a href="#举例-1985-年汽车" class="headerlink" title="举例 - 1985 年汽车"></a>举例 - 1985 年汽车</h5><p>汽车数据集包含<code>1985</code>年车型的<code>193</code>辆汽车。该数据集的目标是根据汽车的<code>23</code>个特征（例如品牌、车身样式和马力）来预测汽车的价格（目标）。在此示例中，我们将利用互信息对特征进行排序，并通过数据可视化研究结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line"></span><br><span class="line">plt.style.use(<span class="string">&quot;seaborn-whitegrid&quot;</span>)</span><br><span class="line"></span><br><span class="line">df = pd.read_csv(<span class="string">&quot;../input/fe-course-data/autos.csv&quot;</span>)</span><br><span class="line">df.head()</span><br></pre></td></tr></table></figure>
+<p><code>MI</code>的<code>scikit-learn</code>算法以不同于连续特征的方式处理离散特征。因此，您需要告诉它哪些是哪些。根据经验，任何必须具有浮点数据类型的东西都不是离散的。通过分类（对象或分类数据类型）提供标签编码，可以将其视为离散的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">X = df.copy()</span><br><span class="line">y = X.pop(<span class="string">&quot;price&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Label encoding for categoricals</span></span><br><span class="line"><span class="keyword">for</span> colname <span class="keyword">in</span> X.select_dtypes(<span class="string">&quot;object&quot;</span>):</span><br><span class="line">    X[colname], _ = X[colname].factorize()</span><br><span class="line"></span><br><span class="line"><span class="comment"># All discrete features should now have integer dtypes (double-check this before using MI!)</span></span><br><span class="line">discrete_features = X.dtypes == <span class="built_in">int</span></span><br></pre></td></tr></table></figure>
+<p><code>Scikit-learn</code>的<code>feature_selection</code>模块中有两种互信息指标：一种用于实值目标 (<code>mutual_info_regression</code>)，一种用于分类目标 (<code>mutual_info_classif</code>)。我们的目标价格是有真实价值的。下一个单元格计算特征的<code>MI</code>分数并将它们包装在一个漂亮的数据框中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_selection <span class="keyword">import</span> mutual_info_regression</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">make_mi_scores</span>(<span class="params">X, y, discrete_features</span>):</span><br><span class="line">    mi_scores = mutual_info_regression(X, y, discrete_features=discrete_features)</span><br><span class="line">    mi_scores = pd.Series(mi_scores, name=<span class="string">&quot;MI Scores&quot;</span>, index=X.columns)</span><br><span class="line">    mi_scores = mi_scores.sort_values(ascending=<span class="literal">False</span>)</span><br><span class="line">    <span class="keyword">return</span> mi_scores</span><br><span class="line"></span><br><span class="line">mi_scores = make_mi_scores(X, y, discrete_features)</span><br><span class="line">mi_scores[::<span class="number">3</span>]  <span class="comment"># show a few features with their MI scores</span></span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curb_weight          1.540126</span><br><span class="line">highway_mpg          0.951700</span><br><span class="line">length               0.621566</span><br><span class="line">fuel_system          0.485085</span><br><span class="line">stroke               0.389321</span><br><span class="line">num_of_cylinders     0.330988</span><br><span class="line">compression_ratio    0.133927</span><br><span class="line">fuel_type            0.048139</span><br><span class="line">Name: MI Scores, dtype: float64</span><br></pre></td></tr></table></figure>
+<p>下边转换为条形图展示更为直观：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">plot_mi_scores</span>(<span class="params">scores</span>):</span><br><span class="line">    scores = scores.sort_values(ascending=<span class="literal">True</span>)</span><br><span class="line">    width = np.arange(<span class="built_in">len</span>(scores))</span><br><span class="line">    ticks = <span class="built_in">list</span>(scores.index)</span><br><span class="line">    plt.barh(width, scores)</span><br><span class="line">    plt.yticks(width, ticks)</span><br><span class="line">    plt.title(<span class="string">&quot;Mutual Information Scores&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">plt.figure(dpi=<span class="number">100</span>, figsize=(<span class="number">8</span>, <span class="number">5</span>))</span><br><span class="line">plot_mi_scores(mi_scores)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_6.png" class="">
+
+<p>正如我们所预期的那样，高分遏制权重特征与目标价格表现出很强的关系。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sns.relplot(x=<span class="string">&quot;curb_weight&quot;</span>, y=<span class="string">&quot;price&quot;</span>, data=df);</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_7.png" class="">
+
+<p><code>Fuel_type</code>特征的<code>MI</code>分数相当低，但从图中可以看出，它清楚地区分了马力特征中具有不同趋势的两个价格群体。这表明<code>Fuel_type</code>具有交互作用，并且可能并非不重要。在根据<code>MI</code>分数确定某个特征不重要之前，最好调查一下任何可能的交互影响——领域知识可以在这里提供很多指导。</p>
+<img data-src="/2024/03/13/artificial-intelligence/Feature_Engineering_study/fe_8.png" class="">
+
+<p>数据可视化是对特征工程工具箱的一个很好的补充。除了互信息等实用指标之外，此类可视化可以帮助您发现数据中的重要关系。</p>
 
     </div>
 
@@ -451,7 +473,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">26:52</span>
+    <span title="站点阅读时长">26:54</span>
   </span>
 </div>
 <div class="busuanzi-count">
