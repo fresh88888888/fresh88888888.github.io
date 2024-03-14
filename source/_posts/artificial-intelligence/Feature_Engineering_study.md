@@ -190,3 +190,228 @@ sns.relplot(x="curb_weight", y="price", data=df);
 {% asset_img fe_8.png %}
 
 数据可视化是对特征工程工具箱的一个很好的补充。除了互信息等实用指标之外，此类可视化可以帮助您发现数据中的重要关系。
+
+#### 创建特征
+
+##### 介绍
+
+发现新特征的技巧：
+- 研究问题领域以获得领域知识。如果您的问题是预测房价，请对房地产进行一些研究。维基百科可能是一个很好的起点，但书籍和期刊文章通常会提供最好的信息。
+- 使用数据可视化。可视化可以揭示特征分布的情况或可以简化的复杂关系。在完成特征工程过程时，请务必可视化您的数据集。
+
+##### 数学变换
+
+数字特征之间的关系通常通过数学公式来表达，您在领域研究中经常会遇到这些公式。在`Pandas`中，您可以对列应用算术运算，就像它们是普通数字一样。汽车数据集中包含描述汽车发动机的特征。 研究产生了各种用于创建潜在有用的新特征的公式。例如，“冲程比”是衡量发动机效率与性能的指标：
+```python
+autos["stroke_ratio"] = autos.stroke / autos.bore
+
+autos[["stroke", "bore", "stroke_ratio"]].head()
+```
+组合越复杂，模型学习就越困难，就像发动机“排量”（衡量其功率的指标）的公式一样：
+```python
+autos["displacement"] = (
+    np.pi * ((0.5 * autos.bore) ** 2) * autos.stroke * autos.num_of_cylinders
+)
+```
+数据可视化可以建议转换，通常是通过幂或对数“重塑”特征。例如，`WindSpeed`在美国事故中的分布就非常不均匀。在这种情况下，对数可以有效地对其进行标准化：
+```python
+# If the feature has 0.0 values, use np.log1p (log(1+x)) instead of np.log
+accidents["LogWindSpeed"] = accidents.WindSpeed.apply(np.log1p)
+
+# Plot a comparison
+fig, axs = plt.subplots(1, 2, figsize=(8, 4))
+sns.kdeplot(accidents.WindSpeed, shade=True, ax=axs[0])
+sns.kdeplot(accidents.LogWindSpeed, shade=True, ax=axs[1]);
+```
+##### 计数
+
+描述某种事物存在或不存在的特征通常是成组出现的，例如疾病的一组危险因素。您可以通过创建计数来聚合此类特征。这些特征将以二进制（`1`表示存在，`0`表示不存在）或布尔值（`True`或 `False`）。在`Python`中，布尔值可以像整数一样相加。在交通事故中，有几个特征指示事故附近是否存在某些道路物体。这将使用`sum`方法创建附近道路要素总数的计数：
+```python
+roadway_features = ["Amenity", "Bump", "Crossing", "GiveWay",
+    "Junction", "NoExit", "Railway", "Roundabout", "Station", "Stop",
+    "TrafficCalming", "TrafficSignal"]
+accidents["RoadwayFeatures"] = accidents[roadway_features].sum(axis=1)
+
+accidents[roadway_features + ["RoadwayFeatures"]].head(10)
+```
+{% asset_img fe_9.png %}
+
+您还可以使用数据框的内置方法来创建布尔值。混凝土数据集中是混凝土配方中组分的数量。许多配方缺少一种或多种成分（即成分值为`0`）。这将使用数据框的内置大于`gt`方法来计算配方中有多少个组件：
+```python
+components = [ "Cement", "BlastFurnaceSlag", "FlyAsh", "Water",
+               "Superplasticizer", "CoarseAggregate", "FineAggregate"]
+concrete["Components"] = concrete[components].gt(0).sum(axis=1)
+
+concrete[components + ["Components"]].head(10)
+```
+{% asset_img fe_10.png %}
+
+##### 构建和分解特征
+
+通常，您会拥有复杂的字符串，可以将其有效地分解为更简单的部分。
+- `ID numbers`: `'123-45-6789'`
+- `Phone numbers`: `'(999) 555-0123'`
+- `Street addresses`: `'8241 Kaggle Ln., Goose City, NV'`
+- `Internet addresses`: `'http://www.kaggle.com`
+- `Product codes`: `'0 36000 29145 2'`
+- `Dates and times`: `'Mon Sep 30 07:06:05 2013'`
+
+此类功能通常具有某种可供您使用的结构。例如，美国的电话号码有一个区号（“(`999`)”部分），可以告诉您呼叫者的位置。`str`访问器允许您应用字符串方法，例如直接将`split`应用于列。客户终身价值数据集包含描述保险公司客户的特征。从保单特征中，我们可以将类型与覆盖级别分开：
+```python
+customer[["Type", "Level"]] = (  # Create two new features
+    customer["Policy"]           # from the Policy feature
+    .str                         # through the string accessor
+    .split(" ", expand=True)     # by splitting on " "
+                                 # and expanding the result into separate columns
+)
+
+customer[["Policy", "Type", "Level"]].head(10)
+```
+{% asset_img fe_11.png %}
+
+如果您有理由相信组合中存在一些交互，您也可以将简单特征加入到组合特征中：
+```python
+autos["make_and_style"] = autos["make"] + "_" + autos["body_style"]
+autos[["make", "body_style", "make_and_style"]].head()
+```
+{% asset_img fe_12.png %}
+
+##### 组变换
+
+最后，我们有**组变换**，它可以聚合按某个类别分组的多行信息。通过组变换，您可以创建诸如“一个人居住州的平均收入”或“按类型在工作日发行的电影的比例”等功能。如果您发现了类别交互，那么针对该类别的组变换可能是值得研究的好东西。使用聚合函数，组变换组合了两个特征：一个提供分组的分类特征和另一个要聚合其值的特征。对于“按州划分的平均收入”，您可以选择“州”作为分组特征，选择“平均值”作为聚合函数，选择“收入”作为聚合特征。为了在`Pandas`中计算这一点，我们使用`groupby`和`transform`方法：
+```python
+customer["AverageIncome"] = (
+    customer.groupby("State")  # for each state
+    ["Income"]                 # select the income
+    .transform("mean")         # and compute its mean
+)
+
+customer[["State", "Income", "AverageIncome"]].head(10)
+```
+{% asset_img fe_13.png %}
+
+`Mean`函数是一个内置的数据帧方法，这意味着我们可以将它作为字符串传递来进行转换。其他方便的方法包括`max、min、median、var、std`和`count`。以下是计算数据集中每个状态出现的频率的方法：
+```python
+customer["StateFreq"] = (
+    customer.groupby("State")
+    ["State"]
+    .transform("count")
+    / customer.State.count()
+)
+
+customer[["State", "StateFreq"]].head(10)
+```
+{% asset_img fe_14.png %}
+
+您可以使用这样的转换来为分类特征创建“频率编码”。如果您使用训练和验证拆分，为了保持它们的独立性，最好仅使用训练集创建分组特征，然后将其加入验证集。在训练集上使用 `drop_duplicates`创建一组唯一的值后，我们可以使用验证集的合并方法：
+```python
+# Create splits
+df_train = customer.sample(frac=0.5)
+df_valid = customer.drop(df_train.index)
+
+# Create the average claim amount by coverage type, on the training set
+df_train["AverageClaim"] = df_train.groupby("Coverage")["ClaimAmount"].transform("mean")
+
+# Merge the values into the validation set
+df_valid = df_valid.merge(
+    df_train[["Coverage", "AverageClaim"]].drop_duplicates(),
+    on="Coverage",
+    how="left",
+)
+
+df_valid[["Coverage", "AverageClaim"]].head(10)
+```
+{% asset_img fe_15.png %}
+
+**创建特征的技巧**: 创建特征时最好记住模型自身的优点和缺点。以下是一些指导原则：
+- 线性模型自然地学习"和"与"差"，但无法学习更复杂的东西。
+- 对于大多数模型来说，比率似乎很难学习。比率组合通常会带来一些简单的性能提升。
+- 线性模型和神经网络通常在归一化特征方面表现更好。神经网络特别需要缩放到离`0`不太远的值的特征。基于树的模型（如随机森林和`XGBoost`）有时可以从归一化中受益，但通常效果要差得多。
+- 树模型可以学习近似任何特征组合，但是当组合特别重要时，它们仍然可以从显式创建的组合中受益，尤其是在数据有限的情况下。
+- 计数对于树模型特别有用，因为这些模型没有一种自然的方式来同时聚合多个特征的信息。
+
+#### K-均值聚类
+
+##### 介绍
+
+无监督算法不利用目标；相反，它们的目的是学习数据的某些属性，以某种方式表示特征的结构。在预测特征工程的背景下，您可以将无监督算法视为“特征发现”技术。聚类意味着根据数据点彼此之间的相似程度将数据点分配到组中。可以说，聚类算法使“物以类聚”。例如，当用于特征工程时，我们可以尝试发现代表细分市场的客户群体，或具有相似天气模式的地理区域。添加集群标签的特征可以帮助机器学习模型理清复杂的空间或邻近关系。
+
+##### 聚类标签作为特征
+
+应用于单个实值特征时，聚类的作用类似于传统的“分箱”或“离散化”变换。在多个特征上，它就像“多维分箱”（有时称为矢量量化）。
+{% asset_img fe_16.png %}
+
+重要的是要记住，这个集群特征是分类的。在这里，它显示为标签编码（即，作为整数序列），如典型的聚类算法所产生的那样；根据您的型号`one-hot`编码可能更合适。添加集群标签的动机是集群会将特征之间的复杂关系分解为更简单的块。然后，我们的模型可以学习更简单的块，而不必一次学习复杂的整体。这是一种“分而治之”的策略。
+{% asset_img fe_17.png %}
+
+该图显示了聚类如何改进简单的线性模型。`YearBuilt`和`SalePrice`之间的曲线关系对于这种模型来说太复杂了——它不适合。然而，在较小的块上，关系几乎是线性的，并且模型可以轻松学习。
+
+##### k-Means Clustering
+
+聚类算法有很多。 它们的不同之处主要在于如何衡量“相似性”以及使用哪些类型的特征。我们将使用的算法`k-means`非常直观且易于在特征工程环境中应用。根据您的应用程序，另一种算法可能更合适。`K`均值聚类使用普通直线距离（换句话说，欧几里得距离）来衡量相似性。它通过在特征空间内放置许多点（称为质心）来创建簇。数据集中的每个点都分配给最接近的质心的簇。“`k-means`”中的“`k`”是它创建的质心（即簇）数量。您可以想象每个质心通过一系列辐射圆捕获点。当来自竞争质心的圆组重叠时，它们会形成一条线。结果就是所谓的`Voronoi`镶嵌。镶嵌会向您显示未来数据将分配到哪些集群；镶嵌本质上是`k-means`从训练数据中学习的内容。上面`Ames`数据集上的聚类是`k-means`聚类。这是同一张图，显示了镶嵌和质心。
+{% asset_img fe_18.png %}
+
+让我们回顾一下`k`均值算法如何学习聚类以及这对特征工程意味着什么。我们将重点关注`scikit-learn`实现中的三个参数：`n_clusters、max_iter`和`n_init`。这是一个简单的两步过程。该算法首先随机初始化一些预定义数量（`n_clusters`）的质心。然后它迭代这两个操作。
+- 将点分配给最近的簇质心。
+- 移动每个质心以最小化到其点的距离。
+
+它迭代这两个步骤，直到质心不再移动，或者直到经过最大迭代次数 (`max_iter`)。质心的初始随机位置经常以较差的聚类结束。因此，该算法会重复多次（`n_init`）并返回每个点与其质心之间总距离最小的聚类，即最佳聚类。下面的动画显示了正在运行的算法。它说明了结果对初始质心的依赖性以及迭代直至收敛的重要性。
+
+对于大量聚类，您可能需要增加`max_iter`，对于复杂数据集，您可能需要增加`n_init`。通常，您需要自己选择的唯一参数是`n_clusters`（即`k`）。一组特征的最佳划分取决于您正在使用的模型以及您想要预测的内容，因此最好像任何超参数一样对其进行调整（例如通过交叉验证）。
+
+##### 举例 - 加州住房
+
+作为空间特征，加州住房的“纬度”和“经度”自然成为`k`均值聚类的候选者。在此示例中，我们将这些与“`MedInc`”（收入中位数）聚集在一起，以在加利福尼亚州的不同地区创建经济细分。
+```python
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+from sklearn.cluster import KMeans
+
+plt.style.use("seaborn-whitegrid")
+plt.rc("figure", autolayout=True)
+plt.rc(
+    "axes",
+    labelweight="bold",
+    labelsize="large",
+    titleweight="bold",
+    titlesize=14,
+    titlepad=10,
+)
+
+df = pd.read_csv("../input/fe-course-data/housing.csv")
+X = df.loc[:, ["MedInc", "Latitude", "Longitude"]]
+X.head()
+```
+由于`k`均值聚类对规模很敏感，因此重新调整或标准化具有极值的数据可能是一个好主意。我们的功能已经大致处于相同的规模，因此我们将保持原样。
+```python
+# Create cluster feature
+kmeans = KMeans(n_clusters=6)
+X["Cluster"] = kmeans.fit_predict(X)
+X["Cluster"] = X["Cluster"].astype("category")
+
+X.head()
+```
+结果输出为：
+```bash
+   MedInc  Latitude  Longitude Cluster
+0  8.3252     37.88    -122.23       0
+1  8.3014     37.86    -122.22       0
+2  7.2574     37.85    -122.24       0
+3  5.6431     37.85    -122.25       0
+4  3.8462     37.85    -122.25       2
+```
+现在让我们看几个图，看看这有多有效。首先，散点图显示集群的地理分布。该算法似乎为沿海高收入地区创建了单独的细分市场。
+```python
+sns.relplot(
+    x="Longitude", y="Latitude", hue="Cluster", data=X, height=6,
+)
+```
+{% asset_img fe_19.png %}
+
+该数据集中的目标是`MedHouseVal`（房屋中位值）。这些箱线图显示了每个簇内目标的分布。如果聚类信息丰富，那么这些分布在大多数情况下应该在`MedHouseVal`中分离，这确实是我们所看到的。
+```python
+X["MedHouseVal"] = df["MedHouseVal"]
+sns.catplot(x="MedHouseVal", y="Cluster", data=X, kind="boxen", height=6);
+```
+{% asset_img fe_20.png %}
