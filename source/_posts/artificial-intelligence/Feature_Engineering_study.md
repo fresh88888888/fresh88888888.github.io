@@ -581,3 +581,26 @@ df["sports_or_wagon"] = X.curb_weight / X.horsepower
 sns.regplot(x="sports_or_wagon", y='price', data=df, order=2)
 ```
 {% asset_img fe_28.png %}
+
+#### 目标编码（Target Encoding）
+
+##### 介绍
+
+我们将在本课中介绍的技术“目标编码”适用于分类特征。它是一种将类别编码为数字的方法，类似于`one-hot`或标签编码，不同之处在于它还使用目标来创建编码。这就是我们所说的监督特征工程技术。
+
+##### Target Encoding
+
+**目标编码**是用从目标派生的某个数字替换特征类别的任何类型的编码。一个简单而有效的版本是应用”组聚合“，例如平均值。使用汽车数据集，计算每辆车品牌的平均价格：
+```python
+import pandas as pd
+
+autos = pd.read_csv("../input/fe-course-data/autos.csv")
+autos["make_encoded"] = autos.groupby("make")["price"].transform("mean")
+autos[["make", "price", "make_encoded"]].head(10)
+```
+{% asset_img fe_29.png %}
+
+这种目标编码有时称为”平均编码“。应用于二进制目标时，也称为`bin`计数。
+
+##### Smoothing
+
