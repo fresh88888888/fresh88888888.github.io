@@ -19,7 +19,7 @@ categories:
 
 ##### 特征工程的指导原则
 
-为了使某个功能有用，它必须与模型能够学习的目标有关系。例如，线性模型只能学习线性关系。因此，当使用线性模型时，您的目标是转换特征以使它们与目标的关系呈线性。这里的关键思想是，应用于特征的转换本质上成为模型本身的一部分。假设您试图根据一侧的长度来预测方形地块的价格。将线性模型直接拟合到长度会产生较差的结果：关系不是线性的。
+为了使某个特征有用，它必须与模型能够学习的目标有关系。例如，线性模型只能学习线性关系。因此，当使用线性模型时，您的目标是转换特征以使它们与目标的关系呈线性。这里的关键思想是，应用于特征的转换本质上成为模型本身的一部分。假设您试图根据一侧的长度来预测方形地块的价格。将线性模型直接拟合到长度会产生较差的结果：关系不是线性的。
 {% asset_img fe_1.png %}
 
 然而，如果我们对长度特征进行平方以获得“面积”，我们就会创建线性关系。将`Area`添加到特征集中意味着该线性模型现在可以拟合抛物线。换句话说，对特征进行平方使线性模型能够拟合平方特征。
@@ -116,3 +116,77 @@ MAE Score with Ratio Features: 7.948
 ##### 举例 - 1985 年汽车
 
 汽车数据集包含`1985`年车型的`193`辆汽车。该数据集的目标是根据汽车的`23`个特征（例如品牌、车身样式和马力）来预测汽车的价格（目标）。在此示例中，我们将利用互信息对特征进行排序，并通过数据可视化研究结果。
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+plt.style.use("seaborn-whitegrid")
+
+df = pd.read_csv("../input/fe-course-data/autos.csv")
+df.head()
+```
+`MI`的`scikit-learn`算法以不同于连续特征的方式处理离散特征。因此，您需要告诉它哪些是哪些。根据经验，任何必须具有浮点数据类型的东西都不是离散的。通过分类（对象或分类数据类型）提供标签编码，可以将其视为离散的。
+```python
+X = df.copy()
+y = X.pop("price")
+
+# Label encoding for categoricals
+for colname in X.select_dtypes("object"):
+    X[colname], _ = X[colname].factorize()
+
+# All discrete features should now have integer dtypes (double-check this before using MI!)
+discrete_features = X.dtypes == int
+```
+`Scikit-learn`的`feature_selection`模块中有两种互信息指标：一种用于实值目标 (`mutual_info_regression`)，一种用于分类目标 (`mutual_info_classif`)。我们的目标价格是有真实价值的。下一个单元格计算特征的`MI`分数并将它们包装在一个漂亮的数据框中。
+```python
+from sklearn.feature_selection import mutual_info_regression
+
+def make_mi_scores(X, y, discrete_features):
+    mi_scores = mutual_info_regression(X, y, discrete_features=discrete_features)
+    mi_scores = pd.Series(mi_scores, name="MI Scores", index=X.columns)
+    mi_scores = mi_scores.sort_values(ascending=False)
+    return mi_scores
+
+mi_scores = make_mi_scores(X, y, discrete_features)
+mi_scores[::3]  # show a few features with their MI scores
+```
+结果输出为：
+```bash
+curb_weight          1.540126
+highway_mpg          0.951700
+length               0.621566
+fuel_system          0.485085
+stroke               0.389321
+num_of_cylinders     0.330988
+compression_ratio    0.133927
+fuel_type            0.048139
+Name: MI Scores, dtype: float64
+```
+下边转换为条形图展示更为直观：
+```python
+def plot_mi_scores(scores):
+    scores = scores.sort_values(ascending=True)
+    width = np.arange(len(scores))
+    ticks = list(scores.index)
+    plt.barh(width, scores)
+    plt.yticks(width, ticks)
+    plt.title("Mutual Information Scores")
+
+
+plt.figure(dpi=100, figsize=(8, 5))
+plot_mi_scores(mi_scores)
+```
+{% asset_img fe_6.png %}
+
+正如我们所预期的那样，高分遏制权重特征与目标价格表现出很强的关系。
+```python
+sns.relplot(x="curb_weight", y="price", data=df);
+```
+{% asset_img fe_7.png %}
+
+`Fuel_type`特征的`MI`分数相当低，但从图中可以看出，它清楚地区分了马力特征中具有不同趋势的两个价格群体。这表明`Fuel_type`具有交互作用，并且可能并非不重要。在根据`MI`分数确定某个特征不重要之前，最好调查一下任何可能的交互影响——领域知识可以在这里提供很多指导。
+{% asset_img fe_8.png %}
+
+数据可视化是对特征工程工具箱的一个很好的补充。除了互信息等实用指标之外，此类可视化可以帮助您发现数据中的重要关系。
