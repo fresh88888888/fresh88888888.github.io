@@ -415,3 +415,169 @@ X["MedHouseVal"] = df["MedHouseVal"]
 sns.catplot(x="MedHouseVal", y="Cluster", data=X, kind="boxen", height=6);
 ```
 {% asset_img fe_20.png %}
+
+#### 主成分分析（Principal Component Analysis）
+
+##### 介绍
+
+我们了解了第一个基于模型的特征工程方法：聚类。我们接下来要学习：主成分分析 (`PCA`)。就像聚类是根据邻近度对数据集进行分区一样，您可以将`PCA`视为对数据变化的分区。`PCA`是一个很好的工具，可以帮助您发现数据中的重要关系，还可以用于创建信息更丰富的特征。（技术说明：`PCA`通常应用于标准化数据。对于标准化数据，“变异”意味着“相关性”。对于非标准化数据，“变异”意味着“协方差”。）
+
+##### Principal Component Analysis
+
+鲍鱼数据集中是对数千只塔斯马尼亚鲍鱼进行的物理测量。（鲍鱼是一种海洋生物，很像蛤或牡蛎。）我们现在只看几个特征：壳的“高度”和“直径”。您可以想象，这些数据中存在“变异轴”，描述了鲍鱼之间的差异。从图中可以看出，这些轴显示为沿着数据的自然维度延伸的垂直线，每个原始特征对应一个轴。
+{% asset_img fe_21.png %}
+
+通常，我们可以为这些变化轴命名。较长的轴我们可以称为“尺寸”组件：小高度和小直径（左下）与大高度和大直径（右上）形成对比。 我们可以将较短的轴称为“形状”组件：小高度和大直径（扁平形状）与大高度和小直径（圆形）形成对比。请注意，我们不必通过“高度”和“直径”来描述鲍鱼，而是可以通过“大小”和“形状”来描述它们。事实上，这就是`PCA`的全部思想：我们不是用原始特征来描述数据，而是用它的变化轴来描述它。变化的轴成为新的特征。
+{% asset_img fe_22.png %}
+
+新特征`PCA`构造实际上只是原始特征的线性组合（加权和）。
+```python
+df["Size"] = 0.707 * X["Height"] + 0.707 * X["Diameter"]
+df["Shape"] = 0.707 * X["Height"] - 0.707 * X["Diameter"]
+```
+这些新特征称为数据的**主成分**。权重本身称为载荷。原始数据集中有多少个特征，就有多少个主成分：如果我们使用十个特征而不是两个，我们最终会得到十个成分。此载荷表告诉我们，在“大小”成分中，“高度”和“直径”沿相同方向（相同符号）变化，但在“形状”组件中，它们沿相反方向（相反符号）变化。在每个成分中，载荷的大小都相同，因此特征在两个成分中的贡献相同。`PCA`还告诉我们每个分量的变化量。从图中我们可以看出，尺寸分量上的数据比形状分量上的数据变化更大。`PCA`通过每个分量的**解释方差百分比**使这一点更加精确。
+{% asset_img fe_23.png %}
+
+尺寸成分捕获高度和直径之间的大部分变化。然而，重要的是要记住，成分中的方差量并不一定与其作为预测变量的效果相对应：它取决于您想要预测的内容。
+
+##### 基于特征工程的PCA
+
+有两种方法可以使用`PCA`进行特征工程。第一种方法是将其用作描述性技术。由于成分会告诉您变化，因此您可以计算成分的`MI`分数，并查看哪种变化最能预测您的目标。这可以为您提供创建各种特征的想法 - 如果“尺寸”很重要，则可以创建“高度”和“直径”的乘积，或者如果“形状”很重要，则可以创建“高度”和“直径”的比率。您甚至可以尝试对一个或多个高分成分进行聚类。第二种方法是使用成分本身作为特征。由于成分直接暴露数据的变分结构，因此它们通常比原始特征提供更多信息。以下是一些用例：
+- **降维**：当您的特征高度冗余（特别是多重共线性）时，`PCA`会将冗余划分为一个或多个接近零方差的分量，然后您可以将其删除，因为它们包含很少或不包含信息。
+- **异常检测**：原始特征中不明显的异常变化通常会出现在低方差成分中。这些组件在异常或异常值检测任务中可能提供大量信息。
+- **降噪**：传感器读数的集合通常会共享一些常见的背景噪声。`PCA`有时可以将（信息丰富的）信号收集到较少数量的特征中，同时保留噪声，从而提高信噪比。
+- **去相关**：一些机器学习算法难以应对高度相关的特征。`PCA`将相关特征转换为不相关成分，这可以让您的算法更容易使用。
+
+`PCA`基本上可以让您直接访问数据的相关结构。应用`PCA`时需要记住以下几点：
+- `PCA`仅适用于数字特征，例如连续数量或计数。
+- `PCA`对规模很敏感。在应用`PCA`之前对数据进行标准化是一个很好的做法，除非您知道有充分的理由不这样做。
+- 考虑删除或限制异常值，因为它们可能会对结果产生不当影响。
+
+##### 举例 - 1985 年汽车
+
+在此示例中，我们将返回汽车数据集并应用`PCA`，将其用作发现特征的描述性技术。
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from IPython.display import display
+from sklearn.feature_selection import mutual_info_regression
+
+
+plt.style.use("seaborn-whitegrid")
+plt.rc("figure", autolayout=True)
+plt.rc(
+    "axes",
+    labelweight="bold",
+    labelsize="large",
+    titleweight="bold",
+    titlesize=14,
+    titlepad=10,
+)
+
+
+def plot_variance(pca, width=8, dpi=100):
+    # Create figure
+    fig, axs = plt.subplots(1, 2)
+    n = pca.n_components_
+    grid = np.arange(1, n + 1)
+    # Explained variance
+    evr = pca.explained_variance_ratio_
+    axs[0].bar(grid, evr)
+    axs[0].set(
+        xlabel="Component", title="% Explained Variance", ylim=(0.0, 1.0)
+    )
+    # Cumulative Variance
+    cv = np.cumsum(evr)
+    axs[1].plot(np.r_[0, grid], np.r_[0, cv], "o-")
+    axs[1].set(
+        xlabel="Component", title="% Cumulative Variance", ylim=(0.0, 1.0)
+    )
+    # Set up figure
+    fig.set(figwidth=8, dpi=100)
+    return axs
+
+def make_mi_scores(X, y, discrete_features):
+    mi_scores = mutual_info_regression(X, y, discrete_features=discrete_features)
+    mi_scores = pd.Series(mi_scores, name="MI Scores", index=X.columns)
+    mi_scores = mi_scores.sort_values(ascending=False)
+    return mi_scores
+
+
+df = pd.read_csv("../input/fe-course-data/autos.csv")
+```
+我们选择了涵盖一系列属性的四个特征。这些功能中的每一个都具有与目标价格相关的高`MI`分数。我们将对数据进行标准化，因为这些特征不在同一尺度上。
+```python
+features = ["highway_mpg", "engine_size", "horsepower", "curb_weight"]
+
+X = df.copy()
+y = X.pop('price')
+X = X.loc[:, features]
+
+# Standardize
+X_scaled = (X - X.mean(axis=0)) / X.std(axis=0)
+```
+现在我们可以拟合`scikit-learn`的`PCA`估计器并创建主成分。您可以在此处看到转换后的数据集的前几行。
+```python
+from sklearn.decomposition import PCA
+
+# Create principal components
+pca = PCA()
+X_pca = pca.fit_transform(X_scaled)
+
+# Convert to dataframe
+component_names = [f"PC{i+1}" for i in range(X_pca.shape[1])]
+X_pca = pd.DataFrame(X_pca, columns=component_names)
+
+X_pca.head()
+```
+{% asset_img fe_24.png %}
+
+拟合后，`PCA`实例在其`elements_`属性中包含载荷。（不幸的是，`PCA`的术语不一致。我们遵循将`X_pca`中转换后的列称为成分的约定，否则这些成分没有名称。）我们将把加载包装在数据框中。
+```python
+loadings = pd.DataFrame(
+    pca.components_.T,  # transpose the matrix of loadings
+    columns=component_names,  # so the columns are the principal components
+    index=X.columns,  # and the rows are the original features
+)
+loadings
+```
+{% asset_img fe_25.png %}
+
+回想一下，组件载荷的符号和大小告诉我们它捕获了什么样的变化。第一个组成部分 (`PC1`) 显示了大型、动力强劲但油耗较低的车辆与较小、更经济且油耗较高的车辆之间的对比。我们可以称之为“豪华/经济”轴。下图显示，我们选择的四个特征主要沿豪华/经济轴变化。
+```python
+# Look at explained variance
+plot_variance(pca)
+```
+{% asset_img fe_26.png %}
+
+我们还看一下组件的`MI`分数。毫不奇怪，`PC1`信息量很大，而其余组件尽管差异很小，但仍然与价格有显着关系。检查这些组成部分可能有助于发现主要豪华/经济轴未捕获的关系。
+```python
+mi_scores = make_mi_scores(X_pca, y, discrete_features=False)
+mi_scores
+```
+结果输出为：
+```bash
+PC1    1.013264
+PC2    0.379156
+PC3    0.306703
+PC4    0.203329
+Name: MI Scores, dtype: float64
+```
+第三个组成部分显示了马力和整备重量之间的对比——看起来是跑车与货车。
+```python
+# Show dataframe sorted by PC3
+idx = X_pca["PC3"].sort_values(ascending=False).index
+cols = ["make", "body_style", "horsepower", "curb_weight"]
+df.loc[idx, cols]
+```
+结果输出为：
+{% asset_img fe_27.png %}
+
+为了表达这种对比，让我们创建一个新的比率特征
+```python
+df["sports_or_wagon"] = X.curb_weight / X.horsepower
+sns.regplot(x="sports_or_wagon", y='price', data=df, order=2)
+```
+{% asset_img fe_28.png %}
