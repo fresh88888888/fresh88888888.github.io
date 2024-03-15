@@ -604,3 +604,83 @@ autos[["make", "price", "make_encoded"]].head(10)
 
 ##### Smoothing
 
+然而，像这样的编码会带来一些问题。首先是未知类别。目标编码会产生过度拟合的特殊风险，这意味着它们需要在独立的“编码”分割上进行训练。当您将编码加入到未来的分割中时，`Pandas`将填充编码分割中不存在的任何类别的缺失值。您必须以某种方式对这些缺失值进行估算。其次是稀有品类。当某个类别仅在数据集中出现几次时，对其组计算的任何统计数据都不太可能非常准确。在 `Automobiles`数据集中，`mercurcy make仅`出现一次。我们计算的“平均”价格只是那一辆车的价格，这可能不能很好地代表我们将来可能看到的。目标编码稀有类别可能会导致过度拟合的可能性更大。解决这些问题的方法是添加**平滑**。这个想法是将类别内平均值与整体平均值相结合。稀有类别在其类别平均值上的权重较小，而缺失类别仅获得总体平均值。
+```python
+encoding = weight * in_category + (1 - weight) * overall
+```
+其中权重是根据类别频率计算得出的`0`到`1`之间的值。确定权重值的一个简单方法是计算`m`估计：
+```python
+weight = n / (n + m)
+```
+其中`n`是该类别在数据中出现的总次数。参数`m`决定“平滑因子”。`m`值越大，整体估计的权重就越大。
+{% asset_img fe_30.png %}
+
+在汽车数据集中，有三辆品牌为`chevrolet`的汽车。如果您选择`m=2.0`，则雪佛兰类别将使用雪佛兰平均价格的`60%`加上总体平均价格的`40%`进行编码。
+```bash
+chevrolet = 0.6 * 6000.00 + 0.4 * 13285.03
+```
+选择`m`值时，请考虑您期望类别的噪声程度。不同品牌的车辆价格是否相差很大？您需要大量数据才能获得良好的估计？如果是这样，`m`最好选择一个更大的值；如果每个品牌的平均价格相对稳定，较小的值也可以。目标编码的用例:
+- **高基数特征**：具有大量类别的特征可能很难编码：`one-hot`编码会生成太多特征，而替代方案（例如标签编码）可能不适合该特征。目标编码使用特征最重要的属性（它与目标的关系）导出类别的数字。
+- **领域驱动的特征**：根据之前的经验，您可能会怀疑分类特征应该很重要，即使它在特征指标上得分很低。目标编码可以帮助揭示特征的真实信息量。
+
+ ##### 举例 - MovieLens1M
+
+` MovieLens1M`数据集包含`MovieLens`网站用户对一百万部电影的评分，以及描述每个用户和电影的特征。
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import warnings
+
+plt.style.use("seaborn-whitegrid")
+plt.rc("figure", autolayout=True)
+plt.rc(
+    "axes",
+    labelweight="bold",
+    labelsize="large",
+    titleweight="bold",
+    titlesize=14,
+    titlepad=10,
+)
+warnings.filterwarnings('ignore')
+
+
+df = pd.read_csv("../input/fe-course-data/movielens1m.csv")
+df = df.astype(np.uint8, errors='ignore') # reduce memory footprint
+print("Number of Unique Zipcodes: {}".format(df["Zipcode"].nunique()))
+```
+`Zipcode`功能拥有超过`3000`个类别，是目标编码的良好候选者，并且该数据集的大小（超过一百万行）意味着我们可以节省一些数据来创建编码。我们将首先创建`25%`的分割来训练目标编码器。
+```python
+X = df.copy()
+y = X.pop('Rating')
+
+X_encode = X.sample(frac=0.25)
+y_encode = y[X_encode.index]
+X_pretrain = X.drop(X_encode.index)
+y_train = y[X_pretrain.index]
+```
+实现了一个`m`估计编码器，我们将使用它来编码我们的`Zipcode`特征。
+```python
+from category_encoders import MEstimateEncoder
+
+# Create the encoder instance. Choose m to control noise.
+encoder = MEstimateEncoder(cols=["Zipcode"], m=5.0)
+
+# Fit the encoder on the encoding split.
+encoder.fit(X_encode, y_encode)
+
+# Encode the Zipcode column to create the final training data
+X_train = encoder.transform(X_pretrain)
+```
+让我们将编码值与目标进行比较，看看我们的编码可以提供多少信息。
+```python
+plt.figure(dpi=90)
+ax = sns.distplot(y, kde=False, norm_hist=True)
+ax = sns.kdeplot(X_train.Zipcode, color='r', ax=ax)
+ax.set_xlabel("Rating")
+ax.legend(labels=['Zipcode', 'Rating']);
+```
+{% asset_img fe_31.png %}
+
+编码后的邮政编码特征的分布大致遵循实际评分的分布，这意味着电影观看者对不同邮政编码的评分差异足够大，以至于我们的目标编码能够捕获有用的信息。
