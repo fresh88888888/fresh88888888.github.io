@@ -291,7 +291,7 @@ score_dataset(X, y)
 ```
 稍后，我们会将`drop_uninformative`函数添加到我们的特征创建管道中。
 
-#### 创建特征
+#### 第3步 - 创建特征
 
 现在我们将开始开发我们的特征集。为了使我们的特征工程工作流程更加模块化，我们将定义一个函数，该函数将获取准备好的数据帧并将其通过转换管道传递以获得最终的特征集。它看起来像这样：
 ```python
@@ -619,7 +619,7 @@ score_dataset(X_train, y_train)
 ```bash
 0.13863986787521657
 ```
-##### 第 4 步 - 超参数调整
+#### 第 4 步 - 超参数调整
 
 在此阶段，您可能希望在创建最终提交之前使用`XGBoost`进行一些超参数调整:
 ```python
@@ -667,7 +667,7 @@ study = optuna.create_study(direction="minimize")
 study.optimize(objective, n_trials=20)
 xgb_params = study.best_params
 ```
-##### 第 5 步 - 训练模型并创建提交
+#### 第 5 步 - 训练模型并创建提交
 
 一旦您对此感到满意，就可以创建最终预测了：
 - 从原始数据创建您的特征集 
