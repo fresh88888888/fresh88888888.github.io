@@ -1,5 +1,5 @@
 ---
-title: 特征工程实践之——房价
+title: 特征工程实践之—房价
 date: 2024-03-15 10:20:32
 tags:
   - AI
@@ -273,3 +273,419 @@ YrSold          0.000000
 Name: MI Scores, Length: 79, dtype: float64
 ```
 您可以看到，我们有许多信息丰富的特征，但也有一些特征似乎根本没有信息（至少其本身）。得分最高的特征通常会在特征开发过程中获得最大的回报，因此将精力集中在这些特征上可能是个好主意。 另一方面，对无信息特征的训练可能会导致过度拟合。因此，我们将完全放弃得分为`0.0`的特征：
+```python
+def drop_uninformative(df, mi_scores):
+    return df.loc[:, mi_scores > 0.0]
+```
+删除它们确实会带来一定的性能提升：
+```python
+X = df_train.copy()
+y = X.pop("SalePrice")
+X = drop_uninformative(X, mi_scores)
+
+score_dataset(X, y)
+```
+结果输出为：
+```bash
+0.14274827027030276
+```
+稍后，我们会将`drop_uninformative`函数添加到我们的特征创建管道中。
+
+#### 创建特征
+
+现在我们将开始开发我们的特征集。为了使我们的特征工程工作流程更加模块化，我们将定义一个函数，该函数将获取准备好的数据帧并将其通过转换管道传递以获得最终的特征集。它看起来像这样：
+```python
+def create_features(df):
+    X = df.copy()
+    y = X.pop("SalePrice")
+    X = X.join(create_features_1(X))
+    X = X.join(create_features_2(X))
+    X = X.join(create_features_3(X))
+    # ...
+    return X
+```
+现在让我们继续定义一个转换，即分类特征的标签编码：
+```python
+def label_encode(df):
+    X = df.copy()
+    for colname in X.select_dtypes(["category"]):
+        X[colname] = X[colname].cat.codes
+    return X
+```
+当您使用像`XGBoost`这样的树集成时，标签编码适用于任何类型的分类特征，即使对于无序类别也是如此。如果您想尝试线性回归模型，您可能会想使用`one-hot`编码，特别是对于具有无序类别的特征。
+
+##### 使用 Pandas 创建特征
+
+```python
+def mathematical_transforms(df):
+    X = pd.DataFrame()  # dataframe to hold new features
+    X["LivLotRatio"] = df.GrLivArea / df.LotArea
+    X["Spaciousness"] = (df.FirstFlrSF + df.SecondFlrSF) / df.TotRmsAbvGrd
+    # This feature ended up not helping performance
+    # X["TotalOutsideSF"] = \
+    #     df.WoodDeckSF + df.OpenPorchSF + df.EnclosedPorch + \
+    #     df.Threeseasonporch + df.ScreenPorch
+    return X
+
+
+def interactions(df):
+    X = pd.get_dummies(df.BldgType, prefix="Bldg")
+    X = X.mul(df.GrLivArea, axis=0)
+    return X
+
+
+def counts(df):
+    X = pd.DataFrame()
+    X["PorchTypes"] = df[[
+        "WoodDeckSF",
+        "OpenPorchSF",
+        "EnclosedPorch",
+        "Threeseasonporch",
+        "ScreenPorch",
+    ]].gt(0.0).sum(axis=1)
+    return X
+
+
+def break_down(df):
+    X = pd.DataFrame()
+    X["MSClass"] = df.MSSubClass.str.split("_", n=1, expand=True)[0]
+    return X
+
+
+def group_transforms(df):
+    X = pd.DataFrame()
+    X["MedNhbdArea"] = df.groupby("Neighborhood")["GrLivArea"].transform("median")
+    return X
+```
+以下是您可以探索其他的一些想法：
+- 质量`Qual`和条件`Cond`特征之间的相互作用。例如，`OverallQual`就是一个高分特征。您可以尝试将其与`OverallCond`结合起来，方法是将两者都转换为整数类型并取一个乘积。
+- 面积特征的平方根。这会将平方英尺的单位转换为英尺。
+- 数字特征的对数。如果某个特征具有偏态分布，则应用对数可以帮助将其标准化。
+- 描述同一事物的数字特征和分类特征之间的相互作用。例如，您可以查看`BsmtQual`和`TotalBsmtSF`之间的交互。
+- `Neighborhood`中的其他群体统计数据。我们做了`GrLivArea`的中位数。查看平均值、标准差或计数可能会很有趣。您还可以尝试将组统计数据与其他功能结合起来。也许`GrLivArea`和中位数的差异很重要？
+
+##### k均值聚类
+
+我们用来创建特征的第一个无监督算法是k均值聚类。我们看到，您可以使用聚类标签作为特征（包含 0、1、2、... 的列），也可以使用观测值到每个聚类的距离。我们看到这些特征有时如何有效地理清复杂的空间关系。
+```python
+cluster_features = [
+    "LotArea",
+    "TotalBsmtSF",
+    "FirstFlrSF",
+    "SecondFlrSF",
+    "GrLivArea",
+]
+
+
+def cluster_labels(df, features, n_clusters=20):
+    X = df.copy()
+    X_scaled = X.loc[:, features]
+    X_scaled = (X_scaled - X_scaled.mean(axis=0)) / X_scaled.std(axis=0)
+    kmeans = KMeans(n_clusters=n_clusters, n_init=50, random_state=0)
+    X_new = pd.DataFrame()
+    X_new["Cluster"] = kmeans.fit_predict(X_scaled)
+    return X_new
+
+
+def cluster_distance(df, features, n_clusters=20):
+    X = df.copy()
+    X_scaled = X.loc[:, features]
+    X_scaled = (X_scaled - X_scaled.mean(axis=0)) / X_scaled.std(axis=0)
+    kmeans = KMeans(n_clusters=20, n_init=50, random_state=0)
+    X_cd = kmeans.fit_transform(X_scaled)
+    # Label features and join to dataset
+    X_cd = pd.DataFrame(
+        X_cd, columns=[f"Centroid_{i}" for i in range(X_cd.shape[1])]
+    )
+    return X_cd
+```
+##### 主成分分析
+
+`PCA`是我们用于特征创建的第二个无监督模型。我们看到了如何使用它来分解数据中的变分结构。`PCA`算法为我们提供了描述变化的每个组成部分的载荷，以及转换后的数据点的组成部分。负载可以建议要创建的特征以及我们可以直接用作特征的成分。
+```python
+def apply_pca(X, standardize=True):
+    # Standardize
+    if standardize:
+        X = (X - X.mean(axis=0)) / X.std(axis=0)
+    # Create principal components
+    pca = PCA()
+    X_pca = pca.fit_transform(X)
+    # Convert to dataframe
+    component_names = [f"PC{i+1}" for i in range(X_pca.shape[1])]
+    X_pca = pd.DataFrame(X_pca, columns=component_names)
+    # Create loadings
+    loadings = pd.DataFrame(
+        pca.components_.T,  # transpose the matrix of loadings
+        columns=component_names,  # so the columns are the principal components
+        index=X.columns,  # and the rows are the original features
+    )
+    return pca, X_pca, loadings
+
+
+def plot_variance(pca, width=8, dpi=100):
+    # Create figure
+    fig, axs = plt.subplots(1, 2)
+    n = pca.n_components_
+    grid = np.arange(1, n + 1)
+    # Explained variance
+    evr = pca.explained_variance_ratio_
+    axs[0].bar(grid, evr)
+    axs[0].set(
+        xlabel="Component", title="% Explained Variance", ylim=(0.0, 1.0)
+    )
+    # Cumulative Variance
+    cv = np.cumsum(evr)
+    axs[1].plot(np.r_[0, grid], np.r_[0, cv], "o-")
+    axs[1].set(
+        xlabel="Component", title="% Cumulative Variance", ylim=(0.0, 1.0)
+    )
+    # Set up figure
+    fig.set(figwidth=8, dpi=100)
+    return axs
+```
+其他特征变化
+```python
+def pca_inspired(df):
+    X = pd.DataFrame()
+    X["Feature1"] = df.GrLivArea + df.TotalBsmtSF
+    X["Feature2"] = df.YearRemodAdd * df.TotalBsmtSF
+    return X
+
+
+def pca_components(df, features):
+    X = df.loc[:, features]
+    _, X_pca, _ = apply_pca(X)
+    return X_pca
+
+
+pca_features = [
+    "GarageArea",
+    "YearRemodAdd",
+    "TotalBsmtSF",
+    "GrLivArea",
+]
+```
+这些只是使用主要成分的几种方法。您还可以尝试使用一个或多个成分进行组合。需要注意的一件事是，`PCA`不会改变点之间的距离——它就像旋转一样。因此，使用全套成分进行聚类与使用原始特征进行聚类相同。相反，选择成分的一些子集，可能是方差最大或`MI`分数最高的成分。为了进一步分析，您可能需要查看数据集的相关矩阵：
+```python
+def corrplot(df, method="pearson", annot=True, **kwargs):
+    sns.clustermap(
+        df.corr(method, numeric_only=True),
+        vmin=-1.0,
+        vmax=1.0,
+        cmap="icefire",
+        method="complete",
+        annot=annot,
+        **kwargs,
+    )
+
+
+corrplot(df_train, annot=None)
+```
+{% asset_img fep_1.png %}
+
+高度相关的特征组通常会产生有趣的负载。
+
+##### PCA 应用 - 指示异常值
+
+您应用了`PCA`来确定异常值的房屋，即房屋的值在其余数据中没有得到很好的体现。您看到爱德华兹附近有一组房屋的销售条件为“部分”，其价值特别极端。某些模型可以从指示这些异常值中受益，这就是下一个转换将要做的事情。
+```python
+def indicate_outliers(df):
+    X_new = pd.DataFrame()
+    X_new["Outlier"] = (df.Neighborhood == "Edwards") & (df.SaleCondition == "Partial")
+    return X_new
+```
+
+您还可以考虑将`scikit-learn`的`sklearn.preprocessing`模块中的某种强大的缩放器应用于外围值，尤其是`GrLivArea`中的值。这是一个说明其中一些的教程。另一种选择可能是使用 `scikit-learn`的异常值检测器之一创建“异常值分数”功能。
+
+##### 目标编码
+
+需要单独的保留集来创建目标编码是相当浪费数据的。我们使用了`25%`的数据集来对单个特征（邮政编码）进行编码。我们根本没有使用那`25%`中其他特征的数据。然而，有一种方法可以使用目标编码，而不必使用保留的编码数据。 这基本上与交叉验证中使用的技巧相同：
+- 将数据拆分为折叠，每个折叠都有数据集的两个分割。
+- 在一个分割上训练编码器，但转换另一个分割的值。对所有分割重复此操作。
+
+这样，训练和转换始终在独立的数据集上进行，就像使用保留集但不会浪费任何数据一样。 下面是一个包装器：
+```python
+class CrossFoldEncoder:
+    def __init__(self, encoder, **kwargs):
+        self.encoder_ = encoder
+        self.kwargs_ = kwargs  # keyword arguments for the encoder
+        self.cv_ = KFold(n_splits=5)
+
+    # Fit an encoder on one split and transform the feature on the
+    # other. Iterating over the splits in all folds gives a complete
+    # transformation. We also now have one trained encoder on each
+    # fold.
+    def fit_transform(self, X, y, cols):
+        self.fitted_encoders_ = []
+        self.cols_ = cols
+        X_encoded = []
+        for idx_encode, idx_train in self.cv_.split(X):
+            fitted_encoder = self.encoder_(cols=cols, **self.kwargs_)
+            fitted_encoder.fit(
+                X.iloc[idx_encode, :], y.iloc[idx_encode],
+            )
+            X_encoded.append(fitted_encoder.transform(X.iloc[idx_train, :])[cols])
+            self.fitted_encoders_.append(fitted_encoder)
+        X_encoded = pd.concat(X_encoded)
+        X_encoded.columns = [name + "_encoded" for name in X_encoded.columns]
+        return X_encoded
+
+    # To transform the test data, average the encodings learned from
+    # each fold.
+    def transform(self, X):
+        from functools import reduce
+
+        X_encoded_list = []
+        for fitted_encoder in self.fitted_encoders_:
+            X_encoded = fitted_encoder.transform(X)
+            X_encoded_list.append(X_encoded[self.cols_])
+        X_encoded = reduce(
+            lambda x, y: x.add(y, fill_value=0), X_encoded_list
+        ) / len(X_encoded_list)
+        X_encoded.columns = [name + "_encoded" for name in X_encoded.columns]
+        return X_encoded
+```
+像这样：
+```python
+encoder = CrossFoldEncoder(MEstimateEncoder, m=1)
+X_encoded = encoder.fit_transform(X, y, cols=["MSSubClass"]))
+```
+您可以将`category_encoders`库中的任何编码器转换为交叉折叠编码器。`CatBoostEncoder`值得尝试。 它与`MEstimateEncoder`类似，但使用一些技巧来更好地防止过度拟合。其平滑参数称为`a`而不是`m`。
+
+##### 创建最终的特征集
+
+现在让我们将所有内容组合在一起。将转换放入单独的函数中可以更轻松地尝试各种组合。我发现那些未注释的结果给出了最好的结果。不过，您应该尝试自己的想法！修改任何这些转换或提出一些您自己的转换以添加到管道中。
+```python
+def create_features(df, df_test=None):
+    X = df.copy()
+    y = X.pop("SalePrice")
+    mi_scores = make_mi_scores(X, y)
+
+    # Combine splits if test data is given
+    #
+    # If we're creating features for test set predictions, we should
+    # use all the data we have available. After creating our features,
+    # we'll recreate the splits.
+    if df_test is not None:
+        X_test = df_test.copy()
+        X_test.pop("SalePrice")
+        X = pd.concat([X, X_test])
+
+    # Lesson 2 - Mutual Information
+    X = drop_uninformative(X, mi_scores)
+
+    # Lesson 3 - Transformations
+    X = X.join(mathematical_transforms(X))
+    X = X.join(interactions(X))
+    X = X.join(counts(X))
+    # X = X.join(break_down(X))
+    X = X.join(group_transforms(X))
+
+    # Lesson 4 - Clustering
+    # X = X.join(cluster_labels(X, cluster_features, n_clusters=20))
+    # X = X.join(cluster_distance(X, cluster_features, n_clusters=20))
+
+    # Lesson 5 - PCA
+    X = X.join(pca_inspired(X))
+    # X = X.join(pca_components(X, pca_features))
+    # X = X.join(indicate_outliers(X))
+
+    X = label_encode(X)
+
+    # Reform splits
+    if df_test is not None:
+        X_test = X.loc[df_test.index, :]
+        X.drop(df_test.index, inplace=True)
+
+    # Lesson 6 - Target Encoder
+    encoder = CrossFoldEncoder(MEstimateEncoder, m=1)
+    X = X.join(encoder.fit_transform(X, y, cols=["MSSubClass"]))
+    if df_test is not None:
+        X_test = X_test.join(encoder.transform(X_test))
+
+    if df_test is not None:
+        return X, X_test
+    else:
+        return X
+
+
+df_train, df_test = load_data()
+X_train = create_features(df_train)
+y_train = df_train.loc[:, "SalePrice"]
+
+score_dataset(X_train, y_train)
+```
+结果输出为：
+```bash
+0.13863986787521657
+```
+##### 第 4 步 - 超参数调整
+
+在此阶段，您可能希望在创建最终提交之前使用`XGBoost`进行一些超参数调整:
+```python
+X_train = create_features(df_train)
+y_train = df_train.loc[:, "SalePrice"]
+
+xgb_params = dict(
+    max_depth=6,           # maximum depth of each tree - try 2 to 10
+    learning_rate=0.01,    # effect of each tree - try 0.0001 to 0.1
+    n_estimators=1000,     # number of trees (that is, boosting rounds) - try 1000 to 8000
+    min_child_weight=1,    # minimum number of houses in a leaf - try 1 to 10
+    colsample_bytree=0.7,  # fraction of features (columns) per tree - try 0.2 to 1.0
+    subsample=0.7,         # fraction of instances (rows) per tree - try 0.2 to 1.0
+    reg_alpha=0.5,         # L1 regularization (like LASSO) - try 0.0 to 10.0
+    reg_lambda=1.0,        # L2 regularization (like Ridge) - try 0.0 to 10.0
+    num_parallel_tree=1,   # set > 1 for boosted random forests
+)
+
+xgb = XGBRegressor(**xgb_params)
+score_dataset(X_train, y_train, xgb)
+```
+结果输出为：
+```bash
+0.12417177287599078
+```
+只需手动调整这些即可给您带来很好的结果。但是，您可能想尝试使用`scikit-learn`的自动超参数调整器之一。或者您可以探索更高级的调优库，例如`Optuna`或`scikit-optimize`。以下是将`Optuna`与`XGBoost`结合使用的方法：
+```python
+import optuna
+
+def objective(trial):
+    xgb_params = dict(
+        max_depth=trial.suggest_int("max_depth", 2, 10),
+        learning_rate=trial.suggest_float("learning_rate", 1e-4, 1e-1, log=True),
+        n_estimators=trial.suggest_int("n_estimators", 1000, 8000),
+        min_child_weight=trial.suggest_int("min_child_weight", 1, 10),
+        colsample_bytree=trial.suggest_float("colsample_bytree", 0.2, 1.0),
+        subsample=trial.suggest_float("subsample", 0.2, 1.0),
+        reg_alpha=trial.suggest_float("reg_alpha", 1e-4, 1e2, log=True),
+        reg_lambda=trial.suggest_float("reg_lambda", 1e-4, 1e2, log=True),
+    )
+    xgb = XGBRegressor(**xgb_params)
+    return score_dataset(X_train, y_train, xgb)
+
+study = optuna.create_study(direction="minimize")
+study.optimize(objective, n_trials=20)
+xgb_params = study.best_params
+```
+##### 第 5 步 - 训练模型并创建提交
+
+一旦您对此感到满意，就可以创建最终预测了：
+- 从原始数据创建您的特征集 
+- 在训练数据上训练 
+- `XGBoost`使用经过训练的模型从测试集中进行预测 
+- 将预测保存到`CSV`文件
+
+```python
+X_train, X_test = create_features(df_train, df_test)
+y_train = df_train.loc[:, "SalePrice"]
+
+xgb = XGBRegressor(**xgb_params)
+# XGB minimizes MSE, but competition loss is RMSLE
+# So, we need to log-transform y to train and exp-transform the predictions
+xgb.fit(X_train, np.log(y))
+predictions = np.exp(xgb.predict(X_test))
+
+output = pd.DataFrame({'Id': X_test.index, 'SalePrice': predictions})
+output.to_csv('my_submission.csv', index=False)
+print("Your submission was successfully saved!")
+```
