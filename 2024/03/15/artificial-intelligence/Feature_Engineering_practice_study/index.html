@@ -168,7 +168,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -392,7 +392,7 @@
 <h5 id="PCA-应用-指示异常值"><a href="#PCA-应用-指示异常值" class="headerlink" title="PCA 应用 - 指示异常值"></a>PCA 应用 - 指示异常值</h5><p>您应用了<code>PCA</code>来确定异常值的房屋，即房屋的值在其余数据中没有得到很好的体现。您看到爱德华兹附近有一组房屋的销售条件为“部分”，其价值特别极端。某些模型可以从指示这些异常值中受益，这就是下一个转换将要做的事情。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">indicate_outliers</span>(<span class="params">df</span>):</span><br><span class="line">    X_new = pd.DataFrame()</span><br><span class="line">    X_new[<span class="string">&quot;Outlier&quot;</span>] = (df.Neighborhood == <span class="string">&quot;Edwards&quot;</span>) &amp; (df.SaleCondition == <span class="string">&quot;Partial&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> X_new</span><br></pre></td></tr></table></figure>
 
-<p>您还可以考虑将<code>scikit-learn</code>的<code>sklearn.preprocessing</code>模块中的某种强大的缩放器应用于外围值，尤其是<code>GrLivArea</code>中的值。这是一个说明其中一些的教程。另一种选择可能是使用 <code>scikit-learn</code>的异常值检测器之一创建“异常值分数”功能。</p>
+<p>您还可以考虑将<code>scikit-learn</code>的<code>sklearn.preprocessing</code>模块中的某种强大的缩放器应用于外围值，尤其是<code>GrLivArea</code>中的值。这是一个说明其中一些的教程。另一种选择可能是使用 <code>scikit-learn</code>的异常值检测器之一创建“异常值分数”特征。</p>
 <h5 id="目标编码"><a href="#目标编码" class="headerlink" title="目标编码"></a>目标编码</h5><p>需要单独的保留集来创建目标编码是相当浪费数据的。我们使用了<code>25%</code>的数据集来对单个特征（邮政编码）进行编码。我们根本没有使用那<code>25%</code>中其他特征的数据。然而，有一种方法可以使用目标编码，而不必使用保留的编码数据。 这基本上与交叉验证中使用的技巧相同：</p>
 <ul>
 <li>将数据拆分为折叠，每个折叠都有数据集的两个分割。</li>
@@ -459,6 +459,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2024/03/15/artificial-intelligence/Deep_Learning_study/" rel="next" title="深度学习（TensorFlow and Keras）">
+                  深度学习（TensorFlow and Keras） <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
@@ -493,14 +496,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">495k</span>
+    <span title="站点总字数">497k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">27:30</span>
+    <span title="站点阅读时长">27:37</span>
   </span>
 </div>
 <div class="busuanzi-count">
