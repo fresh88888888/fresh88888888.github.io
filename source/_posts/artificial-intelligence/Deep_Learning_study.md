@@ -246,6 +246,6 @@ history_df = pd.DataFrame(history.history)
 history_df['loss'].plot();
 ```
 结果输出为：
-{% asset_img dl_12.gif %}
+{% asset_img dl_12.png %}
 
 请注意损失如何随着时间的流逝而趋于平稳。当损失曲线变得像这样水平时，这意味着模型已经学到了它能学到的一切，并且没有理由继续额外的轮训次数。
