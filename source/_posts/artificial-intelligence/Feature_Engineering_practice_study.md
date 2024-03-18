@@ -495,7 +495,7 @@ def indicate_outliers(df):
     return X_new
 ```
 
-您还可以考虑将`scikit-learn`的`sklearn.preprocessing`模块中的某种强大的缩放器应用于外围值，尤其是`GrLivArea`中的值。这是一个说明其中一些的教程。另一种选择可能是使用 `scikit-learn`的异常值检测器之一创建“异常值分数”功能。
+您还可以考虑将`scikit-learn`的`sklearn.preprocessing`模块中的某种强大的缩放器应用于外围值，尤其是`GrLivArea`中的值。这是一个说明其中一些的教程。另一种选择可能是使用 `scikit-learn`的异常值检测器之一创建“异常值分数”特征。
 
 ##### 目标编码
 
