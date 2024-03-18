@@ -177,7 +177,7 @@ y_train = df_train['quality']
 y_valid = df_valid['quality']
 ```
 结果输出为：
-{% asset_img dl_11.gif %}
+{% asset_img dl_11.png %}
 
 该网络应该有多少个输入？我们可以通过查看数据矩阵中的列数来发现这一点。请确保此处不包含目标（'`quality`'）——仅包含输入特征。
 ```python
