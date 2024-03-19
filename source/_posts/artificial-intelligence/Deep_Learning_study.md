@@ -1,5 +1,5 @@
 ---
-title: 深度学习（TensorFlow && Keras）
+title: 深度学习（TensorFlow & Keras）
 date: 2024-03-18 11:20:32
 tags:
   - AI
@@ -485,3 +485,115 @@ history_df.loc[:, ['loss', 'val_loss']].plot()
 
 如果在使用数据进行训练之前对数据进行标准化，通常会获得更好的性能。然而，我们能够使用原始数据，这表明批量归一化在更困难的数据集上是多么有效。
 
+#### 二元分类（Binary Classification）
+
+##### 介绍
+
+到目前为止，我们已经了解了神经网络如何解决回归问题。现在我们将把神经网络应用于另一个常见的机器学习问题：分类。到目前为止我们学到的大部分内容仍然适用。主要区别在于我们使用的损失函数以及我们希望最终层产生什么样的输出。
+
+##### 二元分类
+
+分类为两类之一是常见的机器学习问题。您可能想要预测客户是否有可能进行购买、信用卡交易是否存在欺诈、深空信号是否显示新行星的证据或疾病的医学测试证据。这些都是二元分类问题。在原始数据中，类可能由“是”和“否”或“狗”和“猫”等字符串表示。在使用这些数据之前，我们将分配一个类标签：一个类为`0`，另一个类为`1`。分配数字标签会将数据置于神经网络可以使用的形式中。
+
+##### 准确性和交叉熵
+
+准确性是衡量分类问题成功与否的众多指标之一。准确率是正确预测与总预测的比率：准确率=正确数/总计。始终正确预测的模型的准确度得分为`1.0`。在其他条件相同的情况下，只要数据集中的类以大致相同的频率出现，准确性就是一个合理的指标。准确性（以及大多数其他分类指标）的问题在于它不能用作损失函数。`SGD`需要一个平滑变化的损失函数，但准确度（作为计数的比率）会“跳跃”变化。因此，我们必须选择一个替代函数来充当损失函数。这个替代品就是**交叉熵函数**。现在，回想一下损失函数定义了训练期间网络的目标。通过回归，我们的目标是最小化预期结果和预测结果之间的距离。我们选择`MAE`来测量这个距离。对于分类，我们想要的是概率之间的距离，这就是交叉熵所提供的。交叉熵是一种衡量从一个概率分布到另一个概率分布的距离的度量。
+{% asset_img dl_20.png %}
+
+我们的想法是，我们希望我们的网络以`1.0`的概率预测正确的类别。预测概率距离`1.0`越远，交叉熵损失就越大。我们使用交叉熵的技术原因有点微妙，但是本节的主要内容就是：使用交叉熵进行分类损失；您可能关心的其他指标（例如准确性）往往会随之提高。
+
+##### 使用Sigmoid函数计算概率
+
+**交叉熵和准确度函数**都需要概率作为输入，即从`0`到`1`的数字。为了将密集层产生的实值输出转换为概率，我们附加了一种新的激活函数，即`sigmoid`激活。
+{% asset_img dl_21.png %}
+
+为了获得最终的类别预测，我们定义**阈值概率**。通常情况下，该值为`0.5`，因此四舍五入将为我们提供正确的类别：低于`0.5`表示具有标签`0`的类别，`0.5`或以上表示具有标签`1`的类别。`0.5`阈值是`Keras`默认使用的准确度指标。
+
+##### 举例 - 二元分类
+
+电离层数据集包含从聚焦于地球大气层电离层的雷达信号获得的特征。任务是确定信号是否表明存在某种物体，或者只是空气。
+```python
+import pandas as pd
+from IPython.display import display
+
+ion = pd.read_csv('../input/dl-course-data/ion.csv', index_col=0)
+display(ion.head())
+
+df = ion.copy()
+df['Class'] = df['Class'].map({'good': 0, 'bad': 1})
+
+df_train = df.sample(frac=0.7, random_state=0)
+df_valid = df.drop(df_train.index)
+
+max_ = df_train.max(axis=0)
+min_ = df_train.min(axis=0)
+
+df_train = (df_train - min_) / (max_ - min_)
+df_valid = (df_valid - min_) / (max_ - min_)
+df_train.dropna(axis=1, inplace=True) # drop the empty feature in column 2
+df_valid.dropna(axis=1, inplace=True)
+
+X_train = df_train.drop('Class', axis=1)
+X_valid = df_valid.drop('Class', axis=1)
+y_train = df_train['Class']
+y_valid = df_valid['Class']
+```
+结果输出为：
+{% asset_img dl_22.png %}
+
+我们将像回归任务一样定义我们的模型，但有一个例外。在最后一层中包含“`Sigmoid`”激活，以便模型产生**类别概率**。
+```python
+import tensorflow as tf
+import keras
+from keras import layers, callbacks
+
+model = keras.Sequential([
+    layers.Dense(4, activation='relu', input_shape=[33]),
+    layers.Dense(4, activation='relu'),    
+    layers.Dense(1, activation='sigmoid'),
+])
+```
+使用其编译方法将**交叉熵损失和准确性度量**添加到模型中。对于二分类问题，请务必使用“**二进制**”版本。`Adam`优化器也非常适合分类，因此我们将坚持使用它。
+```python
+model.compile(
+    optimizer='adam',
+    loss='binary_crossentropy',
+    metrics=['binary_accuracy'],
+)
+```
+这个特定问题中的模型可能需要相当多的`epochs`才能完成训练，因此为了方便起见，我们将包含一个早期停止回调。
+```python
+early_stopping = keras.callbacks.EarlyStopping(
+    patience=10,
+    min_delta=0.001,
+    restore_best_weights=True,
+)
+
+history = model.fit(
+    X_train, y_train,
+    validation_data=(X_valid, y_valid),
+    batch_size=512,
+    epochs=1000,
+    callbacks=[early_stopping],
+    verbose=0, # hide the output because we have so many epochs
+)
+```
+我们将一如既往地查看学习曲线，并检查我们在验证集上获得的损失和准确性的最佳值。（请记住，提前停止会将权重恢复到获得这些值的权重。）
+```python
+history_df = pd.DataFrame(history.history)
+# Start the plot at epoch 5
+history_df.loc[5:, ['loss', 'val_loss']].plot()
+history_df.loc[5:, ['binary_accuracy', 'val_binary_accuracy']].plot()
+
+print(("Best Validation Loss: {:0.4f}" +\
+      "\nBest Validation Accuracy: {:0.4f}")\
+      .format(history_df['val_loss'].min(), 
+              history_df['val_binary_accuracy'].max()))
+```
+结果输出为：
+```bash
+Best Validation Loss: 0.6040 
+Best Validation Accuracy: 0.8381
+```
+{% asset_img dl_23.png %}
+{% asset_img dl_24.png %}
