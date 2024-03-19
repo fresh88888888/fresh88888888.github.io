@@ -243,9 +243,134 @@ import pandas as pd
 # convert the training history to a dataframe
 history_df = pd.DataFrame(history.history)
 # use Pandas native plot method
-history_df['loss'].plot();
+history_df['loss'].plot()
 ```
 结果输出为：
 {% asset_img dl_12.png %}
 
-请注意损失如何随着时间的流逝而趋于平稳。当损失曲线变得像这样水平时，这意味着模型已经学到了它能学到的一切，并且没有理由继续额外的轮训次数。
+请注意损失如何随着时间的流逝而趋于平稳。当损失曲线变得像这样水平时，这意味着模型已经学到了它能学到的一切，并且没有理由继续额外的执行次数。
+
+#### 过拟合和欠拟合（Overfitting && Underfitting）
+
+##### 解释学习曲线
+
+您可能会认为训练数据中的信息有两种：信号和噪声。信号是概括的部分，可以帮助我们的模型根据新数据进行预测。噪声是仅适用于训练数据的部分；噪声是来自现实世界中的数据的所有随机波动，或者是所有偶然的、非信息性的模式，这些模式实际上不能帮助模型进行预测。噪音是该部件可能看起来有用但实际上没有用。我们通过选择最小化训练集损失的权重或参数来训练模型。然而，您可能知道，为了准确评估模型的性能，我们需要在一组新数据（验证数据）上对其进行评估。当我们训练模型时，我们会逐个遍历绘制训练集上的损失。为此，我们还将添加验证数据图。这些图我们称之为学习曲线。为了有效地训练深度学习模型，我们需要能够解释它们。
+{% asset_img dl_13.png %}
+
+现在，当模型学习信号或学习噪声时，训练损失都会下降。但只有当模型学习到信号时，验证损失才会下降。（无论模型从训练集中学习到什么噪声，都不会推广到新数据。）因此，当模型学习信号时，两条曲线都会下降，但当它学习噪声时，曲线中会产生间隙。间隙的大小告诉您模型学到了多少噪声。理想情况下，我们将创建能够学习所有信号而不学习任何噪声的模型。这实际上永远不会发生。相反，我们进行交易。我们可以让模型以学习更多噪声为代价来学习更多信号。只要交易对我们有利，验证损失就会继续减少。然而，在某一点之后，交易可能会对我们不利，成本超过收益，验证损失开始上升。
+{% asset_img dl_14.png %}
+
+这种权衡表明，训练模型时可能会出现两个问题：信号不足或噪声太多。**训练集欠拟合是指由于模型没有学习到足够的信号而导致损失没有达到应有的水平。过度拟合训练集是指由于模型学习了太多噪声而导致损失没有达到应有的水平。训练深度学习模型的技巧是找到两者之间的最佳平衡**。我们将研究几种从训练数据中获取更多信号同时减少噪声量的方法。
+
+##### 容量（Capacity）
+
+模型的**容量**是指它能够学习的模式的大小和复杂性。对于神经网络来说，这很大程度上取决于它有多少个神经元以及它们如何连接在一起。如果您的网络似乎不适合数据，您应该尝试增加其容量。您可以通过加宽网络（向现有层添加更多单元）或使其更深（添加更多层）来增加网络的容量。更宽的网络更容易学习更多的线性关系，而更深的网络更喜欢更多的非线性关系。哪个更好只取决于数据集。
+```python
+model = keras.Sequential([
+    layers.Dense(16, activation='relu'),
+    layers.Dense(1),
+])
+
+wider = keras.Sequential([
+    layers.Dense(32, activation='relu'),
+    layers.Dense(1),
+])
+
+deeper = keras.Sequential([
+    layers.Dense(16, activation='relu'),
+    layers.Dense(16, activation='relu'),
+    layers.Dense(1),
+])
+```
+您将在练习中探索网络容量如何影响其性能。
+
+##### 提前停止
+
+我们提到，当模型过于急切地学习噪声时，验证损失可能会在训练期间开始增加。为了防止这种情况，只要验证损失似乎不再减少，我们就可以停止训练。以这种方式中断训练称为**提前停止**。
+{% asset_img dl_15.png %}
+
+一旦我们检测到验证损失开始再次上升，我们就可以将权重重置回最小值发生的位置。这确保了模型不会继续学习噪声并过度拟合数据。提前停止训练还意味着我们在网络完成信号学习之前过早停止训练的危险较小。因此，除了防止训练时间过长而导致过拟合之外，提前停止还可以防止训练时间不够而导致欠拟合。只需将您的训练周期设置为某个较大的数字（超出您的需要），然后提前停止即可完成其余的工作。
+
+##### 添加提前停止
+
+在`Keras`中，我们通过回调在训练中加入早期停止。回调只是您希望在网络训练时经常运行的函数。早期停止回调将在每个遍历后运行。（`Keras`预定义了各种有用的回调，但您也可以定义自己的回调。）
+```python
+from tensorflow.keras.callbacks import EarlyStopping
+
+early_stopping = EarlyStopping(
+    min_delta=0.001, # minimium amount of change to count as an improvement
+    patience=20, # how many epochs to wait before stopping
+    restore_best_weights=True,
+)
+```
+这些参数表示：“如果在过去`20`个`epoch`中验证损失没有至少改善`0.001`，则停止训练并保留您找到的最佳模型。” 有时很难判断验证损失的增加是由于过度拟合还是仅仅由于随机批次变化。这些参数允许我们设置一些关于何时停止的容差。正如我们将在示例中看到的，我们将将此回调与损失和优化器一起传递给`fit`方法。
+
+##### 举例 - 训练提前停止的模型
+
+我们将增加该网络的容量，同时添加提前停止回调以防止过度拟合。
+```python
+import pandas as pd
+from IPython.display import display
+
+red_wine = pd.read_csv('../input/dl-course-data/red-wine.csv')
+
+# Create training and validation splits
+df_train = red_wine.sample(frac=0.7, random_state=0)
+df_valid = red_wine.drop(df_train.index)
+display(df_train.head(4))
+
+# Scale to [0, 1]
+max_ = df_train.max(axis=0)
+min_ = df_train.min(axis=0)
+df_train = (df_train - min_) / (max_ - min_)
+df_valid = (df_valid - min_) / (max_ - min_)
+
+# Split features and target
+X_train = df_train.drop('quality', axis=1)
+X_valid = df_valid.drop('quality', axis=1)
+y_train = df_train['quality']
+y_valid = df_valid['quality']
+```
+结果输出为：
+{% asset_img dl_16.png %}
+
+现在让我们增加网络的容量。我们将选择一个相当大的网络，但一旦验证损失显示出增加的迹象，就依靠回调来停止训练。
+```python
+from tensorflow import keras
+from tensorflow.keras import layers, callbacks
+
+early_stopping = callbacks.EarlyStopping(
+    min_delta=0.001, # minimium amount of change to count as an improvement
+    patience=20, # how many epochs to wait before stopping
+    restore_best_weights=True,
+)
+
+model = keras.Sequential([
+    layers.Dense(512, activation='relu', input_shape=[11]),
+    layers.Dense(512, activation='relu'),
+    layers.Dense(512, activation='relu'),
+    layers.Dense(1),
+])
+model.compile(
+    optimizer='adam',
+    loss='mae',
+)
+```
+定义回调后，将其添加为`fit`中的参数（可以有多个，因此将其放入列表中）。使用提前停止时`epoch`选择的大一点。
+```python
+history = model.fit(
+    X_train, y_train,
+    validation_data=(X_valid, y_valid),
+    batch_size=256,
+    epochs=500,
+    callbacks=[early_stopping], # put your callbacks in a list
+    verbose=0,  # turn off training log
+)
+
+history_df = pd.DataFrame(history.history)
+history_df.loc[:, ['loss', 'val_loss']].plot();
+print("Minimum validation loss: {}".format(history_df['val_loss'].min()))
+```
+{% asset_img dl_17.png %}
+
+果然，`Keras`在满`500`个`epoch`之前就停止了训练！
