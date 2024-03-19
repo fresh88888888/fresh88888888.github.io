@@ -1,6 +1,6 @@
 ---
 title: 深度学习（TensorFlow && Keras）
-date: 2024-03-15 20:20:32
+date: 2024-03-18 11:20:32
 tags:
   - AI
 categories:
@@ -374,3 +374,114 @@ print("Minimum validation loss: {}".format(history_df['val_loss'].min()))
 {% asset_img dl_17.png %}
 
 果然，`Keras`在满`500`个`epoch`之前就停止了训练！
+
+#### Dropout 和批量归一化
+
+##### 介绍
+
+深度学习的世界不仅仅是密集层。您可以向模型添加数十种层。有些就像密集层并定义神经元之间的连接，而其他则可以进行其他类型的预处理或转换。我们将学习两种特殊层，它们本身不包含任何神经元，但添加了一些有时可以以多种方式使模型受益的功能。
+
+##### Dropout
+
+第一个是“`dropout`层”，它可以帮助纠正过度拟合。在上一课中，我们讨论了网络学习训练数据中的虚假模式是如何导致过拟合的。为了识别这些虚假模式，网络通常依赖于非常特定的权重组合，这是一种权重的“阴谋”。由于它们如此具体，因此往往很脆弱：删除其中一个，阴谋就会崩溃。这就是`dropout`背后的想法。为了打破这些阴谋，我们在训练的每一步中随机丢弃层输入单元的一部分，从而使网络更难学习训练数据中的那些虚假模式。相反，它必须寻找广泛、通用的模式，其权重模式往往更稳健。
+{% asset_img dl_18.gif %}
+
+您还可以将`dropout`视为创建一种网络集合。预测将不再由一个大网络做出，而是由较小网络组成的委员会做出。委员会中的个人往往会犯不同类型的错误，但同时又是正确的，这使得委员会作为一个整体比任何个人都更好。（如果您熟悉随机森林作为决策树的集合，那么这是相同的想法。）
+
+##### 添加Dropout
+
+在`Keras`中，退出率参数`rate`定义了要关闭的输入单元的百分比。将`Dropout`图层放在您想要应用`Dropout`的图层之前：
+```python
+keras.Sequential([
+    # ...
+    layers.Dropout(rate=0.3), # apply 30% dropout to the next layer
+    layers.Dense(16),
+    # ...
+])
+```
+##### 批量归一化
+
+我们将看到的下一个特殊层执行“批量归一化”（或“`batchnorm`”），这可以帮助纠正缓慢或不稳定的训练。对于神经网络，通常最好将所有数据放在一个通用的尺度上，也许可以使用 `scikit-learn`的`StandardScaler`或`MinMaxScaler`之类的东西。原因是`SGD`会根据数据产生的激活大小按比例改变网络权重。倾向于产生不同大小激活的特征可能会导致训练行为不稳定。现在，如果在数据进入网络之前对数据进行标准化是件好事，也许在网络内部进行标准化会更好！事实上，我们有一种特殊的层可以做到这一点，即批量归一化层。批次归一化层会查看每个批次的数据，首先使用批次自身的均值和标准差对批次进行归一化，然后使用两个可训练的缩放参数将数据置于新的尺度上。实际上，`Batchnorm`对其输入执行了一种协调的重新调整。最常见的是，添加批归一化作为优化过程的辅助（尽管有时它也可以帮助预测性能）。具有批量归一化的模型往往需要更少的时期来完成训练。此外，`Batchnorm`还可以修复各种可能导致训练“卡住”的问题。考虑向您的模型添加批量归一化，特别是当您在训练期间遇到问题时。
+
+##### 添加批量归一化
+
+看来批量归一化几乎可以在网络中的任何点使用。你可以把它放在一层之后...
+```python
+layers.Dense(16, activation='relu'),
+layers.BatchNormalization(),
+```
+..或者在层及其激活函数之间：
+```python
+layers.Dense(16),
+layers.BatchNormalization(),
+layers.Activation('relu'),
+```
+如果将其添加为网络的第一层，它可以充当一种自适应预处理器，替代`SciKit-Learn`的`StandardScaler`之类的东西。
+
+##### 举例 - 使用 Dropout 和批量归一化
+
+让我们继续开发红酒模型。现在我们将进一步增加容量，但添加`dropout`来控制过度拟合和批量归一化以加快优化速度。这次，我们也将不再对数据进行标准化，以演示批量标准化如何稳定训练。
+```python
+# Setup plotting
+import matplotlib.pyplot as plt
+
+plt.style.use('seaborn-whitegrid')
+# Set Matplotlib defaults
+plt.rc('figure', autolayout=True)
+plt.rc('axes', labelweight='bold', labelsize='large',
+       titleweight='bold', titlesize=18, titlepad=10)
+
+
+import pandas as pd
+red_wine = pd.read_csv('../input/dl-course-data/red-wine.csv')
+
+# Create training and validation splits
+df_train = red_wine.sample(frac=0.7, random_state=0)
+df_valid = red_wine.drop(df_train.index)
+
+# Split features and target
+X_train = df_train.drop('quality', axis=1)
+X_valid = df_valid.drop('quality', axis=1)
+y_train = df_train['quality']
+y_valid = df_valid['quality']
+```
+添加`dropout`时，您可能需要增加`Dense`层中的单元数量。
+```python
+import tensorflow as tf
+import keras
+from keras import layers, callbacks
+
+model = keras.Sequential([
+    layers.Dense(1024, activation='relu', input_shape=[11]),
+    layers.Dropout(0.3),
+    layers.BatchNormalization(),
+    layers.Dense(1024, activation='relu'),
+    layers.Dropout(0.3),
+    layers.BatchNormalization(),
+    layers.Dense(1024, activation='relu'),
+    layers.Dropout(0.3),
+    layers.BatchNormalization(),
+    layers.Dense(1),
+])
+
+model.compile(
+    optimizer='adam',
+    loss='mae',
+)
+
+history = model.fit(
+    X_train, y_train,
+    validation_data=(X_valid, y_valid),
+    batch_size=256,
+    epochs=100,
+    verbose=0,
+)
+
+# Show the learning curves
+history_df = pd.DataFrame(history.history)
+history_df.loc[:, ['loss', 'val_loss']].plot()
+```
+{% asset_img dl_19.png %}
+
+如果在使用数据进行训练之前对数据进行标准化，通常会获得更好的性能。然而，我们能够使用原始数据，这表明批量归一化在更困难的数据集上是多么有效。
+
