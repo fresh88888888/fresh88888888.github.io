@@ -298,3 +298,162 @@ ax = y_pred.plot()
 {% asset_img ts_5.png %}
 
 最好的时间序列模型通常包含时间步长特征和滞后特征的某种组合。在接下来，我们将学习如何使用本课程中的特征作为起点来设计特征，对时间序列中最常见的模式进行建模。
+
+#### 趋势（Trend）
+
+##### 什么是趋势？
+
+**时间序列**的趋势成分代表该序列平均值的持续、长期变化。趋势是一系列中移动最慢的部分，该部分代表了最大的重要时间尺度。在产品销售的时间序列中，随着越来越多的人逐年了解该产品，增长趋势可能是市场扩张的影响。
+{% asset_img ts_6.png %}
+
+我们将重点关注均值趋势。但更一般地说，序列中任何持续且缓慢变化的变化都可能构成趋势——例如，时间序列通常在其变化中具有趋势。
+
+##### 移动平均图
+
+要查看时间序列可能具有什么样的趋势，我们可以使用**移动平均图**。 为了计算时间序列的移动平均值，我们计算某个定义宽度的滑动窗口内的值的平均值。图表上的每个点代表落在两侧窗口内的系列中所有值的平均值。这个想法是为了消除系列中的任何短期波动，以便只保留长期变化。
+{% asset_img ts_7.gif %}
+
+说明线性趋势的移动平均图。曲线上的每个点（蓝色）都是大小为`12`的窗口内点（红色）的平均值。请注意上面的莫纳罗亚系列如何年复一年地重复上下运动——这是一种短期的季节性变化。要使变化成为趋势的一部分，它发生的时间应该比任何季节变化都要长。因此，为了可视化趋势，我们在比该系列中任何季节周期更长的时期内取平均值。对于`Mauna Loa`系列，我们选择了`12`号的窗口，以平滑每年的季节。
+
+##### 工程趋势
+
+一旦我们确定了趋势的形状，我们就可以尝试使用时间步长特征对其进行建模。我们已经了解了如何使用时间虚拟(`time dummy`)变量本身来模拟线性趋势：
+```bash
+target = a * time + b
+```
+我们可以通过时间虚拟(`time dummy`)变量的变换来拟合许多其他类型的趋势。如果趋势看起来是二次的（抛物线），我们只需将时间虚拟(`time dummy`)的平方添加到特征集中，即可得到：
+```bash
+target = a * time ** 2 + b * time + c
+```
+线性回归将学习系数`a`、`b` 和`c`。下图中的趋势曲线都是使用这些特征和`scikit-learn`的`LinearRegression`拟合的：
+{% asset_img ts_8.png %}
+
+如果您以前没有见过这个技巧，您可能还没有意识到线性回归可以拟合曲线而不是直线。这个想法是，如果您可以提供适当形状的曲线作为特征，那么线性回归可以学习如何以最适合目标的方式组合它们。
+
+##### 举例 - 隧道流量
+
+在此示例中，我们将为隧道流量数据集创建趋势模型。
+```python
+from pathlib import Path
+from warnings import simplefilter
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+simplefilter("ignore")  # ignore warnings to clean up output cells
+
+# Set Matplotlib defaults
+plt.style.use("seaborn-whitegrid")
+plt.rc("figure", autolayout=True, figsize=(11, 5))
+plt.rc(
+    "axes",
+    labelweight="bold",
+    labelsize="large",
+    titleweight="bold",
+    titlesize=14,
+    titlepad=10,
+)
+plot_params = dict(
+    color="0.75",
+    style=".-",
+    markeredgecolor="0.25",
+    markerfacecolor="0.25",
+    legend=False,
+)
+%config InlineBackend.figure_format = 'retina'
+
+
+# Load Tunnel Traffic dataset
+data_dir = Path("../input/ts-course-data")
+tunnel = pd.read_csv(data_dir / "tunnel.csv", parse_dates=["Day"])
+tunnel = tunnel.set_index("Day").to_period()
+```
+我们来做一个移动平均图，看看这个系列有什么样的趋势。由于该系列有每日观察，因此我们选择`365`天的窗口来平滑一年内的任何短期变化。要创建移动平均线，首先使用滚动方法开始窗口计算。按照平均值方法计算窗口上的平均值。正如我们所看到的，隧道流量的趋势似乎是线性的。
+```python
+moving_average = tunnel.rolling(
+    window=365,       # 365-day window
+    center=True,      # puts the average at the center of the window
+    min_periods=183,  # choose about half the window size
+).mean()              # compute the mean (could also do median, std, min, max, ...)
+
+ax = tunnel.plot(style=".", color="0.5")
+moving_average.plot(
+    ax=ax, linewidth=3, title="Tunnel Traffic - 365-Day Moving Average", legend=False,
+)
+```
+{% asset_img ts_9.png %}
+
+我们直接在`Pandas`中设计了时间虚拟(`time dummy`)对象。然而，从现在开始，我们将使用`statsmodels`库中名为确定性进程 (`DeterministicProcess`) 的函数。使用此函数将帮助我们避免时间序列和线性回归可能出现的一些棘手的失败情况。`order`参数指的是多项式阶数：`1`表示线性，`2`表示二次，`3`表示三次，依此类推。
+```python
+from statsmodels.tsa.deterministic import DeterministicProcess
+
+dp = DeterministicProcess(
+    index=tunnel.index,  # dates from the training data
+    constant=True,       # dummy feature for the bias (y_intercept)
+    order=1,             # the time dummy (trend)
+    drop=True,           # drop terms if necessary to avoid collinearity
+)
+# `in_sample` creates features for the dates given in the `index` argument
+X = dp.in_sample()
+
+X.head()
+```
+结果输出为：
+```bash
+	const	trend
+Day		
+2003-11-01	1.0	1.0
+2003-11-02	1.0	2.0
+2003-11-03	1.0	3.0
+2003-11-04	1.0	4.0
+2003-11-05	1.0	5.0
+```
+（顺便说一句，确定性过程是一个技术术语，指的是非随机或完全确定的时间序列，例如`const`和趋势序列。从时间索引导出的特征通常是确定性的。）我们基本上像以前一样创建趋势模型，但请注意添加了`fit_intercept=False`参数。
+```python
+from sklearn.linear_model import LinearRegression
+
+y = tunnel["NumVehicles"]  # the target
+
+# The intercept is the same as the `const` feature from
+# DeterministicProcess. LinearRegression behaves badly with duplicated
+# features, so we need to be sure to exclude it here.
+model = LinearRegression(fit_intercept=False)
+model.fit(X, y)
+
+y_pred = pd.Series(model.predict(X), index=X.index)
+```
+我们的线性回归模型发现的趋势几乎与移动平均图相同，这表明在这种情况下线性趋势是正确的决定。
+```python
+ax = tunnel.plot(style=".", color="0.5", title="Tunnel Traffic - Linear Trend")
+_ = y_pred.plot(ax=ax, linewidth=3, label="Trend")
+```
+{% asset_img ts_10.png %}
+
+为了进行预测，我们将模型应用于“**样本外**”特征。 “样本外”是指训练数据观察期之外的时间。以下是我们如何进行`30`天的预测：
+```python
+X = dp.out_of_sample(steps=30)
+
+y_fore = pd.Series(model.predict(X), index=X.index)
+
+y_fore.head()
+```
+结果输出为：
+```bash
+2005-11-17    114981.801146
+2005-11-18    115004.298595
+2005-11-19    115026.796045
+2005-11-20    115049.293494
+2005-11-21    115071.790944
+Freq: D, dtype: float64
+```
+让我们绘制该系列的一部分来查看未来`30`天的趋势预测：
+```python
+ax = tunnel["2005-05":].plot(title="Tunnel Traffic - Linear Trend Forecast", **plot_params)
+ax = y_pred["2005-05":].plot(ax=ax, linewidth=3, label="Trend")
+ax = y_fore.plot(ax=ax, linewidth=3, label="Trend Forecast", color="C3")
+_ = ax.legend()
+```
+{% asset_img ts_11.png %}
+
+除了充当更复杂模型的基线或起点之外，我们还可以将它们用作“混合模型”中的组件，其中算法无法学习趋势（例如`XGBoost`和随机森林）。
