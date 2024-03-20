@@ -457,3 +457,237 @@ _ = ax.legend()
 {% asset_img ts_11.png %}
 
 除了充当更复杂模型的基线或起点之外，我们还可以将它们用作“混合模型”中的组件，其中算法无法学习趋势（例如`XGBoost`和随机森林）。
+
+#### 季节性（Seasonality）
+
+##### 什么是季节性？
+
+当时间序列的均值出现有规律的、周期性的变化时，我们就说该时间序列表现出**季节性**。季节变化通常遵循时钟和日历——一天、一周或一年的重复是很常见的。季节性通常是由自然世界数天和数年的循环或围绕日期和时间的社会行为惯例驱动的。
+{% asset_img ts_12.png %}
+
+我们将学习两种模拟季节性的特征。第一种是指标，最适合观察很少的季节，例如每日观察的每周季节。第二种，即傅里叶特征，最适合具有大量观测的季节，例如每日观测的年度季节。
+
+##### 季节图和季节指标
+
+###### 季节图
+
+就像我们使用移动平均图来发现序列中的趋势一样，我们可以使用**季节图**来发现季节性模式。季节性图显示针对某个共同时期绘制的时间序列的片段，该时期是您要观察的“季节”。该图显示了维基百科关于三角学的文章的每日浏览量的季节图：该文章的每日浏览量绘制在共同的每周时间段内。
+{% asset_img ts_13.png %}
+
+###### 季节性指标
+
+季节性指标是表示时间序列水平季节性差异的二元特征。如果将季节性周期视为分类特征并应用`one-hot`编码，则会得到季节性指标。通过对一周中的某一天进行单热编码，我们可以获得每周的季节性指标。为三角系列创建每周指标将为我们提供六个新的“虚拟”特征。（如果放弃其中一个指标，线性回归效果最好；我们在下面的框架中选择了星期一。）
+{% asset_img ts_14.png %}
+
+在训练数据中添加季节性指标有助于模型区分季节性期间内的平均值：
+{% asset_img ts_15.png %}
+
+指示灯充当开/关开关。在任何时候，这些指标最多有一个值为`1`（开）。线性回归学习周一的基线值`2379`，然后根据当天打开的指标值进行调整；其余的都是`0`并消失。
+
+##### 傅里叶特征和周期图
+
+我们现在讨论的这种功能更适合在许多指标不切实际的情况下进行的长季节观测。傅立叶特征不是为每个日期创建一个特征，而是尝试仅用几个特征来捕获季节性曲线的整体形状。让我们看一下三角学中每年季节的图。注意各种频率的重复：一年`3`次长的上下运动，一年`52`次的短周运动，也许还有其他。
+{% asset_img ts_16.png %}
+
+我们尝试用傅立叶特征来捕获季节内的这些频率。这个想法是在我们的训练数据中包含与我们尝试建模的季节具有相同频率的周期曲线。我们使用的曲线是三角函数正弦和余弦的曲线。傅立叶特征是成对的正弦和余弦曲线，一对对应于季节中从最长的开始的每个潜在频率。模拟年度季节性的傅立叶对具有频率：每年一次、每年两次、每年三次，依此类推。
+{% asset_img ts_17.png %}
+
+如果我们将一组正弦/余弦曲线添加到训练数据中，线性回归算法将计算出适合目标序列中季节性分量的权重。该图说明了线性回归如何使用四个傅里叶对来模拟三角系列中的年度季节性。
+{% asset_img ts_18.png %}
+
+{% note info %}
+**请注意**，我们只需要八个特征（四个正弦/余弦对）即可很好地估计年度季节性。将此与季节性指标方法进行比较，后者需要数百个特征（一年中的每一天一个）。通过使用傅里叶特征仅对季节性的“主效应”进行建模，您通常需要向训练数据添加更少的特征，这意味着减少计算时间并降低过度拟合的风险。
+{% endnote %}
+
+###### 使用周期图选择傅里叶特征
+
+我们的特征集中实际上应该包含多少个傅里叶对？我们可以用周期图来回答这个问题。周期图告诉您时间序列中频率的强度。具体来说，图表`y`轴上的值为`(a ** 2 + b ** 2) / 2`，其中`a`和 `b`是该频率下的正弦和余弦系数（如上面的傅立叶分量图中所示）。
+{% asset_img ts_19.png %}
+
+从左到右，周期图在季度之后下降，每年四次。这就是为什么我们选择四个傅里叶对来模拟年度季节。我们忽略每周频率，因为它更好地用指标建模。
+
+###### 计算傅里叶特征（可选）
+
+了解**傅里叶特征**的计算方式对于使用它们并不重要，但如果查看细节可以澄清问题，下面的单元格隐藏单元说明了如何从时间序列的索引导出一组傅里叶特征。（但是，我们将在我们的应用程序中使用`statsmodels`中的库函数。）
+```python
+import numpy as np
+
+def fourier_features(index, freq, order):
+    time = np.arange(len(index), dtype=np.float32)
+    k = 2 * np.pi * (1 / freq) * time
+    features = {}
+    for i in range(1, order + 1):
+        features.update({
+            f"sin_{freq}_{i}": np.sin(i * k),
+            f"cos_{freq}_{i}": np.cos(i * k),
+        })
+    return pd.DataFrame(features, index=index)
+
+
+# Compute Fourier features to the 4th order (8 new features) for a
+# series y with daily observations and annual seasonality:
+#
+# fourier_features(y, freq=365.25, order=4)
+```
+##### 举例 - 隧道流量
+
+我们将再次继续使用隧道流量数据集。该隐藏单元格加载数据并定义两个函数：`seasonal_plot`和`plot_periodogram`。
+```python
+from pathlib import Path
+from warnings import simplefilter
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+from sklearn.linear_model import LinearRegression
+from statsmodels.tsa.deterministic import CalendarFourier, DeterministicProcess
+
+simplefilter("ignore")
+
+# Set Matplotlib defaults
+plt.style.use("seaborn-whitegrid")
+plt.rc("figure", autolayout=True, figsize=(11, 5))
+plt.rc(
+    "axes",
+    labelweight="bold",
+    labelsize="large",
+    titleweight="bold",
+    titlesize=16,
+    titlepad=10,
+)
+plot_params = dict(
+    color="0.75",
+    style=".-",
+    markeredgecolor="0.25",
+    markerfacecolor="0.25",
+    legend=False,
+)
+
+# annotations: https://stackoverflow.com/a/49238256/5769929
+def seasonal_plot(X, y, period, freq, ax=None):
+    if ax is None:
+        _, ax = plt.subplots()
+    palette = sns.color_palette("husl", n_colors=X[period].nunique(),)
+    ax = sns.lineplot(
+        x=freq,
+        y=y,
+        hue=period,
+        data=X,
+        ci=False,
+        ax=ax,
+        palette=palette,
+        legend=False,
+    )
+    ax.set_title(f"Seasonal Plot ({period}/{freq})")
+    for line, name in zip(ax.lines, X[period].unique()):
+        y_ = line.get_ydata()[-1]
+        ax.annotate(
+            name,
+            xy=(1, y_),
+            xytext=(6, 0),
+            color=line.get_color(),
+            xycoords=ax.get_yaxis_transform(),
+            textcoords="offset points",
+            size=14,
+            va="center",
+        )
+    return ax
+
+
+def plot_periodogram(ts, detrend='linear', ax=None):
+    from scipy.signal import periodogram
+    fs = pd.Timedelta("365D") / pd.Timedelta("1D")
+    freqencies, spectrum = periodogram(
+        ts,
+        fs=fs,
+        detrend=detrend,
+        window="boxcar",
+        scaling='spectrum',
+    )
+    if ax is None:
+        _, ax = plt.subplots()
+    ax.step(freqencies, spectrum, color="purple")
+    ax.set_xscale("log")
+    ax.set_xticks([1, 2, 4, 6, 12, 26, 52, 104])
+    ax.set_xticklabels(
+        [
+            "Annual (1)",
+            "Semiannual (2)",
+            "Quarterly (4)",
+            "Bimonthly (6)",
+            "Monthly (12)",
+            "Biweekly (26)",
+            "Weekly (52)",
+            "Semiweekly (104)",
+        ],
+        rotation=30,
+    )
+    ax.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
+    ax.set_ylabel("Variance")
+    ax.set_title("Periodogram")
+    return ax
+
+
+data_dir = Path("../input/ts-course-data")
+tunnel = pd.read_csv(data_dir / "tunnel.csv", parse_dates=["Day"])
+tunnel = tunnel.set_index("Day").to_period("D")
+```
+让我们看一下一周和一年多的季节性图。
+```python
+X = tunnel.copy()
+
+# days within a week
+X["day"] = X.index.dayofweek  # the x-axis (freq)
+X["week"] = X.index.week  # the seasonal period (period)
+
+# days within a year
+X["dayofyear"] = X.index.dayofyear
+X["year"] = X.index.year
+fig, (ax0, ax1) = plt.subplots(2, 1, figsize=(11, 6))
+seasonal_plot(X, y="NumVehicles", period="week", freq="day", ax=ax0)
+seasonal_plot(X, y="NumVehicles", period="year", freq="dayofyear", ax=ax1);
+```
+{% asset_img ts_20.png %}
+
+现在让我们看一下周期图：
+```python
+plot_periodogram(tunnel.NumVehicles)
+```
+{% asset_img ts_21.png %}
+
+该周期图与上面的季节图一致：每周季节强劲，年度季节较弱。我们将使用指标对每周季节进行建模，并使用傅里叶特征对年度季节进行建模。从右到左，周期图在双月(`6`)和每月(`12`)之间下降，因此我们使用`10`个傅立叶对。我们将使用`DeterministicProcess`创建季节性特征，这与创建趋势特征的实用程序相同。要使用两个季节周期（每周和每年），我们需要将其中一个实例化为“附加项”：
+```python
+from statsmodels.tsa.deterministic import CalendarFourier, DeterministicProcess
+
+fourier = CalendarFourier(freq="A", order=10)  # 10 sin/cos pairs for "A"nnual seasonality
+
+dp = DeterministicProcess(
+    index=tunnel.index,
+    constant=True,               # dummy feature for bias (y-intercept)
+    order=1,                     # trend (order 1 means linear)
+    seasonal=True,               # weekly seasonality (indicators)
+    additional_terms=[fourier],  # annual seasonality (fourier)
+    drop=True,                   # drop terms to avoid collinearity
+)
+
+X = dp.in_sample()  # create features for dates in tunnel.index
+```
+创建特征集后，我们就可以拟合模型并进行预测。我们将添加`90`天的预测，以了解我们的模型如何根据训练数据进行推断。
+```python
+y = tunnel["NumVehicles"]
+
+model = LinearRegression(fit_intercept=False)
+_ = model.fit(X, y)
+
+y_pred = pd.Series(model.predict(X), index=y.index)
+X_fore = dp.out_of_sample(steps=90)
+y_fore = pd.Series(model.predict(X_fore), index=X_fore.index)
+
+ax = y.plot(color='0.25', style='.', title="Tunnel Traffic - Seasonal Forecast")
+ax = y_pred.plot(ax=ax, label="Seasonal")
+ax = y_fore.plot(ax=ax, label="Seasonal Forecast", color='C3')
+_ = ax.legend()
+```
+{% asset_img ts_22.png %}
+
+我们还可以利用时间序列做更多事情来改进我们的预测。我们将学习如何使用时间序列本身作为特征。使用时间序列作为预测的输入，可以让我们对序列中经常出现的另一个组成部分进行建模：**周期**。
