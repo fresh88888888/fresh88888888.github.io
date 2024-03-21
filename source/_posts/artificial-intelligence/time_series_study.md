@@ -691,3 +691,261 @@ _ = ax.legend()
 {% asset_img ts_22.png %}
 
 我们还可以利用时间序列做更多事情来改进我们的预测。我们将学习如何使用时间序列本身作为特征。使用时间序列作为预测的输入，可以让我们对序列中经常出现的另一个组成部分进行建模：**周期**。
+
+#### 时间序列作为特征
+
+##### 什么是串行依赖?
+
+我们研究了最容易建模为时间相关属性的时间序列属性，即我们可以直接从时间索引导出的特征。然而，某些时间序列属性只能建模为序列相关属性，即使用目标序列的过去值作为特征。从随时间变化的图中看，这些时间序列的结构可能并不明显；然而，根据过去的值绘制，结构变得清晰——如下图所示。
+{% asset_img ts_23.png %}
+
+根据趋势和季节性，我们训练模型将曲线拟合到上图左侧的图上——模型正在学习时间依赖性。本课程的目标是训练模型以将曲线拟合到右侧的图上——我们希望它们学习序列依赖性。
+
+###### 周期
+
+序列依赖性表现出来的一种特别常见的方式是**循环**。**周期**是时间序列中的增长和衰减模式，与某个时间序列中的值如何取决于前一个时间的值（但不一定取决于时间步本身）相关。循环行为是可以影响自身或其反应随时间持续的系统的特征。经济、流行病、动物种群、火山爆发和类似的自然现象经常表现出周期性行为。
+{% asset_img ts_24.png %}
+
+周期性行为与季节性的区别在于，周期不一定像季节那样依赖于时间。一个周期中发生的事情与特定的发生日期无关，而更多地与最近发生的事情有关。与时间的（至少相对）独立性意味着周期性行为可能比季节性行为更加不规则。
+
+##### 滞后系列和滞后图
+
+为了研究时间序列中可能的序列依赖性（如周期），我们需要创建该序列的“滞后”副本。滞后时间序列意味着将其值向前移动一个或多个时间步长，或者等效地将其索引中的时间向后移动一个或多个时间步长。无论哪种情况，效果都是滞后序列中的观察结果似乎是在较晚的时间发生的。这显示了美国的月度失业率(`y`)及其第一个和第二个滞后序列（分别为`y_lag_1`和`y_lag_2`）。请注意滞后序列的值如何及时向前移动。
+```python
+import pandas as pd
+
+reserve = pd.read_csv(
+    "../input/ts-course-data/reserve.csv",
+    parse_dates={'Date': ['Year', 'Month', 'Day']},
+    index_col='Date',
+)
+
+y = reserve.loc[:, 'Unemployment Rate'].dropna().to_period('M')
+df = pd.DataFrame({
+    'y': y,
+    'y_lag_1': y.shift(1),
+    'y_lag_2': y.shift(2),    
+})
+
+df.head()
+```
+结果输出为：
+```bash
+	y	y_lag_1	y_lag_2
+Date			
+1954-07	5.8	NaN	NaN
+1954-08	6.0	5.8	NaN
+1954-09	6.1	6.0	5.8
+1954-10	5.7	6.1	6.0
+1954-11	5.3	5.7	6.1
+```
+通过滞后时间序列，我们可以使其过去的值与我们尝试预测的值同时出现（换句话说，在同一行）。这使得滞后序列可用作序列依赖性建模的特征。为了预测美国失业率序列，我们可以使用`y_lag_1`和`y_lag_2`作为特征来预测目标`y`。这将预测未来失业率作为前两个月失业率的函数。
+
+###### 滞后图
+
+时间序列的**滞后图**显示其值与滞后的关系。通过查看滞后图，时间序列中的序列依赖性通常会变得明显。从美国失业率的滞后图可以看出，当前失业率与过去失业率之间存在很强的、明显的线性关系。
+{% asset_img ts_25.png %}
+
+最常用的序列依赖性度量称为**自相关**，它只是时间序列与其滞后之一的相关性。美国失业率在滞后`1`时的自相关性为`0.99`，在滞后`2`时的自相关性为`0.98`，依此类推。
+
+###### 选择滞后
+
+当选择滞后作为特征时，包含具有大自相关的每个滞后通常是没有用的。例如，在美国失业情况中，滞后`2`处的自相关可能完全由滞后`1`中的“衰减”信息产生——只是从上一步中延续下来的相关性。如果滞后`2`不包含任何新内容，那么如果我们已经有了滞后`1`，就没有理由包含它。部分自相关告诉您滞后的相关性占所有先前滞后的影响 - 可以说，滞后贡献的“新”相关量。绘制部分自相关可以帮助您选择要使用的滞后特征。在下图中，滞后`1`到滞后`6`落在“无相关”区间（蓝色）之外，因此我们可以选择滞后`1`到滞后`6`作为美国失业率的特征。（滞后`11`可能是误报。）
+{% asset_img ts_26.png %}
+
+像上面这样的图称为相关图。相关图用于滞后特征，本质上就像周期图用于傅立叶特征一样。最后，我们需要注意，自相关和部分自相关是线性相关性的度量。由于现实世界的时间序列通常具有大量的非线性依赖性，因此在选择滞后特征时最好查看滞后图（或使用一些更通用的依赖性度量，例如**互信息**）。太阳黑子系列具有非线性依赖性的滞后性，我们可能会通过自相关来忽略这一点。
+{% asset_img ts_27.png %}
+
+像这样的非线性关系可以转换为线性关系，也可以通过适当的算法来学习。
+
+##### 举例 - 流感趋势
+
+流感趋势数据集包含`2009`年至`2016`年间几周内因流感就诊的医生记录。我们的目标是预测未来几周的流感病例数。我们将采取两种方法。首先，我们将使用滞后特征来预测医生的就诊次数。我们的第二种方法是使用另一组时间序列的滞后来预测医生的就诊：谷歌趋势捕获的与流感相关的搜索词。
+```python
+from pathlib import Path
+from warnings import simplefilter
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from scipy.signal import periodogram
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from statsmodels.graphics.tsaplots import plot_pacf
+
+simplefilter("ignore")
+
+# Set Matplotlib defaults
+plt.style.use("seaborn-whitegrid")
+plt.rc("figure", autolayout=True, figsize=(11, 4))
+plt.rc(
+    "axes",
+    labelweight="bold",
+    labelsize="large",
+    titleweight="bold",
+    titlesize=16,
+    titlepad=10,
+)
+plot_params = dict(
+    color="0.75",
+    style=".-",
+    markeredgecolor="0.25",
+    markerfacecolor="0.25",
+)
+%config InlineBackend.figure_format = 'retina'
+
+
+def lagplot(x, y=None, lag=1, standardize=False, ax=None, **kwargs):
+    from matplotlib.offsetbox import AnchoredText
+    x_ = x.shift(lag)
+    if standardize:
+        x_ = (x_ - x_.mean()) / x_.std()
+    if y is not None:
+        y_ = (y - y.mean()) / y.std() if standardize else y
+    else:
+        y_ = x
+    corr = y_.corr(x_)
+    if ax is None:
+        fig, ax = plt.subplots()
+    scatter_kws = dict(
+        alpha=0.75,
+        s=3,
+    )
+    line_kws = dict(color='C3', )
+    ax = sns.regplot(x=x_,
+                     y=y_,
+                     scatter_kws=scatter_kws,
+                     line_kws=line_kws,
+                     lowess=True,
+                     ax=ax,
+                     **kwargs)
+    at = AnchoredText(
+        f"{corr:.2f}",
+        prop=dict(size="large"),
+        frameon=True,
+        loc="upper left",
+    )
+    at.patch.set_boxstyle("square, pad=0.0")
+    ax.add_artist(at)
+    ax.set(title=f"Lag {lag}", xlabel=x_.name, ylabel=y_.name)
+    return ax
+
+
+def plot_lags(x, y=None, lags=6, nrows=1, lagplot_kwargs={}, **kwargs):
+    import math
+    kwargs.setdefault('nrows', nrows)
+    kwargs.setdefault('ncols', math.ceil(lags / nrows))
+    kwargs.setdefault('figsize', (kwargs['ncols'] * 2, nrows * 2 + 0.5))
+    fig, axs = plt.subplots(sharex=True, sharey=True, squeeze=False, **kwargs)
+    for ax, k in zip(fig.get_axes(), range(kwargs['nrows'] * kwargs['ncols'])):
+        if k + 1 <= lags:
+            ax = lagplot(x, y, lag=k + 1, ax=ax, **lagplot_kwargs)
+            ax.set_title(f"Lag {k + 1}", fontdict=dict(fontsize=14))
+            ax.set(xlabel="", ylabel="")
+        else:
+            ax.axis('off')
+    plt.setp(axs[-1, :], xlabel=x.name)
+    plt.setp(axs[:, 0], ylabel=y.name if y is not None else x.name)
+    fig.tight_layout(w_pad=0.1, h_pad=0.1)
+    return fig
+
+
+data_dir = Path("../input/ts-course-data")
+flu_trends = pd.read_csv(data_dir / "flu-trends.csv")
+flu_trends.set_index(
+    pd.PeriodIndex(flu_trends.Week, freq="W"),
+    inplace=True,
+)
+flu_trends.drop("Week", axis=1, inplace=True)
+
+ax = flu_trends.FluVisits.plot(title='Flu Trends', **plot_params)
+_ = ax.set(ylabel="Office Visits")
+```
+{% asset_img ts_28.png %}
+
+我们的流感趋势数据显示了不规则的周期，而不是规则的季节性：高峰往往出现在新年前后，但有时更早或更晚，有时更大或更小。使用滞后特征对这些周期进行建模将使我们的预报员能够对不断变化的条件做出动态反应，而不是像季节性特征那样受限于确切的日期和时间。我们首先看一下滞后图和自相关图：
+```python
+_ = plot_lags(flu_trends.FluVisits, lags=12, nrows=2)
+_ = plot_pacf(flu_trends.FluVisits, lags=12)
+```
+{% asset_img ts_29.png %}
+
+滞后图表明`FluVisits`与其滞后的关系大部分是线性的，而部分自相关表明可以使用滞后`1、2、3`和`4`来捕获相关性。我们可以使用平移方法滞后`Pandas`中的时间序列。对于这个问题，我们将用`0.0`填充滞后创建的缺失值。
+```python
+def make_lags(ts, lags):
+    return pd.concat(
+        {
+            f'y_lag_{i}': ts.shift(i)
+            for i in range(1, lags + 1)
+        },
+        axis=1)
+
+
+X = make_lags(flu_trends.FluVisits, lags=4)
+X = X.fillna(0.0)
+```
+我们能够为训练数据之外的任意多个步骤创建预测。然而，当使用滞后特征时，我们仅限于预测滞后值可用的时间步长。使用星期一的滞后`1`特征，我们无法对星期三进行预测，因为所需的滞后`1`值是星期二，而星期二尚未发生。
+```python
+# Create target series and data splits
+y = flu_trends.FluVisits.copy()
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=60, shuffle=False)
+
+# Fit and predict
+model = LinearRegression()  # `fit_intercept=True` since we didn't use DeterministicProcess
+model.fit(X_train, y_train)
+y_pred = pd.Series(model.predict(X_train), index=y_train.index)
+y_fore = pd.Series(model.predict(X_test), index=y_test.index)
+
+ax = y_train.plot(**plot_params)
+ax = y_test.plot(**plot_params)
+ax = y_pred.plot(ax=ax)
+_ = y_fore.plot(ax=ax, color='C3')
+```
+{% asset_img ts_30.png %}
+
+仅查看预测值，我们可以看到我们的模型如何需要一个时间步长来对目标序列的突然变化做出反应。这是仅使用目标序列的滞后作为特征的模型的常见限制。
+```python
+ax = y_test.plot(**plot_params)
+_ = y_fore.plot(ax=ax, color='C3')
+```
+{% asset_img ts_31.png %}
+
+为了改进预测，我们可以尝试找到领先指标，即可以为流感病例变化提供“早期预警”的时间序列。对于第二种方法，我们将在训练数据中添加由`Google`趋势衡量的一些与流感相关的搜索词的受欢迎程度。将搜索短语“`FluCough`”与目标“`FluVisits`”进行比较表明，此类搜索词可以用作领先指标：与流感相关的搜索往往在就诊前几周变得更受欢迎。
+```python
+ax = flu_trends.plot(
+    y=["FluCough", "FluVisits"],
+    secondary_y="FluCough",
+)
+```
+{% asset_img ts_32.png %}
+
+该数据集包含`129`个此类术语，但我们只使用其中的几个。
+```python
+search_terms = ["FluContagious", "FluCough", "FluFever", "InfluenzaA", "TreatFlu", "IHaveTheFlu", "OverTheCounterFlu", "HowLongFlu"]
+
+# Create three lags for each search term
+X0 = make_lags(flu_trends[search_terms], lags=3)
+X0.columns = [' '.join(col).strip() for col in X0.columns.values]
+
+# Create four lags for the target, as before
+X1 = make_lags(flu_trends['FluVisits'], lags=4)
+
+# Combine to create the training data
+X = pd.concat([X0, X1], axis=1).fillna(0.0)
+```
+我们的预测有点粗略，但我们的模型似乎能够更好地预测流感访问量的突然增加，这表明搜索流行度的几个时间序列确实可以作为领先指标。
+```python
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=60, shuffle=False)
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = pd.Series(model.predict(X_train), index=y_train.index)
+y_fore = pd.Series(model.predict(X_test), index=y_test.index)
+
+ax = y_test.plot(**plot_params)
+_ = y_fore.plot(ax=ax, color='C3')
+```
+{% asset_img ts_33.png %}
+
+时间序列可能称为“**纯循环**”：它们没有明显的趋势或季节性。不过，时间序列同时具有趋势、季节性和周期这三个组成部分的情况并不罕见。您只需为每个组件添加适当的特征，就可以使用线性回归对此类序列进行建模。您甚至可以组合经过训练的模型来单独学习各个组件。
