@@ -949,3 +949,214 @@ _ = y_fore.plot(ax=ax, color='C3')
 {% asset_img ts_33.png %}
 
 时间序列可能称为“**纯循环**”：它们没有明显的趋势或季节性。不过，时间序列同时具有趋势、季节性和周期这三个组成部分的情况并不罕见。您只需为每个组件添加适当的特征，就可以使用线性回归对此类序列进行建模。您甚至可以组合经过训练的模型来单独学习各个组件。
+
+#### 混合模型（hybrid models）
+
+##### 介绍
+
+线性回归擅长推断趋势，但无法学习交互作用。`XGBoost`擅长学习交互，但无法推断趋势。接下来，我们将学习如何创建“**混合**”预测器，将互补的学习算法结合起来，并让一种算法的优点弥补另一种算法的缺点。
+
+##### 成分和残差
+
+为了设计有效的混合体，我们需要更好地理解时间序列的构建方式。到目前为止，我们已经研究了三种依赖模式：趋势、季节和周期。许多时间序列可以通过仅由这三个分量加上一些本质上不可预测的完全随机误差的加法模型来精确描述：
+```bash
+series = trend + seasons + cycles + error
+```
+我们将该模型中的每一项称为时间序列的一个组成部分。**模型的残差**是模型训练的目标与模型做出的预测之间的差异，换句话说，就是实际曲线与拟合曲线之间的差异。根据某个特征绘制残差，您就可以得到目标的“剩余”部分，或者模型无法从该特征中了解目标的部分。
+{% asset_img ts_34.png %}
+
+上图左侧是隧道交通序列和趋势-季节曲线的一部分。减去拟合曲线后，剩下的残差位于右侧。残差包含趋势-季节性模型未学到的隧道流量中的所有内容。我们可以将学习时间序列的组成部分想象为一个迭代过程：首先学习趋势并将其从序列中减去，然后从去趋势残差中学习季节性并减去季节，然后学习周期并减去周期，最后只剩下不可预测的错误。
+{% asset_img ts_35.png %}
+
+将我们学到的所有组件加在一起，我们就得到了完整的模型。如果你用一整套建模趋势、季节和周期的特征来训练线性回归，这本质上就是线性回归的作用。
+{% asset_img ts_36.png %}
+
+##### 残差混合预测
+
+我们使用单一算法（线性回归）来一次学习所有组件。但也可以对某些组件使用一种算法，对其余组件使用另一种算法。这样我们总是可以为每个组件选择最佳算法。为此，我们使用一种算法来拟合原始序列，然后使用第二种算法来拟合残差序列。详细来说，流程是这样的：
+```python
+# 1. Train and predict with first model
+model_1.fit(X_train_1, y_train)
+y_pred_1 = model_1.predict(X_train)
+
+# 2. Train and predict with second model on residuals
+model_2.fit(X_train_2, y_train - y_pred_1)
+y_pred_2 = model_2.predict(X_train_2)
+
+# 3. Add to get overall predictions
+y_pred = y_pred_1 + y_pred_2
+```
+我们通常会根据我们希望每个模型学习的内容来使用不同的特征集（上面的`X_train_1`和`X_train_2`）。例如，如果我们使用第一个模型来学习趋势，那么我们通常不需要第二个模型的趋势特征。
+虽然可以使用两个以上的模型，但实际上它似乎并不是特别有用。事实上，构建混合体的最常见策略就是我们刚刚描述的策略：一个简单的（通常是线性的）学习算法，然后是一个复杂的非线性学习器，如`GBDT`或深度神经网络，简单的模型通常设计为后续强大算法的“**帮手**”。
+
+###### 混合设计
+
+还有许多方法可以组合机器学习模型。然而，成功地组合模型需要我们更深入地研究这些算法的运作方式。**回归算法通常有两种方式进行预测：通过转换特征或通过转换目标**。特征转换算法学习一些数学函数，将特征作为输入，然后将它们组合并转换以产生与训练集中的目标值匹配的输出。线性回归和神经网络属于此类。目标转换算法使用这些特征对训练集中的目标值进行分组，并通过对组中的值进行平均来进行预测；一组特征仅指示要对哪个组进行平均。决策树和最近邻就是这种类型。重要的是：特征转换器通常可以在给定适当的特征作为输入的情况下推断训练集之外的目标值，但目标转换器的预测将始终限制在训练集的范围内。如果时间虚拟继续计算时间步长，线性回归将继续绘制趋势线。给定相同的时间虚拟，决策树将永远预测训练数据的最后一步所指示的趋势。决策树无法推断趋势。随机森林和梯度增强决策树（如`XGBoost`）是决策树的集合，因此它们也无法推断趋势。
+{% asset_img ts_37.png %}
+
+这种差异正是**混合设计**的动力：使用线性回归来推断趋势，转换目标以消除趋势，并将`XGBoost`应用于去趋势残差。要混合神经网络（特征转换器），您可以将另一个模型的预测作为特征包含在内，然后神经网络将其作为其自身预测的一部分包含在内。**拟合残差的方法**实际上与**梯度增强算法**使用的方法相同，因此我们将这些称为**增强混合算法**； 使用预测作为特征的方法称为“**堆叠**”，因此我们将这些称为**堆叠混合**。
+
+##### 举例 - 美国零售销售
+
+美国零售销售数据集包含美国人口普查局收集的`1992`年至`2019`年各个零售行业的月度销售数据。我们的目标是根据前几年的销售额预测`2016-2019`年的销售额。除了创建线性回归 + `XGBoost`混合体之外，我们还将了解如何设置与`XGBoost`一起使用的时间序列数据集。
+```python
+from pathlib import Path
+from warnings import simplefilter
+
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from statsmodels.tsa.deterministic import CalendarFourier, DeterministicProcess
+from xgboost import XGBRegressor
+
+simplefilter("ignore")
+
+# Set Matplotlib defaults
+plt.style.use("seaborn-whitegrid")
+plt.rc(
+    "figure",
+    autolayout=True,
+    figsize=(11, 4),
+    titlesize=18,
+    titleweight='bold',
+)
+plt.rc(
+    "axes",
+    labelweight="bold",
+    labelsize="large",
+    titleweight="bold",
+    titlesize=16,
+    titlepad=10,
+)
+plot_params = dict(
+    color="0.75",
+    style=".-",
+    markeredgecolor="0.25",
+    markerfacecolor="0.25",
+)
+
+data_dir = Path("../input/ts-course-data/")
+industries = ["BuildingMaterials", "FoodAndBeverage"]
+retail = pd.read_csv(
+    data_dir / "us-retail-sales.csv",
+    usecols=['Month'] + industries,
+    parse_dates=['Month'],
+    index_col='Month',
+).to_period('D').reindex(columns=industries)
+retail = pd.concat({'Sales': retail}, names=[None, 'Industries'], axis=1)
+
+retail.head()
+```
+结果输出为：
+```bash
+	Sales
+Industries	BuildingMaterials	FoodAndBeverage
+Month		
+1992-01-01	8964	29589
+1992-02-01	9023	28570
+1992-03-01	10608	29682
+1992-04-01	11630	30228
+1992-05-01	12327	31677
+```
+首先，我们使用线性回归模型来了解每个系列的趋势。为了进行演示，我们将使用二次（`2`阶）趋势。虽然不太适合，但足以满足我们的需求。
+```python
+y = retail.copy()
+
+# Create trend features
+dp = DeterministicProcess(
+    index=y.index,  # dates from the training data
+    constant=True,  # the intercept
+    order=2,        # quadratic trend
+    drop=True,      # drop terms to avoid collinearity
+)
+X = dp.in_sample()  # features for the training data
+
+# Test on the years 2016-2019. It will be easier for us later if we
+# split the date index instead of the dataframe directly.
+idx_train, idx_test = train_test_split(
+    y.index, test_size=12 * 4, shuffle=False,
+)
+X_train, X_test = X.loc[idx_train, :], X.loc[idx_test, :]
+y_train, y_test = y.loc[idx_train], y.loc[idx_test]
+
+# Fit trend model
+model = LinearRegression(fit_intercept=False)
+model.fit(X_train, y_train)
+
+# Make predictions
+y_fit = pd.DataFrame(
+    model.predict(X_train),
+    index=y_train.index,
+    columns=y_train.columns,
+)
+y_pred = pd.DataFrame(
+    model.predict(X_test),
+    index=y_test.index,
+    columns=y_test.columns,
+)
+
+# Plot
+axs = y_train.plot(color='0.25', subplots=True, sharex=True)
+axs = y_test.plot(color='0.25', subplots=True, sharex=True, ax=axs)
+axs = y_fit.plot(color='C0', subplots=True, sharex=True, ax=axs)
+axs = y_pred.plot(color='C3', subplots=True, sharex=True, ax=axs)
+for ax in axs: ax.legend([])
+_ = plt.suptitle("Trends")
+```
+{% asset_img ts_38.png %}
+
+虽然线性回归算法能够进行多输出回归，但`XGBoost`算法却不能。为了使用`XGBoost`同时预测多个序列，我们会将这些序列从宽格式（每列一个时间序列）转换为长格式（序列按行中的类别索引）。
+```python
+# The `stack` method converts column labels to row labels, pivoting from wide format to long
+X = retail.stack()  # pivot dataset wide to long
+display(X.head())
+y = X.pop('Sales')  # grab target series
+```
+结果输出为：
+```bash
+		Sales
+Month	Industries	
+1992-01-01	BuildingMaterials	8964
+FoodAndBeverage	29589
+1992-02-01	BuildingMaterials	9023
+FoodAndBeverage	28570
+1992-03-01	BuildingMaterials	10608
+```
+为了让`XGBoost`能够学习区分我们的两个时间序列，我们将“行业”的行标签转换为带有标签编码的分类特征。我们还将通过从时间索引中提取月份数字来创建年度季节性特征。
+```python
+
+# Pivot wide to long (stack) and convert DataFrame to Series (squeeze)
+y_fit = y_fit.stack().squeeze()    # trend from training set
+y_pred = y_pred.stack().squeeze()  # trend from test set
+
+# Create residuals (the collection of detrended series) from the training set
+y_resid = y_train - y_fit
+
+# Train XGBoost on the residuals
+xgb = XGBRegressor()
+xgb.fit(X_train, y_resid)
+
+# Add the predicted residuals onto the predicted trends
+y_fit_boosted = xgb.predict(X_train) + y_fit
+y_pred_boosted = xgb.predict(X_test) + y_pred
+```
+拟合效果看起来相当不错，但我们可以看到`XGBoost`学到的趋势与线性回归学到的趋势一样好，但是，`XGBoost`无法弥补“`BuildingMaterials`”中拟合不佳的趋势系列。
+```python
+axs = y_train.unstack(['Industries']).plot(
+    color='0.25', figsize=(11, 5), subplots=True, sharex=True,
+    title=['BuildingMaterials', 'FoodAndBeverage'],
+)
+axs = y_test.unstack(['Industries']).plot(
+    color='0.25', subplots=True, sharex=True, ax=axs,
+)
+axs = y_fit_boosted.unstack(['Industries']).plot(
+    color='C0', subplots=True, sharex=True, ax=axs,
+)
+axs = y_pred_boosted.unstack(['Industries']).plot(
+    color='C3', subplots=True, sharex=True, ax=axs,
+)
+
+for ax in axs: ax.legend([])
+```
+{% asset_img ts_39.png %}
