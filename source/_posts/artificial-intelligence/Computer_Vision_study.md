@@ -334,3 +334,125 @@ plt.show()
 
 我们看到了卷积网络用于执行特征提取的前两个步骤：使用`Conv2D`层进行过滤并使用`relu`激活进行检测。
 
+#### 最大池化（Maximum Pooling）
+
+##### 介绍
+
+我们开始讨论卷积网络中的**基础**如何执行特征提取。我们了解了此过程中的前两个操作如何在具有`relu`激活的`Conv2D`层中发生。在本课中，我们将了解此序列中的第三个（也是最后一个）操作：**使用最大池进行压缩**，这在`Keras`中由`MaxPool2D`层完成。
+
+##### 使用最大池化进行压缩
+
+在我们之前的模型中添加压缩步骤，将得到：
+```python
+from tensorflow import keras
+from tensorflow.keras import layers
+
+model = keras.Sequential([
+    layers.Conv2D(filters=64, kernel_size=3), # activation is None
+    layers.MaxPool2D(pool_size=2),
+    # More layers follow
+])
+```
+`MaxPool2D`层与`Conv2D`层非常相似，不同之处在于它使用简单的最大值函数而不是内核，其中`pool_size`参数类似于`kernel_size`。然而，`MaxPool2D`层不像其内核中的卷积层那样具有任何可训练权重。请记住，**`MaxPool2D`是压缩步骤**。
+{% note warning %}
+**注意**，应用`ReLU`函数（检测）后，特征图最终会出现大量“**死区**”，即仅包含`0`的大区域（图像中的黑色区域）。必须在整个网络中携带这些`0`激活会增加模型的大小，而不会添加太多有用的信息。相反，我们希望压缩特征图仅保留最有用的部分——**特征本身**。**这实际上就是最大池化的作用**。最大池化采用原始特征图中的**激活补丁**，并将其替换为该补丁中的最大激活值。
+{% endnote %}
+{% asset_img cv_14.png %}
+
+在`ReLU`激活后应用时，它具有“**强化**”特征的效果。**池化步骤将活动像素的比例增加到零像素**。
+
+##### 举例 - 应用最大池化
+
+```python
+import tensorflow as tf
+import matplotlib.pyplot as plt
+import warnings
+
+plt.rc('figure', autolayout=True)
+plt.rc('axes', labelweight='bold', labelsize='large',
+       titleweight='bold', titlesize=18, titlepad=10)
+plt.rc('image', cmap='magma')
+warnings.filterwarnings("ignore") # to clean up output cells
+
+# Read image
+image_path = '../input/computer-vision-resources/car_feature.jpg'
+image = tf.io.read_file(image_path)
+image = tf.io.decode_jpeg(image)
+
+# Define kernel
+kernel = tf.constant([
+    [-1, -1, -1],
+    [-1,  8, -1],
+    [-1, -1, -1],
+], dtype=tf.float32)
+
+# Reformat for batch compatibility.
+image = tf.image.convert_image_dtype(image, dtype=tf.float32)
+image = tf.expand_dims(image, axis=0)
+kernel = tf.reshape(kernel, [*kernel.shape, 1, 1])
+
+# Filter step
+image_filter = tf.nn.conv2d(
+    input=image,
+    filters=kernel,
+    # we'll talk about these two in the next lesson!
+    strides=1,
+    padding='SAME'
+)
+
+# Detect step
+image_detect = tf.nn.relu(image_filter)
+
+# Show what we have so far
+plt.figure(figsize=(12, 6))
+plt.subplot(131)
+plt.imshow(tf.squeeze(image), cmap='gray')
+plt.axis('off')
+plt.title('Input')
+plt.subplot(132)
+plt.imshow(tf.squeeze(image_filter))
+plt.axis('off')
+plt.title('Filter')
+plt.subplot(133)
+plt.imshow(tf.squeeze(image_detect))
+plt.axis('off')
+plt.title('Detect')
+plt.show();
+```
+{% asset_img cv_15.png %}
+
+我们将使用`tf.nn`中的另一个函数`tf.nn.pool`来应用池化步骤。这是一个`Python`函数，与模型构建时使用的`MaxPool2D`层执行相同的操作，但作为一个简单的函数，更容易直接使用。
+```python
+import tensorflow as tf
+
+image_condense = tf.nn.pool(
+    input=image_detect, # image in the Detect step above
+    window_shape=(2, 2),
+    pooling_type='MAX',
+    # we'll see what these do in the next lesson!
+    strides=(2, 2),
+    padding='SAME',
+)
+
+plt.figure(figsize=(6, 6))
+plt.imshow(tf.squeeze(image_condense))
+plt.axis('off')
+plt.show();
+```
+{% asset_img cv_16.png %}
+
+很酷！希望您能够看到**池化步骤如何通过压缩最活跃像素周围的图像来增强特征**。
+
+##### 平移不变性（Translation Invariance）
+
+我们称零像素“不重要”。这是否意味着它们根本不携带任何信息？事实上，零像素携带位置信息。空白区域仍将特征定位在图像内。当`MaxPool2D`删除其中一些像素时，它会删除特征图中的一些位置信息。这赋予了卷积网络一种称为平移不变性的属性。这意味着具有最大池化的卷积网络往往不会根据特征在图像中的位置来区分特征。（“**平移**”是一个数学词，指的是在不旋转某物或改变其形状或大小的情况下改变某物的位置。）观察当我们重复将最大池化应用于以下特征图时会发生什么。
+{% asset_img cv_17.png %}
+
+经过反复池化后，原始图像中的两个点变得无法区分。换句话说，池化会破坏它们的一些位置信息。由于网络无法再在特征图中区分它们，因此它也无法在原始图像中区分它们：它已经变得对位置差异具有不变性。事实上，池化仅在网络中的小距离上产生平移不变性，就像图像中的两个点一样。开始时相距甚远的特征在合并后仍将保持明显；仅丢失一些位置信息，但不是全部。
+{% asset_img cv_18.png %}
+
+这种特征位置微小差异的不变性对于图像分类器来说是一个很好的特性。仅仅由于视角或取景的差异，相同类型的特征可能位于原始图像的不同部分，但我们仍然希望分类器能够识别它们是相同的。由于这种不变性内置于网络中，因此我们可以使用更少的数据进行训练：我们不再需要教它忽略这种差异。这使得卷积网络比只有密集层的网络具有更大的效率优势。
+
+##### 结论
+
+我们学习了特征提取的最后一步：使用`MaxPool2D`进行压缩。
