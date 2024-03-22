@@ -167,3 +167,170 @@ history_frame.loc[:, ['binary_accuracy', 'val_binary_accuracy']].plot()
 ##### 结论
 
 我们了解了卷积网络分类器的结构：**在执行特征提取的基础之上充当分类器的头部**。本质上，头部是一个普通的分类器。对于特征，它使用基础提取的那些特征。这是卷积分类器背后的基本思想：我们可以将执行特征工程的单元附加到分类器本身。这是深度神经网络相对于传统机器学习模型的一大优势：给定正确的网络结构，深度神经网络可以学习如何设计解决问题所需的特征。
+
+#### 卷积 & ReLU激活函数（Convolution & ReLU）
+
+##### 介绍
+
+我们看到卷积分类器有两部分：**卷积基础**和**密集层头部**。我们了解到，**卷积基础**的工作是从图像中提取视觉特征，然后头部将使用这些特征对图像进行分类。我们接下来将学习在卷积图像分类器的基础上找到的两种最重要的层类型。这些是具有`ReLU`激活的**卷积层**和**最大池化层**。如何通过将这些层组合成执行特征提取的块来设计自己的卷积网络。
+
+##### 特征提取
+
+在详细介绍卷积之前，我们先讨论一下网络中这些层的用途。我们将了解如何使用这三种操作（**卷积**、**ReLU**和**最大池化**）来实现**特征提取**的过程。
+- **过滤**图像的特定特征（卷积）。
+- **检测**滤波图像中的该特征 (ReLU)。
+- **压缩**图像以增强特征（最大池化）。
+
+下图说明了此过程。您可以看到这三个操作如何能够隔离原始图像的某些特定特征。
+{% asset_img cv_6.png %}
+
+通常，网络将对单个图像并行执行多次提取。在现代卷积网络中，基础的最后一层产生`1000`多个独特的视觉特征并不罕见。
+```python
+import numpy as np
+from itertools import product
+
+def show_kernel(kernel, label=True, digits=None, text_size=28):
+    # Format kernel
+    kernel = np.array(kernel)
+    if digits is not None:
+        kernel = kernel.round(digits)
+
+    # Plot kernel
+    cmap = plt.get_cmap('Blues_r')
+    plt.imshow(kernel, cmap=cmap)
+    rows, cols = kernel.shape
+    thresh = (kernel.max()+kernel.min())/2
+    # Optionally, add value labels
+    if label:
+        for i, j in product(range(rows), range(cols)):
+            val = kernel[i, j]
+            color = cmap(0) if val > thresh else cmap(255)
+            plt.text(j, i, val, 
+                     color=color, size=text_size,
+                     horizontalalignment='center', verticalalignment='center')
+    plt.xticks([])
+    plt.yticks([])
+```
+##### 卷积过滤
+
+卷积层执行过滤步骤。您可以在`Keras`模型中定义一个卷积层，如下所示：
+```python
+import tensorflow as tf
+import keras
+from keras import layers, callbacks
+
+model = keras.Sequential([
+    layers.Conv2D(filters=64, kernel_size=3), # activation is None
+    # More layers follow
+])
+```
+我们可以通过查看这些参数与层的权重和激活的关系来理解这些参数。
+###### 权重（Weights）
+
+卷积网络在训练期间学习的权重主要包含在其卷积层中。这些权重我们称为**内核**。我们可以将它们表示为小数组：内核通过扫描图像并生成像素值的加权和来进行操作。通过这种方式，内核的作用有点像偏振透镜，强调或弱化某些信息模式。
+{% asset_img cv_7.png %}
+
+内核定义卷积层如何连接到后续层。上面的内核将输出中的每个神经元连接到输入中的九个神经元。通过使用`kernel_size`设置内核的尺寸，您可以告诉卷积网络以何种方式形成这些连接。大多数情况下，内核将具有奇数维度-例如`kernel_size=(3, 3)`或`(5, 5)`-因此单个像素位于中心，但这不是必需的。卷积层中的内核决定了它创建的特征类型。在训练过程中，卷积网络尝试解决分类问题所需的特征。这意味着找到其内核的最佳值。
+
+###### 激活（Activations）
+
+网络中的激活我们称为**特征图**。它们是我们对图像应用滤镜时的结果；它们包含内核提取的视觉特征。以下是一些内核及其生成的特征图。
+{% asset_img cv_8.png %}
+
+从内核中的数字模式，您可以看出它创建的特征图的类型。一般来说，卷积在其输入中强调的内容将与内核中正数的形状相匹配。上面的左侧和中间的内核都会过滤水平形状。使用过滤器参数，您可以告诉卷积层您希望它创建多少个特征图作为输出。
+
+##### 使用ReLU进行检测
+
+过滤后，特征图通过**激活函数**。**整流器函数**如下图：
+{% asset_img cv_9.png %}
+
+连接有整流器的神经元称为**整流线性单元**。因此，我们也可以将整流函数称为**ReLU激活函数**，或者称为`ReLU`函数。`ReLU`激活可以在其自己的激活层中定义，但大多数情况下您只需将其包含为`Conv2D`的激活函数。
+```python
+model = keras.Sequential([
+    layers.Conv2D(filters=64, kernel_size=3, activation='relu')
+    # More layers follow
+])
+```
+您可以将激活函数视为根据某种重要性度量对像素值进行评分。`ReLU`激活表明负值并不重要，因此将它们设置为`0`。这是`ReLU`应用了上面的特征图。请注意它如何成功隔离特征。
+{% asset_img cv_10.png %}
+
+与其他激活函数一样，`ReLU`函数是非线性的。本质上，这意味着网络中所有层的总效果与仅将效果加在一起所获得的效果不同——这与仅使用单个层所能实现的效果相同。非线性确保特征在深入网络时以有趣的方式组合。
+
+##### 举例 - 应用卷积和ReLU
+
+在这个例子中，我们将自己进行提取，以更好地理解卷积网络在“幕后”所做的事情。这是我们将在本示例中使用的图像：
+```python
+import tensorflow as tf
+import matplotlib.pyplot as plt
+
+plt.rc('figure', autolayout=True)
+plt.rc('axes', labelweight='bold', labelsize='large',
+       titleweight='bold', titlesize=18, titlepad=10)
+plt.rc('image', cmap='magma')
+
+image_path = '../input/computer-vision-resources/car_feature.jpg'
+image = tf.io.read_file(image_path)
+image = tf.io.decode_jpeg(image)
+
+plt.figure(figsize=(6, 6))
+plt.imshow(tf.squeeze(image), cmap='gray')
+plt.axis('off')
+plt.show();
+```
+对于过滤步骤，我们将定义一个内核，然后将其与卷积一起应用。本例中的内核是“**边缘检测**”内核。您可以使用`tf.constant`定义它，就像在`Numpy`中使用`np.array`定义数组一样。这将创建`TensorFlow`使用的张量。
+```python
+import tensorflow as tf
+
+kernel = tf.constant([
+    [-1, -1, -1],
+    [-1,  8, -1],
+    [-1, -1, -1],
+])
+
+plt.figure(figsize=(3, 3))
+show_kernel(kernel)
+```
+{% asset_img cv_11.png %}
+
+`TensorFlow`在其`tf.nn`模块中包含神经网络执行的许多常见操作。我们将使用的两个是`conv2d`和`relu`。这些只是`Keras`层的函数版本。下一个隐藏单元会进行一些重新格式化，以使内容与`TensorFlow`兼容。
+```python
+# Reformat for batch compatibility.
+image = tf.image.convert_image_dtype(image, dtype=tf.float32)
+image = tf.expand_dims(image, axis=0)
+kernel = tf.reshape(kernel, [*kernel.shape, 1, 1])
+kernel = tf.cast(kernel, dtype=tf.float32)
+```
+现在让我们应用我们的内核，看看会发生什么。
+```python
+image_filter = tf.nn.conv2d(
+    input=image,
+    filters=kernel,
+    # we'll talk about these two in lesson 4!
+    strides=1,
+    padding='SAME',
+)
+
+plt.figure(figsize=(6, 6))
+plt.imshow(tf.squeeze(image_filter))
+plt.axis('off')
+plt.show()
+```
+{% asset_img cv_12.png %}
+
+接下来是使用`ReLU`函数的检测步骤。该函数比卷积简单得多，因为它不需要设置任何参数。
+```python
+image_detect = tf.nn.relu(image_filter)
+
+plt.figure(figsize=(6, 6))
+plt.imshow(tf.squeeze(image_detect))
+plt.axis('off')
+plt.show()
+```
+{% asset_img cv_13.png %}
+
+现在我们已经创建了一个特征图！像这样的图像是大脑用来解决分类问题的。我们可以想象，某些特征可能更具有汽车特征，而其他功能则更具有卡车特征。训练期间卷积网络的任务是创建可以找到这些特征的内核。
+
+##### 结论
+
+我们看到了卷积网络用于执行特征提取的前两个步骤：使用`Conv2D`层进行过滤并使用`relu`激活进行检测。
+
