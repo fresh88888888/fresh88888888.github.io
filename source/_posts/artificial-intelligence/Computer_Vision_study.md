@@ -456,3 +456,210 @@ plt.show();
 ##### 结论
 
 我们学习了特征提取的最后一步：使用`MaxPool2D`进行压缩。
+
+#### 滑动窗口（The Sliding Window）
+
+##### 介绍
+
+我们学习了从图像中进行特征提取的三种操作：
+- 带卷积层的滤波器。
+- 使用`ReLU`激活进行检测。
+- 使用最大池化层进行压缩。
+
+卷积和池化操作有一个共同的特点：**它们都是在滑动窗口上执行的**。对于卷积，这个“窗口”由内核的尺寸（参数`kernel_size`）给出。对于池化，它是池化窗口，由`pool_size`给出。
+{% asset_img cv_19.gif %}
+
+还有两个影响卷积层和池化层的附加参数——**窗口的步幅以及是否在图像边缘使用填充**。`strides`参数表示窗口每一步应移动多远，`padding`参数描述我们如何处理输入边缘的像素。有了这两个参数，定义两层就变成了：
+```python
+import numpy as np
+from itertools import product
+from skimage import draw, transform
+from tensorflow import keras
+from tensorflow.keras import layers
+
+def circle(size, val=None, r_shrink=0):
+    circle = np.zeros([size[0]+1, size[1]+1])
+    rr, cc = draw.circle_perimeter(
+        size[0]//2, size[1]//2,
+        radius=size[0]//2 - r_shrink,
+        shape=[size[0]+1, size[1]+1],
+    )
+    if val is None:
+        circle[rr, cc] = np.random.uniform(size=circle.shape)[rr, cc]
+    else:
+        circle[rr, cc] = val
+    circle = transform.resize(circle, size, order=0)
+    return circle
+
+def show_kernel(kernel, label=True, digits=None, text_size=28):
+    # Format kernel
+    kernel = np.array(kernel)
+    if digits is not None:
+        kernel = kernel.round(digits)
+
+    # Plot kernel
+    cmap = plt.get_cmap('Blues_r')
+    plt.imshow(kernel, cmap=cmap)
+    rows, cols = kernel.shape
+    thresh = (kernel.max()+kernel.min())/2
+    # Optionally, add value labels
+    if label:
+        for i, j in product(range(rows), range(cols)):
+            val = kernel[i, j]
+            color = cmap(0) if val > thresh else cmap(255)
+            plt.text(j, i, val, 
+                     color=color, size=text_size,
+                     horizontalalignment='center', verticalalignment='center')
+    plt.xticks([])
+    plt.yticks([])
+
+def show_extraction(image,
+                    kernel,
+                    conv_stride=1,
+                    conv_padding='valid',
+                    activation='relu',
+                    pool_size=2,
+                    pool_stride=2,
+                    pool_padding='same',
+                    figsize=(10, 10),
+                    subplot_shape=(2, 2),
+                    ops=['Input', 'Filter', 'Detect', 'Condense'],
+                    gamma=1.0):
+    # Create Layers
+    model = tf.keras.Sequential([
+                    tf.keras.layers.Conv2D(
+                        filters=1,
+                        kernel_size=kernel.shape,
+                        strides=conv_stride,
+                        padding=conv_padding,
+                        use_bias=False,
+                        input_shape=image.shape,
+                    ),
+                    tf.keras.layers.Activation(activation),
+                    tf.keras.layers.MaxPool2D(
+                        pool_size=pool_size,
+                        strides=pool_stride,
+                        padding=pool_padding,
+                    ),
+                   ])
+
+    layer_filter, layer_detect, layer_condense = model.layers
+    kernel = tf.reshape(kernel, [*kernel.shape, 1, 1])
+    layer_filter.set_weights([kernel])
+
+    # Format for TF
+    image = tf.expand_dims(image, axis=0)
+    image = tf.image.convert_image_dtype(image, dtype=tf.float32) 
+    
+    # Extract Feature
+    image_filter = layer_filter(image)
+    image_detect = layer_detect(image_filter)
+    image_condense = layer_condense(image_detect)
+    
+    images = {}
+    if 'Input' in ops:
+        images.update({'Input': (image, 1.0)})
+    if 'Filter' in ops:
+        images.update({'Filter': (image_filter, 1.0)})
+    if 'Detect' in ops:
+        images.update({'Detect': (image_detect, gamma)})
+    if 'Condense' in ops:
+        images.update({'Condense': (image_condense, gamma)})
+    
+    # Plot
+    plt.figure(figsize=figsize)
+    for i, title in enumerate(ops):
+        image, gamma = images[title]
+        plt.subplot(*subplot_shape, i+1)
+        plt.imshow(tf.image.adjust_gamma(tf.squeeze(image), gamma))
+        plt.axis('off')
+        plt.title(title)
+
+model = keras.Sequential([
+    layers.Conv2D(filters=64,
+                  kernel_size=3,
+                  strides=1,
+                  padding='same',
+                  activation='relu'),
+    layers.MaxPool2D(pool_size=2,
+                     strides=1,
+                     padding='same')
+    # More layers follow
+])
+```
+##### Stride
+
+窗口每一步移动的距离称为**步幅**。我们需要指定图像两个维度的步幅：一种用于从左到右移动，一种用于从上到下移动。该动画显示`strides=(2, 2)`，每步移动`2`个像素。
+{% asset_img cv_19.gif %}
+
+**步幅**有什么作用？每当任一方向的步幅大于`1`时，滑动窗口都会在每一步跳过输入中的一些像素。因为我们希望使用高质量的特征进行分类，所以卷积层通常具有步长`=(1, 1)`。增加步幅意味着我们会错过摘要中潜在的有价值的信息。然而，最大池化层的步幅值几乎总是大于`1`，如`(2, 2)`或`(3, 3)`，但不能大于窗口本身。最后需要注意的是，当两个方向的步幅值相同时，只需设置该数字即可；例如，您可以使用`strides=2`来代替`strides=(2, 2)`进行参数设置。
+
+##### Padding
+
+在执行滑动窗口计算时，存在一个问题：在输入的边界处做什么。完全留在输入图像内部意味着窗口永远不会像输入中的每个其他像素一样正好位于这些边界像素上方。由于我们没有以完全相同的方式对待所有像素，是否会出现问题？卷积对这些边界值的作用由其填充参数决定。在`TensorFlow`中，您有两种选择：`padding='same'`或`padding='valid'`。每一个都需要权衡。当我们设置 `padding='valid'`时，卷积窗口将完全保留在输入内部。缺点是输出会缩小（丢失像素），并且对于较大的内核，缩小得更多。这将限制网络可以包含的层数，特别是当输入尺寸较小时。另一种方法是使用`padding='same'`。这里的技巧是在输入的边界周围填充`0`，使用足够的`0`使输出的大小与输入的大小相同。然而，这可以具有削弱边界处像素的影响的效果。下面的动画显示了具有“相同”填充的滑动窗口。
+{% asset_img cv_20.gif %}
+
+我们一直在研究的`VGG`模型对其所有卷积层使用相同的填充。大多数现代卷积网络都会使用两者的某种组合。
+
+##### 举例 - 探索滑动窗口
+
+为了更好地理解滑动窗口参数的影响，它可以帮助观察低分辨率图像上的特征提取，以便我们可以看到各个像素。让我们看一个简单的圆。
+```python
+import tensorflow as tf
+import matplotlib.pyplot as plt
+
+plt.rc('figure', autolayout=True)
+plt.rc('axes', labelweight='bold', labelsize='large',
+       titleweight='bold', titlesize=18, titlepad=10)
+plt.rc('image', cmap='magma')
+
+image = circle([64, 64], val=1.0, r_shrink=3)
+image = tf.reshape(image, [*image.shape, 1])
+# Bottom sobel
+kernel = tf.constant(
+    [[-1, -2, -1],
+     [0, 0, 0],
+     [1, 2, 1]],
+)
+
+show_kernel(kernel)
+```
+{% asset_img cv_21.png %}
+
+`VGG`架构相当简单。它使用步幅为`1`的卷积、最大池化`2 × 2`窗口和步幅为`2`。我们在`Visiontools`程序脚本中包含了一个函数，该函数将向我们显示所有步骤。
+```python
+show_extraction(
+    image, kernel,
+
+    # Window parameters
+    conv_stride=1,
+    pool_size=2,
+    pool_stride=2,
+
+    subplot_shape=(1, 4),
+    figsize=(14, 6),
+)
+```
+{% asset_img cv_22.png %}
+
+这效果非常好！内核被设计用来检测水平线，我们可以看到在生成的特征图中，输入的更多水平部分最终具有最大的激活。如果我们将卷积的步长改为`3`会发生什么？
+```python
+show_extraction(
+    image, kernel,
+
+    # Window parameters
+    conv_stride=3,
+    pool_size=2,
+    pool_stride=2,
+
+    subplot_shape=(1, 4),
+    figsize=(14, 6),    
+)
+```
+{% asset_img cv_23.png %}
+
+这似乎降低了提取的特征的质量。我们的输入圆相当“精细”，只有`1`像素宽。步长为`3`的卷积太粗糙，无法从中生成良好的特征图。有时，模型会在其初始层中使用步幅较大的卷积。这通常也会与更大的内核结合使用。例如，`ResNet50`模型使用`7×7`第一层步幅为`2`的内核。这似乎加速了大规模特征的生成，而无需牺牲输入中的太多信息。
+
+##### 结论
+
+我们研究了**卷积和池化**共有的特征计算：**滑动窗口和影响其在这些层中行为的参数**。 这种窗口计算风格贡献了卷积网络的大部分特征，并且是其功能的重要组成部分。
