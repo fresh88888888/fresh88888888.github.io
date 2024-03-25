@@ -848,3 +848,142 @@ history_frame.loc[:, ['binary_accuracy', 'val_binary_accuracy']].plot()
 ##### 结论
 
 您了解了如何构建由许多**卷积块**组成并能够进行复杂特征工程的**自定义卷积网络**。
+
+#### 数据增强（Data Augmentation）
+
+##### 介绍
+
+现在您已经学习了卷积分类器的基础知识。接下来，您将学习一个可以增强图像分类器的技巧：它称为**数据增强**。
+
+##### 假数据的用途
+
+提高机器学习模型性能的最佳方法是使用更多数据对其进行训练。模型学习的例子越多，它就越能够识别图像中哪些差异重要，哪些差异不重要。更多数据有助于模型更好地泛化。获取更多数据的一种简单方法是使用已有的数据。如果我们能够以保留类别的方式转换数据集中的图像，我们就可以教我们的分类器忽略这些类型的转换。例如，无论汽车在照片中朝左还是朝右，都不会改变它是汽车而不是卡车的事实。因此，如果我们用翻转图像来增强训练数据，我们的分类器将了解到“左或右”是它应该忽略的差异。这就是数据增强背后的整个想法：**添加一些看起来相当像真实数据的额外假数据，你的分类器将会得到改进**。
+
+##### 使用数据增强
+
+通常，在扩充数据集时会使用多种转换。这些可能包括旋转图像、调整颜色或对比度、扭曲图像或许多其他通常组合应用的操作。以下是单个图像可能被转换的不同方式的示例。
+{% asset_img cv_27.png %}
+
+**数据增强**通常是在线完成的，这意味着图像被输入网络进行训练。回想一下，训练通常是在小批量数据上完成的。这就是使用数据增强时一批`16`张图像的样子。
+{% asset_img cv_28.png %}
+
+每次在训练过程中使用图像时，都会应用新的随机变换。这样，模型看到的东西总是与之前看到的有所不同。训练数据中的这种额外差异有助于模型处理新数据。但重要的是要记住，并非所有转换都对给定问题有用。最重要的是，无论您使用什么转换，都不应该混淆这些类。例如，如果您正在训练数字识别器，旋转图像会混淆“9”和“6”。最后，寻找良好增强的最佳方法与大多数机器学习问题相同。
+
+##### 第1步 - 加载数据
+```python
+import os, warnings
+import matplotlib.pyplot as plt
+from matplotlib import gridspec
+
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.preprocessing import image_dataset_from_directory
+
+# Reproducability
+def set_seed(seed=31415):
+    np.random.seed(seed)
+    tf.random.set_seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    #os.environ['TF_DETERMINISTIC_OPS'] = '1'
+set_seed()
+
+# Set Matplotlib defaults
+plt.rc('figure', autolayout=True)
+plt.rc('axes', labelweight='bold', labelsize='large',
+       titleweight='bold', titlesize=18, titlepad=10)
+plt.rc('image', cmap='magma')
+warnings.filterwarnings("ignore") # to clean up output cells
+
+# Load training and validation sets
+ds_train_ = image_dataset_from_directory(
+    '../input/car-or-truck/train',
+    labels='inferred',
+    label_mode='binary',
+    image_size=[128, 128],
+    interpolation='nearest',
+    batch_size=64,
+    shuffle=True,
+)
+ds_valid_ = image_dataset_from_directory(
+    '../input/car-or-truck/valid',
+    labels='inferred',
+    label_mode='binary',
+    image_size=[128, 128],
+    interpolation='nearest',
+    batch_size=64,
+    shuffle=False,
+)
+
+# Data Pipeline
+def convert_to_float(image, label):
+    image = tf.image.convert_image_dtype(image, dtype=tf.float32)
+    return image, label
+
+AUTOTUNE = tf.data.experimental.AUTOTUNE
+ds_train = (
+    ds_train_
+    .map(convert_to_float)
+    .cache()
+    .prefetch(buffer_size=AUTOTUNE)
+)
+ds_valid = (
+    ds_valid_
+    .map(convert_to_float)
+    .cache()
+    .prefetch(buffer_size=AUTOTUNE)
+)
+```
+
+##### 第2步 - 定义模型
+
+为了说明增强的效果，我们只需添加几个简单的转换。
+```python
+from tensorflow import keras
+from tensorflow.keras import layers
+# these are a new feature in TF 2.2
+from tensorflow.keras.layers.experimental import preprocessing
+
+pretrained_base = tf.keras.models.load_model(
+    '../input/cv-course-models/cv-course-models/vgg16-pretrained-base',
+)
+pretrained_base.trainable = False
+
+model = keras.Sequential([
+    # Preprocessing
+    preprocessing.RandomFlip('horizontal'), # flip left-to-right
+    preprocessing.RandomContrast(0.5), # contrast change by up to 50%
+    # Base
+    pretrained_base,
+    # Head
+    layers.Flatten(),
+    layers.Dense(6, activation='relu'),
+    layers.Dense(1, activation='sigmoid'),
+])
+```
+##### 第3步 - 训练和评估
+
+```python
+import pandas as pd
+
+model.compile(
+    optimizer='adam',
+    loss='binary_crossentropy',
+    metrics=['binary_accuracy'],
+)
+
+history = model.fit(
+    ds_train,
+    validation_data=ds_valid,
+    epochs=30,
+    verbose=0,
+)
+
+history_frame = pd.DataFrame(history.history)
+
+history_frame.loc[:, ['loss', 'val_loss']].plot()
+history_frame.loc[:, ['binary_accuracy', 'val_binary_accuracy']].plot();
+```
+{% asset_img cv_29.png %}
+{% asset_img cv_30.png %}
+
+训练和验证曲线很快就出现了分歧，这表明**它可以从一些正则化中受益**。该模型的学习曲线能够保持更紧密的联系，并且我们在验证损失和准确性方面取得了一些适度的改进。这表明数据集确实受益于增强。
