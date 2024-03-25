@@ -663,3 +663,188 @@ show_extraction(
 ##### 结论
 
 我们研究了**卷积和池化**共有的特征计算：**滑动窗口和影响其在这些层中行为的参数**。 这种窗口计算风格贡献了卷积网络的大部分特征，并且是其功能的重要组成部分。
+
+#### 定制卷积网络
+
+我们了解了卷积网络如何通过三个操作来执行特征提取：**过滤、检测和压缩**。单轮特征提取只能从图像中提取相对简单的特征，例如简单的线条或对比度。这些对于解决大多数分类问题来说太简单了。相反，卷积网络将一遍又一遍地重复这种提取，以便特征随着它们深入网络而变得更加复杂和精致。
+
+##### 卷积块（Convolutional Blocks）
+
+它通过将它们传递到执行提取的长卷积块链来实现这一点。
+{% asset_img cv_24.png %}
+
+这些卷积块是`Conv2D`和`MaxPool2D`层的堆栈。
+{% asset_img cv_25.png %}
+
+每个块代表一轮提取，通过组合这些块，卷积网络可以组合和重新组合生成的特征，对它们进行增长和整形，以更好地适应当前的问题。现代卷积网络的深层结构使得这种复杂的特征工程成为可能，并在很大程度上保证了它们的卓越性能。
+
+##### 举例 - 设计一个 Convnet
+
+让我们看看如何定义能够设计复杂特征的**深度卷积网络**。在此例子中，我们将创建一个`Keras`序列模型，然后在我们的`Cars`数据集上对其进行训练。
+
+###### 第1步 - 加载数据
+
+```python
+# Imports
+import os, warnings
+import matplotlib.pyplot as plt
+from matplotlib import gridspec
+
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.preprocessing import image_dataset_from_directory
+
+# Reproducability
+def set_seed(seed=31415):
+    np.random.seed(seed)
+    tf.random.set_seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    os.environ['TF_DETERMINISTIC_OPS'] = '1'
+set_seed()
+
+# Set Matplotlib defaults
+plt.rc('figure', autolayout=True)
+plt.rc('axes', labelweight='bold', labelsize='large',
+       titleweight='bold', titlesize=18, titlepad=10)
+plt.rc('image', cmap='magma')
+warnings.filterwarnings("ignore") # to clean up output cells
+
+
+# Load training and validation sets
+ds_train_ = image_dataset_from_directory(
+    '../input/car-or-truck/train',
+    labels='inferred',
+    label_mode='binary',
+    image_size=[128, 128],
+    interpolation='nearest',
+    batch_size=64,
+    shuffle=True,
+)
+ds_valid_ = image_dataset_from_directory(
+    '../input/car-or-truck/valid',
+    labels='inferred',
+    label_mode='binary',
+    image_size=[128, 128],
+    interpolation='nearest',
+    batch_size=64,
+    shuffle=False,
+)
+
+# Data Pipeline
+def convert_to_float(image, label):
+    image = tf.image.convert_image_dtype(image, dtype=tf.float32)
+    return image, label
+
+AUTOTUNE = tf.data.experimental.AUTOTUNE
+ds_train = (
+    ds_train_
+    .map(convert_to_float)
+    .cache()
+    .prefetch(buffer_size=AUTOTUNE)
+)
+ds_valid = (
+    ds_valid_
+    .map(convert_to_float)
+    .cache()
+    .prefetch(buffer_size=AUTOTUNE)
+)
+```
+###### 第2步 - 定义模型
+
+这是我们将使用的模型的图表：
+{% asset_img cv_26.png %}
+
+现在我们将定义模型。了解我们的模型如何由三个`Conv2D`和`MaxPool2D`层块（基础层）和后面的`Dense`层头组成。只需填写适当的参数，我们就可以或多或少地将该图直接转换为`Keras`序列模型。
+```python
+from tensorflow import keras
+from tensorflow.keras import layers
+
+model = keras.Sequential([
+
+    # First Convolutional Block
+    layers.Conv2D(filters=32, kernel_size=5, activation="relu", padding='same',
+                  # give the input dimensions in the first layer
+                  # [height, width, color channels(RGB)]
+                  input_shape=[128, 128, 3]),
+    layers.MaxPool2D(),
+
+    # Second Convolutional Block
+    layers.Conv2D(filters=64, kernel_size=3, activation="relu", padding='same'),
+    layers.MaxPool2D(),
+
+    # Third Convolutional Block
+    layers.Conv2D(filters=128, kernel_size=3, activation="relu", padding='same'),
+    layers.MaxPool2D(),
+
+    # Classifier Head
+    layers.Flatten(),
+    layers.Dense(units=6, activation="relu"),
+    layers.Dense(units=1, activation="sigmoid"),
+])
+model.summary()
+```
+结果输出为：
+```bash
+Model: "sequential"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ conv2d (Conv2D)             (None, 128, 128, 32)      2432      
+                                                                 
+ max_pooling2d (MaxPooling2D  (None, 64, 64, 32)       0         
+ )                                                               
+                                                                 
+ conv2d_1 (Conv2D)           (None, 64, 64, 64)        18496     
+                                                                 
+ max_pooling2d_1 (MaxPooling  (None, 32, 32, 64)       0         
+ 2D)                                                             
+                                                                 
+ conv2d_2 (Conv2D)           (None, 32, 32, 128)       73856     
+                                                                 
+ max_pooling2d_2 (MaxPooling  (None, 16, 16, 128)      0         
+ 2D)                                                             
+                                                                 
+ flatten (Flatten)           (None, 32768)             0         
+                                                                 
+ dense (Dense)               (None, 6)                 196614    
+                                                                 
+ dense_1 (Dense)             (None, 1)                 7         
+                                                                 
+=================================================================
+Total params: 291,405
+Trainable params: 291,405
+Non-trainable params: 0
+_________________________________________________________________
+```
+{% note warning %}
+**请注意**，在此定义中，滤波器的数量如何逐块加倍：`32、64、128`。这是一种常见模式。由于`MaxPool2D`层正在减小特征图的大小，因此我们可以增加创建的数量。
+{% endnote %}
+
+###### 第3步 - 训练
+
+我们可以训练该模型：使用优化器以及适合二元分类的损失和指标对其进行编译。
+```python
+import pandas as pd
+
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(epsilon=0.01),
+    loss='binary_crossentropy',
+    metrics=['binary_accuracy']
+)
+
+history = model.fit(
+    ds_train,
+    validation_data=ds_valid,
+    epochs=40,
+    verbose=0,
+)
+
+history_frame = pd.DataFrame(history.history)
+history_frame.loc[:, ['loss', 'val_loss']].plot()
+history_frame.loc[:, ['binary_accuracy', 'val_binary_accuracy']].plot()
+```
+该模型比`VGG16`模型小得多——只有`3`个卷积层，而`VGG16`有`16`个。尽管如此，它还是能够很好地拟合这个数据集。我们仍然可以通过添加更多的卷积层来改进这个简单的模型，希望创建更好地适应数据集的特征。这就是我们将在练习中尝试的内容。
+
+##### 结论
+
+您了解了如何构建由许多**卷积块**组成并能够进行复杂特征工程的**自定义卷积网络**。
