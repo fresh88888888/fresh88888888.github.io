@@ -26,12 +26,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="介绍构建一个机器学习模型，根据图像对104种花朵进行分类。您将学习如何在Keras中构建图像分类器并在张量处理单元(TPU)上对其进行训练。 第1步：导入包我们首先导入几个Python包。 12345import math, re, osimport numpy as npimport tensorflow as tfprint(&quot;Tensorflow version &quot; +">
+    <meta name="description" content="介绍构建一个机器学习模型，根据图像对104种花朵进行分类。您将学习如何在Keras中构建图像分类器并在张量处理单元(TPU)上对其进行训练。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="基于机器学习 — 花瓣图像分类（TensorFlow &amp; Keras）">
 <meta property="og:url" content="https://fresh88888888.github.io/2024/03/25/artificial-intelligence/classify_flowers_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="介绍构建一个机器学习模型，根据图像对104种花朵进行分类。您将学习如何在Keras中构建图像分类器并在张量处理单元(TPU)上对其进行训练。 第1步：导入包我们首先导入几个Python包。 12345import math, re, osimport numpy as npimport tensorflow as tfprint(&quot;Tensorflow version &quot; +">
+<meta property="og:description" content="介绍构建一个机器学习模型，根据图像对104种花朵进行分类。您将学习如何在Keras中构建图像分类器并在张量处理单元(TPU)上对其进行训练。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/03/25/artificial-intelligence/classify_flowers_study/cf_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/03/25/artificial-intelligence/classify_flowers_study/cf_2.png">
@@ -172,7 +172,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">122</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -323,6 +323,7 @@
     
     
     <div class="post-body" itemprop="articleBody"><h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>构建一个机器学习模型，根据图像对<code>104</code>种花朵进行分类。您将学习如何在<code>Keras</code>中构建图像分类器并在张量处理单元(<code>TPU</code>)上对其进行训练。</p>
+<span id="more"></span>
 <h4 id="第1步：导入包"><a href="#第1步：导入包" class="headerlink" title="第1步：导入包"></a>第1步：导入包</h4><p>我们首先导入几个<code>Python</code>包。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math, re, os</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Tensorflow version &quot;</span> + tf.__version__)</span><br></pre></td></tr></table></figure>
 <h4 id="第2步：分布式策略"><a href="#第2步：分布式策略" class="headerlink" title="第2步：分布式策略"></a>第2步：分布式策略</h4><p><code>TPU</code>有八个不同的核心，每个核心都充当自己的加速器。（<code>TPU</code>有点像一台机器上有八个<code>GPU</code>）我们告诉<code>TensorFlow</code>如何通过分布式策略同时使用所有这些核心。</p>
@@ -433,6 +434,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2024/03/25/artificial-intelligence/transfer_learning_study/" rel="next" title="迁移学习（TensorFlow & Keras）">
+                  迁移学习（TensorFlow & Keras） <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
@@ -467,14 +471,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">529k</span>
+    <span title="站点总字数">531k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">29:23</span>
+    <span title="站点阅读时长">29:30</span>
   </span>
 </div>
 <div class="busuanzi-count">
