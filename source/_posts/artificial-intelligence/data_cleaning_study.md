@@ -147,3 +147,78 @@ subset_nfl_data.fillna(method='bfill', axis=0).fillna(0)
 ```
 结果输出为：
 {% asset_img dc_2.png %}
+
+#### 缩放和标准化
+
+##### 设置环境
+
+```python
+# modules we'll use
+import pandas as pd
+import numpy as np
+
+# for Box-Cox Transformation
+from scipy import stats
+
+# for min_max scaling
+from mlxtend.preprocessing import minmax_scaling
+
+# plotting modules
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# set seed for reproducibility
+np.random.seed(0)
+```
+##### 缩放与标准化：有什么区别？
+
+缩放和标准化之间很容易混淆的原因之一:是因为这些术语有时可以互换使用，而且更令人困惑的是，它们非常相似！在这两种情况下，您都会转换数值变量的值，以便转换后的数据点具有特定的有用属性。不同之处在于：
+- 在缩放中，您正在更改数据的范围。
+- 在标准化过程中，您正在改变数据分布的形状。
+
+让我们更深入地讨论一下每个选项。
+
+##### 缩放（Scaling）
+
+这意味着您正在转换数据，使其适合特定的范围，例如`0-100`或`0-1`。当您使用基于数据点距离度量的方法（例如支持向量机(`SVM`)或`k`最近邻(`KNN`)）时，您需要缩放数据。使用这些算法，任何数字特征中“`1`”的变化都被赋予相同的重要性。例如，您可能会查看某些产品的日元和美元价格。`1`美元大约值`100`日元，但如果你不调整价格，`SVM`或`KNN`等方法会认为`1`日元的价格差异与`1`美元的差异一样重要！这显然不符合我们对世界的直觉。使用货币，您可以在货币之间进行转换。但是如果您要查看身高和体重之类的数据怎么办？目前尚不完全清楚多少磅应等于一英寸（或多少公斤应等于一米）。通过缩放变量，您可以帮助在平等的基础上比较不同的变量。为了帮助巩固缩放的外观，让我们看一个虚构的示例。
+```python
+# generate 1000 data points randomly drawn from an exponential distribution
+original_data = np.random.exponential(size=1000)
+
+# mix-max scale the data between 0 and 1
+scaled_data = minmax_scaling(original_data, columns=[0])
+
+# plot both together to compare
+fig, ax = plt.subplots(1, 2, figsize=(15, 3))
+sns.histplot(original_data, ax=ax[0], kde=True, legend=False)
+ax[0].set_title("Original Data")
+sns.histplot(scaled_data, ax=ax[1], kde=True, legend=False)
+ax[1].set_title("Scaled data")
+plt.show()
+```
+{% asset_img dc_3.png %}
+
+{% note warning %}
+**请注意**，数据的形状没有改变，但范围不再是`0`到`8`，而是现在的范围是 `0`到`1`。
+{% endnote %}
+
+##### 标准化
+
+缩放只会改变数据的范围。**标准化**是一种更彻底的转变。标准化的目的是改变您的观察结果，以便将它们描述为**正态分布**。正态分布：也称为“**钟形曲线**”，这是一种特定的统计分布，其中大致相等的观测值落在平均值之上和之下，平均值和中位数相同，并且接近平均值的观测值较多。正态分布也称为**高斯分布**。一般来说，如果您要使用假设数据呈正态分布的机器学习或统计技术，则需要对数据进行标准化。其中的一些示例包括**线性判别分析**(`LDA`)和**高斯朴素贝叶斯**。（专业提示：名称中带有“高斯”的任何方法都可能假设正态分布。）我们在这里用来标准化的方法称为`Box-Cox`变换。让我们快速浏览一下一些数据的标准化是什么样子的：
+```python
+# normalize the exponential data with boxcox
+normalized_data = stats.boxcox(original_data)
+
+# plot both together to compare
+fig, ax=plt.subplots(1, 2, figsize=(15, 3))
+sns.histplot(original_data, ax=ax[0], kde=True, legend=False)
+ax[0].set_title("Original Data")
+sns.histplot(normalized_data[0], ax=ax[1], kde=True, legend=False)
+ax[1].set_title("Normalized data")
+plt.show()
+```
+{% asset_img dc_4.png %}
+
+{% note warning %}
+**请注意**，我们的数据形状已经改变。在**标准化**之前它几乎是**L形**的。但标准化后，它看起来更像**钟形的轮廓**（因此称为“**钟形曲线**”）。
+{% endnote %}
