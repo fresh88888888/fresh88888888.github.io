@@ -7,6 +7,7 @@ comments: false
 
 #### 一位技术架构师
 
+![](images/Computer_Vision.png)
 ![](images/Time_Series.png)
 ![](images/Deep_Learning.png)
 ![](images/Feature_Engineering.png)
