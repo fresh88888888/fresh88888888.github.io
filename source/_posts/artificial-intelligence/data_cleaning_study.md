@@ -202,7 +202,7 @@ plt.show()
 **请注意**，数据的形状没有改变，但范围不再是`0`到`8`，而是现在的范围是 `0`到`1`。
 {% endnote %}
 
-##### 标准化
+##### 标准化（Normalization）
 
 缩放只会改变数据的范围。**标准化**是一种更彻底的转变。标准化的目的是改变您的观察结果，以便将它们描述为**正态分布**。正态分布：也称为“**钟形曲线**”，这是一种特定的统计分布，其中大致相等的观测值落在平均值之上和之下，平均值和中位数相同，并且接近平均值的观测值较多。正态分布也称为**高斯分布**。一般来说，如果您要使用假设数据呈正态分布的机器学习或统计技术，则需要对数据进行标准化。其中的一些示例包括**线性判别分析**(`LDA`)和**高斯朴素贝叶斯**。（专业提示：名称中带有“高斯”的任何方法都可能假设正态分布。）我们在这里用来标准化的方法称为`Box-Cox`变换。让我们快速浏览一下一些数据的标准化是什么样子的：
 ```python
@@ -222,3 +222,114 @@ plt.show()
 {% note warning %}
 **请注意**，我们的数据形状已经改变。在**标准化**之前它几乎是**L形**的。但标准化后，它看起来更像**钟形的轮廓**（因此称为“**钟形曲线**”）。
 {% endnote %}
+
+#### 解析日期（Parsing Dates）
+
+##### 设置环境
+
+我们需要做的第一件事是加载我们将使用的库和数据集。我们将使用包含`2007`年至`2016`年期间发生的山体滑坡信息的数据集。在下面的练习中，您将把新技能应用于全球地震数据集。
+```python
+# modules we'll use
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import datetime
+
+# read in our data
+landslides = pd.read_csv("../input/landslide-events/catalog.csv")
+
+# set seed for reproducibility
+np.random.seed(0)
+```
+##### 检查日期列的数据类型
+
+我们首先查看数据的前五行。
+```python
+landslides.head()
+```
+我们将使用`landslides`数据框中的“日期”列。让我们确保它实际上看起来包含日期。
+```python
+# print the first few rows of the date column
+print(landslides['date'].head())
+```
+结果输出为：
+```bash
+0     3/2/07
+1    3/22/07
+2     4/6/07
+3    4/14/07
+4    4/15/07
+Name: date, dtype: object
+```
+请注意，在`head()`输出的底部，您可以看到该列的数据类型是“`object`”。`Pandas`使用“`object`”数据类型来存储各种类型的数据类型，但大多数情况下，当您看到数据类型为“`object`”的列时，它会包含字符串。如果您在此处查看`pandas dtype`文档，您会注意到还有一个特定的`datetime64 dtypes`。因为我们列的数据类型是`object`而不是`datetime64`，所以我们可以看出`Python`不知道该列包含日期。我们还可以只查看列的`dtype`，而不打印前几行：
+```python
+# check the data type of our date column
+landslides['date'].dtype
+```
+结果输出为：
+```bash
+dtype('O')
+```
+您可能需要检查`numpy`文档以将字母代码与对象的数据类型相匹配。“`O`”是“`object`”的代码，所以我们可以看到这两个方法给了我们相同的信息。
+
+##### 将日期列转换为日期时间
+
+现在，我们知道我们的日期列并未被视为日期，现在将其转换为日期了，以便将其视为日期。这称为“**解析日期**”，因为我们正在使用一个字符串并识别其组件部分。我们可以通过称为“`Strftime`指令”的指南来确定日期的格式，您可以在此链接中找到更多信息。基本思想是，您需要指出日期的哪些部分在哪里以及它们之间的标点符号是什么。日期有很多可能的部分，但最常见的是一天`％d`，一个月的`％m`，两位数的`％y`和四位数的`％y`。
+- `1/17/07`的格式为“`%m/%d/%y`”。
+- `17-1-2007`的格式为“`%d-%m-%Y`”。
+
+回顾一下山体滑坡数据集中“日期”列的头部，我们可以看到它的格式是“月/日/两位数年份”，因此我们可以使用与第一个示例相同的语法来解析我们的日期。
+```python
+# create a new column, date_parsed, with the parsed dates
+landslides['date_parsed'] = pd.to_datetime(landslides['date'], format="%m/%d/%y")
+```
+现在，当我检查新列的前几行时，我可以看到`dtype`是`datetime64`。我还可以看到我的日期已稍微重新排列，以便它们符合默认顺序日期时间对象（`year-month-day`）。
+```python
+# print the first few rows
+landslides['date_parsed'].head()
+```
+结果输出为：
+```bash
+0   2007-03-02
+1   2007-03-22
+2   2007-04-06
+3   2007-04-14
+4   2007-04-15
+Name: date_parsed, dtype: datetime64[ns]
+```
+现在我们的日期已正确解析，我们可以以有用的方式与它们交互。
+- 如果我遇到多种日期格式错误怎么办？虽然我们在此处指定日期格式，但有时当单列中有多种日期格式时，您会遇到错误。如果发生这种情况，您可以让`pandas`尝试推断正确的日期格式应该是什么。你可以这样做：`landslides['date_parsed'] = pd.to_datetime(landslides['Date'], infer_datetime_format=True)`。
+- 为什么不总是使用`infer_datetime_format = True`？不总是让`pandas`猜测时间格式有两个重要原因。首先，`pandas`并不总是能够找出正确的日期格式，特别是如果有人在数据输入方面发挥了创意。第二个是它比指定日期的确切格式慢得多。
+
+##### 选择该月的某一天
+
+现在我们有一列已解析的日期，我们可以提取信息，例如山体滑坡发生的月份中的哪一天。
+```python
+# get the day of the month from the date_parsed column
+day_of_month_landslides = landslides['date_parsed'].dt.day
+day_of_month_landslides.head()
+```
+结果输出为：
+```bash
+0     2.0
+1    22.0
+2     6.0
+3    14.0
+4    15.0
+Name: date_parsed, dtype: float64
+```
+如果我们尝试从原始“日期”列中获取相同的信息，我们会收到错误：`AttributeError`：只能将`.dt`访问器与类似日期时间的值一起使用。这是因为`dt.day`不知道如何处理数据类型为“`object`”的列。尽管我们的数据帧中有日期，但我们必须先解析它们，然后才能以有用的方式与它们交互。
+
+##### 绘制该月的日期来检查日期解析
+
+解析日期的最大危险之一是混淆月份和日期。`to_datetime()`函数确实有非常有用的错误消息，但仔细检查我们提取的月份中的日期是否有意义也没有什么坏处。为此，我们绘制该月各天的直方图。我们预计它的值在`1`到`31`之间，并且由于没有理由认为山体滑坡在每月的某些日子比其他日子更常见，因此分布相对均匀。（`31`日有所下降，因为并非所有月份都有`31`天。）让我们看看情况是否如此：
+```python
+# remove na's
+day_of_month_landslides = day_of_month_landslides.dropna()
+
+# plot the day of the month
+sns.distplot(day_of_month_landslides, kde=False, bins=31)
+```
+{% asset_img dc_5.png %}
+
+看起来我们确实正确解析了日期，并且这张图对我来说很有意义。
