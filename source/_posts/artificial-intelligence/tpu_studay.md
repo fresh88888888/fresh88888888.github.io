@@ -1,5 +1,5 @@
 ---
-title: TPU + 木薯叶病（Cassava Leaf Disease）
+title: TPU + 木薯叶病（Cassava Leaf Disease）分类
 date: 2024-03-25 16:06:32
 tags:
   - AI
