@@ -333,3 +333,119 @@ sns.distplot(day_of_month_landslides, kde=False, bins=31)
 {% asset_img dc_5.png %}
 
 看起来我们确实正确解析了日期，并且这张图对我来说很有意义。
+
+#### 字符编码（Character Encodings）
+
+##### 设置环境
+
+我们需要做的第一件事是加载我们将使用的库。
+```python
+# modules we'll use
+import pandas as pd
+import numpy as np
+
+# helpful character encoding module
+import charset_normalizer
+
+# set seed for reproducibility
+np.random.seed(0)
+```
+##### 什么是编码？
+
+**字符编码**是从原始二进制字节字符串（如下所示：`0110100001101001`）映射到构成人类可读文本的字符（如“`hi`”）的特定规则集。有许多不同的编码，如果您尝试使用与最初编写的编码不同的编码来读取文本，您最终会得到称为“`mojibake`”的乱序文本（如`mo-gee-bah-kay`）。这是`mojibake`的示例：`æ–‡å—åŒ–ã??`您也可能会遇到“未知”字符。当您用来读取字节字符串的编码中的特定字节和字符之间没有映射时，会打印一些内容，它们看起来像这样：`����������`如今，字符编码不匹配的情况比以前少见了，但这仍然是一个问题。有许多不同的字符编码，但您需要了解的主要一种是`UTF-8`。`UTF-8`是标准文本编码。所有`Python`代码均采用`UTF-8`格式，理想情况下，所有数据也应采用`UTF-8`格式。当内容不是`UTF-8`时，您就会遇到麻烦。
+```python
+# start with a string
+before = "This is the euro symbol: €"
+
+# check to see what datatype it is
+type(before)
+# str
+```
+另一种数据是字节数据类型，它是整数序列。您可以通过指定字符串的编码将字符串转换为字节：
+```python
+# encode it to a different encoding, replacing characters that raise errors
+after = before.encode("utf-8", errors="replace")
+
+# check the type
+type(after)
+# bytes
+```
+如果您查看`bytes`对象，您会发现它前面有一个`b`，后面可能还有一些文本。这是因为字节被打印出来，就好像它们是用`ASCII`编码的字符一样。（`ASCII`是一种较旧的字符编码，实际上不适用于编写英语以外的任何语言。）在这里您可以看到我们的欧元符号已被一些打印时看起来像“`\xe2\x82\xac`”的`mojibake`所取代 就像它是一个`ASCII`字符串一样。
+```python
+after
+# b'This is the euro symbol: \xe2\x82\xac'
+```
+当我们将字节转换回具有正确编码的字符串时，我们可以看到我们的文本都正确:
+```python
+# convert it back to utf-8
+print(after.decode("utf-8"))
+# This is the euro symbol: €
+```
+但是，当我们尝试使用不同的编码将字节映射到字符串时，我们会收到错误。这是因为我们尝试使用的编码不知道如何处理我们尝试传递的字节。您需要告诉`Python`字节字符串实际应该采用的编码。您可以将不同的编码视为录制音乐的不同方式。您可以将相同的音乐录制在`CD`、盒式磁带或`8`轨上。虽然音乐听起来或多或少相同，但您需要使用正确的设备来播放每种录音格式的音乐。正确的解码器就像磁带播放器或`CD`播放器。如果您尝试在`CD`播放器中播放盒式磁带，它就无法工作。
+```python
+# try to decode our bytes with the ascii encoding
+print(after.decode("ascii"))
+```
+错误输出：
+```bash
+---------------------------------------------------------------------------
+UnicodeDecodeError                        Traceback (most recent call last)
+/tmp/ipykernel_19/27547290.py in <module>
+      1 # try to decode our bytes with the ascii encoding
+----> 2 print(after.decode("ascii"))
+
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 25: ordinal not in range(128)
+```
+如果我们尝试使用错误的编码从字符串映射到字节，我们也会遇到麻烦。正如我之前所说，`Python 3`中的字符串默认为`UTF-8`，因此如果我们尝试像使用其他编码一样对待它们，就会产生问题。例如，如果我们尝试使用`encode()`将字符串转换为`ASCII`字节，我们可以要求字节为`ASCII`时的字节。不过，由于我们的文本不是`ASCII`格式的，因此会有一些它无法处理的字符。我们可以自动替换`ASCII`无法处理的字符。但是，如果我们这样做，任何非`ASCII`字符都将被替换为未知字符。然后，当我们将字节转换回字符串时，该字符将被替换为**未知字符**。这样做的危险之处在于，无法判断它应该是哪个。这意味着我们可能使我们的数据无法使用！
+```python
+# start with a string
+before = "This is the euro symbol: €"
+
+# encode it to a different encoding, replacing characters that raise errors
+after = before.encode("ascii", errors = "replace")
+
+# convert it back to utf-8
+print(after.decode("ascii"))
+
+# We've lost the original underlying byte string! It's been 
+# replaced with the underlying byte string for the unknown character :(
+```
+这很糟糕，我们想避免这样做！最好尽快将所有文本转换为`UTF-8`并保留该编码。
+
+##### 读取有编码问题的文件
+
+您遇到的大多数文件可能都是用`UTF-8`编码的。这是`Python`默认所期望的，所以大多数时候你不会遇到问题。但是，有时您会收到如下错误:
+
+{% note warning %}
+**请注意**，当我们尝试将`UTF-8`字节解码为`ASCII`时，我们得到了相同的`UnicodeDecodeError！`，这告诉我们这个文件实际上不是`UTF-8`。但我们不知道它实际上是什么编码。解决这个问题的一种方法是尝试测试一堆不同的字符编码，看看它们是否有效。不过，更好的方法是使用`charset_normalizer`模块来尝试自动猜测正确的编码是什么。它不能`100%`保证正确，但通常比仅仅尝试猜测要快。
+{% endnote %}
+我将只查看该文件的前一万个字节。这通常足以很好地猜测编码是什么，并且比尝试查看整个文件要快得多。（特别是对于大文件，这可能会非常慢。）仅查看文件第一部分的另一个原因是，通过查看错误消息，我们可以看到第一个问题是第`11`个字符。所以我们可能只需要查看文件的靠前一点的数据，就可以弄清楚发生了什么。
+```python
+# look at the first ten thousand bytes to guess the character encoding
+with open("../input/kickstarter-projects/ks-projects-201801.csv", 'rb') as rawdata:
+    result = charset_normalizer.detect(rawdata.read(10000))
+
+# check what the character encoding might be
+print(result)
+```
+结果输出为：
+```bash
+{'encoding': 'utf-8', 'language': 'English', 'confidence': 1.0}
+```
+因此`charset_normalizer`分析后的正确编码为“`Windows-1252`”的**置信度**为`73%`。让我们看看这是否正确：
+```python
+# read in the file with the encoding detected by charset_normalizer
+kickstarter_2016 = pd.read_csv("../input/kickstarter-projects/ks-projects-201612.csv", encoding='Windows-1252')
+
+# look at the first few lines
+kickstarter_2016.head()
+```
+看起来`charset_normalizer`分析是对的！该文件读入没有问题（尽管我们确实收到了有关数据类型的警告），并且当我们查看前几行时，它似乎没问题。如果`charset_normalizer`猜测的编码不正确怎么办？由于`charset_normalizer`基本上只是一个花哨的猜测器，有时它会猜测错误。您可以尝试的一件事是查看或多或少的文件，看看是否得到不同的结果，然后尝试。
+
+##### 使用UTF-8编码保存文件
+
+最后，一旦您经历了将文件转换为`UTF-8`的所有麻烦，您可能会希望保持这种状态。最简单的方法是使用`UTF-8`编码保存文件。好消息是，由于`UTF-8`是`Python`的标准编码，因此当您保存文件时，它会默认保存为`UTF-8`：
+```python
+# save our file (will be saved as UTF-8 by default!)
+kickstarter_2016.to_csv("ks-projects-201801-utf8.csv")
+```
