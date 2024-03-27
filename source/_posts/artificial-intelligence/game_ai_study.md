@@ -55,6 +55,7 @@ def agent_leftmost(obs, config):
     valid_moves = [col for col in range(config.columns) if obs.board[col] == 0]
     return valid_moves[0]
 ```
+
 那么，`obs`和`config`到底是什么？`obs`包含两条信息：
 - `obs.board`-游戏板（一个`Python`列表，每个网格位置有一个`item`）。
 - `obs.mark`-分配给代理的标记（`1`或`2`）。
@@ -62,7 +63,7 @@ def agent_leftmost(obs, config):
 `obs.board`是一个显示棋子位置的`Python`列表，其中第一行首先出现，然后是第二行，依此类推。我们使用`1`来跟踪`1`的棋子，使用`2`来跟踪`2`的棋子。
 {% asset_img ga_1.png %}
 
-`obs.board`将为[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 2, 1, 2, 0, 2, 0]。
+`obs.board`将为`[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 2, 1, 2, 0, 2, 0]`。
 
 `config`包含三部分信息：
 - `config.columns` - 游戏板中的列数（四子棋为`7`）
@@ -245,3 +246,215 @@ Number of Invalid Plays by Agent 1: 0
 Number of Invalid Plays by Agent 2: 0
 ```
 该代理的性能比随机代理好得多！
+
+#### N-Step Lookahead
+
+##### 介绍
+
+您学习了如何构建`One-Step Lookahead`的代理。该代理表现相当不错，但绝对还有改进的空间！例如，考虑下图中的潜在走势。（请注意，我们对列使用从零开始的编号，因此最左边的列对应于 `col=0`，下一列对应于`col=1`，依此类推。）
+{% asset_img ga_6.png %}
+
+通过`One-Step Lookahead`，红色玩家选择第`5`列或第`6`列之一，每一列都有`50%`的概率。但是，第`5`列显然是一个糟糕的棋步，因为它让对手只需要多一个回合就能赢得比赛。不幸的是，智能体不知道这一点，因为它只能展望未来的一步。接下来，您将使用**极小极大算法**来帮助代理更长远地展望未来并做出更明智的决策。
+
+##### Minimax算法
+
+我们希望利用**游戏树**更深处的信息。现在，假设我们的深度为`3`。这样，在决定其移动时，代理会考虑所有可能的游戏板，这些游戏板可以由
+- 代理人的移动。
+- 对手的动作。
+- 代理人的下一步行动。
+
+我们将使用一个视觉示例。为简单起见，我们假设在每一回合，代理和对手都只有两种可能的动作。下图中的每个蓝色矩形对应着不同的游戏板。
+{% asset_img ga_7.png %}
+
+我们用启发式的分数标记了树底部的每个“叶节点”。和以前一样，当前的游戏板位于图的顶部，代理的目标是结束获得尽可能高的分数。但请注意，智能体不再完全控制其分数——在智能体采取行动后，对手选择自己的行动。而且，对手的选择对于玩家来说可能是灾难性的！尤其，
+- 如果智能体选择左边的分支，对手可以强制得分为`-1`。
+- 如果智能体选择了正确的分支，对手可以强制得分`+10`。
+
+现在花点时间检查一下图中的这一点，以确保它对您有意义！考虑到这一点，您可能会认为正确的分支对于代理来说是更好的选择，因为它是风险较小的选择。当然，它放弃了获得只能在左侧分支上访问的大分数（`+40`）的可能性，但它也保证了代理至少获得`+10`分。这是**极小极大算法**背后的主要思想：**智能体选择移动以获得尽可能高的分数，并且假设对手将通过选择移动来迫使分数尽可能低来抵消这一点**。也就是说，智能体和对手有相反的目标，我们假设对手发挥最佳。那么，在实践中，智能体如何利用这个假设来选择行动呢？我们在下图中说明了智能体的思维过程。
+{% asset_img ga_8.png %}
+
+在该示例中，`minimax`为左侧的移动分配`-1`分，为右侧的移动分配`+10`分。因此，智能体将选择右侧的移动。
+
+##### Code
+
+```python
+import random
+import numpy as np
+
+# Gets board at next step if agent drops piece in selected column
+def drop_piece(grid, col, mark, config):
+    next_grid = grid.copy()
+    for row in range(config.rows-1, -1, -1):
+        if next_grid[row][col] == 0:
+            break
+    next_grid[row][col] = mark
+    return next_grid
+
+# Helper function for get_heuristic: checks if window satisfies heuristic conditions
+def check_window(window, num_discs, piece, config):
+    return (window.count(piece) == num_discs and window.count(0) == config.inarow-num_discs)
+    
+# Helper function for get_heuristic: counts number of windows satisfying specified heuristic conditions
+def count_windows(grid, num_discs, piece, config):
+    num_windows = 0
+    # horizontal
+    for row in range(config.rows):
+        for col in range(config.columns-(config.inarow-1)):
+            window = list(grid[row, col:col+config.inarow])
+            if check_window(window, num_discs, piece, config):
+                num_windows += 1
+    # vertical
+    for row in range(config.rows-(config.inarow-1)):
+        for col in range(config.columns):
+            window = list(grid[row:row+config.inarow, col])
+            if check_window(window, num_discs, piece, config):
+                num_windows += 1
+    # positive diagonal
+    for row in range(config.rows-(config.inarow-1)):
+        for col in range(config.columns-(config.inarow-1)):
+            window = list(grid[range(row, row+config.inarow), range(col, col+config.inarow)])
+            if check_window(window, num_discs, piece, config):
+                num_windows += 1
+    # negative diagonal
+    for row in range(config.inarow-1, config.rows):
+        for col in range(config.columns-(config.inarow-1)):
+            window = list(grid[range(row, row-config.inarow, -1), range(col, col+config.inarow)])
+            if check_window(window, num_discs, piece, config):
+                num_windows += 1
+    return num_windows
+```
+我们还需要稍微修改一下**启发式**，因为对手现在能够修改游戏板。
+{% asset_img ga_9.png %}
+
+我们需要通过下棋来检查对手是否赢得了比赛。新的启发式方法查看（水平、垂直或对角线）线上的每组四个相邻位置并分配：
+- 如果代理人连续有四张棋子（代理人获胜），则`1000000`(`1e6`) 分。
+- 如果代理人填补了三个位置，并且剩余位置为空，则得`1`分（如果代理人填补了空位，则代理人获胜）。
+- 如果对手填满了三个位置，而剩余位置为空（对手填满空位则获胜），则`-100`分。
+- 如果对手连续有四张棋子（对手获胜），则`-10000`(`-1e4`) 分。
+
+```python
+# Helper function for minimax: calculates value of heuristic for grid
+def get_heuristic(grid, mark, config):
+    num_threes = count_windows(grid, 3, mark, config)
+    num_fours = count_windows(grid, 4, mark, config)
+    num_threes_opp = count_windows(grid, 3, mark%2+1, config)
+    num_fours_opp = count_windows(grid, 4, mark%2+1, config)
+    score = num_threes - 1e2*num_threes_opp - 1e4*num_fours_opp + 1e6*num_fours
+    return score
+```
+我们定义了**极小极大代理**所需的一些附加函数。
+```python
+# Uses minimax to calculate value of dropping piece in selected column
+def score_move(grid, col, mark, config, nsteps):
+    next_grid = drop_piece(grid, col, mark, config)
+    score = minimax(next_grid, nsteps-1, False, mark, config)
+    return score
+
+# Helper function for minimax: checks if agent or opponent has four in a row in the window
+def is_terminal_window(window, config):
+    return window.count(1) == config.inarow or window.count(2) == config.inarow
+
+# Helper function for minimax: checks if game has ended
+def is_terminal_node(grid, config):
+    # Check for draw 
+    if list(grid[0, :]).count(0) == 0:
+        return True
+    # Check for win: horizontal, vertical, or diagonal
+    # horizontal 
+    for row in range(config.rows):
+        for col in range(config.columns-(config.inarow-1)):
+            window = list(grid[row, col:col+config.inarow])
+            if is_terminal_window(window, config):
+                return True
+    # vertical
+    for row in range(config.rows-(config.inarow-1)):
+        for col in range(config.columns):
+            window = list(grid[row:row+config.inarow, col])
+            if is_terminal_window(window, config):
+                return True
+    # positive diagonal
+    for row in range(config.rows-(config.inarow-1)):
+        for col in range(config.columns-(config.inarow-1)):
+            window = list(grid[range(row, row+config.inarow), range(col, col+config.inarow)])
+            if is_terminal_window(window, config):
+                return True
+    # negative diagonal
+    for row in range(config.inarow-1, config.rows):
+        for col in range(config.columns-(config.inarow-1)):
+            window = list(grid[range(row, row-config.inarow, -1), range(col, col+config.inarow)])
+            if is_terminal_window(window, config):
+                return True
+    return False
+
+# Minimax implementation
+def minimax(node, depth, maximizingPlayer, mark, config):
+    is_terminal = is_terminal_node(node, config)
+    valid_moves = [c for c in range(config.columns) if node[0][c] == 0]
+    if depth == 0 or is_terminal:
+        return get_heuristic(node, mark, config)
+    if maximizingPlayer:
+        value = -np.Inf
+        for col in valid_moves:
+            child = drop_piece(node, col, mark, config)
+            value = max(value, minimax(child, depth-1, False, mark, config))
+        return value
+    else:
+        value = np.Inf
+        for col in valid_moves:
+            child = drop_piece(node, col, mark%2+1, config)
+            value = min(value, minimax(child, depth-1, True, mark, config))
+        return value
+```
+`N_STEPS`变量用于设置树的深度。
+```python
+# How deep to make the game tree: higher values take longer to run!
+N_STEPS = 3
+
+def agent(obs, config):
+    # Get list of valid moves
+    valid_moves = [c for c in range(config.columns) if obs.board[c] == 0]
+    # Convert the board to a 2D grid
+    grid = np.asarray(obs.board).reshape(config.rows, config.columns)
+    # Use the heuristic to assign a score to each possible board in the next step
+    scores = dict(zip(valid_moves, [score_move(grid, col, obs.mark, config, N_STEPS) for col in valid_moves]))
+    # Get a list of columns (moves) that maximize the heuristic
+    max_cols = [key for key in scores.keys() if scores[key] == max(scores.values())]
+    # Select at random from the maximizing columns
+    return random.choice(max_cols)
+```
+我们看到与随机代理的一轮游戏的结果。
+```python
+from kaggle_environments import make, evaluate
+
+# Create the game environment
+env = make("connectx")
+
+# Two random agents play one game round
+env.run([agent, "random"])
+
+# Show the game
+env.render(mode="ipython")
+```
+我们会检查它的平均表现。
+```python
+def get_win_percentages(agent1, agent2, n_rounds=100):
+    # Use default Connect Four setup
+    config = {'rows': 6, 'columns': 7, 'inarow': 4}
+    # Agent 1 goes first (roughly) half the time          
+    outcomes = evaluate("connectx", [agent1, agent2], config, [], n_rounds//2)
+    # Agent 2 goes first (roughly) half the time      
+    outcomes += [[b,a] for [a,b] in evaluate("connectx", [agent2, agent1], config, [], n_rounds-n_rounds//2)]
+    print("Agent 1 Win Percentage:", np.round(outcomes.count([1,-1])/len(outcomes), 2))
+    print("Agent 2 Win Percentage:", np.round(outcomes.count([-1,1])/len(outcomes), 2))
+    print("Number of Invalid Plays by Agent 1:", outcomes.count([None, 0]))
+    print("Number of Invalid Plays by Agent 2:", outcomes.count([0, None]))
+
+get_win_percentages(agent1=agent, agent2="random", n_rounds=50)
+```
+结果输出为：
+```bash
+Agent 1 Win Percentage: 1.0
+Agent 2 Win Percentage: 0.0
+Number of Invalid Plays by Agent 1: 0
+Number of Invalid Plays by Agent 2: 0
+```
