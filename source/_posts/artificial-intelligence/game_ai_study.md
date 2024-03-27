@@ -458,3 +458,188 @@ Agent 2 Win Percentage: 0.0
 Number of Invalid Plays by Agent 1: 0
 Number of Invalid Plays by Agent 2: 0
 ```
+#### 深度强化学习（Deep Reinforcement Learning）
+
+##### 介绍
+
+到目前为止，我们的玩家依赖于有关如何玩游戏的详细信息。**启发式**确实提供了很多关于如何选择动作的指导！接下来，您将学习如何使用**强化学习**来构建**智能代理**，而无需使用启发式方法。相反，我们将随着时间的推移逐渐完善代理的策略，只需玩游戏并尝试最大化获胜率。
+
+##### 神经网络
+
+很难想出一个完美的**启发式**。改进启发式通常需要多次玩游戏，以确定代理可以做出更好选择的特定情况。而且，要解释到底出了什么问题，并最终纠正旧错误而不意外引入新错误，可能具有挑战性。如果我们有更系统的方法来提升智能体的游戏体验，不是会容易很多吗？为了实现这一目标，我们将用**神经网络代替启发式方法**。网络接受当前板作为输入。并且，它输出每个可能的移动的概率。
+{% asset_img ga_10.png %}
+
+然后，代理通过从这些概率中采样来选择移动。例如，对于上图中的游戏板，智能体以`50%`的概率选择第`4`列。这样，为了编码一个好的游戏策略，我们只需要修改**网络的权重**，以便对于每个可能的游戏板，为更好的动作分配更高的概率。至少在理论上，这是我们的目标。在实践中，我们实际上不会检查，四子棋有超过`4`万亿个可能的游戏板！
+
+##### 设置
+
+在实践中，我们如何完成修改网络权重的任务？
+- 每次移动后，我们都会给智能体一个奖励，告诉它做得有多好：
+    - 如果智能体在该举动中赢得了游戏，我们将给予它`+1`的奖励。
+    - 否则，如果智能体采取了无效的行动（结束了游戏），我们将给予它`-10`的奖励。
+    - 否则，如果对手在下一步行动中赢得了比赛（即代理未能阻止对手获胜），我们将给予代理奖励`-1`。
+    - 否则，代理将获得`1/42`的奖励。
+- 每场比赛结束时，智能体都会将其奖励相加。我们将奖励的总和称为代理的累积奖励。
+    - 例如，如果游戏持续`8`步（每个玩家玩四次），并且智能体最终获胜，则其累积奖励为`3*(1/42) + 1`。
+    - 如果游戏持续`11`步（对手先走，因此智能体下棋五次），并且对手在最后一步获胜，则智能体的累积奖励为`4*(1/42) - 1`。
+    - 如果游戏以平局结束，则智能体正好下完 21 步，并获得`21*(1/42)` 的累积奖励。
+    - 如果游戏持续`7`步并以智能体选择无效的移动而结束，则智能体获得的累积奖励为`3*(1/42) - 10`。
+
+我们的目标是找到（平均）最大化代理累积奖励的**神经网络权重**。这种使用**奖励**来跟踪代理表现的想法是强化学习领域的核心思想。一旦我们以这种方式定义问题，我们就可以使用各种**强化学习算法**中的任何一种来生成代理。
+
+##### 强化学习（Reinforcement Learning）
+
+强化学习算法有很多种，例如`DQN、A2C`和`PPO`等。所有这些算法都使用类似的过程来生成代理：
+- 最初，权重设置为随机值。
+- 当代理玩游戏时，算法会不断尝试新的权重值，以了解平均累积奖励受到的影响。随着时间的推移，在玩了很多游戏之后，我们很好地了解了权重如何影响**累积奖励**，并且算法会选择表现更好的权重。当然，我们在这里掩盖了细节，这个过程涉及很多复杂性。 现在，我们关注大局！
+- 这样，我们最终会得到一个试图赢得游戏的代理（因此它获得`+1`的最终奖励，并避免`-1`和`-10`）并尝试使游戏持续尽可能长的时间（因此 它会尽可能多地收集`1/42`奖金）。您可能会争辩说，希望游戏持续尽可能长的时间并没有真正意义`-`这可能会导致代理效率非常低，在游戏早期不会采取明显的获胜动作。而且，你的直觉是正确的——这将使智能体需要更长的时间才能下出获胜的棋步！我们加入`1/42`奖励的原因是为了帮助我们将使用的算法更好地收敛。
+
+##### Code
+
+网上有很多强化学习算法的优秀实现。为了使环境与稳定基线兼容，我们需要做一些额外的工作。为此，我们定义了下面的`ConnectFourGym`类。此类将`ConnectX`实现为`OpenAI Gym`环境并使用多种方法：
+- `Reset()`将在每个游戏开始时被调用。它以`6`行`7`列的`2D numpy`数组形式返回起始游戏板。
+- `change_reward()`自定义代理收到的奖励。（比赛已经有自己的奖励系统，用于对代理进行排名，并且此方法会更改值以匹配我们设计的奖励系统。）
+- `step()`用于播放代理的动作选择（作为动作提供）以及对手的响应。
+    - 生成的游戏板（作为`numpy`数组）。
+    - 代理的奖励（仅来自最近的移动：`+1、-10、-1`或`1/42`之一）。
+    - 游戏是否结束（如果游戏结束，`done=True`否则，`done=False`）。
+
+```python
+import random
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import gym
+from kaggle_environments import make, evaluate
+from gym import spaces
+
+class ConnectFourGym(gym.Env):
+    def __init__(self, agent2="random"):
+        ks_env = make("connectx", debug=True)
+        self.env = ks_env.train([None, agent2])
+        self.rows = ks_env.configuration.rows
+        self.columns = ks_env.configuration.columns
+        # Learn about spaces here: http://gym.openai.com/docs/#spaces
+        self.action_space = spaces.Discrete(self.columns)
+        self.observation_space = spaces.Box(low=0, high=2, 
+                                            shape=(1,self.rows,self.columns), dtype=int)
+        # Tuple corresponding to the min and max possible rewards
+        self.reward_range = (-10, 1)
+        # StableBaselines throws error if these are not defined
+        self.spec = None
+        self.metadata = None
+    def reset(self):
+        self.obs = self.env.reset()
+        return np.array(self.obs['board']).reshape(1,self.rows,self.columns)
+    def change_reward(self, old_reward, done):
+        if old_reward == 1: # The agent won the game
+            return 1
+        elif done: # The opponent won the game
+            return -1
+        else: # Reward 1/42
+            return 1/(self.rows*self.columns)
+    def step(self, action):
+        # Check if agent's move is valid
+        is_valid = (self.obs['board'][int(action)] == 0)
+        if is_valid: # Play the move
+            self.obs, old_reward, done, _ = self.env.step(int(action))
+            reward = self.change_reward(old_reward, done)
+        else: # End the game and penalize agent
+            reward, done, _ = -10, True, {}
+        return np.array(self.obs['board']).reshape(1,self.rows,self.columns), reward, done, _
+```
+我们将训练一个代理来击败随机代理。我们在下面的`agent2`参数中指定这个对手。下一步是**指定神经网络的架构**。在本例中，我们使用**卷积神经网络**。
+{% note warning %}
+请注意，这是输出选择每一列的概率的神经网络。由于我们使用`PPO`算法，我们的网络还将输出一些附加信息（称为输入的“值”）。
+{% endnote %}
+
+```python
+import torch as th
+import torch.nn as nn
+from stable_baselines3 import PPO 
+from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
+
+# Neural network for predicting action values
+class CustomCNN(BaseFeaturesExtractor):
+    
+    def __init__(self, observation_space: gym.spaces.Box, features_dim: int=128):
+        super(CustomCNN, self).__init__(observation_space, features_dim)
+        # CxHxW images (channels first)
+        n_input_channels = observation_space.shape[0]
+        self.cnn = nn.Sequential(
+            nn.Conv2d(n_input_channels, 32, kernel_size=3, stride=1, padding=0),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=0),
+            nn.ReLU(),
+            nn.Flatten(),
+        )
+
+        # Compute shape by doing one forward pass
+        with th.no_grad():
+            n_flatten = self.cnn(
+                th.as_tensor(observation_space.sample()[None]).float()
+            ).shape[1]
+
+        self.linear = nn.Sequential(nn.Linear(n_flatten, features_dim), nn.ReLU())
+
+    def forward(self, observations: th.Tensor) -> th.Tensor:
+        return self.linear(self.cnn(observations))
+
+policy_kwargs = dict(
+    features_extractor_class=CustomCNN,
+)
+        
+# Initialize agent
+model = PPO("CnnPolicy", env, policy_kwargs=policy_kwargs, verbose=0)
+```
+在上面的代码单元中，神经网络的权重最初设置为随机值。在下一个代码单元中，我们“**训练代理**”，这只是我们找到可能导致代理选择良好动作的神经网络权重的另一种方式。
+```python
+# Train agent
+model.learn(total_timesteps=60000)
+
+def agent1(obs, config):
+    # Use the best model to select a column
+    col, _ = model.predict(np.array(obs['board']).reshape(1, 6,7))
+    # Check if selected column is valid
+    is_valid = (obs['board'][int(col)] == 0)
+    # If not valid, select random move. 
+    if is_valid:
+        return int(col)
+    else:
+        return random.choice([col for col in range(config.columns) if obs.board[int(col)] == 0])
+```
+在下一个代码单元中，我们看到与随机代理的一轮游戏的结果。
+```python
+# Create the game environment
+env = make("connectx")
+
+# Two random agents play one game round
+env.run([agent1, "random"])
+
+# Show the game
+env.render(mode="ipython")
+```
+并且，我们计算它相对于随机代理的平均表现。
+```python
+def get_win_percentages(agent1, agent2, n_rounds=100):
+    # Use default Connect Four setup
+    config = {'rows': 6, 'columns': 7, 'inarow': 4}
+    # Agent 1 goes first (roughly) half the time          
+    outcomes = evaluate("connectx", [agent1, agent2], config, [], n_rounds//2)
+    # Agent 2 goes first (roughly) half the time      
+    outcomes += [[b,a] for [a,b] in evaluate("connectx", [agent2, agent1], config, [], n_rounds-n_rounds//2)]
+    print("Agent 1 Win Percentage:", np.round(outcomes.count([1,-1])/len(outcomes), 2))
+    print("Agent 2 Win Percentage:", np.round(outcomes.count([-1,1])/len(outcomes), 2))
+    print("Number of Invalid Plays by Agent 1:", outcomes.count([None, 0]))
+    print("Number of Invalid Plays by Agent 2:", outcomes.count([0, None]))
+
+get_win_percentages(agent1=agent1, agent2="random")
+```
+结果输出为：
+```python
+Agent 1 Win Percentage: 0.68
+Agent 2 Win Percentage: 0.32
+Number of Invalid Plays by Agent 1: 0
+Number of Invalid Plays by Agent 2: 0
+```
+需要注意的是，我们在这里创建的代理只是经过训练来击败随机代理，因为它的所有游戏体验都是以随机代理为对手。如果我们想要产生一个比许多其他智能体可靠地表现更好的智能体，我们必须在训练期间将我们的智能体暴露给这些其他智能体。
