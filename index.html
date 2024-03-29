@@ -307,179 +307,9 @@
     
     <div class="post-body" itemprop="articleBody">
           <h4 id="什么是PRNG？"><a href="#什么是PRNG？" class="headerlink" title="什么是PRNG？"></a>什么是PRNG？</h4><p>如果我们按照定义，那么<strong>伪随机数生成</strong>是通过算法生成随机数序列的过程，使得生成的随机数的属性近似于从分布中采样的随机数序列的属性。当我们说随机时，意味着预测这个序列的概率并不比随机猜测更好。尽管我们担心这里的随机性，但伪随机数生成并不是真正的随机过程。为什么？因为序列是由提供给算法的初始值或初始状态决定的。用于生成这些随机数序列的算法称为<strong>伪随机数生成器</strong>（<code>Pseudo Random Number Generator</code>）。</p>
-<h4 id="PRNG有何用途？"><a href="#PRNG有何用途？" class="headerlink" title="PRNG有何用途？"></a>PRNG有何用途？</h4><p><code>PRNG</code>有很多用途，但最有趣的是密码学、模拟、游戏、数据科学和机器学习等。您可能已经注意到，大多数人在他们的数据科学和机器学习工作流程中埋下了<strong>种子</strong>。种子被作为初始值！</p>
-<h4 id="为什么要关心PRNG？"><a href="#为什么要关心PRNG？" class="headerlink" title="为什么要关心PRNG？"></a>为什么要关心PRNG？</h4><p>当我们设置种子时，我们试图解决的是<strong>可重复性</strong>问题。尽管可重复性取决于很多因素。我们在机器学习工作中处理随机状态的频率比我们想象的要多。例如，将数据集分为训练集和验证集，从神经网络中的给定分布中对隐藏层的权重进行采样，从高斯分布中采样噪声向量等。因此，当我们在这种情况下说可重复性时，什么是可重复性的？无论我运行同一个进程多少次，我都应该得到相同的随机数序列。这就是为什么埋下种子变得很重要。注意：埋下种子并不能解决工作流程的可重复性危机，它只是确保它的第一步。让我们举个例子来看一下可重复性的问题！</p>
-<h4 id="Numpy中的随机数"><a href="#Numpy中的随机数" class="headerlink" title="Numpy中的随机数"></a>Numpy中的随机数</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jax</span><br><span class="line"><span class="keyword">from</span> jax <span class="keyword">import</span> jit</span><br><span class="line"><span class="keyword">import</span> jax.numpy <span class="keyword">as</span> jnp</span><br><span class="line"></span><br><span class="line"><span class="comment"># If I set the seed, would I get the same sequence of random numbers every time?</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    <span class="comment"># Set initial value by providing a seed value</span></span><br><span class="line">    seed = <span class="number">0</span> </span><br><span class="line">    np.random.seed(seed)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Generate a random integer from a range of [0, 5)</span></span><br><span class="line">    random_number = np.random.randint(<span class="number">0</span>, <span class="number">5</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Seed: <span class="subst">&#123;seed&#125;</span> -&gt; Random number generated: <span class="subst">&#123;random_number&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Seed: 0 -&gt; Random number generated: 4</span></span><br><span class="line"><span class="comment"># Seed: 0 -&gt; Random number generated: 4</span></span><br><span class="line"><span class="comment"># Seed: 0 -&gt; Random number generated: 4</span></span><br><span class="line"><span class="comment"># Seed: 0 -&gt; Random number generated: 4</span></span><br><span class="line"><span class="comment"># Seed: 0 -&gt; Random number generated: 4</span></span><br><span class="line"><span class="comment"># Seed: 0 -&gt; Random number generated: 4</span></span><br><span class="line"><span class="comment"># Seed: 0 -&gt; Random number generated: 4</span></span><br><span class="line"><span class="comment"># Seed: 0 -&gt; Random number generated: 4</span></span><br><span class="line"><span class="comment"># Seed: 0 -&gt; Random number generated: 4</span></span><br><span class="line"><span class="comment"># Seed: 0 -&gt; Random number generated: 4</span></span><br></pre></td></tr></table></figure>
-<p>让我们举一个有点复杂的例子。我们将获取一个数组并将其拆分为两个数组。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Array of 10 values</span></span><br><span class="line">array = np.arange(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">    <span class="comment"># Set initial value by providing a seed value</span></span><br><span class="line">    seed = <span class="number">1234</span></span><br><span class="line">    np.random.seed(seed)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Choose array1 and array2 indices</span></span><br><span class="line">    array_1_idx = np.random.choice(array, size=<span class="number">8</span>)</span><br><span class="line">    array_2_idx = np.random.choice(array, size=<span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Split the array into two sets</span></span><br><span class="line">    array_1 = array[array_1_idx]</span><br><span class="line">    array_2 = array[array_2_idx]</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Iteration: <span class="subst">&#123;i+<span class="number">1</span>&#125;</span>  Seed value: <span class="subst">&#123;seed&#125;</span>\n&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;First array: <span class="subst">&#123;array_1&#125;</span>  Second array: <span class="subst">&#123;array_2&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>结果输出为：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Iteration: 1  Seed value: 1234</span><br><span class="line"></span><br><span class="line">First array: [3 6 5 4 8 9 1 7]  Second array: [9 6]</span><br><span class="line">==================================================</span><br><span class="line"></span><br><span class="line">Iteration: 2  Seed value: 1234</span><br><span class="line"></span><br><span class="line">First array: [3 6 5 4 8 9 1 7]  Second array: [9 6]</span><br><span class="line">==================================================</span><br><span class="line"></span><br><span class="line">Iteration: 3  Seed value: 1234</span><br><span class="line"></span><br><span class="line">First array: [3 6 5 4 8 9 1 7]  Second array: [9 6]</span><br><span class="line">==================================================</span><br><span class="line"></span><br><span class="line">Iteration: 4  Seed value: 1234</span><br><span class="line"></span><br><span class="line">First array: [3 6 5 4 8 9 1 7]  Second array: [9 6]</span><br><span class="line">==================================================</span><br><span class="line"></span><br><span class="line">Iteration: 5  Seed value: 1234</span><br><span class="line"></span><br><span class="line">First array: [3 6 5 4 8 9 1 7]  Second array: [9 6]</span><br><span class="line">==================================================</span><br></pre></td></tr></table></figure>
-<div class="note warning"><p><strong>注意</strong>：我们上面看到的是在<code>numpy</code>中生成随机数序列的传统方法。它使用<code>numpy RandomState(...)</code>提供的原有生成器。但这也是使用最广泛的一种。还有另一个函数（首选）<code>np.random.default_rng()</code>使用默认的<code>BitGenerator</code>来生成随机序列。</p>
-</div>
-
-<p>让我们使用<code>default_rng(...)</code>重复上面的示例。因为这是一个不同的<code>RNG</code>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Array of 10 values</span></span><br><span class="line">array = np.arange(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Same example but with a different kind of random number generator</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">    <span class="comment"># Set initial value by providing a seed value</span></span><br><span class="line">    seed = <span class="number">0</span></span><br><span class="line">    rng = np.random.default_rng(seed)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Choose array1 and array2 indices</span></span><br><span class="line">    array_1_idx = rng.choice(array, size=<span class="number">8</span>)</span><br><span class="line">    array_2_idx = rng.choice(array, size=<span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Split the array into two sets</span></span><br><span class="line">    array_1 = array[array_1_idx]</span><br><span class="line">    array_2 = array[array_2_idx]</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Iteration: <span class="subst">&#123;i+<span class="number">1</span>&#125;</span>  Seed value: <span class="subst">&#123;seed&#125;</span>\n&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;First array: <span class="subst">&#123;array_1&#125;</span>  Second array: <span class="subst">&#123;array_2&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>结果输出为：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Iteration: 1  Seed value: 0</span><br><span class="line">First array: [8 6 5 2 3 0 0 0]  Second array: [1 8]</span><br><span class="line">==================================================</span><br><span class="line"></span><br><span class="line">Iteration: 2  Seed value: 0</span><br><span class="line"></span><br><span class="line">First array: [8 6 5 2 3 0 0 0]  Second array: [1 8]</span><br><span class="line">==================================================</span><br><span class="line"></span><br><span class="line">Iteration: 3  Seed value: 0</span><br><span class="line"></span><br><span class="line">First array: [8 6 5 2 3 0 0 0]  Second array: [1 8]</span><br><span class="line">==================================================</span><br><span class="line"></span><br><span class="line">Iteration: 4  Seed value: 0</span><br><span class="line"></span><br><span class="line">First array: [8 6 5 2 3 0 0 0]  Second array: [1 8]</span><br><span class="line">==================================================</span><br><span class="line"></span><br><span class="line">Iteration: 5  Seed value: 0</span><br><span class="line"></span><br><span class="line">First array: [8 6 5 2 3 0 0 0]  Second array: [1 8]</span><br><span class="line">==================================================</span><br></pre></td></tr></table></figure>
-<h5 id="Numpy-PRNG：优点和缺点"><a href="#Numpy-PRNG：优点和缺点" class="headerlink" title="Numpy PRNG：优点和缺点"></a>Numpy PRNG：优点和缺点</h5><p>我们看到了一些如何在<code>numpy</code>中生成伪随机数的示例。</p>
-<h5 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h5><ul>
-<li>从大多数用户的角度来看，设置全局种子很容易。设置一次即可完成。</li>
-<li>使用新的生成器和<code>SeedSequencing</code>，可以跨多个进程生成可重复的伪随机数。</li>
-<li><strong>顺序等效保证</strong>：<code>numpy</code>中随机数生成的好处之一是它确保了顺序等效保证。意味着无论您一次对包含<code>n</code>个元素的向量进行采样，还是一次对<code>n</code>个元素进行采样，最终的序列始终是相同的。让我们看看它的实际效果。</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Set the seed</span></span><br><span class="line">seed = <span class="number">1234</span></span><br><span class="line">np.random.seed(seed)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample a vector of size 10 </span></span><br><span class="line">array1 = np.random.randint(<span class="number">0</span>, <span class="number">10</span>, size=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sample 10 elements one at a time</span></span><br><span class="line">np.random.seed(seed)</span><br><span class="line">array2 = np.stack([np.random.randint(<span class="number">0</span>, <span class="number">10</span>) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)])</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Sampled all at once    =&gt; <span class="subst">&#123;array1&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Sampled one at a time  =&gt; <span class="subst">&#123;array2&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>结果输出为：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Sampled all at once    =&gt; [3 6 5 4 8 9 1 7 9 6]</span><br><span class="line">Sampled one at a time  =&gt; [3 6 5 4 8 9 1 7 9 6]</span><br></pre></td></tr></table></figure>
-<h5 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h5><ul>
-<li>全局状态不利于<strong>可重复性</strong>：全局状态是有问题的，尤其是当您要在代码中实现某种并发性时。这就是为什么不再鼓励在<code>numpy</code>中设置全局种子的原始方法。</li>
-<li>有了共享的全局状态，就很难推断它是如何在不同的线程、进程和设备之间使用和更新的，而且当熵产生和消耗的细节对最终用户隐藏时，很容易搞砸。</li>
-<li>大多数<code>python</code>和<code>numpy</code>代码中使用的<code>Mersenne Twister PRNG</code>存在几个初始化问题。</li>
-<li>当涉及并发时，<code>SeedSequencing</code>可以轻松获得可重复性的随机数序列，但它仍然不能用于<code>JAX</code>。</li>
-</ul>
-<p>在我们转向<code>JAX PRNG</code>设计之前，让我们先看一个<code>SeedSequencing</code>的例子。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_sequence</span>(<span class="params">seed, size=<span class="number">5</span></span>):</span><br><span class="line">    rng = np.random.default_rng(seed)</span><br><span class="line">    array = np.arange(<span class="number">10</span>)</span><br><span class="line">    <span class="keyword">return</span> rng.choice(array, size=size)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Instantiate SeedSequence</span></span><br><span class="line">seed = <span class="number">1234</span></span><br><span class="line">ss = np.random.SeedSequence(seed)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Spawn 2 child seed sequence</span></span><br><span class="line">child_seeds = ss.spawn(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Run the function a few times in parallel to check if we get</span></span><br><span class="line"><span class="comment"># same RNG sequence</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">    res = []</span><br><span class="line">    <span class="keyword">for</span> child_seed <span class="keyword">in</span> child_seeds:</span><br><span class="line">        res.append(delayed(get_sequence)(child_seed))</span><br><span class="line">    res = Parallel(n_jobs=<span class="number">2</span>)(res)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Iteration: <span class="subst">&#123;i+<span class="number">1</span>&#125;</span> Sequences: <span class="subst">&#123;res&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">70</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Iteration: 1 Sequences: [array([4, 5, 4, 2, 5]), array([7, 7, 7, 5, 1])]</span></span><br><span class="line"><span class="comment"># ======================================================================</span></span><br><span class="line"><span class="comment"># Iteration: 2 Sequences: [array([4, 5, 4, 2, 5]), array([7, 7, 7, 5, 1])]</span></span><br><span class="line"><span class="comment"># ======================================================================</span></span><br><span class="line"><span class="comment"># Iteration: 3 Sequences: [array([4, 5, 4, 2, 5]), array([7, 7, 7, 5, 1])]</span></span><br><span class="line"><span class="comment"># ======================================================================</span></span><br><span class="line"><span class="comment"># Iteration: 4 Sequences: [array([4, 5, 4, 2, 5]), array([7, 7, 7, 5, 1])]</span></span><br><span class="line"><span class="comment"># ======================================================================</span></span><br><span class="line"><span class="comment"># Iteration: 5 Sequences: [array([4, 5, 4, 2, 5]), array([7, 7, 7, 5, 1])]</span></span><br><span class="line"><span class="comment"># ======================================================================</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="JAX中的随机数"><a href="#JAX中的随机数" class="headerlink" title="JAX中的随机数"></a>JAX中的随机数</h4><p><code>JAX</code>中的<code>RNG</code>与<code>numpy</code>中的<code>RNG</code>有很大不同。人们自然想到的一个问题是：当<code>JAX</code>团队可以重用<code>numpy</code>中的相同代码库时，为什么他们要在<code>JAX</code>中实现全新的<code>PRNG</code>？我们举几个例子来回答这个问题，使用<code>numpy</code>代码的函数的执行由<code>Python</code>强制执行。假设<code>A</code>和<code>B</code>是两个函数。<code>A</code>和<code>B</code>的返回值被分配给<code>C</code>。因此，代码如下所示：<code>C = A() + B()</code>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Global seed</span></span><br><span class="line">np.random.seed(<span class="number">1234</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">A</span>():</span><br><span class="line">    <span class="keyword">return</span> np.random.choice([<span class="string">&quot;a&quot;</span>, <span class="string">&quot;A&quot;</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">B</span>():</span><br><span class="line">    <span class="keyword">return</span> np.random.choice([<span class="string">&quot;b&quot;</span>, <span class="string">&quot;B&quot;</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    C = A() + B()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Iteration: <span class="subst">&#123;i+<span class="number">1</span>&#125;</span>  C: <span class="subst">&#123;C&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Iteration: 1  C: AB</span></span><br><span class="line"><span class="comment"># Iteration: 2  C: aB</span></span><br></pre></td></tr></table></figure>
-<p>这里的执行定义的顺序。<code>A()</code>总是在<code>B()</code>之前调用。但是如果你在<code>JAX</code>中做同样的事情并<code>jit</code>，那么你不知道是先调用<code>A()</code>还是<code>B()</code>将首先被调用。</p>
-<ul>
-<li><code>XLA</code>将按照最有效的顺序执行它们，不一定按照相同的顺序。还记得我们以前使用的<code>tf.control_dependency(...)</code>吗？<code>TensorFlow</code>没有任何问题，它只是指导编译器的一种方式。</li>
-<li>如果强制执行顺序，则与<code>JAX</code>的原理相矛盾，即如果两个转换彼此独立，则它们的执行可以并行。</li>
-</ul>
-<p>这看起来像是一场危机。如果您使用全局状态，您将无法推断首次调用哪个函数，因此生成的随机数序列是不可重现的。那有什么方法解决呢？</p>
-<h4 id="JAX中的RNG设计"><a href="#JAX中的RNG设计" class="headerlink" title="JAX中的RNG设计"></a>JAX中的RNG设计</h4><p>为了确保我们可以并行转换，并且仍然获得可重现的结果，<code>JAX</code>应用了两个规则：</p>
-<ul>
-<li>不依赖全局种子来生成随机序列。</li>
-<li>随机函数应该显式地消耗一个状态（种子），这将确保这些函数在使用相同种子时会重现相同的结果。</li>
-</ul>
-<div class="note warning"><p>注意：当人们在<code>PRNG</code>上下文中说状态、种子或密钥时，它们的意思是相同的。<code>JAX</code>使用“键”和“子键”一词比“种子”一词更频繁。为了与文档保持一致，我们将在这里使用相同的术语。</p>
-</div>
-
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> jax <span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="comment"># Define a state</span></span><br><span class="line">seed = <span class="number">1234</span></span><br><span class="line">key = random.PRNGKey(<span class="number">1234</span>)</span><br><span class="line">key</span><br><span class="line"></span><br><span class="line"><span class="comment"># DeviceArray([   0, 1234], dtype=uint32)</span></span><br></pre></td></tr></table></figure>
-<p>因此，<code>key</code>是形状为(2, )的<code>DeviceArray</code>。然后将该<code>key</code>传递给随机函数。<strong>随机函数消耗状态但不改变它</strong>，这意味着如果您不断将相同的<code>key</code>传递给相同的函数，它将始终返回相同的输出。因为函数不会改变状态，所以每次我们调用一个新的随机函数时，我们都需要传递一个新的<code>key</code>。新的<code>key</code>是如何生成的？通过拆分原始<code>key</code>。看看下面的例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Passing the original key to a random function</span></span><br><span class="line">random_integers = random.randint(key=key, minval=<span class="number">0</span>, maxval=<span class="number">10</span>, shape=[<span class="number">5</span>])</span><br><span class="line"><span class="built_in">print</span>(random_integers)</span><br><span class="line"></span><br><span class="line"><span class="comment"># [2 4 9 9 4]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># What if we want to call another function?</span></span><br><span class="line"><span class="comment"># Don&#x27;t use the same key. Split the original key, and then pass it</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Original key: &quot;</span>, key)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Split the key. By default the number of splits is set to 2</span></span><br><span class="line"><span class="comment"># You can specify explicitly how many splits you want to do</span></span><br><span class="line">key, subkey = random.split(key, num=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;New key: &quot;</span>,  key)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Subkey: &quot;</span>, subkey)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Original key:  [   0 1234]</span></span><br><span class="line"><span class="comment"># New key:  [2113592192 1902136347]</span></span><br><span class="line"><span class="comment"># Subkey:  [603280156 445306386]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Call another random function with the new key</span></span><br><span class="line">random_floats = random.normal(key=key, shape=(<span class="number">5</span>,), dtype=jnp.float32)</span><br><span class="line"><span class="built_in">print</span>(random_floats)</span><br><span class="line"></span><br><span class="line"><span class="comment"># [ 5.2179128e-01  1.4659788e-03 -5.9906763e-01 -3.9343226e-01 -1.9224551e+00]</span></span><br></pre></td></tr></table></figure>
-<p>注意：虽然我们称它们为<code>key</code>和<code>subkey</code>，但它们都是状态，您可以将它们中的任何一个传递给随机函数，或者<code>split</code>函数。</p>
-<h4 id="JAX-PRNG：优点和缺点"><a href="#JAX-PRNG：优点和缺点" class="headerlink" title="JAX PRNG：优点和缺点"></a>JAX PRNG：优点和缺点</h4><p>现在我们已经了解了JAX中PRNG的设计以及它是如何实现和使用的，是时候讨论这种方法的优缺点了。</p>
-<h5 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h5><ul>
-<li><code>JAX PRNG</code>是基于计数器的<code>PRNG</code>设计，它使用<code>Threefry</code>哈希函数。这种设计允许<code>JAX</code>摆脱顺序执行约束，允许所有内容可向量化和可并行化，而无需放弃可重复性。</li>
-<li>每个随机函数都会消耗状态但不会改变它。函数不必返回<code>key</code>。</li>
-<li>分割方法是确定性的。因此，如果您从一个随机<code>key</code>开始，并将其拆分为代码中的n个<code>key</code>，可以放心，每次运行代码时，您都会得到相同的拆分。 </li>
-<li>您可以一次从一个<code>key</code>生成n个<code>key</code>并不断传递它们。</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Splitting is deterministic!</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    key = random.PRNGKey(<span class="number">1234</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Iteration: <span class="subst">&#123;i+<span class="number">1</span>&#125;</span>\n&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Original key: <span class="subst">&#123;key&#125;</span>&quot;</span>)</span><br><span class="line">    key, subkey = random.split(key)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;First subkey: <span class="subst">&#123;key&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Second subkey: <span class="subst">&#123;subkey&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Iteration: 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Original key: [   0 1234]</span></span><br><span class="line"><span class="comment"># First subkey: [2113592192 1902136347]</span></span><br><span class="line"><span class="comment"># Second subkey: [603280156 445306386]</span></span><br><span class="line"><span class="comment"># ==================================================</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Iteration: 2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Original key: [   0 1234]</span></span><br><span class="line"><span class="comment"># First subkey: [2113592192 1902136347]</span></span><br><span class="line"><span class="comment"># Second subkey: [603280156 445306386]</span></span><br><span class="line"><span class="comment"># ==================================================</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Iteration: 3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Original key: [   0 1234]</span></span><br><span class="line"><span class="comment"># First subkey: [2113592192 1902136347]</span></span><br><span class="line"><span class="comment"># Second subkey: [603280156 445306386]</span></span><br><span class="line"><span class="comment"># ==================================================</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># You can generate multiple keys at one go with one split</span></span><br><span class="line">key = random.PRNGKey(<span class="number">111</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Original key: <span class="subst">&#123;key&#125;</span>\n&quot;</span>)</span><br><span class="line"></span><br><span class="line">subkeys = random.split(key, num=<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i, subkey <span class="keyword">in</span> <span class="built_in">enumerate</span>(subkeys):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Subkey no: <span class="subst">&#123;i+<span class="number">1</span>&#125;</span>  Subkey: <span class="subst">&#123;subkey&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Original key: [  0 111]</span></span><br><span class="line"><span class="comment"># Subkey no: 1  Subkey: [2149343144 3788759061]</span></span><br><span class="line"><span class="comment"># Subkey no: 2  Subkey: [1263116805 2203640444]</span></span><br><span class="line"><span class="comment"># Subkey no: 3  Subkey: [ 260051842 2161001049]</span></span><br><span class="line"><span class="comment"># Subkey no: 4  Subkey: [ 450316230 2080109636]</span></span><br><span class="line"><span class="comment"># Subkey no: 5  Subkey: [2532194002 3516360950]</span></span><br></pre></td></tr></table></figure>
-<h5 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h5><ul>
-<li><code>JAX</code>中<code>PRNG</code>设计只有在我们放弃顺序等效保证的情况下才有可能实现。由于该属性与矢量化不兼容，因此后者实际上是<code>JAX</code>的优先事项。</li>
-<li>这本身并不是一个缺点，但用户很容易忘记这一点。这里需要考虑两件事：<ul>
-<li>如果您使用相同的<code>key</code>一次又一次地调用一个函数，您将始终得到相同的输出。假设您想要从均匀分布中抽取<code>5</code>个随机数。如果将相同的<code>key</code>传递给采样函数，最终将得到5个重复的数字。</li>
-<li>如果将相同的<code>key</code>传递给不同的函数，在某些情况下您将得到高度相关的结果。用户在传递给使用随机函数的任何东西之前都应分割<code>key</code>。</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># No more Sequential Equivalent Guarantee unlike numpy</span></span><br><span class="line"></span><br><span class="line">key = random.PRNGKey(<span class="number">1234</span>)</span><br><span class="line">random_integers_1 = random.randint(key=key, minval=<span class="number">0</span>, maxval=<span class="number">10</span>, shape=(<span class="number">5</span>,))</span><br><span class="line"></span><br><span class="line">key = random.PRNGKey(<span class="number">1234</span>)</span><br><span class="line">key, *subkeys = random.split(key, <span class="number">5</span>)</span><br><span class="line">random_integers_2 = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> subkey <span class="keyword">in</span> subkeys:</span><br><span class="line">    num = random.randint(key=subkey, minval=<span class="number">0</span>, maxval=<span class="number">10</span>, shape=(<span class="number">1</span>,))</span><br><span class="line">    random_integers_2.append(num)</span><br><span class="line"></span><br><span class="line">random_integers_2 = np.stack(random_integers_2, axis=-<span class="number">1</span>)[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Generated all at once: &quot;</span>, random_integers_1)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Generated sequentially: &quot;</span>, random_integers_2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Generated all at once:  [2 4 9 9 4]</span></span><br><span class="line"><span class="comment"># Generated sequentially:  [1 5 8 7]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Possible highly correlated outputs. </span></span><br><span class="line"><span class="comment"># Not a very good example but serves the demonstration purpose</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sampler1</span>(<span class="params">key</span>):</span><br><span class="line">    <span class="keyword">return</span> random.uniform(key=key, minval=<span class="number">0</span>, maxval=<span class="number">1</span>, shape=(<span class="number">2</span>,))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sampler2</span>(<span class="params">key</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span> * random.uniform(key=key, minval=<span class="number">0</span>, maxval=<span class="number">1</span>, shape=(<span class="number">2</span>,))</span><br><span class="line"></span><br><span class="line">key = random.PRNGKey(<span class="number">0</span>)</span><br><span class="line">sample_1 = sampler1(key=key)</span><br><span class="line">sample_2 = sampler2(key=key)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;First sample: &quot;</span>, sample_1)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Second sample: &quot;</span>, sample_2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># First sample:  [0.21629536 0.8041241 ]</span></span><br><span class="line"><span class="comment"># Second sample:  [0.43259072 1.6082482 ]</span></span><br></pre></td></tr></table></figure>
-<p>在numpy中尝试一下！</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">sampler1</span>():</span><br><span class="line">    <span class="keyword">return</span> np.random.uniform(low=<span class="number">0</span>, high=<span class="number">1</span>, size=(<span class="number">2</span>,))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sampler2</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span> * np.random.uniform(low=<span class="number">0</span>, high=<span class="number">1</span>, size=(<span class="number">2</span>,))</span><br><span class="line"></span><br><span class="line">np.random.seed(<span class="number">0</span>)</span><br><span class="line">sample_1 = sampler1()</span><br><span class="line">sample_2 = sampler2()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;First sample: &quot;</span>, sample_1)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Second sample: &quot;</span>, sample_2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># First sample:  [0.5488135  0.71518937]</span></span><br><span class="line"><span class="comment"># Second sample:  [1.20552675 1.08976637]</span></span><br></pre></td></tr></table></figure>
-<p>您会看到，在<code>JAX</code>代码中，两个采样器的输出高度相关，而在<code>numpy</code>代码中我们没有获得相关性。除非您想要相同的输出，否则切勿通过将<code>key</code>传递给JAX中的不同随机函数来重复使用<code>key</code>。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/28/artificial-intelligence/jax_pure_function_study/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/03/28/artificial-intelligence/jax_pure_function_study/" class="post-title-link" itemprop="url">JAX（Pure Functions）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-03-28 10:10:32" itemprop="dateCreated datePublished" datetime="2024-03-28T10:10:32+08:00">2024-03-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.1k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="纯函数（Pure-Functions）"><a href="#纯函数（Pure-Functions）" class="headerlink" title="纯函数（Pure Functions）"></a>纯函数（Pure Functions）</h4><p>函数就是纯函数：</p>
-<ul>
-<li>当使用相同的输入调用时，该函数返回相同的值。</li>
-<li>函数调用没有观察到副作用。</li>
-</ul>
-<p>虽然这个定义看起来很简单，但如果没有示例可能很难理解，而且听起来很模糊（尤其是对于初学者）。<strong>副作用</strong>是什么意思呢？是什么导致了副作用？做什么可以来避免副作用？让我们举几个例子，看一下产生副作用的错误。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2024/03/28/artificial-intelligence/jax_pure_function_study/#more" rel="contents">
+              <a class="btn" href="/2024/03/29/artificial-intelligence/jax_prng_study/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -580,6 +410,111 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2024/03/28/artificial-intelligence/jax_study/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/28/artificial-intelligence/jax_pure_function_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/03/28/artificial-intelligence/jax_pure_function_study/" class="post-title-link" itemprop="url">JAX（Pure Functions）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-03-28 10:10:32" itemprop="dateCreated datePublished" datetime="2024-03-28T10:10:32+08:00">2024-03-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="纯函数（Pure-Functions）"><a href="#纯函数（Pure-Functions）" class="headerlink" title="纯函数（Pure Functions）"></a>纯函数（Pure Functions）</h4><p>函数就是纯函数：</p>
+<ul>
+<li>当使用相同的输入调用时，该函数返回相同的值。</li>
+<li>函数调用没有观察到副作用。</li>
+</ul>
+<p>虽然这个定义看起来很简单，但如果没有示例可能很难理解，而且听起来很模糊（尤其是对于初学者）。<strong>副作用</strong>是什么意思呢？是什么导致了副作用？做什么可以来避免副作用？让我们举几个例子，看一下产生副作用的错误。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/03/28/artificial-intelligence/jax_pure_function_study/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
