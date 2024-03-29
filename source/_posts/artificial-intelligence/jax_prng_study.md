@@ -301,7 +301,7 @@ print(random_floats)
 
 #### JAX PRNG：优点和缺点
 
-现在我们已经了解了JAX中PRNG的设计以及它是如何实现和使用的，是时候讨论这种方法的优缺点了。
+现在我们已经了解了`JAX`中`PRNG`的设计以及它是如何实现和使用的，是时候讨论这种方法的优缺点了。
 
 ##### 优点
 
@@ -406,7 +406,7 @@ print("Second sample: ", sample_2)
 # First sample:  [0.21629536 0.8041241 ]
 # Second sample:  [0.43259072 1.6082482 ]
 ```
-在numpy中尝试一下！
+在`numpy`中尝试一下！
 ```python
 def sampler1():
     return np.random.uniform(low=0, high=1, size=(2,))
@@ -424,4 +424,4 @@ print("Second sample: ", sample_2)
 # First sample:  [0.5488135  0.71518937]
 # Second sample:  [1.20552675 1.08976637]
 ```
-您会看到，在`JAX`代码中，两个采样器的输出高度相关，而在`numpy`代码中我们没有获得相关性。除非您想要相同的输出，否则切勿通过将`key`传递给JAX中的不同随机函数来重复使用`key`。
+您会看到，在`JAX`代码中，两个采样器的输出高度相关，而在`numpy`代码中我们没有获得相关性。除非您想要相同的输出，否则切勿通过将`key`传递给`JAX`中的不同随机函数来重复使用`key`。
