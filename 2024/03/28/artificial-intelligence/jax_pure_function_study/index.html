@@ -299,14 +299,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.2k</span>
+      <span>7.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
+      <span>6 分钟</span>
     </span>
 </div>
 
@@ -322,6 +322,7 @@
 <li>函数调用没有观察到副作用。</li>
 </ul>
 <p>虽然这个定义看起来很简单，但如果没有示例，它可能很难理解，而且听起来很模糊（尤其是对于初学者）。第一点很清楚，但是副作用是什么意思呢？什么构成或被标记为副作用？您可以做什么来避免副作用？虽然我可以在这里陈述所有内容，并且您可以尝试将它们“适合”您的头脑，以确保您写的内容不会产生副作用，但我更喜欢举一些例子，以便每个人都能理解“为什么”部分以更简单的方式。那么，让我们举几个例子，看看一些可能产生副作用的常见错误。</p>
+<span id="more"></span>
 <h4 id="案例1：全局变量"><a href="#案例1：全局变量" class="headerlink" title="案例1：全局变量"></a>案例1：全局变量</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> jax</span><br><span class="line"><span class="keyword">import</span> jax.numpy <span class="keyword">as</span> jnp</span><br><span class="line"><span class="keyword">from</span> jax <span class="keyword">import</span> grad</span><br><span class="line"><span class="keyword">from</span> jax <span class="keyword">import</span> jit</span><br><span class="line"><span class="keyword">from</span> jax <span class="keyword">import</span> lax</span><br><span class="line"><span class="keyword">from</span> jax <span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="comment"># A global variable</span></span><br><span class="line">counter = <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add_global_value</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    A function that relies on the global variable `counter` for</span></span><br><span class="line"><span class="string">    doing some computation.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> x + counter</span><br><span class="line"></span><br><span class="line">x = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># We will `JIT` the function so that it runs as a JAX transformed</span></span><br><span class="line"><span class="comment"># function and not like a normal python function</span></span><br><span class="line">y = jit(add_global_value)(x)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Global variable value: &quot;</span>, counter)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;First call to the function with input <span class="subst">&#123;x&#125;</span> with global variable value <span class="subst">&#123;counter&#125;</span> returned <span class="subst">&#123;y&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Someone updated the global variable value later in the code</span></span><br><span class="line">counter = <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Call the function again</span></span><br><span class="line">y = jit(add_global_value)(x)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\nGlobal variable changed value: &quot;</span>, counter)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Second call to the function with input <span class="subst">&#123;x&#125;</span> with global variable value <span class="subst">&#123;counter&#125;</span> returned <span class="subst">&#123;y&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
 <p>结果输出为：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Global variable value:  5</span><br><span class="line">First call to the <span class="keyword">function</span> with input 2 with global variable value 5 returned 7</span><br><span class="line"></span><br><span class="line">Global variable changed value:  10</span><br><span class="line">Second call to the <span class="keyword">function</span> with input 2 with global variable value 10 returned 7</span><br></pre></td></tr></table></figure>
@@ -436,14 +437,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">559k</span>
+    <span title="站点总字数">1.6m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">31:03</span>
+    <span title="站点阅读时长">22:21</span>
   </span>
 </div>
 <div class="busuanzi-count">
