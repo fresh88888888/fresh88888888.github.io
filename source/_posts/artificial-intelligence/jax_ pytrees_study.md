@@ -363,6 +363,7 @@ plt.plot(x, forward(params, x), marker="x", label="Predictions")
 plt.legend()
 plt.show()
 ```
+结果输出为：
 ```bash
 Layer 1 => Params shape: {'biases': (128,), 'weights': (1, 128)}
 Layer 2 => Params shape: {'biases': (128,), 'weights': (128, 128)}
