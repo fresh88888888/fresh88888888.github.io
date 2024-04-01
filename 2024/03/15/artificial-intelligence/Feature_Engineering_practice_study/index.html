@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+  <meta name="google-site-verification" content="lk2gSYFP_NyLNFob-fFnt7fm-I_n1ZYws-WZll7mshg">
+  <meta name="msvalidate.01" content="6Jdc01DjYOLguhS5">
+  <meta name="baidu-site-verification" content="code-NR10G09zww">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic%7Ccursive:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+
+    <meta name="description" content="第1步 - 准备工作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="特征工程实践之—房价预测">
+<meta property="og:url" content="https://fresh88888888.github.io/2024/03/15/artificial-intelligence/Feature_Engineering_practice_study/index.html">
+<meta property="og:site_name" content="UMBRELLA">
+<meta property="og:description" content="第1步 - 准备工作">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/15/artificial-intelligence/Feature_Engineering_practice_study/fep_1.png">
+<meta property="article:published_time" content="2024-03-15T02:20:32.000Z">
+<meta property="article:modified_time" content="2024-03-15T02:20:32.000Z">
+<meta property="article:author" content="umbrella">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2024/03/15/artificial-intelligence/Feature_Engineering_practice_study/fep_1.png">
+
+
+<link rel="canonical" href="https://fresh88888888.github.io/2024/03/15/artificial-intelligence/Feature_Engineering_practice_study/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/03/15/artificial-intelligence/Feature_Engineering_practice_study/","path":"2024/03/15/artificial-intelligence/Feature_Engineering_practice_study/","title":"特征工程实践之—房价预测"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>特征工程实践之—房价预测 | UMBRELLA</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">UMBRELLA</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">未雨绸缪，举重若轻</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-算法"><a href="/Algorithm/" rel="section"><i class="fa fa-calendar fa-fw"></i>算法</a></li><li class="menu-item menu-item-c++-&nbsp;编程"><a href="/Programming-C++/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>C++ &nbsp;编程</a></li><li class="menu-item menu-item-rust-编程"><a href="/Programming-Rust/" rel="section"><i class="fa fa-cat fa-fw"></i>Rust 编程</a></li><li class="menu-item menu-item-go-&nbsp;&nbsp;&nbsp;编程"><a href="/Programming-Go/" rel="section"><i class="fa fa-hippo fa-fw"></i>Go &nbsp;&nbsp;&nbsp;编程</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC1%E6%AD%A5-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">第1步 - 准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E5%92%8C%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.</span> <span class="nav-text">导入和配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">数据预处理</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE"><span class="nav-number">1.2.1.</span> <span class="nav-text">加载数据</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B8%85%E7%90%86%E6%95%B0%E6%8D%AE"><span class="nav-number">1.2.2.</span> <span class="nav-text">清理数据</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%AF%B9%E7%BB%9F%E8%AE%A1%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BF%9B%E8%A1%8C%E7%BC%96%E7%A0%81"><span class="nav-number">1.2.3.</span> <span class="nav-text">对统计数据类型进行编码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E7%BC%BA%E5%A4%B1%E5%80%BC"><span class="nav-number">1.2.4.</span> <span class="nav-text">处理缺失值</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE-1"><span class="nav-number">1.3.</span> <span class="nav-text">加载数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E5%9F%BA%E7%BA%BF"><span class="nav-number">1.4.</span> <span class="nav-text">建立基线</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC2%E6%AD%A5-%E7%89%B9%E5%BE%81%E6%9C%89%E6%95%88%E5%88%86%E5%80%BC"><span class="nav-number">2.</span> <span class="nav-text">第2步 - 特征有效分值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC3%E6%AD%A5-%E5%88%9B%E5%BB%BA%E7%89%B9%E5%BE%81"><span class="nav-number">3.</span> <span class="nav-text">第3步 - 创建特征</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-Pandas-%E5%88%9B%E5%BB%BA%E7%89%B9%E5%BE%81"><span class="nav-number">3.1.</span> <span class="nav-text">使用 Pandas 创建特征</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#k%E5%9D%87%E5%80%BC%E8%81%9A%E7%B1%BB"><span class="nav-number">3.2.</span> <span class="nav-text">k均值聚类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90"><span class="nav-number">3.3.</span> <span class="nav-text">主成分分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#PCA-%E5%BA%94%E7%94%A8-%E6%8C%87%E7%A4%BA%E5%BC%82%E5%B8%B8%E5%80%BC"><span class="nav-number">3.4.</span> <span class="nav-text">PCA 应用 - 指示异常值</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E7%BC%96%E7%A0%81"><span class="nav-number">3.5.</span> <span class="nav-text">目标编码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%B9%E5%BE%81%E9%9B%86"><span class="nav-number">3.6.</span> <span class="nav-text">创建最终的特征集</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC-4-%E6%AD%A5-%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E6%95%B4"><span class="nav-number">4.</span> <span class="nav-text">第 4 步 - 超参数调整</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC-5-%E6%AD%A5-%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E5%B9%B6%E5%88%9B%E5%BB%BA%E6%8F%90%E4%BA%A4"><span class="nav-number">5.</span> <span class="nav-text">第 5 步 - 训练模型并创建提交</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="umbrella"
+      src="/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">umbrella</p>
+  <div class="site-description" itemprop="description">没事就多看看书</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">133</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fresh88888888" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fresh88888888" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fresh888888@foxmail.com" title="E-Mail → mailto:fresh888888@foxmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.rust-lang.org/zh-CN/" title="https:&#x2F;&#x2F;www.rust-lang.org&#x2F;zh-CN&#x2F;" rel="noopener" target="_blank">Rust</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://go.dev/" title="https:&#x2F;&#x2F;go.dev&#x2F;" rel="noopener" target="_blank">Golang</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://isocpp.org/" title="https:&#x2F;&#x2F;isocpp.org&#x2F;" rel="noopener" target="_blank">C++</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.python.org/" title="https:&#x2F;&#x2F;www.python.org&#x2F;" rel="noopener" target="_blank">Python</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://doc.rust-lang.org/cargo/index.html" title="https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;cargo&#x2F;index.html" rel="noopener" target="_blank">Cargo</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://gist.github.com/rxaviers/7360908" title="https:&#x2F;&#x2F;gist.github.com&#x2F;rxaviers&#x2F;7360908" rel="noopener" target="_blank">Emoji</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/15/artificial-intelligence/Feature_Engineering_practice_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="特征工程实践之—房价预测 | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          特征工程实践之—房价预测
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-03-15 10:20:32" itemprop="dateCreated datePublished" datetime="2024-03-15T10:20:32+08:00">2024-03-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>15 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="第1步-准备工作"><a href="#第1步-准备工作" class="headerlink" title="第1步 - 准备工作"></a>第1步 - 准备工作</h4><span id="more"></span>
+<h5 id="导入和配置"><a href="#导入和配置" class="headerlink" title="导入和配置"></a>导入和配置</h5><p>我们将首先导入使用的包并设置一些笔记本默认值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> warnings</span><br><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line"><span class="keyword">from</span> IPython.display <span class="keyword">import</span> display</span><br><span class="line"><span class="keyword">from</span> pandas.api.types <span class="keyword">import</span> CategoricalDtype</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> category_encoders <span class="keyword">import</span> MEstimateEncoder</span><br><span class="line"><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> KMeans</span><br><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> PCA</span><br><span class="line"><span class="keyword">from</span> sklearn.feature_selection <span class="keyword">import</span> mutual_info_regression</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> KFold, cross_val_score</span><br><span class="line"><span class="keyword">from</span> xgboost <span class="keyword">import</span> XGBRegressor</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Set Matplotlib defaults</span></span><br><span class="line">plt.style.use(<span class="string">&quot;seaborn-whitegrid&quot;</span>)</span><br><span class="line">plt.rc(<span class="string">&quot;figure&quot;</span>, autolayout=<span class="literal">True</span>)</span><br><span class="line">plt.rc(</span><br><span class="line">    <span class="string">&quot;axes&quot;</span>,</span><br><span class="line">    labelweight=<span class="string">&quot;bold&quot;</span>,</span><br><span class="line">    labelsize=<span class="string">&quot;large&quot;</span>,</span><br><span class="line">    titleweight=<span class="string">&quot;bold&quot;</span>,</span><br><span class="line">    titlesize=<span class="number">14</span>,</span><br><span class="line">    titlepad=<span class="number">10</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Mute warnings</span></span><br><span class="line">warnings.filterwarnings(<span class="string">&#x27;ignore&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h5 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h5><p>在进行任何特征工程之前，我们需要对数据进行预处理，以使其成为适合分析的形式。我们在课程中使用的数据比比赛数据简单一些。对于艾姆斯竞赛数据集，我们需要：</p>
+<ul>
+<li>从<code>CSV</code>文件加载数据。</li>
+<li>清理数据以修复任何错误或不一致。</li>
+<li>对统计数据类型（数字、分类）进行编码。</li>
+<li>估算任何缺失值。</li>
+</ul>
+<h6 id="加载数据"><a href="#加载数据" class="headerlink" title="加载数据"></a>加载数据</h6><p>我们将把所有这些步骤包装在一个函数中，这将使您可以在需要时轻松获得新的数据帧。读取<code>CSV</code>文件后，我们将应用三个预处理步骤：清理、编码和插补，然后创建数据分割：一个 (<code>df_train</code>) 用于训练模型，另一个 (<code>df_test</code>) 用于进行预测。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">load_data</span>():</span><br><span class="line">    <span class="comment"># Read data</span></span><br><span class="line">    data_dir = Path(<span class="string">&quot;../input/house-prices-advanced-regression-techniques/&quot;</span>)</span><br><span class="line">    df_train = pd.read_csv(data_dir / <span class="string">&quot;train.csv&quot;</span>, index_col=<span class="string">&quot;Id&quot;</span>)</span><br><span class="line">    df_test = pd.read_csv(data_dir / <span class="string">&quot;test.csv&quot;</span>, index_col=<span class="string">&quot;Id&quot;</span>)</span><br><span class="line">    <span class="comment"># Merge the splits so we can process them together</span></span><br><span class="line">    df = pd.concat([df_train, df_test])</span><br><span class="line">    <span class="comment"># Preprocessing</span></span><br><span class="line">    df = clean(df)</span><br><span class="line">    df = encode(df)</span><br><span class="line">    df = impute(df)</span><br><span class="line">    <span class="comment"># Reform splits</span></span><br><span class="line">    df_train = df.loc[df_train.index, :]</span><br><span class="line">    df_test = df.loc[df_test.index, :]</span><br><span class="line">    <span class="keyword">return</span> df_train, df_test</span><br></pre></td></tr></table></figure>
+<h6 id="清理数据"><a href="#清理数据" class="headerlink" title="清理数据"></a>清理数据</h6><p>该数据集中的一些分类特征在其类别中存在明显的拼写错误：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">data_dir = Path(<span class="string">&quot;../input/house-prices-advanced-regression-techniques/&quot;</span>)</span><br><span class="line">df = pd.read_csv(data_dir / <span class="string">&quot;train.csv&quot;</span>, index_col=<span class="string">&quot;Id&quot;</span>)</span><br><span class="line"></span><br><span class="line">df.Exterior2nd.unique()</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">array([<span class="string">&#x27;VinylSd&#x27;</span>, <span class="string">&#x27;MetalSd&#x27;</span>, <span class="string">&#x27;Wd Shng&#x27;</span>, <span class="string">&#x27;HdBoard&#x27;</span>, <span class="string">&#x27;Plywood&#x27;</span>, <span class="string">&#x27;Wd Sdng&#x27;</span>,</span><br><span class="line">       <span class="string">&#x27;CmentBd&#x27;</span>, <span class="string">&#x27;BrkFace&#x27;</span>, <span class="string">&#x27;Stucco&#x27;</span>, <span class="string">&#x27;AsbShng&#x27;</span>, <span class="string">&#x27;Brk Cmn&#x27;</span>, <span class="string">&#x27;ImStucc&#x27;</span>,</span><br><span class="line">       <span class="string">&#x27;AsphShn&#x27;</span>, <span class="string">&#x27;Stone&#x27;</span>, <span class="string">&#x27;Other&#x27;</span>, <span class="string">&#x27;CBlock&#x27;</span>], dtype=object)</span><br></pre></td></tr></table></figure>
+<p>将它们与<code>data_description.txt</code>进行比较可以向我们展示哪些内容需要清理。我们将在这里解决几个问题，但您可能需要进一步评估这些数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">clean</span>(<span class="params">df</span>):</span><br><span class="line">    df[<span class="string">&quot;Exterior2nd&quot;</span>] = df[<span class="string">&quot;Exterior2nd&quot;</span>].replace(&#123;<span class="string">&quot;Brk Cmn&quot;</span>: <span class="string">&quot;BrkComm&quot;</span>&#125;)</span><br><span class="line">    <span class="comment"># Some values of GarageYrBlt are corrupt, so we&#x27;ll replace them</span></span><br><span class="line">    <span class="comment"># with the year the house was built</span></span><br><span class="line">    df[<span class="string">&quot;GarageYrBlt&quot;</span>] = df[<span class="string">&quot;GarageYrBlt&quot;</span>].where(df.GarageYrBlt &lt;= <span class="number">2010</span>, df.YearBuilt)</span><br><span class="line">    <span class="comment"># Names beginning with numbers are awkward to work with</span></span><br><span class="line">    df.rename(columns=&#123;</span><br><span class="line">        <span class="string">&quot;1stFlrSF&quot;</span>: <span class="string">&quot;FirstFlrSF&quot;</span>,</span><br><span class="line">        <span class="string">&quot;2ndFlrSF&quot;</span>: <span class="string">&quot;SecondFlrSF&quot;</span>,</span><br><span class="line">        <span class="string">&quot;3SsnPorch&quot;</span>: <span class="string">&quot;Threeseasonporch&quot;</span>,</span><br><span class="line">    &#125;, inplace=<span class="literal">True</span>,</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> df</span><br></pre></td></tr></table></figure>
+<h6 id="对统计数据类型进行编码"><a href="#对统计数据类型进行编码" class="headerlink" title="对统计数据类型进行编码"></a>对统计数据类型进行编码</h6><p><code>Pandas</code>具有与标准统计类型（数值、分类等）相对应的<code>Python</code>类型。使用正确的类型对每个特征进行编码有助于确保我们使用的任何函数都适当地处理每个特征，并使我们更容易一致地应用转换。该隐藏单元定义了编码函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># The numeric features are already encoded correctly (`float` for</span></span><br><span class="line"><span class="comment"># continuous, `int` for discrete), but the categoricals we&#x27;ll need to</span></span><br><span class="line"><span class="comment"># do ourselves. Note in particular, that the `MSSubClass` feature is</span></span><br><span class="line"><span class="comment"># read as an `int` type, but is actually a (nominative) categorical.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The nominative (unordered) categorical features</span></span><br><span class="line">features_nom = [<span class="string">&quot;MSSubClass&quot;</span>, <span class="string">&quot;MSZoning&quot;</span>, <span class="string">&quot;Street&quot;</span>, <span class="string">&quot;Alley&quot;</span>, <span class="string">&quot;LandContour&quot;</span>, <span class="string">&quot;LotConfig&quot;</span>, <span class="string">&quot;Neighborhood&quot;</span>, <span class="string">&quot;Condition1&quot;</span>, <span class="string">&quot;Condition2&quot;</span>, <span class="string">&quot;BldgType&quot;</span>, <span class="string">&quot;HouseStyle&quot;</span>, <span class="string">&quot;RoofStyle&quot;</span>, <span class="string">&quot;RoofMatl&quot;</span>, <span class="string">&quot;Exterior1st&quot;</span>, <span class="string">&quot;Exterior2nd&quot;</span>, <span class="string">&quot;MasVnrType&quot;</span>, <span class="string">&quot;Foundation&quot;</span>, <span class="string">&quot;Heating&quot;</span>, <span class="string">&quot;CentralAir&quot;</span>, <span class="string">&quot;GarageType&quot;</span>, <span class="string">&quot;MiscFeature&quot;</span>, <span class="string">&quot;SaleType&quot;</span>, <span class="string">&quot;SaleCondition&quot;</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># The ordinal (ordered) categorical features </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Pandas calls the categories &quot;levels&quot;</span></span><br><span class="line">five_levels = [<span class="string">&quot;Po&quot;</span>, <span class="string">&quot;Fa&quot;</span>, <span class="string">&quot;TA&quot;</span>, <span class="string">&quot;Gd&quot;</span>, <span class="string">&quot;Ex&quot;</span>]</span><br><span class="line">ten_levels = <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">10</span>))</span><br><span class="line"></span><br><span class="line">ordered_levels = &#123;</span><br><span class="line">    <span class="string">&quot;OverallQual&quot;</span>: ten_levels,</span><br><span class="line">    <span class="string">&quot;OverallCond&quot;</span>: ten_levels,</span><br><span class="line">    <span class="string">&quot;ExterQual&quot;</span>: five_levels,</span><br><span class="line">    <span class="string">&quot;ExterCond&quot;</span>: five_levels,</span><br><span class="line">    <span class="string">&quot;BsmtQual&quot;</span>: five_levels,</span><br><span class="line">    <span class="string">&quot;BsmtCond&quot;</span>: five_levels,</span><br><span class="line">    <span class="string">&quot;HeatingQC&quot;</span>: five_levels,</span><br><span class="line">    <span class="string">&quot;KitchenQual&quot;</span>: five_levels,</span><br><span class="line">    <span class="string">&quot;FireplaceQu&quot;</span>: five_levels,</span><br><span class="line">    <span class="string">&quot;GarageQual&quot;</span>: five_levels,</span><br><span class="line">    <span class="string">&quot;GarageCond&quot;</span>: five_levels,</span><br><span class="line">    <span class="string">&quot;PoolQC&quot;</span>: five_levels,</span><br><span class="line">    <span class="string">&quot;LotShape&quot;</span>: [<span class="string">&quot;Reg&quot;</span>, <span class="string">&quot;IR1&quot;</span>, <span class="string">&quot;IR2&quot;</span>, <span class="string">&quot;IR3&quot;</span>],</span><br><span class="line">    <span class="string">&quot;LandSlope&quot;</span>: [<span class="string">&quot;Sev&quot;</span>, <span class="string">&quot;Mod&quot;</span>, <span class="string">&quot;Gtl&quot;</span>],</span><br><span class="line">    <span class="string">&quot;BsmtExposure&quot;</span>: [<span class="string">&quot;No&quot;</span>, <span class="string">&quot;Mn&quot;</span>, <span class="string">&quot;Av&quot;</span>, <span class="string">&quot;Gd&quot;</span>],</span><br><span class="line">    <span class="string">&quot;BsmtFinType1&quot;</span>: [<span class="string">&quot;Unf&quot;</span>, <span class="string">&quot;LwQ&quot;</span>, <span class="string">&quot;Rec&quot;</span>, <span class="string">&quot;BLQ&quot;</span>, <span class="string">&quot;ALQ&quot;</span>, <span class="string">&quot;GLQ&quot;</span>],</span><br><span class="line">    <span class="string">&quot;BsmtFinType2&quot;</span>: [<span class="string">&quot;Unf&quot;</span>, <span class="string">&quot;LwQ&quot;</span>, <span class="string">&quot;Rec&quot;</span>, <span class="string">&quot;BLQ&quot;</span>, <span class="string">&quot;ALQ&quot;</span>, <span class="string">&quot;GLQ&quot;</span>],</span><br><span class="line">    <span class="string">&quot;Functional&quot;</span>: [<span class="string">&quot;Sal&quot;</span>, <span class="string">&quot;Sev&quot;</span>, <span class="string">&quot;Maj1&quot;</span>, <span class="string">&quot;Maj2&quot;</span>, <span class="string">&quot;Mod&quot;</span>, <span class="string">&quot;Min2&quot;</span>, <span class="string">&quot;Min1&quot;</span>, <span class="string">&quot;Typ&quot;</span>],</span><br><span class="line">    <span class="string">&quot;GarageFinish&quot;</span>: [<span class="string">&quot;Unf&quot;</span>, <span class="string">&quot;RFn&quot;</span>, <span class="string">&quot;Fin&quot;</span>],</span><br><span class="line">    <span class="string">&quot;PavedDrive&quot;</span>: [<span class="string">&quot;N&quot;</span>, <span class="string">&quot;P&quot;</span>, <span class="string">&quot;Y&quot;</span>],</span><br><span class="line">    <span class="string">&quot;Utilities&quot;</span>: [<span class="string">&quot;NoSeWa&quot;</span>, <span class="string">&quot;NoSewr&quot;</span>, <span class="string">&quot;AllPub&quot;</span>],</span><br><span class="line">    <span class="string">&quot;CentralAir&quot;</span>: [<span class="string">&quot;N&quot;</span>, <span class="string">&quot;Y&quot;</span>],</span><br><span class="line">    <span class="string">&quot;Electrical&quot;</span>: [<span class="string">&quot;Mix&quot;</span>, <span class="string">&quot;FuseP&quot;</span>, <span class="string">&quot;FuseF&quot;</span>, <span class="string">&quot;FuseA&quot;</span>, <span class="string">&quot;SBrkr&quot;</span>],</span><br><span class="line">    <span class="string">&quot;Fence&quot;</span>: [<span class="string">&quot;MnWw&quot;</span>, <span class="string">&quot;GdWo&quot;</span>, <span class="string">&quot;MnPrv&quot;</span>, <span class="string">&quot;GdPrv&quot;</span>],</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Add a None level for missing values</span></span><br><span class="line">ordered_levels = &#123;key: [<span class="string">&quot;None&quot;</span>] + value <span class="keyword">for</span> key, value <span class="keyword">in</span></span><br><span class="line">                  ordered_levels.items()&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encode</span>(<span class="params">df</span>):</span><br><span class="line">    <span class="comment"># Nominal categories</span></span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> features_nom:</span><br><span class="line">        df[name] = df[name].astype(<span class="string">&quot;category&quot;</span>)</span><br><span class="line">        <span class="comment"># Add a None category for missing values</span></span><br><span class="line">        <span class="keyword">if</span> <span class="string">&quot;None&quot;</span> <span class="keyword">not</span> <span class="keyword">in</span> df[name].cat.categories:</span><br><span class="line">            df[name] = df[name].cat.add_categories(<span class="string">&quot;None&quot;</span>)</span><br><span class="line">    <span class="comment"># Ordinal categories</span></span><br><span class="line">    <span class="keyword">for</span> name, levels <span class="keyword">in</span> ordered_levels.items():</span><br><span class="line">        df[name] = df[name].astype(CategoricalDtype(levels,</span><br><span class="line">                                                    ordered=<span class="literal">True</span>))</span><br><span class="line">    <span class="keyword">return</span> df</span><br></pre></td></tr></table></figure>
+<h6 id="处理缺失值"><a href="#处理缺失值" class="headerlink" title="处理缺失值"></a>处理缺失值</h6><p>现在处理缺失值将使特征工程进行得更加顺利。我们将缺失数值归为<code>0</code>，将缺失分类值归为“无”。您可能想尝试其他插补策略。特别是，您可以尝试创建“缺失值”指标：每当估算值时为<code>1</code>，否则为 <code>0</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">impute</span>(<span class="params">df</span>):</span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> df.select_dtypes(<span class="string">&quot;number&quot;</span>):</span><br><span class="line">        df[name] = df[name].fillna(<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> df.select_dtypes(<span class="string">&quot;category&quot;</span>):</span><br><span class="line">        df[name] = df[name].fillna(<span class="string">&quot;None&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> df</span><br></pre></td></tr></table></figure>
+
+<h5 id="加载数据-1"><a href="#加载数据-1" class="headerlink" title="加载数据"></a>加载数据</h5><p>现在我们可以调用数据加载器并获取处理后的数据分割：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df_train, df_test = load_data()</span><br></pre></td></tr></table></figure>
+<p>如果您想查看它们包含的内容，请取消注释并运行此单元格。请注意，<code>df_test</code>缺少<code>SalePrice</code>值。（在插补步骤中<code>NA</code>被设为<code>0</code>。）</p>
+<h5 id="建立基线"><a href="#建立基线" class="headerlink" title="建立基线"></a>建立基线</h5><p>最后，让我们建立一个基线分数来判断我们的特征工程。它将计算功能集的交叉验证<code>RMSLE</code>分数。我们的模型使用了<code>XGBoost</code>，但您可以想尝试其他模型。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">score_dataset</span>(<span class="params">X, y, model=XGBRegressor(<span class="params"></span>)</span>):</span><br><span class="line">    <span class="comment"># Label encoding for categoricals</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># Label encoding is good for XGBoost and RandomForest, but one-hot</span></span><br><span class="line">    <span class="comment"># would be better for models like Lasso or Ridge. The `cat.codes`</span></span><br><span class="line">    <span class="comment"># attribute holds the category levels.</span></span><br><span class="line">    <span class="keyword">for</span> colname <span class="keyword">in</span> X.select_dtypes([<span class="string">&quot;category&quot;</span>]):</span><br><span class="line">        X[colname] = X[colname].cat.codes</span><br><span class="line">    <span class="comment"># Metric for Housing competition is RMSLE (Root Mean Squared Log Error)</span></span><br><span class="line">    log_y = np.log(y)</span><br><span class="line">    score = cross_val_score(</span><br><span class="line">        model, X, log_y, cv=<span class="number">5</span>, scoring=<span class="string">&quot;neg_mean_squared_error&quot;</span>,</span><br><span class="line">    )</span><br><span class="line">    score = -<span class="number">1</span> * score.mean()</span><br><span class="line">    score = np.sqrt(score)</span><br><span class="line">    <span class="keyword">return</span> score</span><br></pre></td></tr></table></figure>
+<p>当我们想要尝试新的特征集时，我们可以随时重用这个评分函数。我们现在将在没有附加功能的处理数据上运行它并获得基线分数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">X = df_train.copy()</span><br><span class="line">y = X.pop(<span class="string">&quot;SalePrice&quot;</span>)</span><br><span class="line"></span><br><span class="line">baseline_score = score_dataset(X, y)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Baseline score: <span class="subst">&#123;baseline_score:<span class="number">.5</span>f&#125;</span> RMSLE&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Baseline score: 0.14302 RMSLE</span><br></pre></td></tr></table></figure>
+<p>这个基线分数可以帮助我们了解我们组装的某些特征是否实际上带来了任何改进。</p>
+<h4 id="第2步-特征有效分值"><a href="#第2步-特征有效分值" class="headerlink" title="第2步 - 特征有效分值"></a>第2步 - 特征有效分值</h4><p>我们了解了如何使用互信息来计算某个特征的有效分值，让您了解该特征的潜力有多大。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">make_mi_scores</span>(<span class="params">X, y</span>):</span><br><span class="line">    X = X.copy()</span><br><span class="line">    <span class="keyword">for</span> colname <span class="keyword">in</span> X.select_dtypes([<span class="string">&quot;object&quot;</span>, <span class="string">&quot;category&quot;</span>]):</span><br><span class="line">        X[colname], _ = X[colname].factorize()</span><br><span class="line">    <span class="comment"># All discrete features should now have integer dtypes</span></span><br><span class="line">    discrete_features = [pd.api.types.is_integer_dtype(t) <span class="keyword">for</span> t <span class="keyword">in</span> X.dtypes]</span><br><span class="line">    mi_scores = mutual_info_regression(X, y, discrete_features=discrete_features, random_state=<span class="number">0</span>)</span><br><span class="line">    mi_scores = pd.Series(mi_scores, name=<span class="string">&quot;MI Scores&quot;</span>, index=X.columns)</span><br><span class="line">    mi_scores = mi_scores.sort_values(ascending=<span class="literal">False</span>)</span><br><span class="line">    <span class="keyword">return</span> mi_scores</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">plot_mi_scores</span>(<span class="params">scores</span>):</span><br><span class="line">    scores = scores.sort_values(ascending=<span class="literal">True</span>)</span><br><span class="line">    width = np.arange(<span class="built_in">len</span>(scores))</span><br><span class="line">    ticks = <span class="built_in">list</span>(scores.index)</span><br><span class="line">    plt.barh(width, scores)</span><br><span class="line">    plt.yticks(width, ticks)</span><br><span class="line">    plt.title(<span class="string">&quot;Mutual Information Scores&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>让我们再次看看我们的特征得分:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">X = df_train.copy()</span><br><span class="line">y = X.pop(<span class="string">&quot;SalePrice&quot;</span>)</span><br><span class="line"></span><br><span class="line">mi_scores = make_mi_scores(X, y)</span><br><span class="line">mi_scores</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">OverallQual     0.571457</span><br><span class="line">Neighborhood    0.526220</span><br><span class="line">GrLivArea       0.430395</span><br><span class="line">YearBuilt       0.407974</span><br><span class="line">LotArea         0.394468</span><br><span class="line">                  ...   </span><br><span class="line">PoolQC          0.000000</span><br><span class="line">MiscFeature     0.000000</span><br><span class="line">MiscVal         0.000000</span><br><span class="line">MoSold          0.000000</span><br><span class="line">YrSold          0.000000</span><br><span class="line">Name: MI Scores, Length: 79, dtype: float64</span><br></pre></td></tr></table></figure>
+<p>您可以看到，我们有许多信息丰富的特征，但也有一些特征似乎根本没有信息（至少其本身）。得分最高的特征通常会在特征开发过程中获得最大的回报，因此将精力集中在这些特征上可能是个好主意。 另一方面，对无信息特征的训练可能会导致过度拟合。因此，我们将完全放弃得分为<code>0.0</code>的特征：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">drop_uninformative</span>(<span class="params">df, mi_scores</span>):</span><br><span class="line">    <span class="keyword">return</span> df.loc[:, mi_scores &gt; <span class="number">0.0</span>]</span><br></pre></td></tr></table></figure>
+<p>删除它们确实会带来一定的性能提升：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">X = df_train.copy()</span><br><span class="line">y = X.pop(<span class="string">&quot;SalePrice&quot;</span>)</span><br><span class="line">X = drop_uninformative(X, mi_scores)</span><br><span class="line"></span><br><span class="line">score_dataset(X, y)</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.14274827027030276</span><br></pre></td></tr></table></figure>
+<p>稍后，我们会将<code>drop_uninformative</code>函数添加到我们的特征创建管道中。</p>
+<h4 id="第3步-创建特征"><a href="#第3步-创建特征" class="headerlink" title="第3步 - 创建特征"></a>第3步 - 创建特征</h4><p>现在我们将开始开发我们的特征集。为了使我们的特征工程工作流程更加模块化，我们将定义一个函数，该函数将获取准备好的数据帧并将其通过转换管道传递以获得最终的特征集。它看起来像这样：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">create_features</span>(<span class="params">df</span>):</span><br><span class="line">    X = df.copy()</span><br><span class="line">    y = X.pop(<span class="string">&quot;SalePrice&quot;</span>)</span><br><span class="line">    X = X.join(create_features_1(X))</span><br><span class="line">    X = X.join(create_features_2(X))</span><br><span class="line">    X = X.join(create_features_3(X))</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    <span class="keyword">return</span> X</span><br></pre></td></tr></table></figure>
+<p>现在让我们继续定义一个转换，即分类特征的标签编码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">label_encode</span>(<span class="params">df</span>):</span><br><span class="line">    X = df.copy()</span><br><span class="line">    <span class="keyword">for</span> colname <span class="keyword">in</span> X.select_dtypes([<span class="string">&quot;category&quot;</span>]):</span><br><span class="line">        X[colname] = X[colname].cat.codes</span><br><span class="line">    <span class="keyword">return</span> X</span><br></pre></td></tr></table></figure>
+<p>当您使用像<code>XGBoost</code>这样的树集成时，标签编码适用于任何类型的分类特征，即使对于无序类别也是如此。如果您想尝试线性回归模型，您可能会想使用<code>one-hot</code>编码，特别是对于具有无序类别的特征。</p>
+<h5 id="使用-Pandas-创建特征"><a href="#使用-Pandas-创建特征" class="headerlink" title="使用 Pandas 创建特征"></a>使用 Pandas 创建特征</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mathematical_transforms</span>(<span class="params">df</span>):</span><br><span class="line">    X = pd.DataFrame()  <span class="comment"># dataframe to hold new features</span></span><br><span class="line">    X[<span class="string">&quot;LivLotRatio&quot;</span>] = df.GrLivArea / df.LotArea</span><br><span class="line">    X[<span class="string">&quot;Spaciousness&quot;</span>] = (df.FirstFlrSF + df.SecondFlrSF) / df.TotRmsAbvGrd</span><br><span class="line">    <span class="comment"># This feature ended up not helping performance</span></span><br><span class="line">    <span class="comment"># X[&quot;TotalOutsideSF&quot;] = \</span></span><br><span class="line">    <span class="comment">#     df.WoodDeckSF + df.OpenPorchSF + df.EnclosedPorch + \</span></span><br><span class="line">    <span class="comment">#     df.Threeseasonporch + df.ScreenPorch</span></span><br><span class="line">    <span class="keyword">return</span> X</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">interactions</span>(<span class="params">df</span>):</span><br><span class="line">    X = pd.get_dummies(df.BldgType, prefix=<span class="string">&quot;Bldg&quot;</span>)</span><br><span class="line">    X = X.mul(df.GrLivArea, axis=<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> X</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">counts</span>(<span class="params">df</span>):</span><br><span class="line">    X = pd.DataFrame()</span><br><span class="line">    X[<span class="string">&quot;PorchTypes&quot;</span>] = df[[</span><br><span class="line">        <span class="string">&quot;WoodDeckSF&quot;</span>,</span><br><span class="line">        <span class="string">&quot;OpenPorchSF&quot;</span>,</span><br><span class="line">        <span class="string">&quot;EnclosedPorch&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Threeseasonporch&quot;</span>,</span><br><span class="line">        <span class="string">&quot;ScreenPorch&quot;</span>,</span><br><span class="line">    ]].gt(<span class="number">0.0</span>).<span class="built_in">sum</span>(axis=<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> X</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">break_down</span>(<span class="params">df</span>):</span><br><span class="line">    X = pd.DataFrame()</span><br><span class="line">    X[<span class="string">&quot;MSClass&quot;</span>] = df.MSSubClass.<span class="built_in">str</span>.split(<span class="string">&quot;_&quot;</span>, n=<span class="number">1</span>, expand=<span class="literal">True</span>)[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">return</span> X</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">group_transforms</span>(<span class="params">df</span>):</span><br><span class="line">    X = pd.DataFrame()</span><br><span class="line">    X[<span class="string">&quot;MedNhbdArea&quot;</span>] = df.groupby(<span class="string">&quot;Neighborhood&quot;</span>)[<span class="string">&quot;GrLivArea&quot;</span>].transform(<span class="string">&quot;median&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> X</span><br></pre></td></tr></table></figure>
+<p>以下是您可以探索其他的一些想法：</p>
+<ul>
+<li>质量<code>Qual</code>和条件<code>Cond</code>特征之间的相互作用。例如，<code>OverallQual</code>就是一个高分特征。您可以尝试将其与<code>OverallCond</code>结合起来，方法是将两者都转换为整数类型并取一个乘积。</li>
+<li>面积特征的平方根。这会将平方英尺的单位转换为英尺。</li>
+<li>数字特征的对数。如果某个特征具有偏态分布，则应用对数可以帮助将其标准化。</li>
+<li>描述同一事物的数字特征和分类特征之间的相互作用。例如，您可以查看<code>BsmtQual</code>和<code>TotalBsmtSF</code>之间的交互。</li>
+<li><code>Neighborhood</code>中的其他群体统计数据。我们做了<code>GrLivArea</code>的中位数。查看平均值、标准差或计数可能会很有趣。您还可以尝试将组统计数据与其他功能结合起来。也许<code>GrLivArea</code>和中位数的差异很重要？</li>
+</ul>
+<h5 id="k均值聚类"><a href="#k均值聚类" class="headerlink" title="k均值聚类"></a>k均值聚类</h5><p>我们用来创建特征的第一个无监督算法是k均值聚类。我们看到，您可以使用聚类标签作为特征（包含 0、1、2、… 的列），也可以使用观测值到每个聚类的距离。我们看到这些特征有时如何有效地理清复杂的空间关系。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">cluster_features = [</span><br><span class="line">    <span class="string">&quot;LotArea&quot;</span>,</span><br><span class="line">    <span class="string">&quot;TotalBsmtSF&quot;</span>,</span><br><span class="line">    <span class="string">&quot;FirstFlrSF&quot;</span>,</span><br><span class="line">    <span class="string">&quot;SecondFlrSF&quot;</span>,</span><br><span class="line">    <span class="string">&quot;GrLivArea&quot;</span>,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cluster_labels</span>(<span class="params">df, features, n_clusters=<span class="number">20</span></span>):</span><br><span class="line">    X = df.copy()</span><br><span class="line">    X_scaled = X.loc[:, features]</span><br><span class="line">    X_scaled = (X_scaled - X_scaled.mean(axis=<span class="number">0</span>)) / X_scaled.std(axis=<span class="number">0</span>)</span><br><span class="line">    kmeans = KMeans(n_clusters=n_clusters, n_init=<span class="number">50</span>, random_state=<span class="number">0</span>)</span><br><span class="line">    X_new = pd.DataFrame()</span><br><span class="line">    X_new[<span class="string">&quot;Cluster&quot;</span>] = kmeans.fit_predict(X_scaled)</span><br><span class="line">    <span class="keyword">return</span> X_new</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cluster_distance</span>(<span class="params">df, features, n_clusters=<span class="number">20</span></span>):</span><br><span class="line">    X = df.copy()</span><br><span class="line">    X_scaled = X.loc[:, features]</span><br><span class="line">    X_scaled = (X_scaled - X_scaled.mean(axis=<span class="number">0</span>)) / X_scaled.std(axis=<span class="number">0</span>)</span><br><span class="line">    kmeans = KMeans(n_clusters=<span class="number">20</span>, n_init=<span class="number">50</span>, random_state=<span class="number">0</span>)</span><br><span class="line">    X_cd = kmeans.fit_transform(X_scaled)</span><br><span class="line">    <span class="comment"># Label features and join to dataset</span></span><br><span class="line">    X_cd = pd.DataFrame(</span><br><span class="line">        X_cd, columns=[<span class="string">f&quot;Centroid_<span class="subst">&#123;i&#125;</span>&quot;</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(X_cd.shape[<span class="number">1</span>])]</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> X_cd</span><br></pre></td></tr></table></figure>
+<h5 id="主成分分析"><a href="#主成分分析" class="headerlink" title="主成分分析"></a>主成分分析</h5><p><code>PCA</code>是我们用于特征创建的第二个无监督模型。我们看到了如何使用它来分解数据中的变分结构。<code>PCA</code>算法为我们提供了描述变化的每个组成部分的载荷，以及转换后的数据点的组成部分。负载可以建议要创建的特征以及我们可以直接用作特征的成分。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">apply_pca</span>(<span class="params">X, standardize=<span class="literal">True</span></span>):</span><br><span class="line">    <span class="comment"># Standardize</span></span><br><span class="line">    <span class="keyword">if</span> standardize:</span><br><span class="line">        X = (X - X.mean(axis=<span class="number">0</span>)) / X.std(axis=<span class="number">0</span>)</span><br><span class="line">    <span class="comment"># Create principal components</span></span><br><span class="line">    pca = PCA()</span><br><span class="line">    X_pca = pca.fit_transform(X)</span><br><span class="line">    <span class="comment"># Convert to dataframe</span></span><br><span class="line">    component_names = [<span class="string">f&quot;PC<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>&quot;</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(X_pca.shape[<span class="number">1</span>])]</span><br><span class="line">    X_pca = pd.DataFrame(X_pca, columns=component_names)</span><br><span class="line">    <span class="comment"># Create loadings</span></span><br><span class="line">    loadings = pd.DataFrame(</span><br><span class="line">        pca.components_.T,  <span class="comment"># transpose the matrix of loadings</span></span><br><span class="line">        columns=component_names,  <span class="comment"># so the columns are the principal components</span></span><br><span class="line">        index=X.columns,  <span class="comment"># and the rows are the original features</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> pca, X_pca, loadings</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">plot_variance</span>(<span class="params">pca, width=<span class="number">8</span>, dpi=<span class="number">100</span></span>):</span><br><span class="line">    <span class="comment"># Create figure</span></span><br><span class="line">    fig, axs = plt.subplots(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line">    n = pca.n_components_</span><br><span class="line">    grid = np.arange(<span class="number">1</span>, n + <span class="number">1</span>)</span><br><span class="line">    <span class="comment"># Explained variance</span></span><br><span class="line">    evr = pca.explained_variance_ratio_</span><br><span class="line">    axs[<span class="number">0</span>].bar(grid, evr)</span><br><span class="line">    axs[<span class="number">0</span>].<span class="built_in">set</span>(</span><br><span class="line">        xlabel=<span class="string">&quot;Component&quot;</span>, title=<span class="string">&quot;% Explained Variance&quot;</span>, ylim=(<span class="number">0.0</span>, <span class="number">1.0</span>)</span><br><span class="line">    )</span><br><span class="line">    <span class="comment"># Cumulative Variance</span></span><br><span class="line">    cv = np.cumsum(evr)</span><br><span class="line">    axs[<span class="number">1</span>].plot(np.r_[<span class="number">0</span>, grid], np.r_[<span class="number">0</span>, cv], <span class="string">&quot;o-&quot;</span>)</span><br><span class="line">    axs[<span class="number">1</span>].<span class="built_in">set</span>(</span><br><span class="line">        xlabel=<span class="string">&quot;Component&quot;</span>, title=<span class="string">&quot;% Cumulative Variance&quot;</span>, ylim=(<span class="number">0.0</span>, <span class="number">1.0</span>)</span><br><span class="line">    )</span><br><span class="line">    <span class="comment"># Set up figure</span></span><br><span class="line">    fig.<span class="built_in">set</span>(figwidth=<span class="number">8</span>, dpi=<span class="number">100</span>)</span><br><span class="line">    <span class="keyword">return</span> axs</span><br></pre></td></tr></table></figure>
+<p>其他特征变化</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">pca_inspired</span>(<span class="params">df</span>):</span><br><span class="line">    X = pd.DataFrame()</span><br><span class="line">    X[<span class="string">&quot;Feature1&quot;</span>] = df.GrLivArea + df.TotalBsmtSF</span><br><span class="line">    X[<span class="string">&quot;Feature2&quot;</span>] = df.YearRemodAdd * df.TotalBsmtSF</span><br><span class="line">    <span class="keyword">return</span> X</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pca_components</span>(<span class="params">df, features</span>):</span><br><span class="line">    X = df.loc[:, features]</span><br><span class="line">    _, X_pca, _ = apply_pca(X)</span><br><span class="line">    <span class="keyword">return</span> X_pca</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">pca_features = [</span><br><span class="line">    <span class="string">&quot;GarageArea&quot;</span>,</span><br><span class="line">    <span class="string">&quot;YearRemodAdd&quot;</span>,</span><br><span class="line">    <span class="string">&quot;TotalBsmtSF&quot;</span>,</span><br><span class="line">    <span class="string">&quot;GrLivArea&quot;</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>这些只是使用主要成分的几种方法。您还可以尝试使用一个或多个成分进行组合。需要注意的一件事是，<code>PCA</code>不会改变点之间的距离——它就像旋转一样。因此，使用全套成分进行聚类与使用原始特征进行聚类相同。相反，选择成分的一些子集，可能是方差最大或<code>MI</code>分数最高的成分。为了进一步分析，您可能需要查看数据集的相关矩阵：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">corrplot</span>(<span class="params">df, method=<span class="string">&quot;pearson&quot;</span>, annot=<span class="literal">True</span>, **kwargs</span>):</span><br><span class="line">    sns.clustermap(</span><br><span class="line">        df.corr(method, numeric_only=<span class="literal">True</span>),</span><br><span class="line">        vmin=-<span class="number">1.0</span>,</span><br><span class="line">        vmax=<span class="number">1.0</span>,</span><br><span class="line">        cmap=<span class="string">&quot;icefire&quot;</span>,</span><br><span class="line">        method=<span class="string">&quot;complete&quot;</span>,</span><br><span class="line">        annot=annot,</span><br><span class="line">        **kwargs,</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">corrplot(df_train, annot=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/03/15/artificial-intelligence/Feature_Engineering_practice_study/fep_1.png" class="">
+
+<p>高度相关的特征组通常会产生有趣的负载。</p>
+<h5 id="PCA-应用-指示异常值"><a href="#PCA-应用-指示异常值" class="headerlink" title="PCA 应用 - 指示异常值"></a>PCA 应用 - 指示异常值</h5><p>您应用了<code>PCA</code>来确定异常值的房屋，即房屋的值在其余数据中没有得到很好的体现。您看到爱德华兹附近有一组房屋的销售条件为“部分”，其价值特别极端。某些模型可以从指示这些异常值中受益，这就是下一个转换将要做的事情。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">indicate_outliers</span>(<span class="params">df</span>):</span><br><span class="line">    X_new = pd.DataFrame()</span><br><span class="line">    X_new[<span class="string">&quot;Outlier&quot;</span>] = (df.Neighborhood == <span class="string">&quot;Edwards&quot;</span>) &amp; (df.SaleCondition == <span class="string">&quot;Partial&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> X_new</span><br></pre></td></tr></table></figure>
+
+<p>您还可以考虑将<code>scikit-learn</code>的<code>sklearn.preprocessing</code>模块中的某种强大的缩放器应用于外围值，尤其是<code>GrLivArea</code>中的值。这是一个说明其中一些的教程。另一种选择可能是使用 <code>scikit-learn</code>的异常值检测器之一创建“异常值分数”特征。</p>
+<h5 id="目标编码"><a href="#目标编码" class="headerlink" title="目标编码"></a>目标编码</h5><p>需要单独的保留集来创建目标编码是相当浪费数据的。我们使用了<code>25%</code>的数据集来对单个特征（邮政编码）进行编码。我们根本没有使用那<code>25%</code>中其他特征的数据。然而，有一种方法可以使用目标编码，而不必使用保留的编码数据。 这基本上与交叉验证中使用的技巧相同：</p>
+<ul>
+<li>将数据拆分为折叠，每个折叠都有数据集的两个分割。</li>
+<li>在一个分割上训练编码器，但转换另一个分割的值。对所有分割重复此操作。</li>
+</ul>
+<p>这样，训练和转换始终在独立的数据集上进行，就像使用保留集但不会浪费任何数据一样。 下面是一个包装器：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CrossFoldEncoder</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, encoder, **kwargs</span>):</span><br><span class="line">        self.encoder_ = encoder</span><br><span class="line">        self.kwargs_ = kwargs  <span class="comment"># keyword arguments for the encoder</span></span><br><span class="line">        self.cv_ = KFold(n_splits=<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Fit an encoder on one split and transform the feature on the</span></span><br><span class="line">    <span class="comment"># other. Iterating over the splits in all folds gives a complete</span></span><br><span class="line">    <span class="comment"># transformation. We also now have one trained encoder on each</span></span><br><span class="line">    <span class="comment"># fold.</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">fit_transform</span>(<span class="params">self, X, y, cols</span>):</span><br><span class="line">        self.fitted_encoders_ = []</span><br><span class="line">        self.cols_ = cols</span><br><span class="line">        X_encoded = []</span><br><span class="line">        <span class="keyword">for</span> idx_encode, idx_train <span class="keyword">in</span> self.cv_.split(X):</span><br><span class="line">            fitted_encoder = self.encoder_(cols=cols, **self.kwargs_)</span><br><span class="line">            fitted_encoder.fit(</span><br><span class="line">                X.iloc[idx_encode, :], y.iloc[idx_encode],</span><br><span class="line">            )</span><br><span class="line">            X_encoded.append(fitted_encoder.transform(X.iloc[idx_train, :])[cols])</span><br><span class="line">            self.fitted_encoders_.append(fitted_encoder)</span><br><span class="line">        X_encoded = pd.concat(X_encoded)</span><br><span class="line">        X_encoded.columns = [name + <span class="string">&quot;_encoded&quot;</span> <span class="keyword">for</span> name <span class="keyword">in</span> X_encoded.columns]</span><br><span class="line">        <span class="keyword">return</span> X_encoded</span><br><span class="line"></span><br><span class="line">    <span class="comment"># To transform the test data, average the encodings learned from</span></span><br><span class="line">    <span class="comment"># each fold.</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">transform</span>(<span class="params">self, X</span>):</span><br><span class="line">        <span class="keyword">from</span> functools <span class="keyword">import</span> reduce</span><br><span class="line"></span><br><span class="line">        X_encoded_list = []</span><br><span class="line">        <span class="keyword">for</span> fitted_encoder <span class="keyword">in</span> self.fitted_encoders_:</span><br><span class="line">            X_encoded = fitted_encoder.transform(X)</span><br><span class="line">            X_encoded_list.append(X_encoded[self.cols_])</span><br><span class="line">        X_encoded = reduce(</span><br><span class="line">            <span class="keyword">lambda</span> x, y: x.add(y, fill_value=<span class="number">0</span>), X_encoded_list</span><br><span class="line">        ) / <span class="built_in">len</span>(X_encoded_list)</span><br><span class="line">        X_encoded.columns = [name + <span class="string">&quot;_encoded&quot;</span> <span class="keyword">for</span> name <span class="keyword">in</span> X_encoded.columns]</span><br><span class="line">        <span class="keyword">return</span> X_encoded</span><br></pre></td></tr></table></figure>
+<p>像这样：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">encoder = CrossFoldEncoder(MEstimateEncoder, m=<span class="number">1</span>)</span><br><span class="line">X_encoded = encoder.fit_transform(X, y, cols=[<span class="string">&quot;MSSubClass&quot;</span>]))</span><br></pre></td></tr></table></figure>
+<p>您可以将<code>category_encoders</code>库中的任何编码器转换为交叉折叠编码器。<code>CatBoostEncoder</code>值得尝试。 它与<code>MEstimateEncoder</code>类似，但使用一些技巧来更好地防止过度拟合。其平滑参数称为<code>a</code>而不是<code>m</code>。</p>
+<h5 id="创建最终的特征集"><a href="#创建最终的特征集" class="headerlink" title="创建最终的特征集"></a>创建最终的特征集</h5><p>现在让我们将所有内容组合在一起。将转换放入单独的函数中可以更轻松地尝试各种组合。我发现那些未注释的结果给出了最好的结果。不过，您应该尝试自己的想法！修改任何这些转换或提出一些您自己的转换以添加到管道中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">create_features</span>(<span class="params">df, df_test=<span class="literal">None</span></span>):</span><br><span class="line">    X = df.copy()</span><br><span class="line">    y = X.pop(<span class="string">&quot;SalePrice&quot;</span>)</span><br><span class="line">    mi_scores = make_mi_scores(X, y)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Combine splits if test data is given</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># If we&#x27;re creating features for test set predictions, we should</span></span><br><span class="line">    <span class="comment"># use all the data we have available. After creating our features,</span></span><br><span class="line">    <span class="comment"># we&#x27;ll recreate the splits.</span></span><br><span class="line">    <span class="keyword">if</span> df_test <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        X_test = df_test.copy()</span><br><span class="line">        X_test.pop(<span class="string">&quot;SalePrice&quot;</span>)</span><br><span class="line">        X = pd.concat([X, X_test])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Lesson 2 - Mutual Information</span></span><br><span class="line">    X = drop_uninformative(X, mi_scores)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Lesson 3 - Transformations</span></span><br><span class="line">    X = X.join(mathematical_transforms(X))</span><br><span class="line">    X = X.join(interactions(X))</span><br><span class="line">    X = X.join(counts(X))</span><br><span class="line">    <span class="comment"># X = X.join(break_down(X))</span></span><br><span class="line">    X = X.join(group_transforms(X))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Lesson 4 - Clustering</span></span><br><span class="line">    <span class="comment"># X = X.join(cluster_labels(X, cluster_features, n_clusters=20))</span></span><br><span class="line">    <span class="comment"># X = X.join(cluster_distance(X, cluster_features, n_clusters=20))</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Lesson 5 - PCA</span></span><br><span class="line">    X = X.join(pca_inspired(X))</span><br><span class="line">    <span class="comment"># X = X.join(pca_components(X, pca_features))</span></span><br><span class="line">    <span class="comment"># X = X.join(indicate_outliers(X))</span></span><br><span class="line"></span><br><span class="line">    X = label_encode(X)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Reform splits</span></span><br><span class="line">    <span class="keyword">if</span> df_test <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        X_test = X.loc[df_test.index, :]</span><br><span class="line">        X.drop(df_test.index, inplace=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Lesson 6 - Target Encoder</span></span><br><span class="line">    encoder = CrossFoldEncoder(MEstimateEncoder, m=<span class="number">1</span>)</span><br><span class="line">    X = X.join(encoder.fit_transform(X, y, cols=[<span class="string">&quot;MSSubClass&quot;</span>]))</span><br><span class="line">    <span class="keyword">if</span> df_test <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        X_test = X_test.join(encoder.transform(X_test))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> df_test <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span> X, X_test</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> X</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">df_train, df_test = load_data()</span><br><span class="line">X_train = create_features(df_train)</span><br><span class="line">y_train = df_train.loc[:, <span class="string">&quot;SalePrice&quot;</span>]</span><br><span class="line"></span><br><span class="line">score_dataset(X_train, y_train)</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.13863986787521657</span><br></pre></td></tr></table></figure>
+<h4 id="第-4-步-超参数调整"><a href="#第-4-步-超参数调整" class="headerlink" title="第 4 步 - 超参数调整"></a>第 4 步 - 超参数调整</h4><p>在此阶段，您可能希望在创建最终提交之前使用<code>XGBoost</code>进行一些超参数调整:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">X_train = create_features(df_train)</span><br><span class="line">y_train = df_train.loc[:, <span class="string">&quot;SalePrice&quot;</span>]</span><br><span class="line"></span><br><span class="line">xgb_params = <span class="built_in">dict</span>(</span><br><span class="line">    max_depth=<span class="number">6</span>,           <span class="comment"># maximum depth of each tree - try 2 to 10</span></span><br><span class="line">    learning_rate=<span class="number">0.01</span>,    <span class="comment"># effect of each tree - try 0.0001 to 0.1</span></span><br><span class="line">    n_estimators=<span class="number">1000</span>,     <span class="comment"># number of trees (that is, boosting rounds) - try 1000 to 8000</span></span><br><span class="line">    min_child_weight=<span class="number">1</span>,    <span class="comment"># minimum number of houses in a leaf - try 1 to 10</span></span><br><span class="line">    colsample_bytree=<span class="number">0.7</span>,  <span class="comment"># fraction of features (columns) per tree - try 0.2 to 1.0</span></span><br><span class="line">    subsample=<span class="number">0.7</span>,         <span class="comment"># fraction of instances (rows) per tree - try 0.2 to 1.0</span></span><br><span class="line">    reg_alpha=<span class="number">0.5</span>,         <span class="comment"># L1 regularization (like LASSO) - try 0.0 to 10.0</span></span><br><span class="line">    reg_lambda=<span class="number">1.0</span>,        <span class="comment"># L2 regularization (like Ridge) - try 0.0 to 10.0</span></span><br><span class="line">    num_parallel_tree=<span class="number">1</span>,   <span class="comment"># set &gt; 1 for boosted random forests</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">xgb = XGBRegressor(**xgb_params)</span><br><span class="line">score_dataset(X_train, y_train, xgb)</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.12417177287599078</span><br></pre></td></tr></table></figure>
+<p>只需手动调整这些即可给您带来很好的结果。但是，您可能想尝试使用<code>scikit-learn</code>的自动超参数调整器之一。或者您可以探索更高级的调优库，例如<code>Optuna</code>或<code>scikit-optimize</code>。以下是将<code>Optuna</code>与<code>XGBoost</code>结合使用的方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> optuna</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">objective</span>(<span class="params">trial</span>):</span><br><span class="line">    xgb_params = <span class="built_in">dict</span>(</span><br><span class="line">        max_depth=trial.suggest_int(<span class="string">&quot;max_depth&quot;</span>, <span class="number">2</span>, <span class="number">10</span>),</span><br><span class="line">        learning_rate=trial.suggest_float(<span class="string">&quot;learning_rate&quot;</span>, <span class="number">1e-4</span>, <span class="number">1e-1</span>, log=<span class="literal">True</span>),</span><br><span class="line">        n_estimators=trial.suggest_int(<span class="string">&quot;n_estimators&quot;</span>, <span class="number">1000</span>, <span class="number">8000</span>),</span><br><span class="line">        min_child_weight=trial.suggest_int(<span class="string">&quot;min_child_weight&quot;</span>, <span class="number">1</span>, <span class="number">10</span>),</span><br><span class="line">        colsample_bytree=trial.suggest_float(<span class="string">&quot;colsample_bytree&quot;</span>, <span class="number">0.2</span>, <span class="number">1.0</span>),</span><br><span class="line">        subsample=trial.suggest_float(<span class="string">&quot;subsample&quot;</span>, <span class="number">0.2</span>, <span class="number">1.0</span>),</span><br><span class="line">        reg_alpha=trial.suggest_float(<span class="string">&quot;reg_alpha&quot;</span>, <span class="number">1e-4</span>, <span class="number">1e2</span>, log=<span class="literal">True</span>),</span><br><span class="line">        reg_lambda=trial.suggest_float(<span class="string">&quot;reg_lambda&quot;</span>, <span class="number">1e-4</span>, <span class="number">1e2</span>, log=<span class="literal">True</span>),</span><br><span class="line">    )</span><br><span class="line">    xgb = XGBRegressor(**xgb_params)</span><br><span class="line">    <span class="keyword">return</span> score_dataset(X_train, y_train, xgb)</span><br><span class="line"></span><br><span class="line">study = optuna.create_study(direction=<span class="string">&quot;minimize&quot;</span>)</span><br><span class="line">study.optimize(objective, n_trials=<span class="number">20</span>)</span><br><span class="line">xgb_params = study.best_params</span><br></pre></td></tr></table></figure>
+<h4 id="第-5-步-训练模型并创建提交"><a href="#第-5-步-训练模型并创建提交" class="headerlink" title="第 5 步 - 训练模型并创建提交"></a>第 5 步 - 训练模型并创建提交</h4><p>一旦您对此感到满意，就可以创建最终预测了：</p>
+<ul>
+<li>从原始数据创建您的特征集 </li>
+<li>在训练数据上训练 </li>
+<li><code>XGBoost</code>使用经过训练的模型从测试集中进行预测 </li>
+<li>将预测保存到<code>CSV</code>文件</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">X_train, X_test = create_features(df_train, df_test)</span><br><span class="line">y_train = df_train.loc[:, <span class="string">&quot;SalePrice&quot;</span>]</span><br><span class="line"></span><br><span class="line">xgb = XGBRegressor(**xgb_params)</span><br><span class="line"><span class="comment"># XGB minimizes MSE, but competition loss is RMSLE</span></span><br><span class="line"><span class="comment"># So, we need to log-transform y to train and exp-transform the predictions</span></span><br><span class="line">xgb.fit(X_train, np.log(y))</span><br><span class="line">predictions = np.exp(xgb.predict(X_test))</span><br><span class="line"></span><br><span class="line">output = pd.DataFrame(&#123;<span class="string">&#x27;Id&#x27;</span>: X_test.index, <span class="string">&#x27;SalePrice&#x27;</span>: predictions&#125;)</span><br><span class="line">output.to_csv(<span class="string">&#x27;my_submission.csv&#x27;</span>, index=<span class="literal">False</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Your submission was successfully saved!&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>umbrella
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fresh88888888.github.io/2024/03/15/artificial-intelligence/Feature_Engineering_practice_study/" title="特征工程实践之—房价预测">https://fresh88888888.github.io/2024/03/15/artificial-intelligence/Feature_Engineering_practice_study/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/03/13/artificial-intelligence/Feature_Engineering_study/" rel="prev" title="特征工程（Python）">
+                  <i class="fa fa-chevron-left"></i> 特征工程（Python）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/03/18/artificial-intelligence/Deep_Learning_study/" rel="next" title="深度学习（TensorFlow & Keras）">
+                  深度学习（TensorFlow & Keras） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">辽ICP备15012817号-2 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2022 – 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">umbrella</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">572k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">31:45</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/fresh88888888" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.0.8/medium-zoom.min.js" integrity="sha256-7PhEpEWEW0XXQ0k6kQrPKwuoIomz8R8IYyuU1Qew4P8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/comments.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/motion.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/next-boot.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/pjax.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/search/local-search.min.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.12/pdfobject.min.js","integrity":"sha256-g2xji1rlE3KsGVClvuxTbcR0Kn2+wtQADSff2Tbb4zA="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/tags/pdf.min.js"></script>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/fancybox.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/pace.min.js"></script>
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2024/03/15/artificial-intelligence/Feature_Engineering_practice_study/"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
+
+</body>
+</html>

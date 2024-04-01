@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+  <meta name="google-site-verification" content="lk2gSYFP_NyLNFob-fFnt7fm-I_n1ZYws-WZll7mshg">
+  <meta name="msvalidate.01" content="6Jdc01DjYOLguhS5">
+  <meta name="baidu-site-verification" content="code-NR10G09zww">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic%7Ccursive:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+
+    <meta name="description" content="系统建模语言（SysML）什么是系统建模语言？SysML 是一种用于系统工程应用程序的通用架构建模语言。  SysML 支持各种系统和系统之间的规范、分析、设计、验证和确认。这些系统可能包括硬件、软件、信息、流程、人员和设施。 SysML 是 UML 2.x 的方言，并被定义为 UML 2 Profile。（UML 配置文件是一种 UML 方言，它通过三种机制自定义语言：构造型、标记值和约束。）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MBSE-SysML与CAD集成">
+<meta property="og:url" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/index.html">
+<meta property="og:site_name" content="UMBRELLA">
+<meta property="og:description" content="系统建模语言（SysML）什么是系统建模语言？SysML 是一种用于系统工程应用程序的通用架构建模语言。  SysML 支持各种系统和系统之间的规范、分析、设计、验证和确认。这些系统可能包括硬件、软件、信息、流程、人员和设施。 SysML 是 UML 2.x 的方言，并被定义为 UML 2 Profile。（UML 配置文件是一种 UML 方言，它通过三种机制自定义语言：构造型、标记值和约束。）">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_3.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_6.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_7.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_4.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_5.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_8.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_9.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_10.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_11.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_12.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_13.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_14.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_15.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_16.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_17.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_14.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_18.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_19.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_20.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_21.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_22.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_23.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_24.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_25.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_2.png">
+<meta property="article:published_time" content="2023-12-27T02:20:41.000Z">
+<meta property="article:modified_time" content="2023-12-27T02:20:41.000Z">
+<meta property="article:author" content="umbrella">
+<meta property="article:tag" content="MBSE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_3.png">
+
+
+<link rel="canonical" href="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/","path":"2023/12/27/Other/SysML_CAD_integration/","title":"MBSE-SysML与CAD集成"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MBSE-SysML与CAD集成 | UMBRELLA</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">UMBRELLA</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">未雨绸缪，举重若轻</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-算法"><a href="/Algorithm/" rel="section"><i class="fa fa-calendar fa-fw"></i>算法</a></li><li class="menu-item menu-item-c++-&nbsp;编程"><a href="/Programming-C++/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>C++ &nbsp;编程</a></li><li class="menu-item menu-item-rust-编程"><a href="/Programming-Rust/" rel="section"><i class="fa fa-cat fa-fw"></i>Rust 编程</a></li><li class="menu-item menu-item-go-&nbsp;&nbsp;&nbsp;编程"><a href="/Programming-Go/" rel="section"><i class="fa fa-hippo fa-fw"></i>Go &nbsp;&nbsp;&nbsp;编程</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80%EF%BC%88SysML%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">系统建模语言（SysML）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%B3%BB%E7%BB%9F%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">什么是系统建模语言？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E9%9C%80%E6%B1%82%E5%9B%BE-Requirement-Diagram-%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text">什么是 SysML 需求图(Requirement Diagram)？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E7%94%A8%E4%BE%8B%E5%9B%BE-Use-Case-Diagram-%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">什么是 SysML 用例图(Use Case Diagram)？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E6%B4%BB%E5%8A%A8%E5%9B%BE%EF%BC%88Activity-Diagram%EF%BC%89"><span class="nav-number">1.4.</span> <span class="nav-text">什么是 SysML 活动图（Activity Diagram）?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E6%97%B6%E5%BA%8F%E5%9B%BE-Squence-Diagram-%EF%BC%9F"><span class="nav-number">1.5.</span> <span class="nav-text">什么是 SysML 时序图(Squence Diagram)？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E7%8A%B6%E6%80%81%E6%9C%BA%E5%9B%BE-State-Machine-Diagram-%EF%BC%9F"><span class="nav-number">1.6.</span> <span class="nav-text">什么是 SysML 状态机图(State Machine Diagram)？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E5%9D%97%E5%AE%9A%E4%B9%89%E5%9B%BE-Bolock-Definiation-Diagram-%EF%BC%9F"><span class="nav-number">1.7.</span> <span class="nav-text">什么是 SysML 块定义图(Bolock Definiation Diagram)？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E5%86%85%E9%83%A8%E5%9D%97%E5%9B%BE%EF%BC%9F"><span class="nav-number">1.8.</span> <span class="nav-text">什么是 SysML 内部块图？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E5%8F%82%E6%95%B0%E5%9B%BE-Parametric-Diagram-%EF%BC%9F"><span class="nav-number">1.9.</span> <span class="nav-text">什么是 SysML 参数图(Parametric Diagram)？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E5%8C%85%E5%9B%BE-Package-Diagram-%EF%BC%9F"><span class="nav-number">1.10.</span> <span class="nav-text">什么是 SysML 包图(Package Diagram)？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-SysML-%E5%88%86%E9%85%8D%E8%A1%A8-Allocation-Table-%EF%BC%9F"><span class="nav-number">1.11.</span> <span class="nav-text">什么是 SysML 分配表(Allocation Table)？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MBSE"><span class="nav-number">2.</span> <span class="nav-text">MBSE</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%9F%BA%E4%BA%8E%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%B3%BB%E7%BB%9F%E5%B7%A5%E7%A8%8B-MBSE-%E4%BB%A5%E5%8F%8A%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E5%AE%83%EF%BC%9F"><span class="nav-number">2.1.</span> <span class="nav-text">什么是基于模型的系统工程 (MBSE) 以及如何使用它？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SysML-%E5%BA%94%E5%A6%82%E4%BD%95%E5%BA%94%E7%94%A8%E4%BA%8E-MBSE-%E9%A1%B9%E7%9B%AE%EF%BC%9F"><span class="nav-number">2.2.</span> <span class="nav-text">SysML 应如何应用于 MBSE 项目？</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="umbrella"
+      src="/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">umbrella</p>
+  <div class="site-description" itemprop="description">没事就多看看书</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">133</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fresh88888888" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fresh88888888" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fresh888888@foxmail.com" title="E-Mail → mailto:fresh888888@foxmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.rust-lang.org/zh-CN/" title="https:&#x2F;&#x2F;www.rust-lang.org&#x2F;zh-CN&#x2F;" rel="noopener" target="_blank">Rust</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://go.dev/" title="https:&#x2F;&#x2F;go.dev&#x2F;" rel="noopener" target="_blank">Golang</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://isocpp.org/" title="https:&#x2F;&#x2F;isocpp.org&#x2F;" rel="noopener" target="_blank">C++</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.python.org/" title="https:&#x2F;&#x2F;www.python.org&#x2F;" rel="noopener" target="_blank">Python</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://doc.rust-lang.org/cargo/index.html" title="https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;cargo&#x2F;index.html" rel="noopener" target="_blank">Cargo</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://gist.github.com/rxaviers/7360908" title="https:&#x2F;&#x2F;gist.github.com&#x2F;rxaviers&#x2F;7360908" rel="noopener" target="_blank">Emoji</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MBSE-SysML与CAD集成 | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MBSE-SysML与CAD集成
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-12-27 10:20:41" itemprop="dateCreated datePublished" datetime="2023-12-27T10:20:41+08:00">2023-12-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/other/" itemprop="url" rel="index"><span itemprop="name">other</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>13 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="系统建模语言（SysML）"><a href="#系统建模语言（SysML）" class="headerlink" title="系统建模语言（SysML）"></a>系统建模语言（SysML）</h2><h3 id="什么是系统建模语言？"><a href="#什么是系统建模语言？" class="headerlink" title="什么是系统建模语言？"></a>什么是系统建模语言？</h3><p><code>SysML</code> 是一种用于系统工程应用程序的通用架构建模语言。</p>
+<ul>
+<li><code>SysML</code> 支持各种系统和系统之间的规范、分析、设计、验证和确认。这些系统可能包括硬件、软件、信息、流程、人员和设施。</li>
+<li><code>SysML</code> 是 <code>UML 2.x</code> 的方言，并被定义为 <code>UML 2 Profile</code>。（<code>UML</code> 配置文件是一种 <code>UML</code> 方言，它通过三种机制自定义语言：构造型、标记值和约束。）</li>
+<li><code>SysML</code> 是基于模型的系统工程 <code>(MBSE)</code>的一项支持技术。</li>
+</ul>
+<p><code>SysML</code>图分类：</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_3.png" class="">
+
+<span id="more"></span>
+
+<h3 id="什么是-SysML-需求图-Requirement-Diagram-？"><a href="#什么是-SysML-需求图-Requirement-Diagram-？" class="headerlink" title="什么是 SysML 需求图(Requirement Diagram)？"></a>什么是 SysML 需求图(Requirement Diagram)？</h3><p>需求：需求（符号：带有“需求”关键字的矩形）是系统必须（“应”）满足的能力或条件。功能需求（&lt;&lt;功能需求&gt;&gt;关键字）指定系统必须执行的功能，而非功能需求（<code>NFR</code>）指定可用于测试系统功能有效性的质量标准。<code>SysML</code> 预定义了 <code>NFR</code> 的以下构造型特性：</p>
+<ul>
+<li><code>«performanceRequirement»</code></li>
+<li><code>«interfaceRequirement»</code></li>
+<li><code>«designConstraint»</code></li>
+<li><code>«physicalRequirement»</code></li>
+</ul>
+<p>需求图（<code>req</code>）：<code>SysML</code>需求图是一个静态结构图，显示需求（“需求”）构造、满足（“满足”依赖性）它们的模型元素以及验证（“验证”依赖性）的测试用例之间的关系）。需求图的目的是指定模型中的功能和非功能需求，以便可以将它们追溯到满足它们的其他模型元素和验证它们的测试用例。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_6.png" class="" title="SysML 需求图：顶级需求">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_7.png" class="" title="SysML 需求图：需求集群模式">
+
+<h3 id="什么是-SysML-用例图-Use-Case-Diagram-？"><a href="#什么是-SysML-用例图-Use-Case-Diagram-？" class="headerlink" title="什么是 SysML 用例图(Use Case Diagram)？"></a>什么是 SysML 用例图(Use Case Diagram)？</h3><p>用例：用例（符号：椭圆形）表示与外部系统用户的系统事务，称为参与者。用例有时被视为高级功能需求。用例图 <code>(uc)</code>：用例图显示系统边界（主题；符号：矩形）上下文中系统事务（用例）和外部用户（参与者）之间的通信。参与者可以代表湿件（人、组织、设施）、软件系统或硬件系统。定义系统主体和系统参与者之间的关系是定义系统范围的有效非正式方法。用例图的目的是提供主题系统的高级视图，并以非技术术语向所有利益相关者（包括客户和项目经理以及架构师和工程师）传达顶级系统需求。需要额外的更严格的 <code>SysML</code> 图来指定可扩展和可模拟的系统架构模型 (<code>SAM</code>)。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_4.png" class="" title="SysML 用例图：顶级用例">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_5.png" class="" title="SysML 用例图：用例分解">
+
+<h3 id="什么是-SysML-活动图（Activity-Diagram）"><a href="#什么是-SysML-活动图（Activity-Diagram）" class="headerlink" title="什么是 SysML 活动图（Activity Diagram）?"></a>什么是 SysML 活动图（Activity Diagram）?</h3><p>活动：活动（符号：圆角矩形或“圆角”）表示功能行为流，可能包括可选的对象（数据）流。根据条件，控制和对象流可以是顺序的（默认）或并行的（由分叉和连接节点指示）。</p>
+<ul>
+<li><code>Action</code> &#x3D;  原子<code>Activity</code>, 这是一个原生的可执行动作.</li>
+<li><code>Control Flow</code> &#x3D; 功能行为流</li>
+<li><code>Object Flow</code>&#x3D; 活动或操作的对象输入&#x2F;输出的数据流.</li>
+</ul>
+<p>活动图（<code>act</code>）：活动图使用组合的控制流和对象（数据）流模型显示系统动态行为。活动（以及间接活动图）可以通过在活动定义和调用行为操作用法之间交替进行递归分解（“嵌套”）活动和动作可以被分配（通过代表控制块的分区（即代表系统、子系统、子子系统……原子结构的块）；数据块（即表示持久数据存储的块）和包含数据块的信号可以分配给活动参数和操作引脚；比较和对比：<code>SA/SD DFD、FFBD、EFFFD、IDEF0；BPMN BPD</code>。活动图的目的是使用控制流和对象（数据）流来指定满足系统功能需求的动态系统行为。如果应用得当，活动图可以递归地扩展和模拟。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_8.png" class="" title="SysML 活动图：顶级函数">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_9.png" class="" title="SysML 活动图：功能分解">
+
+<h3 id="什么是-SysML-时序图-Squence-Diagram-？"><a href="#什么是-SysML-时序图-Squence-Diagram-？" class="headerlink" title="什么是 SysML 时序图(Squence Diagram)？"></a>什么是 SysML 时序图(Squence Diagram)？</h3><p>消息：消息（符号：箭头）表示从一个对象到另一个对象的通信，期望随之而来的是有用的行为。消息可以是同步的（表示法：空心箭头）或异步的（表示法：黑色三角形箭头）。时序图<code>(sd)</code>：序列图是一种动态行为图，它通过交换的消息序列以及相应的（可选）事件显示分布式对象或服务之间的交互（协作）。</p>
+<ul>
+<li>协作对象或服务是被描述为生命线的部件（表示法：下面带有垂直虚线的矩形）</li>
+<li>组合片段运算符支持递归嵌套和图灵完备语义（替代<code>[alt]</code>、可选<code>[opt]</code>、并行<code>[par]</code>、循环<code>[loop]</code> 等）</li>
+<li>比较和对比：消息时序图 (<code>MSC</code>)。</li>
+</ul>
+<p>时序图的目的是将动态系统行为指定为原型块（部件）之间的消息传递协作。如果应用得当，活动图可以递归地扩展和模拟。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_10.png" class="" title="SysML 时序图：顶级时序">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_11.png" class="" title="SysML 时序图：参考分解">
+
+<h3 id="什么是-SysML-状态机图-State-Machine-Diagram-？"><a href="#什么是-SysML-状态机图-State-Machine-Diagram-？" class="headerlink" title="什么是 SysML 状态机图(State Machine Diagram)？"></a>什么是 SysML 状态机图(State Machine Diagram)？</h3><p>状态：状态（符号：圆角矩形又名“圆角”）表示对象生命周期中的条件或情况，在此期间它满足某些条件、执行某些活动或等待某些事件。状态机图 (<code>smd</code>)：状态机图是一种动态行为图，显示对象或交互在其生命周期内响应事件（也称为“触发器”）所经历的状态序列。状态机图的目的是指定时间关键、任务关键、安全关键或财务关键对象的动态系统行为。如果应用得当,状态机图可以递归扩展和模拟。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_12.png" class="" title="SysML 状态机图：顶级状态机">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_13.png" class="" title="SysML 状态机图：子状态机">
+
+<h3 id="什么是-SysML-块定义图-Bolock-Definiation-Diagram-？"><a href="#什么是-SysML-块定义图-Bolock-Definiation-Diagram-？" class="headerlink" title="什么是 SysML 块定义图(Bolock Definiation Diagram)？"></a>什么是 SysML 块定义图(Bolock Definiation Diagram)？</h3><p>块：块（表示法：带有关键字&#x3D;<code>“block”</code>的矩形）表示一个系统组件，一个封装其内容（属性，行为，约束）并支持（即可以在其中绘制和直接操作的模块化结构单元）模型存储库）接口。块封装的行为包括：操作、信号和状态机。用于附加和连接（<code>“connection”</code>）块接口的独特交互点称为端口。</p>
+<ul>
+<li>块可以指定软件、硬件、机械和<code>facilities</code>（人员、组织、设施）组件。</li>
+<li>块支持信息和物理流的提供（实现或实现）和必需（使用）接口。</li>
+<li>块可以递归地分解为部分，其中每个部分也必须由块定义。</li>
+</ul>
+<p>块定义图（<code>bdd</code>）：块定义图是一个静态结构图，显示系统组件、它们的内容（属性、行为、约束）、接口和关系。</p>
+<ul>
+<li>通过在块定义图 (<code>BDD</code>)定义和内部框图 (<code>IBD</code>) 用法之间交替，可以将块递归分解（“嵌套”）为多个部分（请参阅下面的使用说明。）</li>
+<li>行为可以由块（例如，操作、信号和状态机）封装，也可以直接或间接（通过接口）分配（通过“分配”依赖性）到块（例如活动&#x2F;动作）。</li>
+<li>可以通过约束块对块进行数学约束，以生成数学上可模拟的参数图。</li>
+</ul>
+<p>块定义图的目的是指定用于控制对象、数据对象和接口对象的系统静态结构。如果应用得当，块定义图可以递归扩展并在数学上（参数）可模拟。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_14.png" class="" title="SysML 块定义图：系统块剖析">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_15.png" class="" title="SysML 块定义图：系统上下文">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_16.png" class="" title="SysML 块定义图：系统接口">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_17.png" class="" title="SysML 块定义图：系统组件">
+
+<h3 id="什么是-SysML-内部块图？"><a href="#什么是-SysML-内部块图？" class="headerlink" title="什么是 SysML 内部块图？"></a>什么是 SysML 内部块图？</h3><p>块：块（表示法：带有关键字&#x3D;<code>“block”</code>的矩形）表示一个系统组件，一个封装其内容（属性，行为，约束）并支持一流（即可以在其中绘制和直接操作的模块化结构单元）模型存储库）接口。块封装的行为包括：操作、信号和状态机。用于附加和连接（“接线”）块接口的独特交互点称为端口。</p>
+<ul>
+<li>块可以指定软件、硬件、机械和湿件（人员、组织、设施）组件。</li>
+<li>块支持信息和物理流的提供（实现或实现）和必需（使用）接口。</li>
+<li>块可以递归地分解为部分，其中每个部分也必须由块定义。</li>
+</ul>
+<p>内部块图（<code>ibd</code>）：内部框图是特定块拥有的静态结构图，显示其封装的结构内容：部件、属性、连接器、端口和接口。换句话说，<code>IBD</code> 是封装（“黑盒”）块的“白盒”视角。</p>
+<ul>
+<li>通过在块定义图 (<code>BDD</code>)定义和内部块图 (&#96;IBD&#96;&#96;) 用法之间交替，可以将块递归分解（“嵌套”）为多个部分。</li>
+<li>行为可以由块（例如，操作、信号和状态机）封装，也可以直接或间接（通过接口）分配（通过“分配”依赖性）到块（例如活动&#x2F;动作）。</li>
+<li>可以通过约束块对块进行数学约束，以生成数学上可模拟的参数图。</li>
+</ul>
+<p>内部块图（<code>IBD</code>）的目的是显示块的封装结构内容（部件、属性、连接器、端口、接口），以便可以使用基于接口的设计技术递归地分解和“<code>connection</code>”它们。如果正确使用，<code>BDD + IBD</code> 可以递归扩展并且可以在数学上（参数）模拟。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_14.png" class="" title="SysML 内部块图：零件定义">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_18.png" class="" title="SysML 内部块图：零件使用">
+
+<h3 id="什么是-SysML-参数图-Parametric-Diagram-？"><a href="#什么是-SysML-参数图-Parametric-Diagram-？" class="headerlink" title="什么是 SysML 参数图(Parametric Diagram)？"></a>什么是 SysML 参数图(Parametric Diagram)？</h3><p>约束块：约束块（表示法：带有关键字 &#x3D; <code>«constraint»</code> 的矩形）定义数学规则 ( <code>Constraint</code> ) 和规则参数，其中后者绑定到块值属性，以便对一个块值属性的更改将传播到其他块值属性以符合数学规则的方式块值属性。</p>
+<p>参数图 (<code>par</code>)：参数图是内部块图 (&#96;IBD&#96;&#96;) 的特例化，它在受约束块参数约束的内部零件值属性上强制执行由约束块定义的数学规则（约束） 。</p>
+<ul>
+<li>约束块参数和内部零件值属性之间的绑定连接器（关键字 &#x3D; <code>«equal»</code>）会影响约束满足（传播）</li>
+</ul>
+<p>参数图 (<code>PAR</code>) 的目的是在块值属性中强制执行数学规则。如果正确使用，<code>BDD + IBD + PAR</code> 可以递归扩展并且可以进行数学模拟。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_19.png" class="" title="SysML 参数图：约束块定义">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_20.png" class="" title="SysML 参数图：约束块使用">
+
+<h3 id="什么是-SysML-包图-Package-Diagram-？"><a href="#什么是-SysML-包图-Package-Diagram-？" class="headerlink" title="什么是 SysML 包图(Package Diagram)？"></a>什么是 SysML 包图(Package Diagram)？</h3><p>包：包（符号：“文件夹”图标）是一种将模型元素和图表组织成组的通用机制。包为在其范围内定义的模型元素定义了唯一的名称空间。</p>
+<ul>
+<li>命名空间&#x3D;一个声明性区域，为其中包含的标识符提供范围。</li>
+</ul>
+<p>包图（<code>pkg</code>）：包图是一个静态结构图，显示包及其内容之间的关系。包可以被构造型（定制）用于将模型元素组织成模型、视图、模型库和框架。</p>
+<p>包图的目的是支持大型、复杂的系统架构模型（<code>SAM</code>）的组织和管理。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_21.png" class="" title="SysML 包图：视图&amp;视角">
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_22.png" class="" title="SysML 包图：系统设计视图">
+
+<h3 id="什么是-SysML-分配表-Allocation-Table-？"><a href="#什么是-SysML-分配表-Allocation-Table-？" class="headerlink" title="什么是 SysML 分配表(Allocation Table)？"></a>什么是 SysML 分配表(Allocation Table)？</h3><p>分配：分配依赖性箭头（带有开放箭头表示法的虚线和关键字 &#x3D; <code>«allocate»</code>）关联或映射不同类型或不同层次结构中的模型元素。分配依赖模式通常对于提高模型架构完整性（也称为格式良好）和一致性很有用。<code>SysML</code> 预定义了以下分配依赖项：</p>
+<ul>
+<li>需求依赖性的分配</li>
+<li>活动到分区的分配（泳道）</li>
+</ul>
+<p>分配表：分配表是分配关系的表格（矩阵）表示法，但 <code>SysML</code> 标准没有规定这些格式的特定格式，因此它们往往是特定于供应商的。</p>
+<p>分配表的目的是定义图表类型内部和之间的关系矩阵，以提高模型架构的完整性和一致性。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_23.png" class="" title="SysML 分配表：示例">
+
+<h2 id="MBSE"><a href="#MBSE" class="headerlink" title="MBSE"></a>MBSE</h2><h3 id="什么是基于模型的系统工程-MBSE-以及如何使用它？"><a href="#什么是基于模型的系统工程-MBSE-以及如何使用它？" class="headerlink" title="什么是基于模型的系统工程 (MBSE) 以及如何使用它？"></a>什么是基于模型的系统工程 (MBSE) 以及如何使用它？</h3><p>基于模型的系统工程 (<code>MBSE</code>)，又名基于模型的系统开发 (<code>MBSD</code>)，是一种系统工程过程范例，强调在整个系统开发生命周期 (<code>SDLC</code>) 的系统工程活动中应用严格的架构建模原则和最佳实践。这些系统工程活动包括但不限于需求分析、系统（功能）分析、性能分析（权衡研究）、系统设计、系统架构规范以及系统验证和确认（<code>V&amp;V</code>）。</p>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_24.png" class="" title="MBSE 系统体系架构">
+
+<h3 id="SysML-应如何应用于-MBSE-项目？"><a href="#SysML-应如何应用于-MBSE-项目？" class="headerlink" title="SysML 应如何应用于 MBSE 项目？"></a>SysML 应如何应用于 MBSE 项目？</h3><p>随着 <code>SysML</code> 成为基于模型的系统工程 (<code>MBSE</code>) 方法的事实上的标准，几种渐进严格的 <code>SysML</code> 使用模式如下：</p>
+<ul>
+<li><p>最不严格且最常见的使用模式— <code>SysML-as-Pretty-Pictures</code>：这是最不正式且最不严格的 <code>SysML</code> 使用模式。不幸的是，这也是 <code>SysML</code> 被滥用的最常见方式。在<code>SysML-as-Pretty-Pictures</code> 使用模式中，使用<code>SysML</code> 表示法代替临时建模表示法（例如<code>Visio</code> 或<code>PowerPoint</code> 绘图），但对<code>SysML</code> 格式良好性及其底层可模拟和可执行语义的关注相对较少。因此，在 <code>SysML-as-Pretty-Pictures</code> 模式下生成的 <code>SysML</code> 模型很少能够驱动动态模拟或精确指定系统架构蓝图。</p>
+</li>
+<li><p><code>SysML-as-Model-Simulation</code>：这种<code>SysML</code>使用模式是对<code>SysML-as-Pretty-Pictures</code>模式的重大改进，因为它强调系统动态行为和系统参数约束的模拟。在 <code>SysML-as-System-Simulation</code> 模式中，至少一些 <code>SysML</code> 行为图（活动、序列、状态机图）由行为模拟引擎执行。此外，一些参数图约束也可以由约束传播引擎（<code>MATLAB/Simulink、OpenModelica、SysML</code> 工具专有插件等）执行。对于那些寻求摆脱 <code>SysML-as-Pretty-Pictures</code> 语言滥用的人来说，这是一种中间 <code>SysML</code> 使用模式。</p>
+</li>
+<li><p><code>SysML-as-System-Architecture-Blueprint</code>：此 <code>SysML</code> 使用模式是对 <code>SysML-as-Model-Simulation</code> 模式的实质性改进，因为它扩展了后者以包含系统架构模型 (<code>SAM</code>) 的精确且完整的规范。<code>SAM</code> 的目的是足够精确和完整，作为系统项目中涉及的所有工程流程的“系统架构真相”，包括系统工程师 (<code>SE</code>)、软件工程师 (<code>SWE</code>)、电气工程师 (<code>EE</code>)、机械工程师 (<code>ME</code>) 等。为了使 <code>SAM</code> 成为系统工程项目的系统架构真理，<code>SAM</code> 必须满足系统架构质量的所有 5 个 <code>C</code>（正确、完整、清晰、简洁和一致）。这是一种比较先进的<code>SysML</code>使用模式，通常是 - <code>SysML-as-System-Simulation</code>模式的自然演进。</p>
+</li>
+<li><p>最严格的 <code>SYSML</code> 使用模式— <code>SysML-as-Executable-System-Architecture</code>：此 <code>SysML`` 使用模式是对 </code>SysML-as-System-Architecture-Blueprint<code>模式的重大改进，因为它扩展了后一种模式以实现</code>SAM<code> 的大部分行为和参数规范可模拟，并且可执行。</code>MBSE&#96;上下文中的可执行文件通常指的是系统接口、系统测试用例的部分或完全自动生成。</p>
+</li>
+</ul>
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_25.png" class="" title="MBSE + SysML System Architecture Framework Pattern Example">
+
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration.png" class="">
+
+<img data-src="/2023/12/27/Other/SysML_CAD_integration/SysML_CAD_integration_2.png" class="">
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>umbrella
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/" title="MBSE-SysML与CAD集成">https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/MBSE/" rel="tag"># MBSE</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/12/22/Other/s3-design/" rel="prev" title="S3 架构原理">
+                  <i class="fa fa-chevron-left"></i> S3 架构原理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/01/03/Design-Patterns/unified_modeling_language_2.5.1/" rel="next" title="Unified Modeling Langusge 2.5.1">
+                  Unified Modeling Langusge 2.5.1 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">辽ICP备15012817号-2 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2022 – 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">umbrella</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">572k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">31:45</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/fresh88888888" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.0.8/medium-zoom.min.js" integrity="sha256-7PhEpEWEW0XXQ0k6kQrPKwuoIomz8R8IYyuU1Qew4P8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/comments.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/motion.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/next-boot.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/pjax.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/search/local-search.min.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.12/pdfobject.min.js","integrity":"sha256-g2xji1rlE3KsGVClvuxTbcR0Kn2+wtQADSff2Tbb4zA="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/tags/pdf.min.js"></script>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/fancybox.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/pace.min.js"></script>
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2023/12/27/Other/SysML_CAD_integration/"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+  <meta name="google-site-verification" content="lk2gSYFP_NyLNFob-fFnt7fm-I_n1ZYws-WZll7mshg">
+  <meta name="msvalidate.01" content="6Jdc01DjYOLguhS5">
+  <meta name="baidu-site-verification" content="code-NR10G09zww">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic%7Ccursive:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+
+    <meta name="description" content="假设我们要删除目录中的文件Downloads。根据我们迄今为止收集的知识，我们可以查看其中有哪些文件并删除它们： 123456789$ cd ~&#x2F;Downloads$ ls05 Between Angels and Insects.ogg07 Wake Up.ogg$ rm -v &amp;#x27;05 Between Angels and Insects.ogg&amp;#x27; &amp;#x27;07 Wake">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Bash 编程】变量和扩展">
+<meta property="og:url" content="https://fresh88888888.github.io/2023/08/02/Cloud-Native/%E3%80%90Bash%20%E7%BC%96%E7%A8%8B%E3%80%91variable-expand/index.html">
+<meta property="og:site_name" content="UMBRELLA">
+<meta property="og:description" content="假设我们要删除目录中的文件Downloads。根据我们迄今为止收集的知识，我们可以查看其中有哪些文件并删除它们： 123456789$ cd ~&#x2F;Downloads$ ls05 Between Angels and Insects.ogg07 Wake Up.ogg$ rm -v &amp;#x27;05 Between Angels and Insects.ogg&amp;#x27; &amp;#x27;07 Wake">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-02T12:23:01.000Z">
+<meta property="article:modified_time" content="2023-08-02T12:23:01.000Z">
+<meta property="article:author" content="umbrella">
+<meta property="article:tag" content="Cloud Native">
+<meta property="article:tag" content="bash programing">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://fresh88888888.github.io/2023/08/02/Cloud-Native/%E3%80%90Bash%20%E7%BC%96%E7%A8%8B%E3%80%91variable-expand/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2023/08/02/Cloud-Native/%E3%80%90Bash%20%E7%BC%96%E7%A8%8B%E3%80%91variable-expand/","path":"2023/08/02/Cloud-Native/【Bash 编程】variable-expand/","title":"【Bash 编程】变量和扩展"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【Bash 编程】变量和扩展 | UMBRELLA</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">UMBRELLA</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">未雨绸缪，举重若轻</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-算法"><a href="/Algorithm/" rel="section"><i class="fa fa-calendar fa-fw"></i>算法</a></li><li class="menu-item menu-item-c++-&nbsp;编程"><a href="/Programming-C++/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>C++ &nbsp;编程</a></li><li class="menu-item menu-item-rust-编程"><a href="/Programming-Rust/" rel="section"><i class="fa fa-cat fa-fw"></i>Rust 编程</a></li><li class="menu-item menu-item-go-&nbsp;&nbsp;&nbsp;编程"><a href="/Programming-Go/" rel="section"><i class="fa fa-hippo fa-fw"></i>Go &nbsp;&nbsp;&nbsp;编程</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A9%E5%B1%95"><span class="nav-number">1.</span> <span class="nav-text">扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Pathname-Expansion"><span class="nav-number">1.1.</span> <span class="nav-text">Pathname Expansion</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B3%A2%E5%BD%A2%E7%AC%A6%E6%89%A9%E5%B1%95"><span class="nav-number">1.2.</span> <span class="nav-text">波形符扩展</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E6%9B%BF%E6%8D%A2"><span class="nav-number">1.3.</span> <span class="nav-text">命令替换</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%92%8C%E9%87%8D%E5%A4%8D%E4%BD%BF%E7%94%A8%E6%95%B0%E6%8D%AE"><span class="nav-number">2.</span> <span class="nav-text">存储和重复使用数据</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#shell-%E5%8F%98%E9%87%8F"><span class="nav-number">2.1.</span> <span class="nav-text">shell 变量</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83"><span class="nav-number">3.</span> <span class="nav-text">环境</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">3.1.</span> <span class="nav-text">环境变量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Shell-Initialization"><span class="nav-number">3.2.</span> <span class="nav-text">Shell Initialization</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="nav-number">3.3.</span> <span class="nav-text">位置参数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E5%8F%82%E6%95%B0"><span class="nav-number">3.4.</span> <span class="nav-text">特殊参数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Shell-%E5%86%85%E9%83%A8%E5%8F%98%E9%87%8F"><span class="nav-number">3.5.</span> <span class="nav-text">Shell 内部变量</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E7%BB%84"><span class="nav-number">4.</span> <span class="nav-text">数组</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">4.1.</span> <span class="nav-text">数组的作用</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="umbrella"
+      src="/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">umbrella</p>
+  <div class="site-description" itemprop="description">没事就多看看书</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">133</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fresh88888888" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fresh88888888" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fresh888888@foxmail.com" title="E-Mail → mailto:fresh888888@foxmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.rust-lang.org/zh-CN/" title="https:&#x2F;&#x2F;www.rust-lang.org&#x2F;zh-CN&#x2F;" rel="noopener" target="_blank">Rust</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://go.dev/" title="https:&#x2F;&#x2F;go.dev&#x2F;" rel="noopener" target="_blank">Golang</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://isocpp.org/" title="https:&#x2F;&#x2F;isocpp.org&#x2F;" rel="noopener" target="_blank">C++</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.python.org/" title="https:&#x2F;&#x2F;www.python.org&#x2F;" rel="noopener" target="_blank">Python</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://doc.rust-lang.org/cargo/index.html" title="https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;cargo&#x2F;index.html" rel="noopener" target="_blank">Cargo</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://gist.github.com/rxaviers/7360908" title="https:&#x2F;&#x2F;gist.github.com&#x2F;rxaviers&#x2F;7360908" rel="noopener" target="_blank">Emoji</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2023/08/02/Cloud-Native/%E3%80%90Bash%20%E7%BC%96%E7%A8%8B%E3%80%91variable-expand/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【Bash 编程】变量和扩展 | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【Bash 编程】变量和扩展
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-08-02 20:23:01" itemprop="dateCreated datePublished" datetime="2023-08-02T20:23:01+08:00">2023-08-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Bash-Programing/" itemprop="url" rel="index"><span itemprop="name">Bash Programing</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>14k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>47 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>假设我们要删除目录中的文件Downloads。根据我们迄今为止收集的知识，我们可以查看其中有哪些文件并删除它们：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> ~/Downloads</span><br><span class="line">$ <span class="built_in">ls</span></span><br><span class="line">05 Between Angels and Insects.ogg</span><br><span class="line">07 Wake Up.ogg</span><br><span class="line">$ <span class="built_in">rm</span> -v <span class="string">&#x27;05 Between Angels and Insects.ogg&#x27;</span> <span class="string">&#x27;07 Wake Up.ogg&#x27;</span></span><br><span class="line">removed <span class="string">&#x27;05 Between Angels and Insects.ogg&#x27;</span></span><br><span class="line">removed <span class="string">&#x27;07 Wake Up.ogg&#x27;</span></span><br><span class="line">$ <span class="built_in">ls</span></span><br><span class="line">$ </span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p>如果我们不必把所有事情都说得那么明确，那不是很好吗？毕竟，我们的目的是清空我们的<code>Downloads</code>目录。为此，我们必须手动前往那里，找出存在哪些文件，并发出<code>rm</code>枚举每个文件名的命令。让我们改进这个工作流程，让我们的代码更加动态一些。我们想要实现的是一种可以反复使用的工作模板。职位描述描述了执行我们意图的方式，无论我们当前所处的具体情况如何。</p>
+<h4 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h4><h5 id="Pathname-Expansion"><a href="#Pathname-Expansion" class="headerlink" title="Pathname Expansion"></a>Pathname Expansion</h5><p>bash 为我们提供的多种形式的扩展中的第一种。欢迎使用路径名扩展：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> ~/Downloads</span><br><span class="line">$ <span class="built_in">rm</span> -v *</span><br><span class="line">removed <span class="string">&#x27;05 Between Angels and Insects.ogg&#x27;</span></span><br><span class="line">removed <span class="string">&#x27;07 Wake Up.ogg&#x27;</span></span><br><span class="line">$ <span class="built_in">ls</span></span><br><span class="line">$ </span><br></pre></td></tr></table></figure>
+<p>我们想要删除的文件名发生了什么？我们用一种模式替换了它们，告诉 bash为我们扩展路径名。扩展是用特定情况的代码替换部分命令代码的做法。在本例中，我们希望替换*为下载目录中每个文件的路径名。因此，用路径名替换模式称为路径名扩展。bash 注意到您已在命令行上期望看到参数的位置放置了路径名模式。然后，它采用此路径名模式，并在文件系统中查找它可以找到的与我们的此模式匹配的每个路径名。碰巧该模式*与当前目录中每个文件的名称相匹配。因此，bash 将命令行中的模式替换为当前目录中每个文件的路径名。我们不必再自己做这些工作了！结果，我们的下载目录按预期被清空。</p>
+<div class="note warning"><p>重要的是要理解，虽然我们*在代码中看到明显的参数对于 <code>rm</code>，但我们实际上并没有传递*给<code>rm</code>。事实上，该rm命令甚至永远不会看到我们的路径名扩展模式。该模式在启动之前就由 <code>bash</code> 进行评估和扩展<code>rm</code>。据了解<code>rm</code>，它只是接收一个<code>-v</code>参数，后跟目录中每个文件的确切完整名称。扩展始终由<code>bash</code>本身执行，并且始终在实际运行命令之前执行！</p>
+</div>
+<p><code>Bash</code> 可以为我们执行各种路径名扩展。要执行路径名扩展，我们只需在要扩展路径名的位置编写语法<code>glob</code> 模式即可。<code>glob</code> 是 <code>bash shell</code> 支持的模式类型的名称。以下是 <code>bash shell</code> 支持的各种基本 <code>glob</code> 模式：</p>
+<table>
+<thead>
+<tr>
+<th align="left">Glob</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>*</code></td>
+<td align="left">星号或星号匹配任何类型的文本，甚至根本没有文本。</td>
+</tr>
+<tr>
+<td align="left"><code>?</code></td>
+<td align="left">问号与任意一个字符匹配。</td>
+</tr>
+<tr>
+<td align="left"><code>[characters]</code></td>
+<td align="left">方括号内的一组字符与单个字符匹配，前提是该字符位于给定的集合中。</td>
+</tr>
+<tr>
+<td align="left"><code>[[:classname:]]</code></td>
+<td align="left">当矩形大括号内直接有一组冒号时，您可以指定一类字符的名称，而不必自己枚举每个字符。Bash 了解各种字符类。例如，如果您使用该模式，则仅当该字符是字母数字时，<code>bash</code> 才会将其与字符匹配。支持的字符类包括：<code>alnum、alpha、ascii、blank、cntrl、digit、graph、lower、print、punct、space、upper、word、xdigit[[:alnum:]]</code></td>
+</tr>
+</tbody></table>
+<p>我们可以将这些 glob 模式组合在一起来描述各种路径名组合。我们还可以将它与文字字符结合起来，告诉 bash 模式的一部分应该包含确切的文本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">ls</span>                                <span class="comment"># Without arguments, ls simply lists the full contents of a directory.</span></span><br><span class="line">myscript.txt</span><br><span class="line">mybudget.xsl</span><br><span class="line">hello.txt</span><br><span class="line">05 Between Angels and Insects.ogg</span><br><span class="line">07 Wake Up.ogg</span><br><span class="line">$ <span class="built_in">ls</span> *                              <span class="comment"># While the effect is the same, this command actually enumerates every single file</span></span><br><span class="line">myscript.txt                        <span class="comment"># in the directory to the ls in its arguments!</span></span><br><span class="line">mybudget.xsl</span><br><span class="line">hello.txt</span><br><span class="line">05 Between Angels and Insects.ogg</span><br><span class="line">07 Wake Up.ogg</span><br><span class="line">$ <span class="built_in">ls</span> *.txt                          <span class="comment"># When we include the literal string .txt, the only pathnames that still match the pattern</span></span><br><span class="line">myscript.txt                        <span class="comment"># are those that start with any kind of text and end with the literal string .txt.</span></span><br><span class="line">hello.txt</span><br><span class="line">$ <span class="built_in">ls</span> 0?<span class="string">&#x27; &#x27;</span>*.ogg                     <span class="comment"># Here we&#x27;re combining patterns, looking for any pathname start starts with a 0,</span></span><br><span class="line">05 Between Angels and Insects.ogg   <span class="comment"># followed by any single character, followed by a literal space, ending in .ogg.</span></span><br><span class="line">07 Wake Up.ogg</span><br><span class="line">$ <span class="built_in">ls</span> [0-9]*                         <span class="comment"># In a character set, we can use - to indicate a range of characters.  This will match</span></span><br><span class="line">05 Between Angels and Insects.ogg   <span class="comment"># a pathname starting with one character between 0 and 9 followed by any other text.</span></span><br><span class="line">07 Wake Up.ogg</span><br><span class="line">$ <span class="built_in">ls</span> [[:digit:]][[:digit:]]*        <span class="comment"># Character classes are really nice because they speak for us: they tell us exactly</span></span><br><span class="line">05 Between Angels and Insects.ogg   <span class="comment"># what our intent here is.  We want any pathname that start with two digits.</span></span><br><span class="line">07 Wake Up.ogg</span><br><span class="line">$ <span class="built_in">ls</span> [[:digit:]][[:digit:]]         <span class="comment"># Your pattern needs to be complete!  None of our filenames is only just two digits.</span></span><br><span class="line">$ </span><br></pre></td></tr></table></figure>
+<p>同样重要的是要了解这些 <code>glob</code> 永远不会跳转到子目录中。它们仅与自己目录中的文件名匹配。如果我们希望 <code>glob</code> 去查看不同目录中的路径名，我们需要用文字路径名显式地告诉它：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">ls</span> ~/Downloads/*.txt                    <span class="comment"># Enumerate all pathnames in ~/Downloads that end with .txt.</span></span><br><span class="line">/Users/lhunath/Downloads/myscript.txt</span><br><span class="line">/Users/lhunath/Downloads/hello.txt</span><br><span class="line">$ <span class="built_in">ls</span> ~/*/hello.txt                        <span class="comment"># Globs can even search through many directories!  Here bash will search</span></span><br><span class="line">/Users/lhunath/Documents/hello.txt        <span class="comment"># through all directories in our home directory for a file that&#x27;s called hello.txt.</span></span><br><span class="line">/Users/lhunath/Downloads/hello.txt</span><br></pre></td></tr></table></figure>
+<p>路径名扩展是一个非常强大的工具，可以避免在参数中指定确切的路径名，或者在文件系统中查找我们需要的文件。最后，<code>bash</code> 还内置了对更高级的 <code>glob</code> 模式的支持。这些 <code>glob</code> 称为：扩展 <code>glob</code>。默认情况下，对它们的支持是禁用的，但我们可以使用以下命令在当前 <code>shell</code> 中轻松启用它：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">shopt</span> -s extglob</span><br></pre></td></tr></table></figure>
+<p>启用扩展 glob 后，上面的 glob 模式运算符表将扩展为以下附加运算符：</p>
+<table>
+<thead>
+<tr>
+<th align="left">全局扩展</th>
+<th align="left">意义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>+(pattern[ | pattern ... ])</code></td>
+<td align="left">当列表中的任何模式出现一次或多次时匹配。读作：至少其中之一……</td>
+</tr>
+<tr>
+<td align="left"><code>*(pattern[ | pattern ... ])</code></td>
+<td align="left">当列表中的任何模式出现一次、根本不出现或出现多次时匹配。读作：然而许多……。</td>
+</tr>
+<tr>
+<td align="left"><code>?(pattern[ | pattern ... ])</code></td>
+<td align="left">当列表中的任何模式出现一次或根本不出现时匹配。读作：也许其中之一……</td>
+</tr>
+<tr>
+<td align="left"><code>@(pattern[ | pattern ... ])</code></td>
+<td align="left">当列表中的任何模式仅出现一次时匹配。读作：……之一。</td>
+</tr>
+<tr>
+<td align="left"><code>!(pattern[ | pattern ... ])</code></td>
+<td align="left">仅当列表中没有出现任何模式时才匹配。读作：没有一个……。</td>
+</tr>
+</tbody></table>
+<p>这些运算符起​​初有点难以理解，但它们是向模式添加逻辑的好方法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">ls</span> +([[:digit:]])<span class="string">&#x27; &#x27;</span>*.ogg               <span class="comment"># Filenames that start with one or more digits.</span></span><br><span class="line">05 Between Angels and Insects.ogg</span><br><span class="line">07 Wake Up.ogg</span><br><span class="line">$ <span class="built_in">ls</span> *.jp?(e)g                            <span class="comment"># Filenames that end either in .jpg or .jpeg.</span></span><br><span class="line">img_88751.jpg</span><br><span class="line">igpd_45qr.jpeg</span><br><span class="line">$ <span class="built_in">ls</span> *.@(jpg|jpeg)                        <span class="comment"># Same thing, perhaps written more clearly!</span></span><br><span class="line">img_88751.jpg</span><br><span class="line">igpd_45qr.jpeg</span><br><span class="line">$ <span class="built_in">ls</span> !(my*).txt                           <span class="comment"># All the .txt files that do not begin with my.</span></span><br><span class="line">hello.txt</span><br><span class="line">$ <span class="built_in">ls</span> !(my)*.txt                           <span class="comment"># Can you guess why this one matches myscript.txt?</span></span><br><span class="line">myscript.txt</span><br><span class="line">hello.txt</span><br></pre></td></tr></table></figure>
+<p>扩展的全局模式有时非常有用，但它们也可能令人困惑和误导。让我们关注最后一个例子：为什么要<code>!(my)*.txt</code>扩展路径名<code>myscript.txt？</code>是不是<code>!(my)</code>应该只在路径名在此位置没有时才匹配<code>？my</code>你说得对，就是这样！然而，<code>bash</code> 扩展了以my!开头的路径名。</p>
+<p>这里的答案是 <code>bash</code> 很乐意将模式的这一部分与m开头的 匹配（与 不同<code>my</code>），甚至与文件名开头的空白进行匹配。这意味着为了使路径名仍然可以扩展，模式的其余部分需要与路径名的其余部分匹配。碰巧我们在 <code>glob*</code>后面有一个 <code>glob !(my)</code>，它很乐意匹配整个文件名。在这种情况下，该部分与名称开头的字符<code>!(my)</code>匹配，该部分与该部分匹配，模式的后缀与尾随的字符匹配<code>m*yscript.txt.txt</code>我们的路径名。模式与名称相匹配，因此名称被扩展！当我们在模式*内部包含该内容时<code>!()</code>，这不再有效，并且针对此路径名的匹配失败：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">ls</span> !(my)*.txt</span><br><span class="line">myscript.txt</span><br><span class="line">hello.txt</span><br><span class="line">$ <span class="built_in">ls</span> !(my*).txt</span><br><span class="line">hello.txt</span><br></pre></td></tr></table></figure>
+<h5 id="波形符扩展"><a href="#波形符扩展" class="headerlink" title="波形符扩展"></a>波形符扩展</h5><p>它称为波形符扩展，它涉及将路径名中的波形符 ( ~) 替换为当前用户主目录的路径：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">&#x27;I live in: &#x27;</span> ~           <span class="comment"># Note that expansions must not be quoted or they will become literal!</span></span><br><span class="line">I live <span class="keyword">in</span>: /Users/lhunath</span><br></pre></td></tr></table></figure>
+<p>与路径名扩展相比，波浪线扩展在 <code>bash</code> 中稍微特殊，因为它发生在解析器阶段的早期。这只是一个细节，但重要的是要注意波浪号扩展与路径名扩展不同。我们不会执行搜索并尝试将文件名与全局模式进行匹配。我们只是用显式路径名替换波形符。除了简单的波浪号之外，我们还可以通过将用户名放在波浪号后面来扩展另一个用户的主目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">&#x27;My boss lives in: &#x27;</span> ~root</span><br><span class="line">My boss lives <span class="keyword">in</span>: /var/root</span><br></pre></td></tr></table></figure>
+<h5 id="命令替换"><a href="#命令替换" class="headerlink" title="命令替换"></a>命令替换</h5><p>扩展的用途远不止于此。我们可以使用扩展将几乎任何类型的数据扩展到命令的参数中。命令替换是将数据扩展为命令参数的一种非常流行的方法。通过<code>Command Substitution</code>，我们可以有效地在命令中编写命令，并要求 <code>bash</code> 将内部命令展开到其输出中，并使用该输出作为主命令的参数数据：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">&#x27;Hello world.&#x27;</span> &gt; hello.txt</span><br><span class="line">$ <span class="built_in">cat</span> hello.txt</span><br><span class="line">Hello world.</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;The file &lt;hello.txt&gt; contains: <span class="subst">$(cat hello.txt)</span>&quot;</span></span><br><span class="line">The file &lt;hello.txt&gt; contains: Hello world.</span><br></pre></td></tr></table></figure>
+<p>我们开始非常简单：我们创建一个名为 的文件<code>hello.txt</code>并将字符串放入<code>Hello world</code>.其中。然后我们使用cat命令输出文件的内容。我们可以看到该文件包含我们保存到其中的字符串。</p>
+<p>但接下来事情就变得有趣了：我们想要在这里做的是向用户输出一条消息，用一个漂亮的句子解释我们文件中的字符串是什么。为此，我们希望使文件的内容成为我们<code>echo</code>输出的句子的“一部分”。然而，当我们为这句话编写代码时，我们并不知道文件的内容是什么，那么我们如何在脚本中打出正确的句子呢？答案是扩展：我们知道如何使用 获取文件的内容<code>cat</code>，因此这里我们将命令的输出扩展为我们的句子。<code>Bash</code> 将首先运行，获取该命令的输出（这是我们的字符串），然后扩展我们的命令替换语法<code>$(cat ...)</code>进入该输出。只有在这个扩展之后，<code>bash</code>才会尝试运行该<code>echo</code>命令。您能猜出在我们的命令替换就地扩展之后该命令的参数<code>echo</code>变成了什么吗？答案是：<code>echo &quot;The file &lt;hello.txt&gt; contains: Hello world</code>.”</p>
+<p>这是我们了解到的第一种价值扩展。值扩展允许我们将数据扩展为命令参数。它们非常有用，您将一直使用它们。<code>Bash</code> 在值扩展方面具有相当一致的语法：它们都以<code>$</code>符号开头。命令替换实质上扩展了在子 shell 中执行的命令的价值。因此，语法是值扩展前缀$后跟要扩展的子 shell 的组合：(…)。子 shell 本质上是一个小型的新 bash 进程，用于在主 bash shell 等待结果时运行命令。</p>
+<div class="note success"><p>非常细心的读者可能已经注意到，本指南倾向于使用单引号来引用其字符串，但在最新的示例中，对包含扩展语法的句子改用双引号。这是有意为之的：如果参数是双引号的，则所有值扩展（即所有带有<code>$</code>前缀的语法）只能在带引号的参数内扩展。单引号会将<code>$</code>语法转换为文字字符，导致 <code>bash</code> 输出美元而不是就地扩展其值！因此，对所有包含值扩展的参数加双引号非常重要。</p>
+<p>值扩展 ( $…) 必须始终用双引号引起来。</p>
+</div>
+<div class="note warning"><p>切勿将价值扩展不加引号。如果这样做，<code>bash</code> 将使用分词来分割该值，删除其中的所有空格，并对其中的所有单词执行隐藏的路径名扩展！</p>
+</div>
+
+<h4 id="存储和重复使用数据"><a href="#存储和重复使用数据" class="headerlink" title="存储和重复使用数据"></a>存储和重复使用数据</h4><p>我们现在知道如何使用 bash 来编写和管理简单的命令。这些命令使我们能够访问系统上的许多强大的操作。我们已经了解了命令如何通过为程序创建新进程来告诉 bash 执行程序。我们甚至学会了操纵这些进程的基本输入和输出，以便我们可以读取和写入任意文件。那些真正密切关注的人甚至会发现我们如何使用诸如此处文档和此处字符串之类的结构将任意数据传递到进程中。现在最大的限制是我们无法灵活处理数据。我们可以将其写入文件，然后通过使用许多文件重定向再次将其读入，并且我们可以使用此处文档和此处字符串传入静态预定义数据。</p>
+<p><strong>bash 参数</strong></p>
+<p>简单地说，bash 参数是内存中的区域，您可以在其中临时存储一些信息以供以后使用。与文件不同，我们写入这些参数，并在稍后需要检索信息时从中读取。但由于我们使用系统内存而不是磁盘来写入这些信息，因此访问速度要快得多。与将输入和输出重定向到文件或从文件重定向相比，使用参数也更容易，语法也更强大。Bash 提供了几种不同类型的参数：位置参数、特殊参数和 shell 变量。后者是最有趣的类型，前两者主要使我们能够访问 bash 提供的某些信息。我们将通过变量介绍参数的实际方面和用法，然后解释位置参数和特殊参数的不同之处。</p>
+<h5 id="shell-变量"><a href="#shell-变量" class="headerlink" title="shell 变量"></a>shell 变量</h5><p><code>shell</code> 变量本质上是一个有名称的 <code>bash</code> 参数。您可以使用变量来存储值，并在以后修改或读回该值以供重复使用。使用变量很容易。您可以通过变量分配在其中存储信息，并在以后随时使用参数扩展来访问该信息：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ name=lhunath                         <span class="comment"># Assign the value lhunath to the variable name</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;Hello, <span class="variable">$name</span>. How are you?&quot;</span>    <span class="comment"># Expand the value of name into the echo argument</span></span><br><span class="line">Hello, lhunath.  How are you?</span><br></pre></td></tr></table></figure>
+<p>正如您所看到的，赋值创建了一个名为 的变量<code>name</code>，并在其中放入了一个值。参数值的扩展是通过在名称前添加符号来完成的<code>$</code>，这会导致我们的值被注入到 <code>echo</code> 参数中。赋值使用<code>=</code>运算符。您必须了解运算符周围不能有语法空间。虽然其他语言可能允许这样做，但 bash 却不允许。请记住上一章中的空格在 <code>bash</code> 中具有特殊含义：它们将命令拆分为参数。如果我们在运算符周围放置空格&#x3D;，它们会导致 <code>bash</code> 将命令拆分为命令名称和参数，认为您想要执行程序而不是分配变量值：&#x3D;要修复此代码，我们只需删除导致分词的运算符周围的空格即可。如果我们想给以几个文字空格字符开头的变量分配一个值，我们需要使用引号来向 <code>bash</code> 发出信号，表明我们的空格是文字的，不应该触发分词：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ name=lhunath</span><br><span class="line">$ item=<span class="string">&#x27;    4. Milk&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>我们甚至可以将此赋值语法与其他值扩展结合起来：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ contents=<span class="string">&quot;<span class="subst">$(cat hello.txt)</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<p>在这里，我们执行命令替换，将文件的内容扩展hello.txt为我们的赋值语法，这随后导致该内容被分配给内容变量。给变量赋值很简洁，但并不是立即有用。能够随时重用这些值使得参数变得如此有趣。重用参数值是通过扩展它们来完成的。参数扩展有效地从参数中取出数据并将其内联到命令的数据中。正如我们之前简要看到的，我们通过在参数名称前加上符号来扩展参数$。每当您在 bash 中看到此符号时，可能是因为某些内容正在扩展。它可以是参数、命令的输出或算术运算的结果。此外，参数扩展允许您将大括号 ({和}) 括在扩展周围。这些大括号用于告诉 bash 参数名称的开头和结尾是什么。它们通常是可选的，因为 bash 通常可以自行计算出名称。尽管有时它们成为必需品：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ name=Britta time=23.73                        <span class="comment"># We want to expand time and add an s for seconds</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$name</span>&#x27;s current record is <span class="variable">$times</span>.&quot;</span>      <span class="comment"># but bash mistakes the name for times which holds nothing</span></span><br><span class="line">Britta<span class="string">&#x27;s current record is .</span></span><br><span class="line"><span class="string">$ echo &quot;$name&#x27;</span>s current record is <span class="variable">$&#123;time&#125;</span>s.<span class="string">&quot;    # Braces explicitly tell bash where the name ends</span></span><br><span class="line"><span class="string">Britta&#x27;s current record is 23.73s.</span></span><br></pre></td></tr></table></figure>
+<p>参数扩展非常适合将用户或程序数据插入到我们的命令指令中，但它们还有一个额外的王牌：参数扩展运算符。扩展参数时，可以将运算符应用于扩展值。该运算符可以通过多种有用方法之一修改该值。请记住，该运算符仅更改扩展的值；它不会改变变量中的原始值。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ name=Britta time=23.73</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$name</span>&#x27;s current record is <span class="variable">$&#123;time%.*&#125;</span> seconds and <span class="variable">$&#123;time#*.&#125;</span> hundredths.&quot;</span></span><br><span class="line">Britta<span class="string">&#x27;s current record is 23 seconds and 73 hundredths.</span></span><br><span class="line"><span class="string">$ echo &quot;PATH currently contains: $&#123;PATH//:/, &#125;&quot;</span></span><br><span class="line"><span class="string">PATH currently contains: /Users/lhunath/.bin, /usr/local/bin, /usr/bin, /bin, /usr/libexec</span></span><br></pre></td></tr></table></figure>
+<p>上面的示例使用<code>%</code>,<code>#</code>和<code>//</code>运算符在扩展结果之前对参数值执行各种操作。参数本身没有改变；运算符仅影响扩展到位的值。您还会注意到，我们可以在这里使用 <code>glob</code> 模式，就像我们在路径名扩展期间所做的那样，来匹配参数中的值。</p>
+<p>在第一种情况下，我们在展开之前使用%运算符从 的值中删除.及其后面的数字。time这样我们就只剩下了 前面的部分.，即秒。第二种情况做了类似的事情，我们使用#运算符从值的开头删除一部分<code>time</code>。最后，我们使用<code>//</code>运算符（这实际上是运算符的特例<code>/</code>）将的值:中的每个字符替换为。结果是一个目录列表，比原来的冒号分隔的目录更容易阅读。 <code>PATH, PATH</code></p>
+<table>
+<thead>
+<tr>
+<th align="left">Operator</th>
+<th align="left">Example</th>
+<th align="left">Result</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>$&#123;parameter#pattern&#125;</code>如果与模式匹配的最短字符串位于值的开头，则删除它。</td>
+<td align="left"><code>&quot;$&#123;url#*/&#125;&quot;</code></td>
+<td align="left">https:&#x2F;&#x2F;&#x2F;guide.bash.academy&#x2F;variables.html &gt; &#x2F;guide.bash.academy&#x2F;variables.html</td>
+</tr>
+<tr>
+<td align="left"><code>$&#123;parameter##pattern&#125;</code>如果与模式匹配的最长字符串位于值的开头，则删除它。</td>
+<td align="left"><code>&quot;$&#123;url##*/&#125;&quot;</code></td>
+<td align="left"><a target="_blank" rel="noopener" href="https://guide.bash.academy/variables.html">https://guide.bash.academy/variables.html</a> &gt; variables.html</td>
+</tr>
+<tr>
+<td align="left"><code>$&#123;parameter%pattern&#125;</code>如果与模式匹配的最短字符串位于值的末尾，则删除它。</td>
+<td align="left"><code>&quot;$&#123;url%/*&#125;&quot;</code></td>
+<td align="left"><a target="_blank" rel="noopener" href="https://guide.bash.academy/variables.html">https://guide.bash.academy/variables.html</a> &gt; <a target="_blank" rel="noopener" href="https://guide.bash.academy/">https://guide.bash.academy</a></td>
+</tr>
+<tr>
+<td align="left"><code>$&#123;parameter%%pattern&#125;</code>如果与模式匹配的最长字符串位于值的末尾，则删除它。</td>
+<td align="left"><code>&quot;$&#123;url%%/*&#125;&quot;</code></td>
+<td align="left">https：&#x2F;&#x2F;guide.bash.academy&#x2F;variables.html &gt; https：</td>
+</tr>
+<tr>
+<td align="left"><code>$&#123;parameter/pattern/replacement&#125;</code>将与模式匹配的第一个字符串替换为替换内容。</td>
+<td align="left"><code>&quot;$&#123;url/./-&#125;&quot;</code></td>
+<td align="left"><a target="_blank" rel="noopener" href="https://guide.bash.academy/variables.html">https://guide.bash.academy/variables.html</a> &gt; <a target="_blank" rel="noopener" href="https://guide-bash.academy/variables.html">https://guide-bash.academy/variables.html</a></td>
+</tr>
+<tr>
+<td align="left"><code>$&#123;parameter//pattern/replacement&#125;</code>将与模式匹配的每个字符串替换为替换内容。</td>
+<td align="left"><code>&quot;$&#123;url//./-&#125;&quot;</code></td>
+<td align="left"><a target="_blank" rel="noopener" href="https://guide.bash.academy/variables.html">https://guide.bash.academy/variables.html</a> &gt; <a target="_blank" rel="noopener" href="https://guide-bash-academy/variables-html">https://guide-bash-academy/variables-html</a></td>
+</tr>
+<tr>
+<td align="left"><code>$&#123;parameter/#pattern/replacement&#125;</code>将与值开头的模式匹配的字符串替换为替换值。</td>
+<td align="left"><code>&quot;$&#123;url/#*:/http:&#125;&quot;</code></td>
+<td align="left">https：&#x2F;&#x2F;guide.bash.academy&#x2F;variables.html &gt; <a target="_blank" rel="noopener" href="http://guide.bash.academy/variables.html">http://guide.bash.academy/variables.html</a></td>
+</tr>
+<tr>
+<td align="left"><code>$&#123;parameter/%pattern/replacement&#125;</code>将与值末尾的模式匹配的字符串替换为替换值。</td>
+<td align="left"><code>&quot;$&#123;url/%.html/.jpg&#125;&quot;</code></td>
+<td align="left"><a target="_blank" rel="noopener" href="https://guide.bash.academy/variables.html">https://guide.bash.academy/variables.html</a> &gt; <a target="_blank" rel="noopener" href="https://guide.bash.academy/variables.jpg">https://guide.bash.academy/variables.jpg</a></td>
+</tr>
+<tr>
+<td align="left"><code>$&#123;#parameter&#125;</code>扩展值的长度（以字节为单位）。</td>
+<td align="left"><code>&quot;$&#123;#url&#125;&quot;</code></td>
+<td align="left"><a target="_blank" rel="noopener" href="https://guide.bash.academy/variables.html">https://guide.bash.academy/variables.html</a> &gt; 40</td>
+</tr>
+<tr>
+<td align="left"><code>$&#123;parameter:start[:length]&#125;</code>展开值的一部分，从start开始，长度字节长。您甚至可以使用负值（空格后跟一个）从末尾而不是从开头开始计数。</td>
+<td align="left"><code>&quot;$&#123;url:8&#125;&quot;</code></td>
+<td align="left"><a target="_blank" rel="noopener" href="https://guide.bash.academy/variables.html">https://guide.bash.academy/variables.html</a> &gt; guide.bash.academy&#x2F;variables.html</td>
+</tr>
+<tr>
+<td align="left"><code>$&#123;parameter[^|^^|,|,,][pattern]&#125;</code>展开转换后的值，将与模式匹配的第一个或所有字符大写或小写。您可以省略模式来匹配任何字符。</td>
+<td align="left"><code>&quot;$&#123;url^^[ht]&#125;&quot;</code></td>
+<td align="left"><a target="_blank" rel="noopener" href="http://guide.bash.academy/variables.html">http://guide.bash.academy/variables.html</a> &gt; HTTps:&#x2F;&#x2F;guide.basH.academy&#x2F;variables.HTml</td>
+</tr>
+</tbody></table>
+<p><code>Shell</code> 变量是您可以自由赋值的参数。赋值是使用语法完成的<code>var=value</code>。可以扩展参数以将其数据内联到命令的参数中。参数扩展是通过在变量名前加上<code>$</code>符号来完成的。有时，您需要在参数名称周围添加<code>&#123;&#125;</code>大括号，以明确告诉 bash 参数名称的开始和结束位置（例如 <code>&quot;$&#123;time&#125;s&quot;</code>）。<br><strong>参数扩展应始终用双引号引起来，以保持一致性</strong>，并防止其中任何潜在的空格导致分词以及触发意外的路径名完成。在扩展参数时，您可以应用特殊的参数扩展运算符以某种方式改变扩展值。</p>
+<ol>
+<li>分配hello给变量greeting。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ greeting=hello</span><br></pre></td></tr></table></figure></li>
+<li>显示变量<code>greeting</code>的内容。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$greeting</span>&quot;</span></span><br></pre></td></tr></table></figure></li>
+<li>将字符串分配 world到变量当前内容的末尾。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ greeting=<span class="string">&quot;<span class="variable">$greeting</span> world&quot;</span></span><br><span class="line">$ greeting+=<span class="string">&quot; world&quot;</span></span><br></pre></td></tr></table></figure></li>
+<li>显示变量greeting中的最后一个单词。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;greeting##* &#125;</span>&quot;</span></span><br></pre></td></tr></table></figure></li>
+<li>显示变量问候语的内容，第一个字符大写，.末尾有一个句点 ( )。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;greeting^&#125;</span>.&quot;</span></span><br></pre></td></tr></table></figure></li>
+<li>将变量内容中的第一个空格字符替换为big。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ greeting=<span class="variable">$&#123;greeting/ / big &#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>将变量greeting的内容重定向到一个文件中，该文件的名称是该变量的值，并且末尾的空格替换为下划线( _) 和 a 。.txt<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$greeting</span>&quot;</span> &gt; <span class="string">&quot;<span class="variable">$&#123;greeting// /_&#125;</span>.txt&quot;</span></span><br></pre></td></tr></table></figure></li>
+<li>显示变量问候语的内容，中间单词完全大写。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ middle=<span class="variable">$&#123;greeting% *&#125;</span> middle=<span class="variable">$&#123;middle#* &#125;</span>; <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;greeting%% *&#125;</span> <span class="variable">$&#123;middle^^&#125;</span> <span class="variable">$&#123;greeting##* &#125;</span>&quot;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h4><p>有两个单独的空间保存变量。这些独立的空间经常被混淆，导致许多误解。您已经熟悉了第一个：shell 变量。保存变量的第二个空间是进程环境。我们将介绍环境变量并解释它们与 shell 变量的区别。</p>
+<h5 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h5><p>与 shell 变量不同，环境变量存在于进程级别。这意味着它们不是 bash shell 的功能，而是系统上任何程序进程的功能。如果我们将流程想象成您购买的一块土地，那么我们在这块土地上建造的建筑物将是在您的流程中运行的代码。你可以在土地上建造一座bash房子、一间grep棚屋或一座塔。firefox环境变量是存储在您的进程土地本身上的变量，而 shell 变量存储在您的土地上构建的 bash house 内。<br>您可以在环境中存储变量，也可以在 shell 中存储变量。环境是每个进程都拥有的，而 shell 空间仅适用于 bash 进程。通常，您应该将变量放在 shell 空间中除非您明确要求环境变量的行为。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">╭──── bash────────────────────────╮ </span><br><span class="line">│ ╭────────────────── ─╮ │ </span><br><span class="line">│ 环境 │ SHELL │ │ │ </span><br><span class="line">│ shell_var1=值 │ │ </span><br><span class="line">│ │ shell_var2=值 │ │ </span><br><span class="line">│ ╰──────────────────╯ │ </span><br><span class="line">│ ENV_VAR1=值 │ </span><br><span class="line">│ ENV_VAR2=值 │ </span><br><span class="line">╰──────────────────────────────────╯</span><br></pre></td></tr></table></figure>
+<p>当您从 shell 运行新程序时，bash 将在新进程中运行该程序。当它发生时，这个新进程将拥有自己的环境。但与shell进程不同的是，普通进程没有shell变量。他们只有环境变量。更重要的是，当创建一个新进程时，它的环境是通过创建创建进程的环境的副本来填充的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">╭──── bash ──────────────────────╮ </span><br><span class="line">│ ╭────────────────╮ │ </span><br><span class="line">│环境 │ SHELL │ │ </span><br><span class="line">│ │greeting=hello │ │ </span><br><span class="line">│ ╰────────────────╯ │ </span><br><span class="line">│ HOME=/home/lhunath │ </span><br><span class="line">│ PATH=/bin:/usr/bin │ </span><br><span class="line">╰─┬────────────────────────────╯ </span><br><span class="line">  ╎ ╭──── ls ────────── ────────────────╮ </span><br><span class="line">  └╌╌┥ │ </span><br><span class="line">     │ 环境 │ </span><br><span class="line">     │ │ </span><br><span class="line">     │ HOME=/home/lhunath │ </span><br><span class="line">     │ PATH=/bin:/usr/bin │ </span><br><span class="line">     ╰─── ──────────────────────────────╯</span><br></pre></td></tr></table></figure>
+<p>一个常见的误解是，环境是所有进程共享的系统全局变量池。这种错觉通常是由于在子进程中看到相同的变量而导致的。当您在 shell 中创建自定义环境变量时，您之后创建的任何子进程都将继承该变量，因为该变量会从您的 shell 复制到子进程的环境中。但是，由于环境特定于每个进程，因此在子进程中更改或创建新变量绝不会影响父进程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">    ╭─── bash ───────────────────────╮</span><br><span class="line">    │             ╭────────────────╮ │</span><br><span class="line">    │ ENVIRONMENT │ SHELL          │ │</span><br><span class="line">    │             │ greeting=hello │ │</span><br><span class="line">    │             ╰────────────────╯ │</span><br><span class="line">    │ HOME=/home/lhunath             │</span><br><span class="line">    │ PATH=/bin:/usr/bin             │</span><br><span class="line">    │ NAME=Bob                       │</span><br><span class="line">    ╰─┬──────────────────────────────╯</span><br><span class="line">      ╎  ╭─── bash ───────────────────────╮</span><br><span class="line">      └╌╌┥             ╭────────────────╮ │</span><br><span class="line">         │ ENVIRONMENT │ SHELL          │ │</span><br><span class="line">         │             ╰────────────────╯ │</span><br><span class="line">         │ HOME=/home/lhunath             │</span><br><span class="line">         │ PATH=/bin:/usr/bin             │</span><br><span class="line">         │ NAME=Bob                       │</span><br><span class="line">         ╰────────────────────────────────╯</span><br><span class="line"></span><br><span class="line">$ NAME=John</span><br><span class="line"></span><br><span class="line">    ╭─── bash ───────────────────────╮</span><br><span class="line">    │             ╭────────────────╮ │</span><br><span class="line">    │ ENVIRONMENT │ SHELL          │ │</span><br><span class="line">    │             │ greeting=hello │ │</span><br><span class="line">    │             ╰────────────────╯ │</span><br><span class="line">    │ HOME=/home/lhunath             │</span><br><span class="line">    │ PATH=/bin:/usr/bin             │</span><br><span class="line">    │ NAME=Bob                       │</span><br><span class="line">    ╰─┬──────────────────────────────╯</span><br><span class="line">      ╎  ╭─── bash ───────────────────────╮</span><br><span class="line">      └╌╌┥             ╭────────────────╮ │</span><br><span class="line">         │ ENVIRONMENT │ SHELL          │ │</span><br><span class="line">         │             ╰────────────────╯ │</span><br><span class="line">         │ HOME=/home/lhunath             │</span><br><span class="line">         │ PATH=/bin:/usr/bin             │</span><br><span class="line">         │ NAME=John                      │</span><br><span class="line">         ╰────────────────────────────────╯</span><br></pre></td></tr></table></figure>
+<p>这种区别也清楚地表明了为什么人们会选择将某些变量放入环境中。虽然大多数变量都是普通的 shell 变量，但您可以选择将一些 shell 变量“导出”到 shell 的进程环境中。这样做时，您可以有效地将变量的数据导出到您创建的每个子进程，而这些子进程又将其环境变量导出到它们的子进程。您的系统将环境变量用于各种用途，主要是为某些进程提供状态信息和默认配置。</p>
+<p>#例如，login传统上用于将用户登录到系统的程序将有关用户的信息导出到环境中（USER包含您的用户名，HOME包含您的主目录，PATH包含标准命令搜索路径等） 。现在，您登录后运行的所有进程都可以通过查看环境来了解它们正在为哪个用户运行。</p>
+<p>您可以将自己的变量导出到环境中。这通常是为了配置您运行的任何程序的行为。例如，您可以导出LANG并为其分配一个值，告诉程序应该使用什么语言和字符集。环境变量通常仅对那些明确了解并支持它们的程序有用。有些变量的用途非常狭窄，例如 某些程序可以使用LSCOLORSls来对系统上文件的输出进行着色。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">╭─── bash ───────────────────────╮</span><br><span class="line">│             ╭────────────────╮ │</span><br><span class="line">│ ENVIRONMENT │ SHELL          │ │</span><br><span class="line">│             │ greeting=hello │ │</span><br><span class="line">│             ╰────────────────╯ │</span><br><span class="line">│ HOME=/home/lhunath             │</span><br><span class="line">│ PATH=/bin:/usr/bin             │</span><br><span class="line">│ LANG=en_CA                     │</span><br><span class="line">│ PAGER=less                     │</span><br><span class="line">│ LESS=-i -R                     │</span><br><span class="line">╰─┬──────────────────────────────╯</span><br><span class="line">  ╎  ╭─── rm ─────────────────────────╮           # rm uses just LANG if present to determine</span><br><span class="line">  ├╌╌┥                                │           # the language of its error messages.</span><br><span class="line">  ╎  │ ENVIRONMENT                    │</span><br><span class="line">  ╎  │                                │</span><br><span class="line">  ╎  │ HOME=/home/lhunath             │</span><br><span class="line">  ╎  │ PATH=/bin:/usr/bin             │</span><br><span class="line">  ╎  │ LANG=en_CA                     │</span><br><span class="line">  ╎  │ PAGER=less                     │</span><br><span class="line">  ╎  │ LESS=-i -R                     │</span><br><span class="line">  ╎  ╰────────────────────────────────╯</span><br><span class="line">  ╎  ╭─── man ────────────────────────╮           # In addition to LANG, man uses PAGER to determine</span><br><span class="line">  └╌╌┥                                │           # what program to use for paginating long manuals.</span><br><span class="line">     │ ENVIRONMENT                    │</span><br><span class="line">     │                                │</span><br><span class="line">     │ HOME=/home/lhunath             │</span><br><span class="line">     │ PATH=/bin:/usr/bin             │</span><br><span class="line">     │ LANG=en_CA                     │</span><br><span class="line">     │ PAGER=less                     │</span><br><span class="line">     │ LESS=-i -R                     │</span><br><span class="line">     ╰─┬──────────────────────────────╯</span><br><span class="line">       ╎  ╭─── less ───────────────────────╮      # less makes use of the LESS variable to supply</span><br><span class="line">       └╌╌┥                                │      # an initial configuration for itself.</span><br><span class="line">          │ ENVIRONMENT                    │</span><br><span class="line">          │                                │</span><br><span class="line">          │ HOME=/home/lhunath             │</span><br><span class="line">          │ PATH=/bin:/usr/bin             │</span><br><span class="line">          │ LANG=en_CA                     │</span><br><span class="line">          │ PAGER=less                     │</span><br><span class="line">          │ LESS=-i -R                     │</span><br><span class="line">          ╰────────────────────────────────╯</span><br></pre></td></tr></table></figure>
+
+<h5 id="Shell-Initialization"><a href="#Shell-Initialization" class="headerlink" title="Shell Initialization"></a>Shell Initialization</h5><p>当您启动交互式 <code>bash</code> 会话时，<code>bash</code> 将通过从系统上的不同文件读取一些初始化命令来准备使用。您可以使用这些文件来告诉 <code>bash</code> 如何行为。其中一个特别旨在让您有机会将变量导出到环境中。该文件被调用<code>.bash_profile</code>并且位于您的主目录中。您很可能还没有此文件；如果是这种情况，您只需创建该文件，<code>bash</code> 下次查找它时就会找到它。</p>
+<p>在你的最后<code>~/.bash_profile</code>，你应该有命令<code>source ~/.bashrc</code>。这是因为当<code>.bash_profile</code>存在时，<code>bash</code> 的行为有点奇怪，因为它停止寻找其标准 <code>shell</code> 初始化文件<code>~/.bashrc</code>。该source命令解决了这个奇怪的问题。</p>
+<p>请注意，如果没有<code>~/.bash_profile</code>文件，<code>bash</code> 将尝试读取<code>~/.profile</code>（如果存在）。后者是通用的 <code>shell</code> 配置文件，其他 <code>shell</code> 也可以读取该文件。您可以选择将环境配置放在那里，但如果这样做，您需要注意应该限制自己使用 <code>POSIX sh</code> 语法，而不是在文件中使用任何特定于 <code>bash</code> 的 <code>shell</code> 语法。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">login                  The login program signs the user in</span><br><span class="line">  │</span><br><span class="line">  ╰─ -bash             The login command starts the user&#x27;s login shell</span><br><span class="line">     │</span><br><span class="line">     ╰─ screen         The user runs the screen program from his login shell</span><br><span class="line">          │</span><br><span class="line">          ╰─ weechat   The screen program creates multiple windows</span><br><span class="line">          │            and allows the user to switch between them. </span><br><span class="line">          ╰─ bash      The first runs an IRC client, two others run a </span><br><span class="line">          │            non-login bash shell. </span><br><span class="line">          ╰─ bash</span><br></pre></td></tr></table></figure>
+<p>该进程树描述了一个用户，该用户使用 bash 作为登录 shell，并多路复用他的终端以创建多个单独的“屏幕”，从而允许他与多个同时运行的程序进行交互。登录后，系统（login程序）确定用户的登录shell。例如，它可以通过查看来做到这一点&#x2F;etc&#x2F;passwd。在本例中，用户的登录 shell 设置为 bash。login继续运行 bash 并将其名称设置为-bash. 程序的标准过程是login在登录 shell 的名称前添加一个-（破折号）前缀，指示该 shell 它应该充当登录 shell。</p>
+<p>一旦用户拥有正在运行的 bash 登录 shell，他就运行该screen程序。当 screen 运行时，它会接管用户的整个终端并模拟其中的多个终端，允许用户在它们之间切换。在每个模拟终端中，屏幕运行一个新程序。在这种情况下，用户将屏幕配置为启动一个运行 IRC 客户端的模拟终端，以及两个运行交互式（但非登录）bash shell 的模拟终端。实际情况如下：<br>我们来看看这个场景中初始化是如何发生的，以及环境变量来自哪里：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">login</span><br><span class="line">  │ TERM=dumb</span><br><span class="line">  │ USER=lhunath</span><br><span class="line">  │ HOME=/home/lhunath</span><br><span class="line">  │ PATH=/usr/bin:/bin</span><br><span class="line">  │</span><br><span class="line">  ╰─ -bash</span><br><span class="line">     │ TERM=dumb</span><br><span class="line">     │ USER=lhunath</span><br><span class="line">     │ HOME=/home/lhunath</span><br><span class="line">     │ PATH=/usr/bin:/bin</span><br><span class="line">     │ PWD=/home/lhunath</span><br><span class="line">     │ SHLVL=1</span><br><span class="line">     │╭──────────────╮     ╭────────────────────────╮╭──────────────────╮</span><br><span class="line">     ┝┥ login shell? ┝─yes─┥ source ~/.bash_profile ┝┥ source ~/.bashrc │</span><br><span class="line">     │╰──────────────╯     ╰────────────────────────╯╰──────────────────╯</span><br><span class="line">     │ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/libexec</span><br><span class="line">     │ EDITOR=vim</span><br><span class="line">     │ LANG=en_CA.UTF-8</span><br><span class="line">     │ LESS=-i -M -R -W -S</span><br><span class="line">     │ GREP_COLOR=31</span><br><span class="line">     │</span><br><span class="line">     ╰─ screen</span><br><span class="line">          │ TERM=dumb</span><br><span class="line">          │ TERM=screen-bce</span><br><span class="line">          │ USER=lhunath</span><br><span class="line">          │ HOME=/home/lhunath</span><br><span class="line">          │ PATH=/usr/bin:/bin</span><br><span class="line">          │ PWD=/home/lhunath</span><br><span class="line">          │ SHLVL=1</span><br><span class="line">          │ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/libexec</span><br><span class="line">          │ EDITOR=vim</span><br><span class="line">          │ LANG=en_CA.UTF-8</span><br><span class="line">          │ LESS=-i -M -R -W -S</span><br><span class="line">          │ GREP_COLOR=31</span><br><span class="line">          │ WINDOW=0</span><br><span class="line">          │</span><br><span class="line">          ╰─ weechat</span><br><span class="line">          │</span><br><span class="line">          ╰─ bash</span><br><span class="line">          │    │╭──────────────╮</span><br><span class="line">          │    ╰┥ login shell? ┝</span><br><span class="line">          │     ╰──────┰───────╯</span><br><span class="line">          │            no</span><br><span class="line">          │     ╭──────┸───────╮     ╭──────────────────╮</span><br><span class="line">          │     │ interactive? ┝─yes─┥ source ~/.bashrc │</span><br><span class="line">          │     ╰──────────────╯     ╰──────────────────╯</span><br><span class="line">          ╰─ bash</span><br><span class="line">               │╭──────────────╮</span><br><span class="line">               ╰┥ login shell? ┝</span><br><span class="line">                ╰──────┰───────╯</span><br><span class="line">                       no</span><br><span class="line">                ╭──────┸───────╮     ╭──────────────────╮</span><br><span class="line">                │ interactive? ┝─yes─┥ source ~/.bashrc │</span><br><span class="line">                ╰──────────────╯     ╰──────────────────╯</span><br></pre></td></tr></table></figure>
+<p>正如您所看到的，不同级别将自己的变量导出到环境中。每个子进程都从其父进程的环境中继承变量。反过来，它可以覆盖其中一些值或添加新变量。</p>
+<p>请注意第一个（登录）bash 如何获取两者的源<del>&#x2F;.bash_profile，而</del>&#x2F;.bashrc底部的两个仅获取源<del>&#x2F;.bashrc。这是因为只有第一个 bash 进程作为“登录 shell”启动（通过-在其名称前面添加 ）。下面的两个 bash 进程是普通的交互式 shell。他们不需要采购的原因</del>&#x2F;.bash_profile现在变得更加明显：他们的职责 ~&#x2F;.bash_profile是设置 bash 的环境，而底部的两个 shell 已经从其登录 shell 祖先继承了环境。</p>
+<h5 id="位置参数"><a href="#位置参数" class="headerlink" title="位置参数"></a>位置参数</h5><p>其中变量是带有名称的参数，位置参数是带有数字（更具体地说，正整数）的参数。我们使用正常的参数扩展语法来扩展这些参数：<code>$1, $3</code>。但值得注意的是，<code>bash</code> 要求您在超过一位数字的位置参数周围使用大括号： , <code>$&#123;10&#125;（$&#123;22&#125;</code>实际上，您很少需要显式引用这么高的位置参数）。</p>
+<p>位置参数扩展到由父进程创建时作为参数发送到进程的值。例如，当您<code>grep</code>使用以下命令启动进程时：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ grep Name registrations.txt</span><br></pre></td></tr></table></figure>
+<p>您正在有效地运行<code>grep</code>带有参数Name的命令<code>registrations.txt</code>。如果<code>grep</code>是 <code>bash</code> 脚本，则第一个参数可以通过扩展在脚本中使用<code>$1</code>，第二个参数可以通过扩展使用<code>$2</code>。高于的位置参数2将被取消设置。</p>
+<p>很高兴知道还有第零个位置参数。该位置参数扩展为进程的名称。进程的名称是由创建它的程序选择的，因此第零个参数实际上可以包含任何内容，并且完全取决于脚本的父级。大多数 <code>shell</code> 将使用它们运行的​​文件的绝对路径来启动进程作为进程的名称，或者用户执行的启动进程的命令。请注意，这绝不是一个要求，您不能对第零个参数的内容做出任何可靠的假设：出于所有意图和目的，最好避免这样做。</p>
+<p>很好而且非常方便：到目前为止我们学到的关于可变参数的大部分知识也适用于位置参数：我们可以扩展它们，并且可以在这些扩展上应用参数扩展运算符来改变结果值：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;The Name Script&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;usage: names &#x27;My Full Name&#x27;&quot;</span>; <span class="built_in">echo</span></span><br><span class="line"></span><br><span class="line">first=<span class="variable">$&#123;1%% *&#125;</span> last=<span class="variable">$&#123;1##* &#125;</span> middle=<span class="variable">$&#123;1#$first&#125;</span> middle=<span class="variable">$&#123;middle%$last&#125;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Your first name is: <span class="variable">$first</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Your last name is: <span class="variable">$last</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Your middle names are: <span class="variable">$middle</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<p>如果您将此脚本保存在名为 的文件中<code>names</code>，并根据使用说明运行它，通过向其传递单个参数，您将看到该脚本分析您的姓名并告知您姓名的哪一部分构成了第一个、最后一个和中间部分名称。当我们在语句中扩展变量时，我们使用变量<code>first</code>、<code>last</code>和<code>middle</code>来存储这些信息<code>echo</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">chmod</span> +x names</span><br><span class="line">$ ./names <span class="string">&#x27;Maarten Billemont&#x27;</span></span><br><span class="line">The Name Script</span><br><span class="line">usage: names <span class="string">&#x27;My Full Name&#x27;</span></span><br><span class="line"></span><br><span class="line">Your first name is: Maarten</span><br><span class="line">Your last name is: Billemont</span><br><span class="line">Your middle names are: </span><br><span class="line">$ ./names <span class="string">&#x27;James Tiberius &quot;Jim&quot; Kirk&#x27;</span></span><br><span class="line">The Name Script</span><br><span class="line">usage: names <span class="string">&#x27;My Full Name&#x27;</span></span><br><span class="line"></span><br><span class="line">Your first name is: James</span><br><span class="line">Your last name is: Kirk</span><br><span class="line">Your middle names are:  Tiberius <span class="string">&quot;Jim&quot;</span></span><br></pre></td></tr></table></figure>
+<p>重要的是要理解，与大多数变量不同，位置参数是只读参数。经过反思，您可能会认为人们无法从脚本内部更改脚本的参数。因此，这是一个语法错误：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ 1=<span class="string">&#x27;New First Argument&#x27;</span></span><br><span class="line">-bash: 1=New First Argument: <span class="built_in">command</span> not found</span><br></pre></td></tr></table></figure>
+<p>虽然错误消息有点令人困惑，但它表明 bash 甚至不认为该语句是试图为变量赋值（因为参数不是变量1），而是认为您已经给了它命令的名称你想跑。</p>
+<p>然而，我们可以使用一个内置命令来更改位置参数集的值。虽然这是缺乏 bash 更高级功能的古代 shell 中的常见做法，但在 bash 中您很少需要这样做。要修改当前的位置参数集，请使用该set命令并在参数后面指定新的位置参数作为参数–：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">set</span> -- <span class="string">&#x27;New First Argument&#x27;</span> Second Third <span class="string">&#x27;Fourth Argument&#x27;</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;1: <span class="variable">$1</span>, 2: <span class="variable">$2</span>, 4: <span class="variable">$4</span>&quot;</span></span><br><span class="line">1: New First Argument, 2: Second, 4: Fourth Argument</span><br></pre></td></tr></table></figure>
+<p>除了更改位置参数集之外，还有shift可用于“推送”我们的位置参数集的内置函数。当我们移动位置参数时，我们实际上将它们全部推向开头，导致前几个位置参数被撞掉，为其他参数让路：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">New First Argument Second Third Fourth Argument</span><br><span class="line">$ <span class="built_in">shift</span> 2                              <span class="comment"># Push the positional parameters back 2.</span></span><br><span class="line">Third Fourth Argument &lt;----</span><br></pre></td></tr></table></figure>
+<p>最后，当使用命令启动新的 <code>bash shell</code> 时<code>bash</code>，有一种方法可以传入位置参数。这是将参数列表传递给内联 <code>bash</code> 脚本的非常有用的方法。稍后，当您将内联 <code>bash</code> 代码与其他实用程序结合使用时，您将使用此方法，但就目前而言，这是试验位置参数的好方法，而无需创建单独的脚本来调用和传递参数（就像我们在示例中所做的那样 <code>names</code>）多于）。以下是如何运行内联 <code>bash</code> 命令并传入参数列表来填充位置参数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ bash -c <span class="string">&#x27;echo &quot;1: $1, 2: $2, 4: $4&quot;&#x27;</span> -- <span class="string">&#x27;New First Argument&#x27;</span> Second Third <span class="string">&#x27;Fourth Argument&#x27;</span></span><br><span class="line">1: New First Argument, 2: Second, 4: Fourth Argument</span><br></pre></td></tr></table></figure>
+<p>我们运行该bash命令，传递-c选项，后跟包含一些 bash shell 代码的参数。这将告诉 bash，您不想启动新的交互式 bash shell，而只想让 shell 运行提供的 bash 代码并完成。在 shell 代码之后，我们指定用于填充位置参数的参数。我们示例中的第一个参数是–，虽然从技术上讲该参数用于填充第零个位置参数，但–为了兼容性并明确 bash 参数与 bash 参数之间的区别，始终使用它是一个好主意。你的外壳代码。在此参数之后，每个参数都会按照您的预期填充标准位置参数。</p>
+<div class="note success"><p>请注意，我们包含 bash 代码的参数是’single-quoted’：</p>
+<p>每当我们将代码放入字符串中时（例如将其作为参数传递的情况），代码都应该用单引号引起来。不要用于<code>&quot;double quotes&quot;</code>包装代码字符串。这很重要，因为单引号在制作包装数据文字方面比双引号可靠得多。</p>
+</div>
+<p>如果我们在上面的示例中使用双引号，则我们在其中键入命令的 <code>shell bash</code>会展开<code>$1,$2</code>和<code>$4</code>扩展，从而导致该<code>-c</code>选项的参数损坏。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ bash -vc <span class="string">&#x27;echo &quot;1: $1, 2: $2, 4: $4&quot;&#x27;</span> -- \          <span class="comment"># We pass the -v argument to bash to show us the code it is going to run before the result.</span></span><br><span class="line"><span class="string">&#x27;New First Argument&#x27;</span> Second Third <span class="string">&#x27;Fourth Argument&#x27;</span>   <span class="comment"># We can use \ at the end of a line to resume on a new line.</span></span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;1: <span class="variable">$1</span>, 2: <span class="variable">$2</span>, 4: <span class="variable">$4</span>&quot;</span>                            <span class="comment"># Here is the code it is going to run.</span></span><br><span class="line">1: New First Argument, 2: Second, 4: Fourth Argument  <span class="comment"># And this is the result.</span></span><br></pre></td></tr></table></figure>
+
+<p><code>-c</code>如果我们在参数周围使用双引号而不是单引号会发生什么：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ bash -vc <span class="string">&quot;echo &quot;</span>1: <span class="variable">$1</span>, 2: <span class="variable">$2</span>, 4: <span class="variable">$4</span><span class="string">&quot;&quot;</span> -- \          <span class="comment"># The outer double-quotes conflict with the inner double-quotes, leading to ambiguity.</span></span><br><span class="line"><span class="string">&#x27;New First Argument&#x27;</span> Second Third <span class="string">&#x27;Fourth Argument&#x27;</span></span><br><span class="line"><span class="built_in">echo</span> 1:                                               <span class="comment"># As a result, the argument to -c is no longer the entire bash code but only the first word of it.</span></span><br><span class="line">1:</span><br><span class="line">$ bash -vc <span class="string">&quot;echo \&quot;1: <span class="variable">$1</span>, 2: <span class="variable">$2</span>, 4: <span class="variable">$4</span>\&quot;&quot;</span> -- \        <span class="comment"># Even if we fix the quoting ambiguity, the $1, $2 and $4 are now evaluated by the shell we&#x27;re typing this command into,</span></span><br><span class="line"><span class="string">&#x27;New First Argument&#x27;</span> Second Third <span class="string">&#x27;Fourth Argument&#x27;</span>   <span class="comment"># not the shell we pass the arguments to.</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;1: , 2: , 4: &quot;</span>                                  <span class="comment"># Since $1, $2 and $4 are likely empty in your interactive shell, they will expand empty and disappear from the -c argument.</span></span><br><span class="line">1: , 2: , 4:</span><br></pre></td></tr></table></figure>
+<p>我们甚至可以通过反斜杠转义所有特殊字符（包括双引号和美元符号）来解决双引号内的所有问题。这可以解决问题，但会使 shell 代码看起来极其复杂且难以阅读。维护像这样以特殊方式转义的 shell 代码是一场噩梦，并且会导致难以发现的意外错误：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ bash -vc <span class="string">&quot;echo \&quot;1: \$1, 2: \$2, 4: \$4\&quot;&quot;</span> -- \</span><br><span class="line"><span class="string">&#x27;New First Argument&#x27;</span> Second Third <span class="string">&#x27;Fourth Argument&#x27;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;1: <span class="variable">$1</span>, 2: <span class="variable">$2</span>, 4: <span class="variable">$4</span>&quot;</span></span><br><span class="line">1: New First Argument, 2: Second, 4: Fourth Argument</span><br></pre></td></tr></table></figure>
+
+<h5 id="特殊参数"><a href="#特殊参数" class="headerlink" title="特殊参数"></a>特殊参数</h5><p>了解位置参数对理解特殊参数变得更加容易：它们非常相似。特殊参数是名称为单个符号字符的参数，它们用于从 <code>bash shell</code> 请求某些状态信息。以下是不同类型的特殊参数及其包含的信息：</p>
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Example</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>&quot;$*&quot;</code></td>
+<td align="left"><code>echo &quot;Arguments: $*&quot;</code></td>
+<td align="left">扩展单个<code>string</code>，将所有位置参数连接成一个，并用IFS中的第一个字符（默认情况下为空格）分隔。注意：除非您明确打算连接所有参数，否则切勿使用此参数。你几乎总是想用它<code>@</code>来代替。</td>
+</tr>
+<tr>
+<td align="left"><code>&quot;$@&quot;</code></td>
+<td align="left"><code>rm &quot;$@&quot;</code></td>
+<td align="left">将位置参数扩展为单独参数的列表。</td>
+</tr>
+<tr>
+<td align="left"><code>&quot;$#&quot;</code></td>
+<td align="left"><code>echo &quot;Count: $#&quot;</code></td>
+<td align="left">展开为一个数字，指示可用位置参数的数量。</td>
+</tr>
+<tr>
+<td align="left"><code>&quot;$?&quot;</code></td>
+<td align="left"><code>(( $? == 0 )) | echo &quot;Error: $?&quot;</code></td>
+<td align="left">展开刚刚完成的最后一个（同步）命令的退出代码。退出代码 0 表示命令成功，任何其他数字表示命令失败的原因。</td>
+</tr>
+<tr>
+<td align="left"><code>&quot;$-&quot;</code></td>
+<td align="left"><code>[[ $- = *i* ]]</code></td>
+<td align="left">扩展为当前在 shell 中处于活动状态的选项标志集。选项标志配置 <code>shell</code> 的行为，该示例测试该标志是否存在i，表明 <code>shell</code> 是交互式的（有提示）并且没有运行脚本。</td>
+</tr>
+<tr>
+<td align="left"><code>&quot;$$&quot;</code></td>
+<td align="left"><code>echo &quot;$$&quot; &gt; /var/run/myscript.pid</code></td>
+<td align="left">扩展一个数字，该数字是 shell 进程（正在解析代码）的唯一进程标识符。</td>
+</tr>
+<tr>
+<td align="left"><code>&quot;$!&quot;</code></td>
+<td align="left"><code>kill &quot;$!&quot;</code></td>
+<td align="left">展开一个数字，该数字是在后台（异步）启动的最后一个进程的唯一进程标识符。该示例向后台进程发出信号，表明该终止了。</td>
+</tr>
+<tr>
+<td align="left"><code>&quot;$_&quot;</code></td>
+<td align="left"><code>mkdir -p ~/workspace/projects/myscripts &amp;&amp; cd &quot;$_&quot;</code></td>
+<td align="left">扩展到上一个命令的最后一个参数。</td>
+</tr>
+</tbody></table>
+<p>就像位置参数一样，特殊参数是只读的：您只能使用它们来扩展信息，而不能存储信息。</p>
+<h5 id="Shell-内部变量"><a href="#Shell-内部变量" class="headerlink" title="Shell 内部变量"></a>Shell 内部变量</h5><p>您已经知道什么是 <code>shell</code> 变量。您是否知道 <code>bash shell</code> 还为您创建了一些变量？这些变量用于各种任务，并且可以方便地从 <code>shell</code> 查找某些状态信息或更改某些 <code>shell</code> 行为。</p>
+<div class="note success"><p>内部 <code>shell</code> 变量是名称全部大写的 <code>shell</code> 变量。几乎所有环境变量都是如此。重要的是要确保当我们开始创建自己的 <code>shell</code> 变量时，我们不会意外地使用我们不知道的 <code>shell</code> 变量的名称，这个错误将导致各种危险和意外的行为。值得庆幸的是，<code>shell</code> 变量名称区分大小写，因此为了避免意外覆盖 <code>shell</code> 内部变量或同名的系统导出变量，一般规则是：</p>
+<p>您应该将所有自己的 <code>shell</code> 变量设置为小写。如果创建环境变量，请为其指定一个全大写名称。</p>
+</div>
+<p>虽然 <code>bash</code> 实际上定义了相当多的内部 <code>shell</code> 变量，但其中大多数都不是很有用。其他的可以使用，但仅在非常特定的情况下使用。其中许多变量要求您了解更高级的 <code>bash</code> 概念。我将简要提及一些现阶段值得了解的内部 <code>shell</code> 变量。内部 <code>shell</code> 变量的完整列表可以在 中找到<code>man bash</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">BASH	                     /usr/local/bin/bash</span><br><span class="line">This variable contains the full pathname of the command that started the bash you are currently in.</span><br><span class="line"></span><br><span class="line">BASH_VERSION	            4.4.0(1)-release</span><br><span class="line">A version number that describes the currently active version of bash.</span><br><span class="line"></span><br><span class="line">BASH_VERSINFO	            [ 4, 4, 0, 1, release, x86_64-apple-darwin16.0.0 ]</span><br><span class="line">An array of detailed version information on the currently active version of bash.</span><br><span class="line"></span><br><span class="line">BASH_SOURCE	               myscript</span><br><span class="line">This contains all the filenames of the scripts that are currently running. The first is the script that&#x27;s currently running.Usually it is either empty (no scripts running) or contains just the pathname of your script.</span><br><span class="line"></span><br><span class="line">BASHPID	                  5345</span><br><span class="line">This contains the process ID of the bash that is parsing the script code.</span><br><span class="line"></span><br><span class="line">UID	                     501</span><br><span class="line">Contains the ID number of the user that&#x27;s running this bash shell.</span><br><span class="line"></span><br><span class="line">HOME	                     /Users/lhunath</span><br><span class="line">Contains the pathname of the home directory of the user running the bash shell.</span><br><span class="line"></span><br><span class="line">HOSTNAME	                  myst.local</span><br><span class="line">The name of your computer.</span><br><span class="line"></span><br><span class="line">LANG	                     en_CA.UTF-8</span><br><span class="line">Used to indicate your preferred language category.</span><br><span class="line"></span><br><span class="line">MACHTYPE	                  x86_64-apple-darwin16.0.0</span><br><span class="line">A full description of the type of system you are running.</span><br><span class="line"></span><br><span class="line">PWD	                     /Users/lhunath</span><br><span class="line">The full pathname of the directory you are currently in.</span><br><span class="line"></span><br><span class="line">OLDPWD	                  /Users/lhunath</span><br><span class="line">The full pathname of the directory you were in before you came to the current directory.</span><br><span class="line"></span><br><span class="line">RANDOM	                  12568</span><br><span class="line">Expands a new random number between 0 and 32767, every time.</span><br><span class="line"></span><br><span class="line">SECONDS	                  338217</span><br><span class="line">Expands the number of seconds your bash shell has been running for.</span><br><span class="line"></span><br><span class="line">LINES	                     48</span><br><span class="line">Contains the height (amount of rows or lines) of your terminal display.</span><br><span class="line"></span><br><span class="line">COLUMNS	                  178</span><br><span class="line">Contains the width (amount of single-character spaces) of a single row in your terminal display.</span><br><span class="line"></span><br><span class="line">IFS	                     $&#x27; \t\n&#x27;</span><br><span class="line">The &quot;Internal Field Separator&quot; is a string of characters that bash uses for word-splitting of data. By default, bash splits on spaces, tabs and newlines.</span><br><span class="line"></span><br><span class="line">PATH	                     /Users/lhunath/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/libexec</span><br><span class="line">The list of paths bash will search for executable programs when you run a command.</span><br><span class="line"></span><br><span class="line">PS1	                     \s-\v\$ </span><br><span class="line">This contains a string that describes what the interactive bash shell&#x27;s prompt should look like.</span><br><span class="line"></span><br><span class="line">PS2	                     &gt; </span><br><span class="line">This contains a string that describes what the interactive bash shell&#x27;s secondary prompt should look like. The secondary prompt is used when you finish a command line but the command isn&#x27;t yet complete.</span><br></pre></td></tr></table></figure>
+<p>正如我所提到的，还有许多其他内部 <code>shell</code> 变量，但它们每个都服务于目前并不有趣的非常具体的高级案例。如果您正在寻找有关 <code>bash</code> 当前如何运行的一些信息，您很可能可以在其内部 <code>shell</code> 变量之一中找到它。</p>
+<ol>
+<li>启动一个新的 bash shell，输出其第一个参数并Hello World!作为参数传递给它。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bash -c <span class="string">&#x27;echo &quot;$1&quot;&#x27;</span> -- <span class="string">&#x27;Hello World!&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li>启动一个 bash shell，输出传入的参数数量并传入参数1,2和The Third。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bash -c <span class="string">&#x27;echo &quot;$#&quot;&#x27;</span> -- 1 2 <span class="string">&#x27;The Third&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li>启动一个 bash shell，将位置参数移走，然后输出第一个。传入参数1,2和The Third。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bash -c <span class="string">&#x27;shift; echo &quot;$1&quot;&#x27;</span> -- 1 2 <span class="string">&#x27;The Third&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li>启动一个 bash shell，输出最后传入的参数并传入参数1,2和The Third。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bash -c <span class="string">&#x27;echo &quot;$&#123;@: -1&#125;&quot;&#x27;</span> -- 1 2 <span class="string">&#x27;The Third&#x27;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h4><p>最后但同样重要的是，我们可能会遇到最有趣的 bash 参数：数组。</p>
+<h5 id="数组的作用"><a href="#数组的作用" class="headerlink" title="数组的作用"></a>数组的作用</h5><p>数组是一个奇特的词，指的是参数，它不能容纳一个字符串，而是容纳一整串字符串。存储事物列表的概念并不新鲜 - 我们之前在本指南中已经看到过它，例如PATH存储 bash 的目录路径名列表以查找命令程序。然而，引入数组是为了解决使用简单字符串变量存储事物列表时出现的一个非常重要的问题。</p>
+<p>在简单变量中存储事物列表的问题是，当您对此列表的单独元素感兴趣时，您不可避免地需要将这个单个变量拆分为这些单独的元素。然而，我们大多数人甚至没有注意到这是一个问题：作为人类，我们非常擅长根据具体情况做到这一点。当我们看到诸如 的名字时Leonard Cohen，我们认识到它由两个单独的名字组成，这两个名字一起构成一个人的全名。现在，当我们查看诸如 之类的字符串时Leonard Cohen - Adam Cohen - Lorca Cohen，我们立即将其识别为三个不同名称的列表：我们立即识别出该字符串中用破折号分隔名称的模式。事实上，我们非常擅长这一点，以至于当我们看到诸如此类的名称列表时，我们通常甚至不需要停下来思考Susan Q. - Mary T. - Steven S. - Anne-Marie D. - Peter E.。我们甚至擅长在较大的字符串中找到相关的上下文单元，例如由行和段落组成的诗歌。但不幸的是，当我们开始考虑让计算机为我们处理数据时，我们需要停止思考我们优秀的人类抽象，并穿上我们的认知婴儿鞋。计算机不知道这Susan Q. - Mary T. - Steven S. - Anne-Marie D. - Peter E.是一个名称列表，它当然也不知道这些名称是用破折号分隔的，并且它绝对无法猜测这是一个单一的名称，Anne-Marie而不是其中两个不同的人的名称。列表。<br>明确列表中单独元素的一个好方法是使用命令的参数。还记得我们什么时候学过引用吗？事实上，这是回顾我们的引用课程的好时机。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">ls</span> -l 05 Between Angels and Insects.ogg</span><br></pre></td></tr></table></figure>
+<p>在此命令中，我们向命令传递ls一个包含许多参数的列表，bash 会将每个参数假定为单独的文件名。这显然不是预期的效果，但 bash 并不像我们人类那样擅长从任意数据中获取上下文意义。因此，我们必须明确列表中的元素是什么，这一点很重要：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">ls</span> -l <span class="string">&quot;05 Between Angels and Insects.ogg&quot;</span></span><br></pre></td></tr></table></figure>
+<p>现在我们已经清楚地向 bash 表明我们的列表仅包含一个文件名，并且该文件名本身包含多个单词，该ls命令能够正确完成其工作。变量也存在同样的问题。如果我们想创建一个包含我们要删除的所有文件的列表的变量怎么办？我们如何创建这样一个列表，然后我们可以将该列表中的每个不同元素传递给命令进行rm删除，而不会冒 bash 误解我们的文件名需要如何解释的风险？<br>答案是数组：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$$ _files=( myscript hello.txt <span class="string">&quot;05 Between Angels and Insects.ogg&quot;</span> )</span><br><span class="line"><span class="built_in">rm</span> -v <span class="string">&quot;<span class="variable">$&#123;files[@]&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<p>为了创建数组变量，bash 引入了一个略有不同的赋值运算符<code>：=( )</code>。与标准一样&#x3D;，我们将变量的名称放在运算符的左侧，但是，分配给该变量的值列表应该很好地放在大括号和大(括号之间)。</p>
+<p>您可能还记得我们关于变量赋值的部分，重要的是我们不要在赋值值周围放置语法空格：<code>bash</code> 之后的空格将赋值拆分为命令名称和参数对；我们的赋值值中不带引号的空格会导致 bash 将值拆分为部分赋值，后跟命令名称。使用这种新的数组赋值语法，大括号内可以自由地允许空格，事实上，它们用于分隔数组值列表的许多元素。但就像常规变量赋值一样，当空格需要成为变量数据的一部分时，必须用引号引起来，以便 <code>bash</code> 将空格解释为文字。请注意，在上面的示例中，我们使用语法myscript和之间的间距hello.txt，允许 bash 将这两个单词理解为列表中不同的元素，而我们在单词和之间使用文字间距- 这里的空格是文件名的一部分，它不应该导致 bash 将单词分成单独的列表elements：空格是字面意思，因此我们引用了它。</p>
+<p>事实上，这些语法规则并不是什么新鲜事。我们已经知道如何将不同的参数传递给我们的命令，并且将不同的元素传递给我们的数组赋值运算符也没有什么不同。</p>
+<p>#最后，创建文件列表后，我们扩展命令的参数rm。如果您还记得上面的参数扩展部分，扩展是通过在参数名称前加上$- 符号来进行的。然而，与常规参数扩展相反，我们对扩展单个参数不感兴趣：我们想要做的是将列表中的每个元素扩展为命令的单独且不同的参数rm。为此，我们将参数名称添加为后缀<code>[@]</code>，现在需要使用花括号 ( ) 将整个参数括起来{ }，以确保 bash 将整个参数理解为单个参数扩展单元。files使用语法扩展参数<code>&quot;$&#123;files[@]&#125;&quot;</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$</span><br><span class="line"><span class="built_in">rm</span> <span class="string">&#x27;myscript&#x27;</span></span><br><span class="line"><span class="built_in">rm</span> <span class="string">&#x27;hello.txt&#x27;</span></span><br><span class="line"><span class="built_in">rm</span> <span class="string">&#x27;05 Between Angels and Insects.ogg&#x27;</span>      <span class="comment">#rm -v myscript hello.txt &quot;05 Between Angels and Insects.ogg&quot;</span></span><br></pre></td></tr></table></figure>
+<p>Bash 巧妙地将数组列表中的每个单独元素扩展为命令的单独参数<code>rm!</code></p>
+<div class="note warning"><p>与所有参数扩展一样，将所有数组参数扩展用双引号括起来至关重要。与常规参数扩展一样，如果无法对扩展进行双引号引用，则会导致 <code>bash</code> 对完全不同的数组项列表中的所有值进行分词，从而导致命令的单词参数列表损坏：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">rm</span> -v <span class="variable">$&#123;files[@]&#125;</span></span><br><span class="line">removed <span class="string">&#x27;myscript&#x27;</span></span><br><span class="line">removed <span class="string">&#x27;hello.txt&#x27;</span></span><br><span class="line"><span class="built_in">rm</span>: cannot remove <span class="string">&#x27;05&#x27;</span>: No such file or directory</span><br><span class="line"><span class="built_in">rm</span>: cannot remove <span class="string">&#x27;Between&#x27;</span>: No such file or directory</span><br><span class="line"><span class="built_in">rm</span>: cannot remove <span class="string">&#x27;Angels&#x27;</span>: No such file or directory</span><br><span class="line"><span class="built_in">rm</span>: cannot remove <span class="string">&#x27;and&#x27;</span>: No such file or directory</span><br><span class="line"><span class="built_in">rm</span>: cannot remove <span class="string">&#x27;Insects.ogg&#x27;</span>: No such file or directory</span><br></pre></td></tr></table></figure>
+<p>回想一下我们之前学过的引用规则：如果你的参数中有空格或符号，你必须引用双引号。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">rm</span> -v <span class="string">&quot;<span class="variable">$&#123;files[@]&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>除了数组赋值和数组扩展之外，bash 还提供了一些我们可以对数组执行的其他操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$files</span>+=( selfie.png )        <span class="comment"># 使用+=( )运算符，我们可以将项目列表附加到数组的末尾。</span></span><br><span class="line"><span class="variable">$files</span>=( *.txt )              <span class="comment"># 就像在命令的参数中一样，我们可以在这里扩展全局模式。</span></span><br><span class="line"><span class="variable">$echo</span> <span class="string">&quot;<span class="variable">$&#123;files[0]&#125;</span>&quot;</span>           <span class="comment"># 要扩展数组中的单个项目，请指定该项目的序号。</span></span><br><span class="line"><span class="variable">$echo</span> <span class="string">&quot;<span class="variable">$files</span>&quot;</span>                <span class="comment"># 如果我们忘记了数组扩展语法，bash 将仅扩展第一项。</span></span><br><span class="line"><span class="variable">$unset</span> <span class="string">&quot;files[3]&quot;</span>             <span class="comment"># 要从数组中删除特定项目，我们使用unset.</span></span><br><span class="line">                              <span class="comment"># 但请注意：我们在这里不使用 @ $，因为我们没有扩展该值！</span></span><br></pre></td></tr></table></figure>
+<p>除了[@]将数组元素扩展为不同参数的后缀之外，bash 还可以将所有数组元素扩展为单个参数。这是使用<code>[*]</code>后缀完成的。bash 如何将所有单独的元素合并到一个参数中？我们可能希望它通过多种方式来做到这一点——它是否创建一个以空格分隔的字符串？它是否将所有元素挤压在一起形成一个长字符串，没有任何元素分隔？也许它可以创建一个字符串，其中每个元素都位于单独的行上？事实是，由于上述所有原因，没有一种策略可以将不同的元素合并到单个字符串中而不出现问题。因此该运营商非常可疑<code>[@]</code>并且在几乎所有情况下都应该避免！</p>
+<p>事实上，<code>bash</code> 允许您在使用<code>[*]</code>: 时通过查看IFS内部 shell 变量的当前值来选择如何将元素合并到单个字符串中。<code>Bash</code> 使用此变量的第一个字符（默认情况下是空格）来分隔结果字符串中的元素：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ names=( <span class="string">&quot;Susan Quinn&quot;</span> <span class="string">&quot;Anne-Marie Davis&quot;</span> <span class="string">&quot;Mary Tate&quot;</span> )</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;Invites sent to: &lt;<span class="variable">$&#123;names[*]&#125;</span>&gt;.&quot;</span>                    <span class="comment"># Results in a single argument where elements are separated by a literal space.</span></span><br><span class="line">Invites were sent to: &lt;Susan Quinn Anne-Marie Davis Mary Tate&gt;.</span><br><span class="line">$ ( IFS=<span class="string">&#x27;,&#x27;</span>; <span class="built_in">echo</span> <span class="string">&quot;Invites sent to: &lt;<span class="variable">$&#123;names[*]&#125;</span>&gt;.&quot;</span> )       <span class="comment"># When we change IFS to a ,, the distinct elements become more clear.</span></span><br><span class="line">Invites were sent to: &lt;Susan Quinn,Anne-Marie Davis,Mary Tate&gt;.</span><br></pre></td></tr></table></figure>
+<p>由于包含多个不同元素的单个字符串几乎总是有缺陷的，并且不如那些元素很好分离的数组变量有用，因此后缀的实际用途很少<code>[*]</code>。但有一个例外：该运算符对于向用户显示元素列表非常有用。当我们尝试向人类显示数组的值时，我们不必太担心输出的语法正确性。在上面的示例中，<code>IFS</code>被更改以,说明向用户显示数组中的值的常见方法。</p>
+<div class="note warning"><p>在修改内部 bash shell 变量时（例如上面使用IFS 的示例），务必要非常小心：<br>当我们更改内部 shell 变量时，我们需要认识到我们正在改变 bash 的运行方式。将IFS的值更改为逗号 ( ,) 以便使用[*]后缀扩展文件是可以的，但是如果您继续执行脚本，同时将IFS设置为其非默认值“ ,”，则许多其他事情基于IFS值的 bash 会突然出现故障。</p>
+<p>正是由于这个原因，您应该始终将内部 shell 配置更改的范围限制在尽可能缩小的脚本区域内。您可能已经注意到，在上面的示例中，我们( )在代码周围引入了大括号。这些大括号创建一个子 shell，在其中执行代码，当大括号结束时，具有非标准IFS值的子 shell 也随之结束。因此，原始脚本的 bash shell 从未修改过其 IFS变量，我们避免了这些意外故障。</p>
+</div>
+<p>最后，我们之前了解的所有特殊参数扩展运算符也可以应用于数组扩展，但我们将重新迭代其中一些，因为它们的效果在扩展多个不同元素的上下文中非常有趣。对于初学者来说，该<code>$&#123;parameter[@]/pattern/replacement&#125;</code>运算符及其所有变体在扩展时都将其替换逻辑明确应用于每个元素：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ names=( <span class="string">&quot;Susan Quinn&quot;</span> <span class="string">&quot;Anne-Marie Davis&quot;</span> <span class="string">&quot;Mary Tate&quot;</span> )</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;names[@]/ /_&#125;</span>&quot;</span>                                    <span class="comment"># Replace spaces by underscores in each name.</span></span><br><span class="line">Susan_Quinn Anne-Marie_Davis Mary_Tate</span><br><span class="line">$ ( IFS=<span class="string">&#x27;,&#x27;</span>; <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;names[*]/#/Ms &#125;</span>&quot;</span> )                     <span class="comment"># More interestingly: replace the start of each name with Ms ,</span></span><br><span class="line">Ms Susan Quinn,Ms Anne-Marie Davis,Ms Mary Tate             <span class="comment"># effectively prefixing every element with a string as we expand them</span></span><br></pre></td></tr></table></figure>
+<p>运算<code>$&#123;#parameter&#125;</code>符与后缀相结合<code>[@]</code>给出了元素的计数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;#names[@]&#125;</span>&quot;</span></span><br><span class="line">3</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;#names[1]&#125;</span>&quot;</span>            <span class="comment"># But we can still get the length of a string by specifying directly</span></span><br><span class="line">16                               <span class="comment"># which string element in the array we want to get the length of.</span></span><br></pre></td></tr></table></figure>
+<p>最后，该<code>$&#123;parameter[@]:start:length&#125;</code>运算符可用于获取数组的切片或“子集”：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;names[@]:1:2&#125;</span>&quot;</span></span><br><span class="line">Anne-Marie Davis Mary Tate</span><br><span class="line">$ <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$&#123;names[@]: -2&#125;</span>&quot;</span>         <span class="comment"># Specifying a negative start allows us to count backwards from the end!</span></span><br><span class="line">Anne-Marie Davis Mary Tate       <span class="comment"># While omitting the length yields &quot;all remaining elements&quot; from the start</span></span><br></pre></td></tr></table></figure>
+<p>请注意，在负起始值前面包含一个空格很重要：如果我们省略空格，<code>bash</code> 会感到困惑，并认为您正在尝试调用运算符，只要参数的值为空，该运算符就会替换默认值<code>$&#123;parameter:-value&#125;</code>。<code>value</code>这显然不是我们想要的。</p>
+<p>就是这样！您已经牢牢掌握了 <code>bash shell</code> 语言绝对最重要和最有用的方面：它的参数和扩展，以及我们可以将运算符应用于扩展值并根据我们的各种需求塑造它们的多种方式。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>umbrella
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fresh88888888.github.io/2023/08/02/Cloud-Native/%E3%80%90Bash%20%E7%BC%96%E7%A8%8B%E3%80%91variable-expand/" title="【Bash 编程】变量和扩展">https://fresh88888888.github.io/2023/08/02/Cloud-Native/【Bash 编程】variable-expand/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Cloud-Native/" rel="tag"># Cloud Native</a>
+              <a href="/tags/bash-programing/" rel="tag"># bash programing</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/08/01/Cloud-Native/%E3%80%90Bash%20%E7%BC%96%E7%A8%8B%E3%80%91command-parameter/" rel="prev" title="【Bash 编程】命令行和参数">
+                  <i class="fa fa-chevron-left"></i> 【Bash 编程】命令行和参数
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/08/03/Cloud-Native/%E3%80%90Bash%20%E7%BC%96%E7%A8%8B%E3%80%91tests-conditionals/" rel="next" title="【Bash 编程】Tests And Conditionals">
+                  【Bash 编程】Tests And Conditionals <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">辽ICP备15012817号-2 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2022 – 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">umbrella</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">572k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">31:45</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/fresh88888888" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.0.8/medium-zoom.min.js" integrity="sha256-7PhEpEWEW0XXQ0k6kQrPKwuoIomz8R8IYyuU1Qew4P8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/comments.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/motion.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/next-boot.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/pjax.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/search/local-search.min.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.12/pdfobject.min.js","integrity":"sha256-g2xji1rlE3KsGVClvuxTbcR0Kn2+wtQADSff2Tbb4zA="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/tags/pdf.min.js"></script>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/fancybox.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/pace.min.js"></script>
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2023/08/02/Cloud-Native/%E3%80%90Bash%20%E7%BC%96%E7%A8%8B%E3%80%91variable-expand/"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
+
+</body>
+</html>

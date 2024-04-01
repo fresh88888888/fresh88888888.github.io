@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+  <meta name="google-site-verification" content="lk2gSYFP_NyLNFob-fFnt7fm-I_n1ZYws-WZll7mshg">
+  <meta name="msvalidate.01" content="6Jdc01DjYOLguhS5">
+  <meta name="baidu-site-verification" content="code-NR10G09zww">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic%7Ccursive:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+
+    <meta name="description" content="业务建模(business modeling)业务建模首先是定义问题的方法，其次才是解决问题的方法。而我们通过定义问题，甚至可以把解决方案的复杂度降低几个数量级。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于业务驱动设计方法">
+<meta property="og:url" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="UMBRELLA">
+<meta property="og:description" content="业务建模(business modeling)业务建模首先是定义问题的方法，其次才是解决问题的方法。而我们通过定义问题，甚至可以把解决方案的复杂度降低几个数量级。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/model.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/ddd.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/unified_language.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/unified_language_desc.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/package.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/model2.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_2.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_3.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_4.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_5.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_6.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_7.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_8.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_9.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_10.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_11.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_12.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_13.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_14.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_15.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_16.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_17.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_18.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_19.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_20.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_21.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_22.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_23.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_24.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_25.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_26.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_27.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_28.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_29.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_30.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_31.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_32.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_33.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_34.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_35.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_36.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_37.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_38.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_74.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_75.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_76.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_77.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_78.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_79.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_80.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_81.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_82.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_83.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_84.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_85.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_86.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_87.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_88.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_89.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_90.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_91.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_92.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_93.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_94.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_95.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_96.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_97.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_91.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_98.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_99.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_100.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_101.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_102.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_103.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_104.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_107.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_105.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_106.png">
+<meta property="article:published_time" content="2023-08-30T08:23:01.000Z">
+<meta property="article:modified_time" content="2023-08-30T08:23:01.000Z">
+<meta property="article:author" content="umbrella">
+<meta property="article:tag" content="business driven design">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/model.png">
+
+
+<link rel="canonical" href="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/","path":"2023/08/30/Design-Patterns/业务驱动设计/","title":"基于业务驱动设计方法"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>基于业务驱动设计方法 | UMBRELLA</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">UMBRELLA</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">未雨绸缪，举重若轻</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-算法"><a href="/Algorithm/" rel="section"><i class="fa fa-calendar fa-fw"></i>算法</a></li><li class="menu-item menu-item-c++-&nbsp;编程"><a href="/Programming-C++/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>C++ &nbsp;编程</a></li><li class="menu-item menu-item-rust-编程"><a href="/Programming-Rust/" rel="section"><i class="fa fa-cat fa-fw"></i>Rust 编程</a></li><li class="menu-item menu-item-go-&nbsp;&nbsp;&nbsp;编程"><a href="/Programming-Go/" rel="section"><i class="fa fa-hippo fa-fw"></i>Go &nbsp;&nbsp;&nbsp;编程</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E5%BB%BA%E6%A8%A1-business-modeling"><span class="nav-number">1.</span> <span class="nav-text">业务建模(business modeling)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%9F%E4%B8%80%E8%AF%AD%E8%A8%80"><span class="nav-number">2.</span> <span class="nav-text">统一语言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%BB%9F%E4%B8%80%E8%AF%AD%E8%A8%80"><span class="nav-number">2.1.</span> <span class="nav-text">什么是统一语言?</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.2.</span> <span class="nav-text">关联对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1%E5%AE%9E%E7%8E%B0%E8%81%9A%E5%90%88%E5%85%B3%E7%B3%BB%EF%BC%9A"><span class="nav-number">2.3.</span> <span class="nav-text">使用关联对象实现聚合关系：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82%E4%B8%8E%E9%A2%86%E5%9F%9F%E9%80%BB%E8%BE%91"><span class="nav-number">2.4.</span> <span class="nav-text">隔离技术实现细节与领域逻辑</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E8%BF%87%E8%BD%BD%EF%BC%88Context-Overloading%EF%BC%89"><span class="nav-number">2.5.</span> <span class="nav-text">上下文过载（Context Overloading）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%92%E8%89%B2%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.6.</span> <span class="nav-text">角色对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E4%B8%8A%E4%B8%8B%E6%96%87%E5%AF%B9%E8%B1%A1%E5%88%86%E7%A6%BB%E4%B8%8D%E5%90%8C%E4%B8%8A%E4%B8%8B%E6%96%87%E4%B8%AD%E7%9A%84%E9%80%BB%E8%BE%91"><span class="nav-number">2.7.</span> <span class="nav-text">通过上下文对象分离不同上下文中的逻辑</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E9%97%B4%E7%9A%84%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB"><span class="nav-number">2.8.</span> <span class="nav-text">上下文间的依赖关系</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E5%88%86%E5%B1%82"><span class="nav-number">2.9.</span> <span class="nav-text">架构分层</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%83%BD%E5%8A%9B%E4%BE%9B%E5%BA%94%E5%95%86%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.10.</span> <span class="nav-text">能力供应商模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%83%BD%E5%8A%9B%E4%BE%9B%E5%BA%94%E5%95%86%E7%9A%84%E5%A4%9A%E5%B1%82%E6%9E%B6%E6%9E%84"><span class="nav-number">2.11.</span> <span class="nav-text">使用能力供应商的多层架构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%92%E8%89%B2-%E7%9B%AE%E6%A0%87-%E5%AE%9E%E4%BD%93%E6%B3%95"><span class="nav-number">2.12.</span> <span class="nav-text">角色 - 目标 - 实体法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BC%B9%E6%80%A7%E8%BE%B9%E7%95%8C%EF%BC%88Elasticity-Boundary%EF%BC%89"><span class="nav-number">2.13.</span> <span class="nav-text">弹性边界（Elasticity Boundary）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8B%86%E5%88%86%E5%BE%AE%E6%9C%8D%E5%8A%A1%EF%BC%8C%E5%BC%B9%E6%80%A7%E4%BC%98%E5%85%88%E8%BF%98%E6%98%AF%E4%B8%9A%E5%8A%A1%E4%BC%98%E5%85%88%EF%BC%9F"><span class="nav-number">2.14.</span> <span class="nav-text">拆分微服务，弹性优先还是业务优先？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BC%B9%E6%80%A7%E8%BE%B9%E7%95%8C%E9%97%B4%E7%9A%84%E4%BE%9D%E8%B5%96%E4%B8%8E%E8%80%A6%E5%90%88"><span class="nav-number">2.15.</span> <span class="nav-text">弹性边界间的依赖与耦合</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E5%BC%B9%E6%80%A7%E8%80%A6%E5%90%88%EF%BC%9F"><span class="nav-number">2.16.</span> <span class="nav-text">如何避免弹性耦合？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E7%B3%BB%E7%BB%9F%E4%B8%8E%E9%A2%86%E5%9F%9F%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">2.17.</span> <span class="nav-text">业务系统与领域系统的区别？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9B%9B%E7%A7%8D%E4%B8%9A%E5%8A%A1%E8%BF%90%E8%90%A5%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.18.</span> <span class="nav-text">四种业务运营模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%A8%A1%E5%9E%8B%E4%B8%AD%E6%9C%80%E6%98%8E%E6%98%BE%E7%9A%84%E5%BC%B9%E6%80%A7%E8%BE%B9%E7%95%8C%EF%BC%9F"><span class="nav-number">2.19.</span> <span class="nav-text">什么是模型中最明显的弹性边界？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%90%86%E8%A7%A3%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91%EF%BC%8C%E6%88%91%E4%BB%AC%E6%9C%89%E4%BB%80%E4%B9%88%E5%A5%BD%E7%9A%84%E5%8A%9E%E6%B3%95%E5%90%97%EF%BC%9F"><span class="nav-number">2.20.</span> <span class="nav-text">理解业务逻辑，我们有什么好的办法吗？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%AD%E8%AF%81%E8%A7%92%E8%89%B2%E5%8C%96%E5%BB%BA%E7%AB%8B%E5%90%88%E5%90%8C%E9%97%B4%E7%9A%84%E5%85%B3%E8%81%94"><span class="nav-number">2.21.</span> <span class="nav-text">凭证角色化建立合同间的关联</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E7%B3%BB%E7%BB%9F%E4%B8%AD%E7%9A%84%E5%8F%98%E5%8C%96%E7%82%B9"><span class="nav-number">2.22.</span> <span class="nav-text">业务系统中的变化点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C%E6%88%91%E5%81%9A%E7%9A%84%E7%B3%BB%E7%BB%9F%E5%B9%B6%E4%B8%8D%E5%8C%85%E5%90%AB%E5%AF%B9%E5%A4%96%E7%9A%84%E5%90%88%E5%90%8C%EF%BC%8C%E9%82%A3%E4%B9%88%E8%A6%81%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="nav-number">2.23.</span> <span class="nav-text">如果我做的系统并不包含对外的合同，那么要怎么办？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%E5%92%8C%E4%BD%9C%E8%80%85%E4%B9%8B%E9%97%B4%E7%9A%84%E5%88%9B%E4%BD%9C%E5%90%88%E5%90%8C%E4%B8%8A%E4%B8%8B%E6%96%87%E5%BB%BA%E6%A8%A1%EF%BC%9A"><span class="nav-number">2.24.</span> <span class="nav-text">极客时间和作者之间的创作合同上下文建模：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%E5%92%8C%E7%BC%96%E8%BE%91%E4%B9%8B%E9%97%B4%E7%9A%84%E7%BB%A9%E6%95%88%E5%8D%8F%E8%AE%AE%E4%B8%8A%E4%B8%8B%E6%96%87%E5%BB%BA%E6%A8%A1%EF%BC%9A"><span class="nav-number">2.25.</span> <span class="nav-text">极客时间和编辑之间的绩效协议上下文建模：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%AD%E5%8F%B0%EF%BC%9F"><span class="nav-number">2.26.</span> <span class="nav-text">什么是中台？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91%EF%BC%9A"><span class="nav-number">2.27.</span> <span class="nav-text">业务逻辑：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F%E9%80%BB%E8%BE%91"><span class="nav-number">2.28.</span> <span class="nav-text">领域逻辑</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E5%A4%8D%E7%94%A8"><span class="nav-number">2.29.</span> <span class="nav-text">逻辑复用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%9A%E5%8A%A1%E7%B3%BB%E7%BB%9F%EF%BC%9F"><span class="nav-number">2.30.</span> <span class="nav-text">什么是业务系统？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E4%B8%9A%E5%8A%A1%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.31.</span> <span class="nav-text">面向业务设计</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E5%BB%BA%E6%A8%A1"><span class="nav-number">2.32.</span> <span class="nav-text">业务建模</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F%E5%BB%BA%E6%A8%A1"><span class="nav-number">2.33.</span> <span class="nav-text">领域建模</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B1%A5%E7%BA%A6%E5%BB%BA%E6%A8%A1%E6%B3%95"><span class="nav-number">2.34.</span> <span class="nav-text">履约建模法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B1%A5%E7%BA%A6%E5%BB%BA%E6%A8%A1%E6%B3%95%E6%9C%89%E4%B8%89%E5%A4%A7%E5%9B%BE%E4%BE%8B%E5%88%86%E7%B1%BB%EF%BC%9A"><span class="nav-number">2.35.</span> <span class="nav-text">履约建模法有三大图例分类：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%AD%E8%AF%81"><span class="nav-number">2.36.</span> <span class="nav-text">凭证</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%82%E4%B8%8E%E5%85%83%E7%B4%A0"><span class="nav-number">2.37.</span> <span class="nav-text">参与元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%92%E8%89%B2"><span class="nav-number">2.38.</span> <span class="nav-text">角色</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87-Conetxt"><span class="nav-number">2.39.</span> <span class="nav-text">上下文(Conetxt)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%E6%BC%94%E7%A4%BA"><span class="nav-number">2.40.</span> <span class="nav-text">案例演示</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E5%AE%8F%E6%B5%81%E7%A8%8B%E4%B8%8E%E6%A0%B8%E5%BF%83%E4%B8%9A%E5%8A%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.41.</span> <span class="nav-text">业务宏流程与核心业务模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E5%AE%8F%E6%B5%81%E7%A8%8B%E4%B8%8E%E6%A0%B8%E5%BF%83%E4%B8%9A%E5%8A%A1%E6%A8%A1%E5%BC%8F-1"><span class="nav-number">2.42.</span> <span class="nav-text">业务宏流程与核心业务模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E4%B8%9A%E5%8A%A1%E8%AE%BE%E8%AE%A1-Business-Oriented-Design-%E7%AE%80%E7%A7%B0BOD"><span class="nav-number">2.43.</span> <span class="nav-text">面向业务设计(Business Oriented Design 简称BOD)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B1%A5%E7%BA%A6%E5%BB%BA%E6%A8%A1%E6%B3%95-FulFillment-Modeling-%E7%AE%80%E7%A7%B0%EF%BC%9AFM"><span class="nav-number">2.44.</span> <span class="nav-text">履约建模法(FulFillment Modeling 简称：FM)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%86%E5%B1%82%E6%9E%B6%E6%9E%84-Layered-Architecture"><span class="nav-number">2.45.</span> <span class="nav-text">分层架构(Layered Architecture)</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%91%E5%8E%9F%E7%94%9F"><span class="nav-number">3.</span> <span class="nav-text">云原生</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%8E%E4%B8%9A%E5%8A%A1%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">3.1.</span> <span class="nav-text">从业务建模到微服务架构设计</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%8E%E4%BA%91%E5%8E%9F%E7%94%9F"><span class="nav-number">3.2.</span> <span class="nav-text">微服务与云原生</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BC%B9%E6%80%A7%E8%BE%B9%E7%95%8C%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">3.3.</span> <span class="nav-text">弹性边界的含义</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86%E7%9A%84%E4%BE%9D%E6%8D%AE%EF%BC%9F"><span class="nav-number">3.4.</span> <span class="nav-text">微服务拆分的依据？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E5%A4%A9%E7%84%B6%E7%9A%84%E5%BC%82%E6%AD%A5%E6%80%A7%EF%BC%8C%E6%98%AF%E5%BC%B9%E6%80%A7%E8%BE%B9%E7%95%8C%E7%9A%84%E5%A4%A9%E7%84%B6%E8%AE%BE%E5%88%AB%E7%82%B9%E3%80%82"><span class="nav-number">3.5.</span> <span class="nav-text">业务天然的异步性，是弹性边界的天然设别点。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BE%9D%E6%8D%AE%E4%B8%9A%E5%8A%A1%E5%BB%BA%E6%A8%A1%E7%9A%84%E4%B8%9A%E5%8A%A1%E4%B8%8E%E9%A2%86%E5%9F%9F%E5%88%92%E5%88%86%EF%BC%8C%E5%8F%AF%E4%BB%A5%E6%8C%87%E5%AF%BC%E7%9B%B8%E5%BA%94%E7%9A%84API%E8%83%BD%E5%8A%9B%E8%AE%BE%E8%AE%A1%E3%80%82"><span class="nav-number">3.6.</span> <span class="nav-text">依据业务建模的业务与领域划分，可以指导相应的API能力设计。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%8E%E5%A4%8D%E7%94%A8%E6%A8%A1%E5%BC%8F%E7%9C%8B%E4%B8%9A%E5%8A%A1%E4%B8%AD%E5%8F%B0%E4%B8%8E%E7%BB%84%E7%BB%87%E5%88%92%E5%88%86"><span class="nav-number">3.7.</span> <span class="nav-text">从复用模式看业务中台与组织划分</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%84%E7%BB%87%E6%9E%B6%E6%9E%84"><span class="nav-number">4.</span> <span class="nav-text">组织架构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%90%88%E7%BA%A6%E8%A7%86%E8%A7%92%E7%9A%84SaaS%E5%8C%96%E7%AD%96%E7%95%A5"><span class="nav-number">5.</span> <span class="nav-text">基于合约视角的SaaS化策略</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%88%87%E5%85%A5%E9%9D%A2%E5%90%91%E4%B8%9A%E5%8A%A1%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="nav-number">5.1.</span> <span class="nav-text">什么时候切入面向业务设计？</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="umbrella"
+      src="/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">umbrella</p>
+  <div class="site-description" itemprop="description">没事就多看看书</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">133</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fresh88888888" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fresh88888888" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fresh888888@foxmail.com" title="E-Mail → mailto:fresh888888@foxmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.rust-lang.org/zh-CN/" title="https:&#x2F;&#x2F;www.rust-lang.org&#x2F;zh-CN&#x2F;" rel="noopener" target="_blank">Rust</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://go.dev/" title="https:&#x2F;&#x2F;go.dev&#x2F;" rel="noopener" target="_blank">Golang</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://isocpp.org/" title="https:&#x2F;&#x2F;isocpp.org&#x2F;" rel="noopener" target="_blank">C++</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.python.org/" title="https:&#x2F;&#x2F;www.python.org&#x2F;" rel="noopener" target="_blank">Python</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://doc.rust-lang.org/cargo/index.html" title="https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;cargo&#x2F;index.html" rel="noopener" target="_blank">Cargo</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://gist.github.com/rxaviers/7360908" title="https:&#x2F;&#x2F;gist.github.com&#x2F;rxaviers&#x2F;7360908" rel="noopener" target="_blank">Emoji</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="基于业务驱动设计方法 | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于业务驱动设计方法
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-08-30 16:23:01" itemprop="dateCreated datePublished" datetime="2023-08-30T16:23:01+08:00">2023-08-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Architecture/" itemprop="url" rel="index"><span itemprop="name">Architecture</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>24k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1:21</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="业务建模-business-modeling"><a href="#业务建模-business-modeling" class="headerlink" title="业务建模(business modeling)"></a>业务建模(business modeling)</h4><p>业务建模首先是定义问题的方法，其次才是解决问题的方法。而我们通过定义问题，甚至可以把解决方案的复杂度降低几个数量级。</p>
+<span id="more"></span>
+
+<p>分析模型关联需求，设计模型关联实现：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/model.png" class="">
+<p>模型与软件实现关联；统一语言与模型关联；提炼知识的循环:</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/ddd.png" class="">
+<p>知识消化是一种迭代改进试错法，它并不追求模型的好坏，而是通过迭代反馈的方式逐渐提高模型的有效性。这个过程的前提是将模型与软件实现关联在一起。</p>
+<h4 id="统一语言"><a href="#统一语言" class="headerlink" title="统一语言"></a>统一语言</h4><p>为什么会有统一语言？</p>
+<ul>
+<li>首先业务方大多习惯从业务维度（Business Perspective），比如流程、交互、功能、规则、价值等出发去描述软件系统，这是业务方感知软件系统的主要途径。而模型则偏重于数据角度，描述了在不同业务维度下，数据将会如何改变，以及如何支撑对应的计算与统计。那么，业务的维度就被模型的抽象隐藏了，业务方是无法从模型中直接感知到业务维度的。</li>
+<li>其次，模型是从已知需求中总结提炼的知识，这就意味着模型无法表达未知需求中尚未提炼的知识。但是，单纯使用模型一定会有无法表述的需求，因而我们需要一个相对允许歧义与未知的隔离层，来帮助我们发现和反馈模型的不足。</li>
+<li>因此，我们需要一种能与模型关联的共同语言，它既能让模型在核心位置扮演关键角色，又能弥合视角差异，并提供足够的缓冲。<br>修改代码就是修改模型，改变模型就是改变统一语言，修改代码等于改变统一语言：</li>
+</ul>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/unified_language.png" class="">
+
+<p>当且仅当，统一语言与领域模型关联，且多方认可并承认对统一语言的集体所有权时，统一语言的提案才能成为真正的统一语言。统一语言包含如下内容：</p>
+<ul>
+<li>源自领域模型的概念与逻辑</li>
+<li>界限上下文（Bounded Context）</li>
+<li>系统隐喻</li>
+<li>职责的分层</li>
+<li>模式（patterns）与惯用法</li>
+</ul>
+<p>除了源自领域逻辑的核心概念之外，界限上下文、系统隐喻等其他几项都可以看作对业务维度的补充与展开。将它们引入通过统一语言后，可以帮助业务方更直观地理解模型。</p>
+<p>系统隐喻：<br>系统隐喻就是在价值与业务模式维度上的补充与扩展</p>
+<p>责任分层：<br>责任分层关注“稳定性”，哪些是稳定而哪些是易变的</p>
+<p>模式与惯用法:<br>模式与惯用法是业务规则、流程与实现模式</p>
+<p>界限上下文：<br>总的来说，界限上下文是万能的，应用之妙存乎一心，关键在于你会不会用<br>通过定义与解释，我们使这些词语在其所使用的上下文中没有歧义。再通过这些基础词汇，去描述业务的行为或者规则，慢慢就可以将其确立为跨业务与技术的统一语言了。要始终记得，统一语言是在使用中被确立的。重点是，在所有可能的地方使用这个语言。只有当所有工种角色都接受它，使用它去描述业务和系统的时候，它才会真正成为统一语言</p>
+<h5 id="什么是统一语言"><a href="#什么是统一语言" class="headerlink" title="什么是统一语言?"></a>什么是统一语言?</h5><p>统一语言特指根据领域模型构造的业务方与技术方都使用的共同语言。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/unified_language_desc.png" class="">
+
+<h5 id="关联对象"><a href="#关联对象" class="headerlink" title="关联对象"></a>关联对象</h5><p>顾名思义，就是将对象间的关联关系直接建模出来，然后再通过接口与抽象的隔离，把具体技术实现细节封装到接口的实现中。这样可保证概念上的统一。又能避免技术实现上的限制</p>
+<h5 id="使用关联对象实现聚合关系："><a href="#使用关联对象实现聚合关系：" class="headerlink" title="使用关联对象实现聚合关系："></a>使用关联对象实现聚合关系：</h5><p>首先我们需要定义关联对象，因为我们需要表达的是 User 与 Subscription 间的一对多的关系，那么最简单的命名方法是将两个对象名字组合，从而得到关联对象的名字 UserSubscriptions：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserSubscriptions</span> <span class="keyword">extends</span> <span class="title class_">Iterable</span> &#123; </span><br><span class="line">    List <span class="title function_">subList</span><span class="params">(<span class="type">int</span> from, <span class="type">int</span> to)</span>; <span class="comment">//分页 double getTotalSubscriptionFee(); //获取总共花费 </span></span><br><span class="line">    <span class="type">int</span> <span class="title function_">count</span><span class="params">()</span>; <span class="comment">//获取总订阅数 </span></span><br><span class="line">    Iterable <span class="title function_">sort</span><span class="params">(...)</span>; </span><br><span class="line">    .... </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当然，我们最好是从业务上下文出发，寻找更具有业务含义的名字，毕竟我们是要形成统一语言的，源自业务的名字总是更容易被非技术角色所理解。<br>比如这里我们要表达的是用户已经订阅的专栏，或者是用户已经购买的专栏，所以选择了<strong>MySubscriptions</strong>,于是 User 对象就变成了这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">MySubscriptions</span> <span class="keyword">extends</span> <span class="title class_">Iterable</span> &#123; </span><br><span class="line">    List <span class="title function_">subList</span><span class="params">(<span class="type">int</span> from, <span class="type">int</span> to)</span>; <span class="comment">//分页 double getTotalSubscriptionFee(); //获取总共花费 </span></span><br><span class="line">    <span class="type">int</span> <span class="title function_">count</span><span class="params">()</span>; <span class="comment">//获取总订阅数 </span></span><br><span class="line">    Iterable <span class="title function_">sort</span><span class="params">(...)</span>; </span><br><span class="line">    .... </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> MySubscriptions mySubscriptions; </span><br><span class="line">    <span class="keyword">public</span> MySubscriptions <span class="title function_">getMySubscriptions</span><span class="params">()</span> &#123;</span><br><span class="line">         <span class="keyword">return</span> mySubscriptions </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很明显，我们没有逻辑泄露，User 是 Subscription 的聚合根，那么与之相关的逻辑也仍然被封装在 User 的上下文中，当然是进一步被封装在关联对象中。<br>那么我们怎么解决持久化的问题呢？怎么从领域对象中，移除掉对技术实现的依赖呢？秘诀就在于接口与实现分离</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MySubscriptionsDB</span> <span class="keyword">implements</span> <span class="title class_">MySubscriptions</span> &#123;</span><br><span class="line">     ... </span><br><span class="line">     <span class="keyword">private</span> DataSource db;</span><br><span class="line">     <span class="keyword">private</span> User user; </span><br><span class="line">     <span class="keyword">public</span> List <span class="title function_">subList</span><span class="params">(<span class="type">int</span> from, <span class="type">int</span> to)</span> &#123; </span><br><span class="line">        <span class="keyword">return</span> db.executeQuery(...); </span><br><span class="line">    &#125; </span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+<p>在这里，我们将与数据库访问相关的逻辑毫不避讳地封装到 MySubscriptionsDB 中。不过，作为领域对象的 User 类，并不会知道它使用了数据库，因为它仅仅通过 MySubscriptions 接口，访问它所需要的功能。此时我们可以通过简单的分包的策略：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/package.png" class="">
+<p>从上图中包的架构上看，模型的包中有 MySubscriptions、User、UserRepository。与数据库相关的代码的包里有 MySubscriptionsDB 和 UserRepositoryDB。于是，我们成功地将核心的领域逻辑与实现细节分开了。<br>当然最后还有一个问题：如何将 MySubscriptionsDB 与 User 结合在一起？最直接的做法就是这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> UserRepositoryDB <span class="keyword">implements</span> <span class="title class_">UserRepository</span> &#123; </span><br><span class="line">    ... </span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">findBy</span><span class="params">(<span class="type">long</span> id)</span> &#123; </span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> .....; </span><br><span class="line">        <span class="keyword">return</span> setMySubscription(user); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">public</span> List <span class="title function_">findBy</span><span class="params">(....)</span> &#123; </span><br><span class="line">        <span class="type">List</span> <span class="variable">user</span> <span class="operator">=</span> .....; </span><br><span class="line">        <span class="keyword">return</span> user.map(user -&gt; setMySubscription(user)); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">private</span> User <span class="title function_">setMySubscription</span><span class="params">(User user)</span> &#123; </span><br><span class="line">        user.setMySubscriptions(<span class="keyword">new</span> <span class="title class_">MySubscriptionDB</span>(db, user)); </span><br><span class="line">        <span class="keyword">return</span> user;</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为 User 是聚合根，从数据库中读取的 User 对象都需要从 UserRepository 中获取。那么，在 UserRepository 的具体实现中为 User 对象设置 MySubscription 对象，是再自然不过的选择了。<br>当然更简洁漂亮的做法，是通过 Java CDI API 或是框架提供的生命周期实践监听器，来完成关联对象的设置。</p>
+<h5 id="隔离技术实现细节与领域逻辑"><a href="#隔离技术实现细节与领域逻辑" class="headerlink" title="隔离技术实现细节与领域逻辑"></a>隔离技术实现细节与领域逻辑</h5><p>如果这时候 Subscription 信息并不是存在数据库中，而是通过 RESTful API 从另一个系统中获取的。那么，我们只需提供另一个 MySubscriptions 的实现就可以了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MySubscriptionsAPI</span> <span class="keyword">implements</span> <span class="title class_">MySubscriptions</span> &#123; </span><br><span class="line">    ... </span><br><span class="line">    <span class="keyword">private</span> User user; </span><br><span class="line">    <span class="keyword">public</span> List <span class="title function_">subList</span><span class="params">(<span class="type">int</span> from, <span class="type">int</span> to)</span> &#123; </span><br><span class="line">        <span class="keyword">return</span> client.findSubscriptions(....); </span><br><span class="line">    &#125; </span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>这种改变并不会传递到领域逻辑层，对于分页和计算的调用仍然不变，RESTful API 的性能瓶颈和需要调整的地方与数据库不同，这种变化都被关联对象的接口封装隔离了。<br>从面向对象编程的角度来说，我们很容易理解为什么关联对象可以带来如此多的好处。在诸多面向对象的最佳实践中，有一条是说要尽可能避免使用原始类型（primitive type）。因为原始类型没有对概念进行提取，也缺乏封装，所以我们应该尽可能地使用自定义的类去替换它们。<br>不过如果我们把语言内提供的集合类型（List 等）也当作原始类型的话，关联对象就是对这一条建议自然的扩展：使用自定义关联对象，而不是集合类型来表示对象间的关联。<br>关联对象除了可以帮助聚拢逻辑、隔离实现细节之外，还能从概念上帮助我们获得更好的领域模型，因为关联对象是对集体逻辑的直接建模。<br>所谓集体逻辑，是指个体不具备，而成为一个集体之后才具备的能力。哪怕是同一群个体，组成了不同的集体，就会具有不同的逻辑。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/model2.png" class="">
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123; </span><br><span class="line">    <span class="keyword">private</span> List subscriptions; </span><br><span class="line">    .... </span><br><span class="line">&#125; </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Column</span> &#123; </span><br><span class="line">    <span class="keyword">private</span> List subscriptions; </span><br><span class="line">    .... </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这段代码中，User 中的 List 表示用户已订阅的所有专栏，而 Column 中的 List，则表示所有订阅了专栏的用户。虽然同为 Subscription 的集合，但是当它们组成集体时，在不同的上下文中则具有不同的含义。<br>那么如果显式地表达为关联对象，可以进一步澄清我们的意图，得到揭示意图的接口（Intention Revealing Interface）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123; </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">interface</span> <span class="title class_">MySubscriptions</span> <span class="keyword">extends</span> <span class="title class_">Iterable</span> &#123; </span><br><span class="line">        ... </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">private</span> MySubscriptions mySubscriptions; </span><br><span class="line">    ... </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Column</span> &#123; </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">interface</span> <span class="title class_">MyReaders</span> <span class="keyword">extends</span> <span class="title class_">Iterable</span> &#123; </span><br><span class="line">        ... </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">private</span> MyReaders myReaders； </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这段代码中，我们通过引入关联对象，可以将这两个不同的集体变更为 User.MySubscriptions 和 Column.MyReaders，然后在各自的上下文去定义不同的集体逻辑。<br>比如我订阅的专栏可以计算我一共付了多少钱，而在我的读者中，可以计算订阅者对专栏的平均打分情况，示意代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">interface</span> <span class="title class_">MySubscriptions</span> <span class="keyword">extends</span> <span class="title class_">Iterable</span> &#123; </span><br><span class="line">    <span class="type">double</span> <span class="title function_">getTotalFee</span><span class="params">()</span>; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">interface</span> <span class="title class_">MyReaders</span> <span class="keyword">extends</span> <span class="title class_">Iterable</span> &#123; </span><br><span class="line">    <span class="type">double</span> <span class="title function_">getAverageRating</span><span class="params">()</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="上下文过载（Context-Overloading）"><a href="#上下文过载（Context-Overloading）" class="headerlink" title="上下文过载（Context Overloading）"></a>上下文过载（Context Overloading）</h5><p>就是指领域模型中的某个对象在多个上下文中发挥重要作用，甚至是聚合根。<br>上下文过载存在的问题：</p>
+<ul>
+<li>一这个对象本身会变的很复杂，造成模型僵化</li>
+<li>二可能带来潜在的性能问题</li>
+</ul>
+<p>对过载的上下文进行有效的分离，成为了要面对的问题。解决方式是利用角色对象和上下文对象。</p>
+<h5 id="角色对象"><a href="#角色对象" class="headerlink" title="角色对象"></a>角色对象</h5><img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_1.png" class="">
+<p>在这个扩展了的模型中，包含了三个不同的上下文:</p>
+<ul>
+<li>订阅：用户阅读订阅内容的上下文，根据订阅关系判断某些内容是否对用户可见；</li>
+<li>社交：用户维护朋友关系的上下文，通过朋友关系分享动态与信息；</li>
+<li>订单：用户购买订阅专栏的上下文，通过订单与支付，完成对专栏的订阅。<br>按照这个模型，我们很容易得到与之对应的“富含知识的模型”：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123; </span><br><span class="line">    <span class="keyword">private</span> <span class="type">long</span> id; </span><br><span class="line">    <span class="comment">// 社交上下文 </span></span><br><span class="line">    <span class="keyword">private</span> List friends; <span class="keyword">private</span> List moments; </span><br><span class="line">    <span class="comment">// 订阅上下文 </span></span><br><span class="line">    <span class="keyword">private</span> List subscriptions; </span><br><span class="line">    <span class="comment">// 订单上下文 </span></span><br><span class="line">    <span class="keyword">private</span> List orders; <span class="keyword">private</span> List payments; </span><br><span class="line">    <span class="comment">// 社交上下文 </span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">make</span><span class="params">(Friendship friend)</span> &#123; </span><br><span class="line">        ... </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">break</span><span class="params">(Friendship friend)</span> &#123; </span><br><span class="line">        ... </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="comment">// 订单上下文 </span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">placeOrder</span><span class="params">(Column column)</span> &#123; </span><br><span class="line">        ... </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="comment">// 订阅上下文 </span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">canView</span><span class="params">(Content content)</span> &#123; </span><br><span class="line">        ... </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+估计已经发现问题所在了：一个对象中包含了不同的上下文，而这恰好是坏味道过大类（Large Class）的定义。<br>那么过大类会带来什么问题呢？首当其冲是模型僵硬。想要理解这个类的行为，就必须理解所有的上下文。而只有理解了所有的上下文，才能判断其中的代码和行为是否合理。于是，上下文的过载就变成了认知的过载（Cognitive Overloading），而认知过载就会造成维护的困难。<br>但是我们不要忘了，这是与模型关联的代码啊！改不动的代码就是改不动的模型！改不动的僵硬的模型，要怎么参与提炼知识的循环呢？</li>
+</ul>
+<p>上下文过载的根本问题：<br>逻辑是需要汇聚于实体（User）还是上下文（订阅、社交与订单）<br>DCI 范型（Data-Context-Interaction，数据 - 上下文 - 交互）要求汇聚于显式建模的上下文对象（Context Object），或者上下文中的角色对象（Role Object）上，我们可以如下图这样建立模型：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_2.png" class="">
+<p>在不同的上下文中，用户是以不同的角色与其他对象发生交互的，而一旦离开了对应的上下文，相关的交互也就不会发生了。也就是说，在订阅上下文中的读者（Reader），不会以读者的身份与订单上下文中的支付信息发生交互。而买家（Buyer），也不会以买家的身份去社交上下文中去建立朋友关系。</p>
+<p>从 DCI 的角度看待聚合与聚合根关系，我们可以发现，并不是 User 聚合了 Subscription，而是订阅上下文中的 Reader 聚合了它。同时，并不是 User 聚合了 Friendship 与 Moments，而是社交上下文中的 Contact 聚合了它们。可以说，User 只是恰好在不同的上下文中扮演了这些角色而已。</p>
+<p>我们也就发现了上下文过载的根源：实体在不同的上下文中扮演的多个角色，再借由聚合关系，将不同上下文中的逻辑富集于实体之中，就造成了上下文过载。<br>针对不同上下文中的角色建模，将对应的逻辑富集到角色对象中，再让实体对象去扮演不同的角色，就能解决上下文过载的问题了。<br>在实践中却没有这么简单，主要是如何在代码中实现这种实体与角色间的扮演关系?<br>通过装饰器（Decorator），我们可以构造一系列角色对象（Role Object）作为 User 的装饰器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Reader</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> User user;</span><br><span class="line">    <span class="keyword">private</span> List&lt;Subscription&gt; subscriptions;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Reader</span><span class="params">(User user)</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 订阅上下文</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">canView</span><span class="params">(Content content)</span> &#123;</span><br><span class="line">      ...</span><br><span class="line">    &#125;        </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Buyer</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> User user;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> List&lt;Order&gt; orders;</span><br><span class="line">    <span class="keyword">private</span> List&lt;Payment&gt; payments;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Buyer</span><span class="params">(User user)</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 订单上下文</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">placeOrder</span><span class="params">(Column column)</span> &#123;</span><br><span class="line">      ...</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Contact</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> User user;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> List&lt;Friendship&gt; friends;</span><br><span class="line">    <span class="keyword">private</span> List&lt;Moments&gt; moments;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Contact</span><span class="params">(User user)</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 社交上下文</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">make</span><span class="params">(Friendship friend)</span> &#123;</span><br><span class="line">      ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">break</span><span class="params">(Friendship friend)</span> &#123;</span><br><span class="line">      ...</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>我们很容易地将不同上下文中的行为与逻辑富集到对应的角色对象中，并且与领域模型中的概念完全对应起来。然而这里还有最后一个问题，就是如何构造这些装饰器对象。</p>
+<h5 id="通过上下文对象分离不同上下文中的逻辑"><a href="#通过上下文对象分离不同上下文中的逻辑" class="headerlink" title="通过上下文对象分离不同上下文中的逻辑"></a>通过上下文对象分离不同上下文中的逻辑</h5><p>如同我们之前在关联对象中讲到的，获取关联集合的方式可能是异构的，也就是不止从数据库中读取这一种方法。如果社交上下文中的朋友关系，是通过服务接口调用，从其他社交平台获取的呢？这个时候，我们将 asContact 方法置于 UserRepositoryDB 之内，就显得不那么合适了。<br>我们来换个思路。我们可以遵循关联对象的思路，将上下文直接建模出来，并通过接口隔离具体实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">SubscriptionContext</span> &#123;</span><br><span class="line">    <span class="keyword">interface</span> <span class="title class_">Reader</span> &#123;</span><br><span class="line">        <span class="type">boolean</span> <span class="title function_">canView</span><span class="params">(Content content)</span>;    </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    Reader <span class="title function_">asReader</span><span class="params">(User user)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">SocialContext</span> &#123;</span><br><span class="line">    <span class="keyword">interface</span> <span class="title class_">Contact</span> &#123;</span><br><span class="line">        <span class="keyword">void</span> <span class="title function_">make</span><span class="params">(Friendship friend)</span>;</span><br><span class="line">        <span class="keyword">void</span> <span class="title function_">break</span><span class="params">(Friendship friend)</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    Contact <span class="title function_">asContact</span><span class="params">(User user)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">OrderContext</span> &#123;</span><br><span class="line">    <span class="keyword">interface</span> <span class="title class_">Buyer</span> &#123;</span><br><span class="line">        <span class="keyword">void</span> <span class="title function_">placeOrder</span><span class="params">(Column column)</span>;        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    Buyer <span class="title function_">asBuyer</span><span class="params">(User user)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么，我们就可以将上下文对象的获取放置在 UserRepository 上，对它进行改写：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">UserRepository</span> &#123;</span><br><span class="line">    User <span class="title function_">findUserById</span><span class="params">(<span class="type">long</span> id)</span>;</span><br><span class="line">    </span><br><span class="line">    SubscriptionContext <span class="title function_">inSubscriptionContext</span><span class="params">()</span>;</span><br><span class="line">    SocialContext <span class="title function_">inSocialContext</span><span class="params">()</span>;</span><br><span class="line">    OrderContext <span class="title function_">inOrderContext</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserRepositoryDB</span> <span class="keyword">implements</span> <span class="title class_">UserRepository</span> &#123;</span><br><span class="line">    <span class="comment">//通过依赖注入获取不同的上下文对象</span></span><br><span class="line">    <span class="meta">@Inject</span> <span class="keyword">private</span> SubscriptionContext subscriptionContext;     </span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Inject</span> <span class="keyword">private</span> SocialContext socialContext;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Inject</span> <span class="keyword">private</span> OrderContext orderContext;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">最后的使用方式就成了：</span><br><span class="line"></span><br><span class="line"><span class="type">UserRepository</span> <span class="variable">users</span> <span class="operator">=</span> ....;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> users.findUserById(...);</span><br><span class="line"></span><br><span class="line"><span class="type">Buyer</span> <span class="variable">buyer</span> <span class="operator">=</span> users.inOrderContext().asBuyer(user);</span><br><span class="line"><span class="type">Reader</span> <span class="variable">reader</span> <span class="operator">=</span> users.inSubscriptionContext().asReader(user);</span><br><span class="line"><span class="type">Contact</span> <span class="variable">contact</span> <span class="operator">=</span> users.inSocialContext().asContact(user);</span><br></pre></td></tr></table></figure>
+<p>通过增加上下文对象，我们获得了诸多好处:<br>第一：借由上下文对象的封装，不同上下文中的技术可以是完全异构的。也就是在不同的上下文中，我们可以使用不同的技术方案。而这些技术的细节，不会暴露给外在的使用者。<br>第二：软件实现、模型与统一语言更加紧密地关联在了一起。我们知道界限上下文的名字是统一语言的一部分。在模型中虽然不以实体的形式出现，但总归还是有它的标识（虚线的上下文边界）。如果没有上下文对象，那么它不会是软件实现的一部分，总是觉得不够理想。而有了上下文对象，统一语言、领域模型和软件实现就彻底一致了。<br>第三：我们更加清楚地揭示了领域知识的意图。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">UserRepository</span> &#123;</span><br><span class="line">    User <span class="title function_">findUserById</span><span class="params">(<span class="type">long</span> id)</span>;</span><br><span class="line">    </span><br><span class="line">    SubscriptionContext <span class="title function_">inSubscriptionContext</span><span class="params">()</span>;</span><br><span class="line">    SocialContext <span class="title function_">inSocialContext</span><span class="params">()</span>;</span><br><span class="line">    OrderContext <span class="title function_">inOrderContext</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过这个定义，我们清晰地知道，User 在三个不同的上下文中扮演不同的角色。而没有上下文对象的时候，这些信息则没有被披露，会增加理解的成本和负担。</p>
+<h5 id="上下文间的依赖关系"><a href="#上下文间的依赖关系" class="headerlink" title="上下文间的依赖关系"></a>上下文间的依赖关系</h5><p>不过这里还有一个问题，上下文对象在处理复杂问题的时候，还能继续保持简洁和优雅吗？让我们再来看一个略微复杂的问题。比如我们要做个新业务，将我所订阅的专栏赠送给我的朋友。<br>直觉告诉我们，这需要跨越两个不同的上下文，才能构建这个业务。也就是说，在这个业务中，处在订阅上下文中的 Reader，也是处在社交上下文中的 Contact。单纯从实现它来说，问题也不难解决：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> users.findUserById(...);</span><br><span class="line"><span class="type">User</span> <span class="variable">friend</span> <span class="operator">=</span> users.findUserById(...);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">Contact</span> <span class="variable">contact</span> <span class="operator">=</span> users.inSocialContext().asContact(user);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">Reader</span> <span class="variable">reader</span> <span class="operator">=</span> users.inSubscriptionContext().asReader(user);</span><br><span class="line"><span class="type">Subscription</span> <span class="variable">subscription</span> <span class="operator">=</span> reader.getSubscriptions(...);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>（contact.isFriend(friend) &#123;</span><br><span class="line">    reader.transfer(subscription, friend);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的问题是，“只有朋友间才能赠送”属于领域逻辑。我们希望它被富集到模型中，而不是在模型外，那么我们要怎么处理呢？答案出乎意料得简单，在上下文对象中加入依赖就好了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SubscriptionContextDB</span> <span class="keyword">implements</span> <span class="title class_">SubscriptionContext</span> &#123;</span><br><span class="line">    <span class="meta">@Inject</span> SocialContext SocialContext; </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Reader <span class="title function_">asReader</span><span class="params">(User user)</span> &#123;</span><br><span class="line">        <span class="comment">//在这里将依赖的上下文传到角色对象中去就好了</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而实现这个业务代码就成了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> users.findUserById(...);</span><br><span class="line"><span class="type">User</span> <span class="variable">friend</span> <span class="operator">=</span> users.findUserById(...);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">Reader</span> <span class="variable">reader</span> <span class="operator">=</span> users.inSubscriptionContext().asReader(user);</span><br><span class="line"><span class="type">Subscription</span> <span class="variable">subscription</span> <span class="operator">=</span> reader.getSubscriptions(...);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">reader.transfer(subscription, friend)</span><br></pre></td></tr></table></figure>
+<p>通过显式建模上下文对象，我们不光将业务逻辑富集到领域模型中，而且在跨域多个上下文实现某个业务时，上下文之间的依赖关系还成了实现细节，被封装于上下文对象中了。</p>
+<p>而上下文过载会导致模型僵化，也就是“看不懂改不动”的代码变成了“看不懂改不动”的模型，这样提炼知识的循环就无法展开了。因而我们需要将上下文从领域对象上剥离，解决办法就是角色对象和上下文对象。<br>需要强调的是，虽然仅仅使用角色对象也能解决问题，但是配合上下文对象一起，它们能在揭示意图的同时，使模型、统一语言与软件实现更紧密地关联在了一起，是非常有用的模式。</p>
+<h5 id="架构分层"><a href="#架构分层" class="headerlink" title="架构分层"></a>架构分层</h5><p>我们学会了</p>
+<ul>
+<li>通过关联对象解决聚合&#x2F;关联关系；</li>
+<li>利用角色对象分离不同上下文中的交互；</li>
+<li>并使用上下文对象完成实体对象到角色对象的扮演。</li>
+</ul>
+<p>这些模式通过结构上的优化，更好地组织了对核心数据的访问逻辑，使得我们可以在兼顾架构约束的同时，将领域概念与逻辑有效地转化为领域模型。<br>然而当我们把眼光从构造领域模型，扩展到利用领域模型构建整个应用或系统时，就会遇到新的问题：如何组织领域逻辑与非领域逻辑，才能避免非领域逻辑对模型的污染？<br>通常我们会使用分层架构（Layered Architecture）区分不同的逻辑以解决这个问题。然而由于领域层被人为赋予了最稳定的特性，破坏了分层架构间的依赖关系。所以我们需要修正分层，才能有效地围绕领域模型来构造软件架构。</p>
+<p>分层架构是运用最为广泛的架构模式，它将不同关注点的逻辑封装到不同的层中，以便扩展维护，同时也能有效地控制变化的传播。<br>在使用领域驱动设计时，我们通常会将系统分成四层：</p>
+<ul>
+<li>展现层（Representation Layer）：负责给最终用户展现信息，并接受用户的输入作为功能的触发点。如果不是人机交互系统，用户也可以是其他软件系统。 </li>
+<li>应用层（Application Layer）：负责支撑具体的业务或者交互流程，将业务逻辑组织为软件的功能。 </li>
+<li>领域层（Domain Layer）：核心的领域概念、信息与规则。它不随应用层的流程、展现层的界面以及基础设施层的能力改变而改变。 </li>
+<li>基础设施层（Infrastructure Layer）：通用的技术能力，比如数据库、消息总线等等。</li>
+</ul>
+<p>领域驱动设计使用分层架构，主要是因为各层的需求变化速率（Pace of Changing）不同。分层架构对变化传播的控制，是通过层与层之间的依赖关系实现的，因为下层的修改会波及到上层。我们希望通过层来控制变化的传播，只要所有层都单向依赖比自己更稳定的层，更易变依赖不易改变的，那么变化就不会扩散了。</p>
+<p>那么我们只能承认基础设施不是层，需要从不同的角度构建一种架构模式，使得领域模型既可以隐含地使用基础设施，又不暴露对它的依赖。</p>
+<h5 id="能力供应商模式"><a href="#能力供应商模式" class="headerlink" title="能力供应商模式"></a>能力供应商模式</h5><p>如何才能取消基础设施层，但仍然不影响领域模型的实现呢？我会推荐使用能力供应商（Capability Provider）模式。能力供应商模式是面向对象基础原则 SOLID 的综合应用。<br>让我们通过一个案例，看一下如何构造能力供应商。还是极客时间的例子，这次我们来看订单部分。假设目前需要通过网银来支付订单，并通过邮件将订单状态更新并发送给客户。模型如下：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_3.png" class="">
+<p>那么在忽略具体实现细节之后，代码可能是这个样子的：首先调用银行网关，然后根据银行网关返回的结果，生成支付记录并通知客户。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Order</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">pay</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">BankResponse</span> <span class="variable">response</span> <span class="operator">=</span> bank.pay(....);</span><br><span class="line">        <span class="keyword">if</span> （response.isOk()) &#123;</span><br><span class="line">            payments.add(<span class="keyword">new</span> <span class="title class_">Payment</span>(response...));</span><br><span class="line">            status = ....;</span><br><span class="line">            email.send(....);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            email.send(....);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为领域层被认为定义为绝对稳定，它不能依赖任何非领域逻辑（除了基础库）。而我们又要使用网银客户端和邮件通知客户端来完成功能，那该怎么办呢？我们只好将网银客户端和邮件通知客户端移动到领域层内。<br>但是我们不能直接移动，毕竟领域层中只能是领域概念与逻辑，与具体业务无关的概念是不能进入领域层的。于是我们需要将对基础设施层的依赖，看作一种未被发现的领域概念进行提取，这样其实就发挥了我们定义业务的权利，从业务上去思考技术组件的含义。<br>一种有效的方法是将技术组件进行拟人化处理。比如网银转账这个行为，如果在业务中有一个人去做这个操作，那么会是谁呢？通知用户订单状态发生转变了，这个人又会是谁呢？通过拟人化，我们就能很清楚地看到技术组件到底帮助我们完成了什么业务操作。<br>在我们这个例子里，转账的是出纳（Cashier），通知用户的是客服（Customer Service）。于是我们的模型就能转化为：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_4.png" class="">
+
+<p>可以看到，我们将具有业务含义的能力抽象成接口纳入领域层，而使用基础设施层的技术能力去实现领域层的接口。也就是说，基础设施层成为了能力供应商。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//领域层内</span></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Cashier</span> &#123;</span><br><span class="line">    Payment <span class="title function_">collect</span><span class="params">(...)</span>&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">CustomerService</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">tell</span><span class="params">(User owner)</span>&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Order</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">pay</span><span class="params">(Cashier cashier, CustomerService staff)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Payment</span> <span class="variable">payment</span> <span class="operator">=</span> cashier.collect(...);</span><br><span class="line">            payments.add(payment);</span><br><span class="line">            staff.tell(owner, ..);</span><br><span class="line">        &#125; <span class="keyword">catch</span>(....) &#123;</span><br><span class="line">            staff.tell(owner, ..);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//领域层外</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BankPaymentCahsier</span> <span class="keyword">extends</span> <span class="title class_">BankPaymentClient</span> <span class="keyword">implements</span> <span class="title class_">Cashier</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">EmailCustomerService</span> <span class="keyword">extends</span> <span class="title class_">EmailNotificationClient</span> <span class="keyword">implements</span> <span class="title class_">CustomerService</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从具体实现方法中寻找到一个抽象接口，然后将从对具体实现的依赖，转化为对接口的依赖（SOLID 中的里氏替换原则）。<br>也就是说，领域概念可以不是领域方提取的。只要我们从技术组件中提取的词汇具有业务含义，且被业务方认可，那么它就是领域概念。因此我们并不是改了个名，而是提取了领域概念。<br>总结来说，通过从技术组件抽象具有业务含义的能力，我们就能将基础设施转变为具有这种能力的供应商。于是，我们就能帮助领域层实现了它希望的那种“不正当关系”，既使用了基础设施，又对它没有依赖：我们依赖的是领域层内的能力接口（SOLID 中的接口隔离原则），而不是基础设计的实现（SOLID 中的倒置依赖原则）。</p>
+<h5 id="使用能力供应商的多层架构"><a href="#使用能力供应商的多层架构" class="headerlink" title="使用能力供应商的多层架构"></a>使用能力供应商的多层架构</h5><p>我们可以将基础设施，看作对不同的层的扩展或贡献（SOLID 的开闭原则）。它虽被接口隔离，但却是展示层、应用层和领域层的有机组成部分。在每一层中留有能力接口，基础设施则作为这些能力接口的供应商，参与层内、层间的交互。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_5.png" class="">
+<p>那么这样的架构，无论从变化的频率还是使用实现关系上就形成了统一。除此之外，通过能力供应商，我们还解决了分层架构里的另一个难题：层与层之间是单向依赖关系，那么如果需要上一层参与下一层的交互与逻辑，层与层之间就会形成双向依赖关系。<br>不过，通过能力与能力供应商，层与层之间出现了另一种交互的可能：上一层作为下一层的能力供应商，参与到下一层的业务与流程中去。而这种参与，并不会带来额外的依赖。<br>比如在前面支付的例子里，除了邮件通知以外，我们还希望触发一个流程去为用户做一下支付失败原因的回访。这属于应用层逻辑的一部分。那么我们只需要在应用层中实现对应的逻辑，并成为领域层的能力供应商就可以了。示意代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FollowUpWorkflow</span> <span class="keyword">implements</span> <span class="title class_">CustomerSerivce</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> WorkflowEngine engine;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">tell</span><span class="params">(.....)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.engine.startFlow(....);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>能力供应商模式就是它就是关联对象、角色对象和上下文对象的元模式（Meta Pattern）。通过这个元模式，我们还可以衍生出很多有用的模式，比如全局数据对象（Global Data Object）模型，用类似 Users 这样的领域概念表示系统全局范围内所有的用户对象。</p>
+<p>分层模式并不能很好地帮助我们构建以领域模型为核心的系统架构，主要问题就在于如何处理领域层与基础设施层的关系上。而我们对领域模型的执念，使得我们无法承认基础设施层更稳定（本身也有突变风险）。所以我们应该重新思考分层架构是否正确，以及怎么分才更合理。</p>
+<p>我个人建议分成三层：展示层、应用层与领域层。不仅要将基础设施作为能力供应商配合其他层来使用，同时通过能力供应商模式，来实现层与层之间的双向交互，这样就不用担心会带来额外的依赖了。</p>
+<p>最后，能力供应商模式是一个元模式，关联对象、角色对象和上下文对象可以看作它的具体应用。熟练掌握这个模式，你就可以根据需要发明自己的领域驱动实现模式了。</p>
+<h5 id="角色-目标-实体法"><a href="#角色-目标-实体法" class="headerlink" title="角色 - 目标 - 实体法"></a>角色 - 目标 - 实体法</h5><p>角色 - 目标 - 实体法除了能够得到一个更“纯净”（也就是不包含无法与实现关联的模型）的领域模型之外，还提供了一种收集需求，结构化进行领域建模与构建统一语言的流程：</p>
+<ul>
+<li>首先与业务方沟通，明确参与系统的所有角色。 </li>
+<li>围绕着这些角色，澄清他们希望通过系统达成的目标。 </li>
+<li>将目标中提及的“实体”（名词、概念）提取出来，问清楚含义与内涵。 </li>
+<li>围绕这些实体建立领域模型，并与业务方阐述这些模型是如何用以实现目标的。 </li>
+<li>当业务方理解了模型之后，模型就成为了统一语言。<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_6.png" class=""></li>
+</ul>
+<p>这个流程有个额外的好处：可以提高业务方对领域模型的认同感。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_7.png" class="">
+<p>不同于催化剂方法，角色 - 目标 - 实体法更像一种共创方法，它由研发人员建立领域模型，然后再解释给业务方。双方通过协作共同梳理系统中的用户与其目标，共同澄清领域概念。然后技术人员再根据澄清的实体，建立领域模型。这样得到的领域模型，可以更自然地成为统一语言。</p>
+<h5 id="弹性边界（Elasticity-Boundary）"><a href="#弹性边界（Elasticity-Boundary）" class="headerlink" title="弹性边界（Elasticity Boundary）"></a>弹性边界（Elasticity Boundary）</h5><p>它指把弹性作为最优先的考虑要素而划定的系统边界。如下图所示，产品目录和支付，被分别放入了不同的组网：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_8.png" class="">
+<p>于是，我们通过弹性负载均衡控制了不同的组网环境，也就控制了不同逻辑功能在弹性变化上的边界。这就是弹性边界。换个角度来看，我们把弹性作为主要指标，对系统进行划分，将不同弹性变化的组件放入了不同的弹性边界中。<br>可以说，通过弹性边界，我们实际上是以更细致的粒度，控制了系统运营的成本。也只有这样，才能真正发挥云平台的能力。所以当我们想要利用云平台架构软件时，<strong>寻找合理的弹性边界</strong>便是最重要的事情。</p>
+<h5 id="拆分微服务，弹性优先还是业务优先？"><a href="#拆分微服务，弹性优先还是业务优先？" class="headerlink" title="拆分微服务，弹性优先还是业务优先？"></a>拆分微服务，弹性优先还是业务优先？</h5><p><strong>事实上，我们可以将微服务架构看作一种以业务上下文为弹性边界的云原生架构模式</strong>。也就是说，微服务是云原生架构的一个子集，或者是一种特化（specilization）的形态。如图所示，我们可以把极客时间模型中不同的上下文放入不同的弹性边界中，就能获得一个微服务架构：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_9.png" class="">
+<p>这里要说明的是，虽然微服务并不一定需要以云原生架构作为基础，而且你也可以在具有固定弹性的数据中心，去部署微服务。但是实践经验告诉我们，比起将微服务部署到云平台上，在固定弹性的平台上使用微服务架构，有极高的实施成本。<br>如果将微服务架构风格看作一种云原生架构风格，那我们可以从弹性边界出发，重新去审视它。这样我们就能获得另外一种视角：从云平台利用度去理解微服务架构风格，并将它与其他架构风格做出比较。<br>于是从弹性边界的角度出发来看待不同的架构模式，就为我们带来了另一个评价是否需要拆分微服务的思路：是否值得将某个业务上下文放入独立的弹性边界内。<br>答案是“弹性优先”。也就是说在云平台上，弹性永远是第一优先级。如果两个上下文明显具有不同的弹性诉求，那就应该拆分。而如果具有一致的弹性诉求，就可以不拆。<br>因为弹性优先原则用在微服务拆分上，就是在询问这样一个问题：将拆分出的服务放置于独立的弹性边界中，是否能够利用云的弹性，更容易地控制运营成本？如果不能，那么就不要拆。如果能，那么就可以拆。这种基于效益的考量，就是“功利主义架构思路”。<br><strong>微服务的划分要以弹性边界为主，以业务上下文为辅。</strong><br>微服务到底要多微？<br>答案是，微到能够更好地利用弹性控制成本的大小。</p>
+<p>最后需要说明的是，弹性优先原则不仅仅适用于微服务架构，而是适用于所有云原生架构。无论是今天的微服务，或是无服务器架构（Serverless Architecture），还是未来可能出现的宏服务（Marco Service，已经有些许苗头了）。这些都是希望通过利用弹性进而更高效地利用云平台的架构模式。因而，这些架构模式都可以通过弹性优先原则去思考和比较。</p>
+<h5 id="弹性边界间的依赖与耦合"><a href="#弹性边界间的依赖与耦合" class="headerlink" title="弹性边界间的依赖与耦合"></a>弹性边界间的依赖与耦合</h5><p>而弹性边界间的依赖（也就是服务间调用关系，或是数据交换关系），会造成流量的传递。如果上游弹性边界突然需要处理大量的流量，那么这些流量自然也会传递到下游弹性边界中。<br>我将这种不同弹性边界间流量的传递称作弹性依赖（Elasticity Dependency）。弹性依赖可以帮助我们理解不同弹性边界内容量变化的根源，并制定相应的扩容策略，然后作出最佳应对。<br>在云原生架构下，只要组件之间存在交互，弹性依赖就不可避免。只不过，云平台更擅长处理依赖于吞吐量（Thoughput）的弹性依赖，但对依赖于响应时间（Response Time）的弹性依赖，就没有什么好办法了。<br>水平扩展并不能保证改进响应时间，而只能提高吞吐量。也就是说，云平台的弹性并不总能改进响应时间，但一定可以提高吞吐量。这就意味着对于吞吐量的诉求，可以通过弹性来解决。但对于响应时间的诉求，弹性可能无法处理。<br>弹性扩容实际上就是对吞吐量的扩容，因而更大的吞吐量诉求对于云平台来说，就是小事一桩。同时我们也可以观察到，弹性扩容对响应速度没什么影响。如果从始至终，只有一个请求访问该服务，那么无论弹性负载均衡复制多少新的虚拟机，都无法缩短响应时间。<br>正因为云平台不擅长处理依赖于响应时间的弹性依赖，我将这类弹性依赖称为弹性耦合（Elasticity Coupling），以表示与依赖于吞吐量的弹性依赖的区别。因为两个弹性边界间存在弹性耦合，通常意味着，将这两个弹性边界分离后，对于云平台利用效率的提高，不足以弥补为了分离它们所付出的成本。</p>
+<h5 id="如何避免弹性耦合？"><a href="#如何避免弹性耦合？" class="headerlink" title="如何避免弹性耦合？"></a>如何避免弹性耦合？</h5><p>最简单的方式，是将组件间的同步调用模式改为异步。这是因为，服务与组件间的同步调用，会带来响应时间的依赖；而异步调用，则能将其改变为吞吐量的依赖。</p>
+<p>假设我们有一个电子商务网站，已经完全部署到了云平台之上。而且我们按照弹性边界，将这个系统分解成了“订单”“支付”“邮寄”“通知”等组件，并将它们放置到不同的弹性负载均衡控制之下。 那么对于“下单”这个业务功能，我们会：</p>
+<ul>
+<li>通过订单组件，先去调用支付组件，完成订单支付。 </li>
+<li>然后呢，再通知邮寄组件，生成快递单，将用户购买的产品发出。 </li>
+<li>最后通过通知组件，告知用户订单状态。</li>
+</ul>
+<p>如下图所示，展示了不同弹性边界内业务功能间的相互调用：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_10.png" class="">
+<p>如果订单组件是同步调用支付组件，那么作为调用方的订单组件，也会消耗资源，等待支付组件的返回。<br>这里要注意，无论这个等待的时间是 500 毫秒、15 秒或是 5 分钟，可以确定的是，在下游响应之后，调用方才能释放自己的资源。而且，调用方付出了资源等待，那么这个时间就不仅仅是消耗了下游的资源，调用方自己的资源其实也在消耗。<br>此时，支付组件的响应时间，也就包含在了订单组件的响应时间里面，因而订单组件的响应时间依赖于支付组件的响应时间。这就意味着订单与支付这两个弹性边界间存在着耦合关系。<br>而异步调用的关键，就在于无需消耗资源等待下游返回，就可以将对下游响应时间的要求，改为对于吞吐量的诉求。<br>这个规定时间，无论是 500 毫秒、15 秒或是 5 分钟，其实并不是响应时间，而是吞吐量的另一种表现形式。所以 500 毫秒，其实是每分钟 120 次的吞吐量（60 秒 x1000 毫秒 &#x2F; 500），15 秒就是每分钟 5 次的吞吐量，5 分钟也就是 1 小时 12 次的吞吐量。<br>以此来看，当订单侧流量增大时，我们只需要利用云平台对支付进行扩容，保证同样的吞吐量即可。那么这里的关键就在于，异步调用是怎么做到将响应时间变为吞吐量的呢？<br>我们可以将异步调用想象成在所需调用的组件前，存在一个请求的缓冲。所有的请求都会先进入缓冲之中，而且这个缓冲有个总容量，在到达这个容量之前，总处理时间不会超过某个给定的限定值。<br>那么因为组件间的直接调用被缓冲隔离了，上下游组件间从直接耦合，就变成了通过缓冲的间接耦合。<br>而同步调用中对响应速度的要求，就被分解成了处理时间、等待返回时间和请求缓冲的轮转时间。其中请求缓冲的轮转时间，就是吞吐量的另一种表现形式。在我们前面例子里，这三个时间分别对应订单的处理速度、订单的结果返回速度以及支付的吞吐量。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_11.png" class="">
+<p>由此可以看出，通过将同步调用改变为异步调用，我们就把对于下游响应时间的依赖，改变成对于下游吞吐量的依赖。然后将弹性耦合变成了弹性依赖，使得整个系统可以更好地利用云平台的能力。而行业中也有大量的佐证，表明在云时代，异步调用、事件驱动架构风格会逐渐成为主流的选择。<br>我相信这些尝试仅仅是个开始，随着我们对于云平台、弹性以及弹性边界认识的深入，过往的最佳实践都会被打破。而围绕着云与弹性，我们会重新认识什么才是架构软件的最佳方式。<br>#####默认异步对业务建模的挑战<br>为了消除弹性耦合，我们需要放弃默认同步调用的方式。那么当我们延续领域驱动设计的思路，以一种模型驱动的视角来看待这个问题的话，就会面临两个挑战：</p>
+<ul>
+<li>如何将异步调用与模型结合起来？</li>
+<li>如何处理异步调用对聚合关系一致性的影响？<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_12.png" class=""></li>
+</ul>
+<p>可以看到这个模型中，有两个对象，User和Subscription，以及关联关系User-Subscription，我们可以创建 User 对象、Subscription 对象，或者将 User 对象与 Subscription 对象关联在一起。但是从模型中，并没有任何结构支撑我们以异步的方式构造 User、Subscription 对象，或是将 User 与 Subscription 关联起来。</p>
+<p><strong>要知道异步方式意味着，由模型产生的数据可能存在中间状态</strong>，比如，我们通过异步方式为 User 增加了新的 Subscription，那么可能处于“请求已发送，但是还没有得到明确反馈的中间态”。<br>此外，异步的中间态还会影响聚合根对关联关系一致性的控制。正如我们前面所说，在同步模型中，要么 Subscription 已经与 User 关联，要么未与 User 关联。Subscription 关联的一致性由聚合根 User 控制。<br>然而一旦进入异步模式，会出现尚未确认的关联。这个问题其实不大，<strong>不过需要额外注意的是，那些在规定时间内没有得到确认的关联</strong>。<br>那么这种因为异步带来的一致性改变，对业务会产生什么影响呢？这是我们需要考虑的第二个问题。</p>
+<p>所以归根到底，为了解决弹性耦合的问题，我们需要将原味面向对象风格中默认的同步模型改为异步。但是我们也知道，在领域驱动设计“两关联一循环”的大框架下，对于模型的改动，最终会反映到我们如何理解业务上。因此我们需要一种方式，将异步模型对应到业务上下文中。</p>
+<p>总结来看，在云原生时代，我们需要将弹性作为首要考虑因素，纳入建模的考量，那么弹性边界就划分我们系统的重要依据，而且我们还需要考虑弹性边界间的依赖关系，尽量避免弹性耦合。<br>对于业务建模来说，为了配合云时代的架构约束，我们需要做到以下几点？</p>
+<ul>
+<li>确定一种模型结构以反应弹性边界</li>
+</ul>
+<h5 id="业务系统与领域系统的区别？"><a href="#业务系统与领域系统的区别？" class="headerlink" title="业务系统与领域系统的区别？"></a>业务系统与领域系统的区别？</h5><p>进入云时代，处于更有效的利用云平台的目的，我们引入了新的架构约束：<strong>弹性优先原则</strong>。也就是说，<strong>在云时代架构系统中，弹性是需要最优先考虑的因素</strong>。<br><strong>业务模型会不会受到技术泛型的影响</strong>？<br>会，但不经常发生。那什么时候会发生呢？就是在技术泛型改变可以带来成本答复下降，或者带来收入巨幅增加的时候。<strong>所以实际上，并不是新的技术泛型直接改变了模型，而是新的技术泛型带来成本、收入上的优势，业务方则为了利用这些优势，便根据新的技术泛型，改变了业务的运营方式，引起了背后模型的改变</strong>。<br>可以说，好的模型可以在软件的生命周期内保持稳定。帮助我们在特定的架构风格下高效的应对变化。但是，魔性不能帮助我们渡劫，如果架构风格彻底变了，那么模型就必须重建。</p>
+<h5 id="四种业务运营模式"><a href="#四种业务运营模式" class="headerlink" title="四种业务运营模式"></a>四种业务运营模式</h5><img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_13.png" class="">
+<p><strong>流程标准化</strong>：看做强制同样的的业务流程<br><strong>流程整合度</strong>：看做是否使用同一个数据源</p>
+<ul>
+<li>统一模式：强制使用同样的业务流程，也需要同样的数据源，业务上是强流程管控模式。对应的软件上元婴模式也是单例模式。</li>
+<li>复制模式：强制使用同样的流程，但可以使用不同数据源，业务上以同样的业务模式独立运营的业务单元，对应的软件运营模式是多租户模式，也就是我们所说的SaaS模式。</li>
+<li>协作模式：不强制使用同样的流程，但需要使用同样的数据源。业务上是仅仅在财务流程和关键数据上互通的，更具有独立性的业务单元或子公司模式。对应在软件上，可以看做通过开放 API 提供对于共享数据的访问。</li>
+<li>差异化模式：不强制使用相同的业务流程，也不使用同样的数据源，基本上就是不同的业务实体。对应到软件上，可以将其看作开放生态模式。<br>而从这个角度来看，<strong>我们行业内存在的很多问题，就源自业务组织能力与 IT 能力的不匹配</strong>。</li>
+</ul>
+<h5 id="什么是模型中最明显的弹性边界？"><a href="#什么是模型中最明显的弹性边界？" class="headerlink" title="什么是模型中最明显的弹性边界？"></a>什么是模型中最明显的弹性边界？</h5><p>我们知道云是通过降低成本改变运营模式，从而给业务带来影响的。那么是否存在着某些业务功能更容易受到运营模式的影响，而另一些业务功能，则不容易受到运营模式的影响呢？<br>如果是这样，这就意味着<strong>两种不同的功能存在不同的弹性边界。那么按照弹性优先的原则，我们就需要将这两类需求进行分离</strong>，总而在最宏观层面，贯彻弹性优先的原则。<br>比如说，极客时间专栏提供了企业版，也就是对企业收取特定的费用（每年或者一次性），这样企业内的员工就能无限或者按照规定的量来自由阅读专栏。<br>可以发现，与发布、阅读、评论相关的功能点，无论是公开版本，还是企业版本，都没有什么区别。而定价、返现、提成等功能，则会发生较大的改变。也就是说，这些功能点更容易受运营模式改变的影响。<br>如果按照变化隔离的原则，从架构上将这两类功能分割开的话，我们就有了一个不同的看待极客时间系统架构的角度。我们将它分成两部分：一个是与运营无关的内容管理系统（Content Management System，CMS）；一个是极客时间的运营系统。<br>那么，企业版不过就是在内容管理系统上，提供了另一套运营系统而已。如下图所示：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_14.png" class="">
+<p>由此我们发现了一个常用的架构模式，<strong>可以把系统分为两部分：与运营无关的部分，提供运营能力的部分</strong></p>
+<ul>
+<li>与运营无关的部分，模型似乎不需要业务方输入</li>
+<li>提供运营能力的部分，需要业务方输入及验证<br>在进行建模时，针对与运营无关的部分和与运营有关的部分，我们需要处理的核心复杂度并不相同。而且，“两关联一循环”对于这两部分的功用也不尽相同。<br><strong>“领域”表示与运营无关的问题域，“业务”表示与运营相关的问题域</strong>。<br>从我的经验来看，通过“两关联一循环”对业务逻辑建模的效果，要远远好于对领域逻辑的建模的效果。<strong>因而业务逻辑一般具有运营特定和领域中立性。与之相对的，就是领域逻辑具有运营中立性和领域特定性</strong>。<br>事实上，对于能通过面向对象模型表示核心复杂度的领域逻辑，知识消化法是能够发挥作用的。因为我们讲到现在，隐含的前提就是通过对象模型建模问题。但是，并不是所有的领域逻辑都适合使用对象模型表达。比如推荐引擎，通过特征建模（Feature Modeling）并使用相似度算法，可能是更好的方法。当然，也可以是决策树（Decision Tree），甚至是神经网络（Neural Network）。这时候，知识消化并不能帮助我们得到这些模型。所以知识消化实际是一种“业务建模”方法，而不是“领域建模”方法。<br>总结来说：将领域和业务分开，可以让我们更好的理解什么是业务系统，<strong>支撑业务运营，利用领域系统赚钱&#x2F;省钱的系统，就做业务系统</strong>。所以我们建模的目的，就是寻找恰当的业务模型，更好的支撑业务系统的构建和演进。</li>
+<li>业务逻辑是源自业务运营的逻辑，是领域中立且运营特定的，其复杂度来自于业务流程，关注的是如何通过某个领域逻辑实现获利。因而它的关注点，就集中在盈利和成本结构上。或者说，业务逻辑对外体现为利润或现金，对内体现为成本和绩效承诺。</li>
+<li>领域逻辑源自问题域自身的逻辑，是运营中立而领域特定的，其复杂度来自于问题本身，关注点通常是算法、计划、统计、优化等等。</li>
+</ul>
+<p>所以关注业务逻辑的组件与关注领域逻辑的组件，通常具有不同的弹性边界。以极客时间专栏为例，在缓存策略恰当的前提下，如果读者猛增，那么对内容管理部分的弹性需求，会远远小于对业务运营部分的弹性需求。而对于搜索引擎业务来说，当搜索用户猛增时，对广告投放这部分的弹性需求，要远远小于对索引部分的弹性需求。</p>
+<p>因而从弹性优先的角度出发，我们应该将关注业务逻辑的组件与关注领域逻辑的组件分离。这样构建出来的模型，更能适应云时代的架构约束，也能让我们分别使用不同的建模方法，获得对应的领域模型与业务模型。</p>
+<p>如何通过模型发现业务系统的变化点？<br>领域逻辑与运营无关，源自某个特定的问题域；而业务逻辑与运营相关，大量的业务逻辑来资源运营中实践经验的总结。由此发现业务逻辑不如领域逻辑稳定。毕竟业务关注的是如何盈利，而不是准确的描述某个问题域。这似乎跟我们长久地想法相违背，我们希望通过精确建模某个问题域，从而实现某个问题域的复用。<strong>在商业社会里，复用某个领域，就是围绕这个领域构建能够盈利的运营模式</strong>。<strong>业务知识的重建与复用，才是领域复用的关键</strong>。</p>
+<h5 id="理解业务逻辑，我们有什么好的办法吗？"><a href="#理解业务逻辑，我们有什么好的办法吗？" class="headerlink" title="理解业务逻辑，我们有什么好的办法吗？"></a>理解业务逻辑，我们有什么好的办法吗？</h5><ul>
+<li>以凭证追溯从财务角度理解企业经营</li>
+<li>以合同履约理解企业业务</li>
+</ul>
+<p>我们发现，在所有的业务逻辑中，权责履约是最小的业务交互，合同是最小的业务上下文。那么我们就可以使用权责和合同上下文来做业务建模了。<br>对于权责履约，我们可以使用履约请求（表示一个时间段）和履约确认（时间点）这样的结构来表示。并将相应的凭证与履约请求关联，以表示发起履约的依据。同样，履约确认也会与相应的凭证关联，以表示履约的证明。<br>凭证在权责履约的范围内，可以按照四色建模的方式寻找。也就是说，针对每一个权责履约，实际是在业务上定义了一小段时间线，从履约请求开始，到履约确认为止。这是利用了事件建模中的多时间线法。而我们可以在这条时间线上追溯履约中的关键凭证。<br>除了履约时间线上的凭证之外，履约请求还可以引用合同上下文中的其他凭证。特别是，履约请求和履约确认本身也是凭证，可以供其他请求与确认引用。比如，卖家未在约定时间内发货，那么违约取消合同的时候，就可以引用之前的支付履约请求或者支付履约确认，证明卖家没有发货。<br>明确了履约的结构之后，合同可以作为上下文对象，用以涵盖对应的所有履约项。而且由于合同只存在于双方之间（多方合同是多份双方合同），因而任何合同上下文中都存在两个角色对象。比如采购订单合同中的买家和卖家，快递合同中的邮寄方和承运方等。<br>在整个合同上下文中，权责也是围绕着两个角色展开的。所以，我们可以将合同上下文看做两个角色间业务交互的证据的聚合。这是一种业务上存在的聚合关系，是一种比对象聚合更具有业务含义的包含关系。<br>合同的参与方以及凭证中的标的物，可能来自领域系统。比如说，我们网购的采购合同中的支付凭证，牵扯到的标的物就是商品。那么我们可以将商品看做领域系统产品目录中的概念，然后通过凭证引用领域系统中的概念，让领域系统中的概念参与到业务逻辑中来。<br>元模型（Meta Model）图，表示了上面我们所讲的核心概念，以及它们之间的关联：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_15.png" class="">
+
+<p>建模流程：</p>
+<ul>
+<li>寻找合同上下文</li>
+<li>寻找合同中的主要履约项，按四色建模寻找凭证；</li>
+<li>对于主要的履约项，寻找违约的情况，设立新的履约项，按四色建模寻找凭证;</li>
+<li>重复步骤三，知道不得不打官司为止；</li>
+<li>将参与方和标的物划分入领域边界</li>
+</ul>
+<p>下面就通过例子来看一下这个过程，还是我们的老朋友，极客时间专栏。首先来看一下读者侧，合同是非常明确的，即专栏订阅合同。参与方就是读者和极客时间。然后，我们来看看主要履约项：</p>
+<ul>
+<li>支付订阅费用，权利方是极客时间，义务方是读者。</li>
+<li>访问付费内容，权利方是读者，义务方是极客时间。</li>
+</ul>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_16.png" class="">
+
+<p>接下来我们就需要寻找违约情况了，对应上面讲的两个权责，那么分别存在如下两种违约情况：</p>
+<ul>
+<li>未在规定时间内完成支付，那么合同自动作废，读者并不承担额外责任。权利方是极客时间，义务方是读者。 </li>
+<li>如果专栏出现断更，没能按说明提供内容，专栏下架，极客时间退钱，并且在下次同专栏上架时，不再向原读者收取任何费用。权利方是读者，义务方是极客时间。</li>
+</ul>
+<p>所以我们可以继续添加模型到上面的模型图中，并将标的物划入不同的上下文，以表示领域边界，如下图所示。这里我也说明一下，由于图片大小关系，我省略了一些凭证，还简化了权责方与请求和确认的关联。不过这并不影响对模型的整体理解，你可以着重看一下权责履约项：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_17.png" class="">
+
+<p>首先，通过 Request-Confirmation 表示的履约结构是一种异步结构：在规定时限内，未得到确认之前，履约处在未知状态。这种异步并不是技术上的刻意选择，而是业务的真实状态。<br>让我们回想一下真实世界中的业务操作，其实都是这样的异步状态：权利方主张，义务方履约。而我们在软件世界中习惯的是同步状态，是在很短时间内完成的主张 - 履约。但无论这个完成的时间有多短，在概念上，主张、履约仍是异步结构。<br><strong>所以严格意义来说，我们过往通过同步方式建模都是错的，都是从实现方式去理解问题，而不是从问题本身出发。其次，如果履约出现错误，也就是不能履约的情况，那么对于这种异常状态的修正，就需要触发新的履约过程。</strong><br>想想看，在现实世界中的业务，从来不存在可以自动修正的情况。因为任何履约失败，都存在破坏合同条款，最终引起法律纠纷的可能。所以不可能在合同双方不知情，也没有提前协商的情况下，对未完成的履约项进行修正（而且严格意义来讲，这么做也是违法的）。<br>因而，<strong>从业务角度出发，履约中的异常会触发新的履约项，从而在合同的上下文中维持业务的一致性。</strong><br>也就是说，如果我们完全从业务出发，不受对象模型搅合的话，就会自然地得到异步为主的模型以表示业务逻辑。那么接下来，就让我们看看合同上下文。</p>
+<h5 id="凭证角色化建立合同间的关联"><a href="#凭证角色化建立合同间的关联" class="headerlink" title="凭证角色化建立合同间的关联"></a>凭证角色化建立合同间的关联</h5><p>如果再仔细看前面的模型，你可能会发现，我们将支付部分归属于专栏订阅合同了。这表明什么呢？表明这是一个线下的现金交易模型。也就是读者和极客时间面对面完成了现金交易，然后极客时间开具发票。<br>因为在专栏订阅的合同上下文中，参与的双方是读者和极客时间，既没有微信，也没有其他的参与方。因而说明，这是个现金交易模式。不过，这显然不适合现在的数字化时代。那么如果我们需要支持移动支付，模型会有什么改变呢？<br>首当其冲的改变就是引入了第三个角色：移动支付供应商。我们知道合同只能在两者之间签署，那么我们势必需要引入另一个合同上下文，去表示移动支付供应商和读者之间的关系。也就是说，在读者和移动支付供应商之间，存在一个合同，用以支撑支付行为。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_18.png" class="">
+
+<p>通过这个模型很明显的发现，<strong>业务模式改变了，从面对面现金交易变成了借由第三方支付服务完成交易。</strong><br>因为在专栏订阅合同上下文的履约确认中，我们关联了另一个合同，也就是移动支付协议上下文中产生的凭证，而这个凭证是由合同上下文中的义务方移动支付供应商提供的。<br><strong>那么这种跨合同上下文的凭证引用，实际上就表示了不同合同履约项中权利方与义务方间的协作</strong>。专栏付款确认引用了移动支付确认作为凭证，也就是说，专栏订阅合同上下文中，专栏付款履约项的权利方极客时间，和移动支付协议上下文中，移动支付履约项的义务方移动支付供应商，共同协作，为用户（移动支付协议合同上下文）完成了支付，以帮助读者（专栏订阅合同上下文）完成了订阅。<br>我们通过跨合同上下文间的凭证引用，建模了不同服务之间的协作。但是对其他上下文中凭证的引用，实际上表示了不同上下文间的依赖关系。<br>专栏订阅合同是依赖于移动支付协议的。那么如果我们引入另一种支付模式，比如说预充值抵扣，那么我们可能就会引入另外一个合同上下文：预付费合同。而专栏订阅合同也会依赖于它。如下所示：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_19.png" class="">
+
+<p>这里明显会出现一个坏味道，随着新支付方式和手段的引入，专栏订阅合同上下文会不断地去依赖新的合同上下文。且不说由于依赖关系引起的变化传播，单从业务上讲，专栏订阅合同是极客时间的核心业务逻辑，也是核心差异化所在。而不同的支付合同，更像是为了支撑这个核心业务逻辑而存在的。那么对于这种依赖关系，我们就需要小心了，因为让核心逻辑依赖于支撑逻辑，总是一种坏味道。</p>
+<h5 id="业务系统中的变化点"><a href="#业务系统中的变化点" class="headerlink" title="业务系统中的变化点"></a>业务系统中的变化点</h5><p>不过解决的办法也很简单，<strong>那就是反转依赖，我们可以让履约确认角色化，让其他合同中的凭证来扮演这个履约确认</strong>。能力供应商模式，它是面向对象技术中反转依赖的一个小应用。如下图所示:</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_20.png" class="">
+
+<p>通过将专栏付款确认角色化，我们就在专栏订阅合同中引入了一个变化点。就意味着这个履约项，可由多种不同凭证来确定，也就是存在跟其他不同合同上下文交互的可能性。<strong>而这种对业务变化的判断，并不是源自技术方案，而是从业务本身的结构出发，寻找可能存在的变化点。</strong></p>
+<p><strong>我们不停地通过各种建模手段，希望可以预判业务改变的方向，尽早做出隔离，从而更好地响应业务的改变。同样的，业务逻辑变化的可能性天然也就存在于业务中，而且具有明显的结构特征</strong>。</p>
+<p>云计算给建模带来的挑战时，总共讲了四条：</p>
+<ul>
+<li>确立一种模型结构以反映弹性边界； </li>
+<li>在弹性边界切分业务上下文时，维护业务一致性； </li>
+<li>从异步模型的视角，解读业务逻辑； </li>
+<li>在异步调用产生中间态异常时，维护业务一致性。</li>
+</ul>
+<p>我们来看看怎么应对这四个挑战。前两条与弹性边界有关。我们知道合同上下文表示了服务边界，其中合同的乙方就是服务提供者，甲方就是消费者。那么是不是合同上下文就是弹性边界呢？<br><strong>所以合同上下文并不是弹性边界，履约上下文才是弹性边界</strong>。此外，由于我们分离了领域逻辑和业务逻辑，那么<strong>领域逻辑也是弹性边界</strong>。<br>在领域逻辑中，数据一致性为主导；而在业务逻辑中，是合同上下文中对业务逻辑的聚合为主导。合同上下文中的业务一致性，也就是履约与违约构成的一致性，因而业务逻辑的弹性改变并不会影响领域逻辑。<br><strong>通过切分领域与业务边界，分别以领域逻辑边界和合同上下文中的履约上下文作为弹性边界，就能解决在弹性边界切分业务上下文时的一致性维护问题。</strong></p>
+<p>后两条与异步模式有关。这里有意思的是，如果我们完全从业务角度出发，遵循主张 - 履约的方式建模（比如用 8X Flow 建模），这根本不是问题：因为业务本身就应该通过异步解读；异常状态作为违约，触发其他履约项或诉诸法律。</p>
+<p>然而在概念上，我们仍留有通过集合封装内存中的对象与数据库中的数据的习惯。这使得我们在使用领域驱动设计的时候，特别是使用聚合关系的时候，变得左右为难：要么放弃性能，获得更好的模型；要么泄露逻辑，以得到可接受的性能。 但是关联对象，则可以让我们在更加明确揭示意图的同时，去解决性能与逻辑封装的问题。</p>
+<p>当我们严格遵照“富含知识的模型”的原则，将聚合关系有关的逻辑富集到领域模型上时，很容易产生上下文过载的问题，其根源在于实体在不同的上下文中扮演了多个角色。<br>而上下文过载会导致模型僵化，也就是“看不懂改不动”的代码变成了“看不懂改不动”的模型，这样提炼知识的循环就无法展开了。因而我们需要将上下文从领域对象上剥离，解决办法就是角色对象和上下文对象。</p>
+<p>分层模式并不能很好地帮助我们构建以领域模型为核心的系统架构，主要问题就在于如何处理领域层与基础设施层的关系上。而我们对领域模型的执念，使得我们无法承认基础设施层更稳定（本身也有突变风险）。所以我们应该重新思考分层架构是否正确，以及怎么分才更合理。<br>我个人建议分成三层：展示层、应用层与领域层。不仅要将基础设施作为能力供应商配合其他层来使用，同时通过能力供应商模式，来实现层与层之间的双向交互，这样就不用担心会带来额外的依赖了。</p>
+<ul>
+<li>第一，合同之前的上下文和合同上下文应该具有不同的弹性边界。<br>从实际业务上讲，二者的弹性诉求通常也差距巨大。以网上购物为例，浏览啊、查找啊、比价啊、砍价啊、拼单啊、拼团啊，都是合同之前的业务。而下单之后的采购合同签订了，然后才会进入到合同履约的环节，弹性诉求自然不同。</li>
+<li>第二，合同前的上下文是系统另一个重要变化点。</li>
+<li>第三，虽然投标邀请和投标并不是履约项，但是它们也具有 Request-Confirmation 的结构，所以实际上也是异步的业务行为。</li>
+</ul>
+<h5 id="如果我做的系统并不包含对外的合同，那么要怎么办？"><a href="#如果我做的系统并不包含对外的合同，那么要怎么办？" class="headerlink" title="如果我做的系统并不包含对外的合同，那么要怎么办？"></a>如果我做的系统并不包含对外的合同，那么要怎么办？</h5><ul>
+<li>第一，你做的系统的目标是管理内部绩效。比如说客户关系管理系统（CRM，Customer Relationship Management），目标管理系统（Objective Management），销售管理系统（Sales Management），等等。<br>虽然这些系统并不牵扯对外的权责履约，但是我们仍然可以使用权责履约对这类系统进行建模。因为从业务上讲，这类系统是存在履约项的，而履约项，其实就是干系人的工作产出、KPI、OKR 等等。<br>那么从合同上下文和履约的角度来看，管理者和电话销售就绩效目标达成一致，实际上是一种口头的绩效合同，或者叫绩效协议。那么周会、月会，实际上就是进度履约的检查和确认。</li>
+<li>第二种情况，你做的是领域系统，并不在合同上下文之内。<br>我们仍然以上面这个 CRM 电话销售为例。假设你所做的是为电话销售提供客户信息（标的物），那么你做的系统就处在合同上下文之外了，当然不会具有合同上下文了。这时候你就需要按领域系统建模。</li>
+<li>第三种情况，你做的是工具。仍然是 CRM 电话销售的例子。你做的系统是帮助电话销售，直接从电脑上控制座机电话拨号。同样的，不是业务系统，不需要业务建模，可能需要领域建模，也可能不需要（如果就是简单集成的话，就是胶水代码）。</li>
+<li>或者，最可悲的，你做的系统完全不重要，跟业务没有任何关系。比如在任何的内外合同 &#x2F; 协议上下文中，都不留下任何痕迹，也不会被人当作工具使用。这个时候，你需要反思的不仅仅是这个系统了，可能还有你的职业生涯。</li>
+</ul>
+<p>其中至少存在两个合同上下文：极客时间和作者之间的创作协议；极客时间和编辑之间的绩效约定。</p>
+<h5 id="极客时间和作者之间的创作合同上下文建模："><a href="#极客时间和作者之间的创作合同上下文建模：" class="headerlink" title="极客时间和作者之间的创作合同上下文建模："></a>极客时间和作者之间的创作合同上下文建模：</h5><img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_21.png" class="">
+
+<h5 id="极客时间和编辑之间的绩效协议上下文建模："><a href="#极客时间和编辑之间的绩效协议上下文建模：" class="headerlink" title="极客时间和编辑之间的绩效协议上下文建模："></a>极客时间和编辑之间的绩效协议上下文建模：</h5><img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_22.png" class="">
+
+<p>那么如果我们将这三个合同上下文放在一起，就可以看到凭证是如何在不同的合同上下文间，完成了业务的串联与整合。如下图所示：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_23.png" class="">
+<p>在这个全视图中，我们可以看到：</p>
+<ul>
+<li>编辑是如何帮助作者从选题、打磨内容，到签订合同，最后再到催稿上线的； </li>
+<li>读者是如何通过订阅专栏，为作者带来分成的； </li>
+<li>创作合同是如何保证作者一定会按时更新文章，以保证读者能阅读到课程内容的； </li>
+<li>以及三方是如何围绕领域系统 CMS（也就是由专栏、文章组成的领域上下文）展开协同的。</li>
+</ul>
+<p>我们首先区分了什么是业务逻辑，什么是领域逻辑。从宏观上将两者分离，以保证业务系统与领域系统具有不同的知识边界和弹性边界。<br>然后，我们从合同履约入手，通过履约项和合同上下文建立业务模型。<br>我们又介绍了合同之前的上下文，也就是渠道上下文。并解释了为何公司内的绩效管理也可以通过协议与履约的方式进行建模。<br><strong>归根结底，也就是不要从技术解决方案上去定义业务问题，要回到业务本身，去理解业务问题</strong>。<br>所以，<strong>架构也要以应对业务的变化点为根本出发点，将合同上下文、履约上下文和领域上下文作为系统天然的边界。从业务上下文中寻找变化点（角色化的履约确认、不同的渠道上下文等），并通过软件架构降低支持这些变化的成本</strong>。</p>
+<p>总之，我们不要老是抱怨业务逻辑不易理解、变来变去的。事实上，业务逻辑是最简单，也是最理性的逻辑：多赚钱少花钱，规避法律风险，提供合规审计。要知道这套逻辑，业务方不光要跟你讲，也会跟投资人、股东讲，还会跟审计、法务讲，所以绝对是经过了千锤百炼，可以放心使用。</p>
+<h5 id="什么是中台？"><a href="#什么是中台？" class="headerlink" title="什么是中台？"></a>什么是中台？</h5><p>应对未来商业社会的一种可能的更具竞争力的模式，是通过小而灵活的前台团队，频繁而低成本地试错。而支撑这种团队结构的软件平台，就是中台。那么它可能更接近一个产生 SaaS 的 SaaS，而不是直接服务于租户的 SaaS。<br>宏流程促进了从业务层面上模式的复用，也给创新带来了不同的思考。那就是如何复用已经存在并成功的业务模式，是一种更有效的创新方法。</p>
+<p>说到底，不停地将企业成功的核心模式灌注到新的市场，让企业在扩展业务版图的同时，也能不断强化核心竞争力。这是绝大多数企业长久以来期盼的发展创新的模式。注意，不是重复，而是在不同的竞争领域复现。这是宏流程带来的思考方式的转变，也是承载宏流程的软件平台——中台让我们着迷的地方。</p>
+<p>理论上讲，每个不同履约项都可能具有不同的弹性边界，而以履约项为单位拆分成细小的服务，仍然可以表示业务能力。然而我会建议你，从合同上下文开始，先将不同的合同上下文作为服务边界，然后再看看是否需要将履约项拆分成独立的服务。<br>需要再次强调，你并不需要把每一个履约项拆分成独立的服务，这样不一定有什么好处。只有在履约项真的需要独立的弹性边界时，才需要这么做。至于其他两种业务上下文，比照合同上下文处理即可。<br>另外，对于每个领域上下文，我建议做成一个服务就行了。毕竟在面向对象设计中，弹性边界不是很容易切分。但是只要使用 RESTful API，无论服务如何拆分，接口都是稳定的。</p>
+<p><strong>学习是一种状态（being），而不是一种行为（doing）</strong></p>
+<p>如何避免循环调用？<br>可以通过间接的方式避免(回调函数)</p>
+<p>领域指的是问题，在业务场景边界不清，所以改用业务来代替，所以叫做业务建模。</p>
+<h5 id="业务逻辑："><a href="#业务逻辑：" class="headerlink" title="业务逻辑："></a>业务逻辑：</h5><p>源自于业务运营的逻辑，是领域中立且运营特定的，其复杂度来自于流程本身，关注的如何盈利和成本结构(或者可以理解为对外体现利润和现金，对内体现成本和绩效承诺)。常见于：合同、法务、会计和审计等。业务逻辑是支撑了业务运营流程。</p>
+<h5 id="领域逻辑"><a href="#领域逻辑" class="headerlink" title="领域逻辑"></a>领域逻辑</h5><p>源自于问题域的逻辑，是领域特定而运营中立的。其复杂度来自于问题本身，关注的是如何解决问题(通常这些问题的解决办法源于专家经验，研究成果或参考已有的解决方案)。常见于：算法、分布式计算与存储、统计、优化等。而领域逻辑实现了盈利的能力。</p>
+<h5 id="逻辑复用"><a href="#逻辑复用" class="headerlink" title="逻辑复用"></a>逻辑复用</h5><p>从复用方式上来说，业务逻辑的复用往往通过复制运营团队来实现，而领域逻辑的复用往往通过包装并被业务集成来实现。</p>
+<p>因为业务逻辑和领域逻辑天然具有不同的变化原因和复用方式，而隔离变化是架构设计的核心。所以，业务逻辑和领域逻辑要被明确区分。</p>
+<h5 id="什么是业务系统？"><a href="#什么是业务系统？" class="headerlink" title="什么是业务系统？"></a>什么是业务系统？</h5><p>以业务逻辑支撑业务运营，利用领域逻辑实现盈利的系统，就叫过业务系统。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_24.png" class="">
+
+<h5 id="面向业务设计"><a href="#面向业务设计" class="headerlink" title="面向业务设计"></a>面向业务设计</h5><p>面向业务设计所聚焦的是在业务架构明确后，理解并抽取业务模式，分离业务与领域的上下文。以应用架构作为系统架构的牵引，联系业务业务架构与组织架构，促进同构性。换句话说业务设计不直接影响业务架构，也不直接影响系统实现。</p>
+<h5 id="业务建模"><a href="#业务建模" class="headerlink" title="业务建模"></a>业务建模</h5><p>是对业务流程的可视化抽象和分析过程。在面向业务设计中，用于对业务输入进行分析和抽象从而识别并分离业务上下文和领域上下文。侧重于理解业务、划分边界、分析业务模式。</p>
+<h5 id="领域建模"><a href="#领域建模" class="headerlink" title="领域建模"></a>领域建模</h5><p>是对领域问题的可视化抽象和分析过程。在面向业务的设计中，用于在划分业务上下文和领域上下文后，对领域上下文进一步探索，或指导对象模型设计。侧重于理解领域，补充领域问题解决方案、指导实现。</p>
+<h5 id="履约建模法"><a href="#履约建模法" class="headerlink" title="履约建模法"></a>履约建模法</h5><p>是一种以业务履约为视角，通过提取业务模式并引入变化点构建可复用业务模型的、云原生时代的业务建模方法。</p>
+<p>如果没有软件系统，一个公对公的商品交易是靠双方的活动过程和纸质单据来完成的。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_25.png" class="">
+
+<p>形成决定的过程往往都是复杂的领域问题，是产生纸质凭证的关键输入。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_26.png" class="">
+
+<p>当交易结束后，交易过程将会遗忘，当事双方通过留存的纸质凭证进行过程追溯。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_27.png" class="">
+
+<p>业务流程的本质即业务凭证的追溯过程</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_28.png" class="">
+
+<p><strong>业务凭证具有不可变性和不可抛弃型</strong>，换句话说：<strong>作为业务凭证，只存在创建，不存在修改和删除</strong>。<br>注意：从架构实现视角来看，如果我们给业务逻辑实现了CRUD的API，那么显然做错了，基于可追溯理论，业务系统的对外API只能有CR，没有UD。</p>
+<p>业务凭证追溯所体现的是当事双方的权责与履约关系</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_29.png" class="">
+
+<p>权责履约关系被现实生活中的合约所描述。合约的关键信息：</p>
+<ul>
+<li>当事人：即常说的甲乙方</li>
+<li>条款</li>
+<li>违约</li>
+</ul>
+<p><strong>合约通常分为协议和合同两种形式。其中合同是可以被法院强制执行的协议。为了方便沟通，我们统一称为合约，统一称呼具有相同约束效力的业务凭证</strong>。</p>
+<p>基于合约进行分析能够快速了解业务上下文，<strong>用合约来描述业务的做法天然存在，并且是职业经理人、法务、会计等专业人士一直以来快速理解和审视业务的合理性的依据</strong>。<br>合约可以被视为一种能够反映业务流程的有效业务模式（规律性）</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_30.png" class="">
+
+<p>合约上下文有不同阶段的业务凭证所体现，通常一个完整的业务由5个关键阶段，以及每个阶段的业务凭证。其中履约有履约请求和履约确认两种凭证所组成，履约请求代表的是一个“时段”，履约确认代表的是一个时刻。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_31.png" class="">
+
+<p>合约上下文能够充分的分离业务和领域：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_32.png" class="">
+
+<p>因为合同签订和业务履约过程天然是“异步”的，所以为云原生的弹性边界的识别提供了关键依据。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_33.png" class="">
+
+<p><strong>由于业务凭证是履约过程的结果(事件)，所以履约建模法的本质其实是一种以合约视角为核心的事件建模法</strong>。</p>
+<p><strong>归纳推理法：是由经验、经历、对事实的观察，对个别案例或具体的特殊示例归类，概括得出一个一般性的结论，或者暂时认为是普遍适用的结论</strong>。</p>
+<p><strong>演绎推理法：是基于“前提”的已知事实(通常是归纳得出)，“必然地”得出推理结果，如果前提为真，则结论必然为真</strong>。</p>
+<ul>
+<li>归纳法：超出归纳范围，结论则不成立，无法用逻辑来证伪</li>
+<li>演绎法：大前提不成立，结论则不成立，可以用逻辑来证伪</li>
+</ul>
+<p><strong>归纳是演绎的前提和出发点，演绎又是归纳的补充和验证，两者辩证统一</strong>。</p>
+<h5 id="履约建模法有三大图例分类："><a href="#履约建模法有三大图例分类：" class="headerlink" title="履约建模法有三大图例分类："></a>履约建模法有三大图例分类：</h5><ul>
+<li>凭证(Evidence)：粉色</li>
+<li>参与元素(Participant)：绿色</li>
+<li>角色(Role)：黄色<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_34.png" class=""></li>
+</ul>
+<h5 id="凭证"><a href="#凭证" class="headerlink" title="凭证"></a>凭证</h5><p>以一个公对公的商品采购流程为例：<br>该业务由采购方发起询价，由商品提供方给予报价，当双方认可后签订商品采购协议。其中部分业务凭证追溯关系如下：<br>商品询价单、商品报价单、商品采购协议&#x2F;合同、支付申请单、支付确认单、支付凭证、发票开具申请单、发票开具确认单、发票、发货申请单、发货确认单、发货单。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_35.png" class="">
+<p>由于业务凭证往往都是“单据”，可以省略单这个字，将单据的概念融入颜色中，用粉色来表示凭证：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_36.png" class="">
+<p>凭证具有不同的上下文。其中商品询价和报价的业务凭证属于合约前的上下文，商品采购协议及其履约相关的业务凭证属于合约上下文。可以用实线表示上下文内的业务凭证追溯关联关系</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_37.png" class="">
+
+<p>凭证的标准建模图，当使用标准化图例补充凭证的类型、数量关系和关键属性之后，可以清晰的看出模型元素之间的关系。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_38.png" class="">
+
+<p>不同的凭证代表了时间关系上的时段和时刻</p>
+
+
+<p>时段和时刻在合约条款上的体现，当甲乙双方签订商品采购协议后，甲方需在7个工作日内完成商品采购款支付，并提供支付凭证。</p>
+
+
+<p>凭证标准建模图例，履约建模法使用六种标准图例代表不同类型的凭证：</p>
+
+<p>合约前上下文的常见场景：一次RFP对应一次Proposal, 一次方案索取可能只会对应一次提案，并且在业务上只需要对方案索取和提案的唯一凭证进行留存和追溯。</p>
+
+<p>合约前上下文的常见场景：一次RFP对应多次Proposal, 一次方案索取可能会对应多次提案，并且业务上需要对多次提案的凭证进行留存和追溯。</p>
+
+<p>合约前上下文的常见场景：没有RFP，可能会没有方案索取的过程，或业务上无需对方案索取的凭证留存和追溯。</p>
+
+<p>合约前上下文的常见场景：没有RFP和Proposal，可能会没有方案索取和提案的过程，或业务上无需对方案索取和提案的凭证进行留存和追溯。</p>
+
+<p>合约前上下文的常见场景：一个合约可能存在多种合约前的上下文。合约的签订，可能会通过多种不同的方式的合约前的上下文所达成。</p>
+
+
+<p>合约上下文的常见场景，一个履约请求时间段内由单次履约确认，并且业务上只需要对某个唯一的履约确认凭证进行记录和追溯</p>
+
+<p>合约上下文的常见场景: 多个履约请求关联共同的履约确认来进行履约，在这种情况下用于履约确认的凭证的权责关系是等价的</p>
+
+
+<p><strong>注意：在建模时，有履约请求(时段)，就至少有一次履约确认(时刻)。在追溯时，如果履约请求(时段)缺少了对应的履约确认(时刻)凭证，则可被认为是除了履约确认超时外的另一种违约形式。</strong></p>
+
+
+<h5 id="参与元素"><a href="#参与元素" class="headerlink" title="参与元素"></a>参与元素</h5><p>当事人(party)。履约过程中所涉及到的具体人员(或其在系统内对应存在)，对凭证所承载的权责直接负责(也可以理解为凭证需要谁签字盖章)。可由绿色的当事人来表示。</p>
+
+
+<p>标的物(Thing)。在履约的过程中，会涉及到凭证相关的非凭证物品(往往是交易或履约的具体对象)，此时我们可以使用同为绿色的标的物来表达。</p>
+
+
+<p>参与元素的标准建模图</p>
+
+
+<p>参与元素的标准建模图例：履约建模法使用两种标准图例代表不同类型的参与元素：</p>
+
+
+<p><strong>参与元素的主要作用是丰富上下文相关的知识，所以在实际过程中，需要结合实际需要按需使用，不必追求完全穷尽</strong></p>
+<h5 id="角色"><a href="#角色" class="headerlink" title="角色"></a>角色</h5><p>当事人角色化，从合约的视角来看，合约的当事双方都是法人，而具体的当事人实际上是在业务流程中代表法人进行履约活动，所以我们可以使用黄色的角色来抽象合约双方法人的概念。</p>
+
+
+<p>抽象的目的是为了提供变化点，将当事人角色化之后，具体的当事人就可以扮演法人的角色，这样就为系统实现提供了基于角色的变化点。</p>
+
+
+<p>领域逻辑角色化与第三方系统角色化，凭证还会与一些领域逻辑或第三方系统发生关联关系，此时我们可以用抽象来代表这两种特殊的概念。已体现业务的领域中立性，换句话说领域逻辑和第三方系统也可成为业务逻辑的变化点。</p>
+
+
+<p>其他合约上下文角色化。对于当前合约上下文相关联的其他合约上下文，<strong>在我们不关心其业务内部逻辑时，也可以使用角色化来代替</strong>。</p>
+
+
+<p>凭证角色化。已支付为例，有时候我们可能出现多种支付方式，而支付凭证往往是另外一个合约上下文的凭证，所以可以<strong>使用凭证角色化来表达另一个合约上下文中的凭证，对当前合约上文所依赖凭证的扮演关系。</strong></p>
+<p>角色的标准建模图</p>
+
+
+<p><strong>注意：由于时段类凭证不能代表业务上确定的结果，所以只有时刻类凭证能够成为凭证角色化的扮演者。</strong><br>角色的标准建模图例</p>
+
+
+<p><strong>角色的主要作用是通过抽象提供业务变化点，所以在实际过程中需要结合对变化点进行抽象，不必追求完全抽象。</strong></p>
+<h5 id="上下文-Conetxt"><a href="#上下文-Conetxt" class="headerlink" title="上下文(Conetxt)"></a>上下文(Conetxt)</h5><p>拥有角色扮演关系的角色元素提供了最为明显的上下文边界提示。</p>
+
+<p>按照被扮演的角色可以清晰的分离不同的上下文，而这些角色被其分隔开两个上下文共用。</p>
+
+<p>未标明扮演关系的参与元素、领域逻辑、第三方系统和其它合约上下文均处于独立的上下文中。</p>
+
+<p>参与元素、领域逻辑、业务逻辑，通常是专门的领域问题，业务逻辑和领域逻辑的边界清晰分离。</p>
+
+
+<p>常见的跨合约上下文关联方式：通过具体凭证直接关联。在无需通过抽象提供变化点的情况下，可能与另一个合约上下文中的时刻类凭证进行跨上下文的直接关联。</p>
+
+
+<p>常见的跨合约上下文关联方式：通过凭证角色化扮演关系直接关联。在通过抽象提供变化点的情况下，通过凭证角色化元素和时刻类凭证扮演关系进行跨上下文的直接关联</p>
+
+
+<p>常见的跨合约上下文关联方式：通过参与元素直接关联，两个合约上下文，可能通过对于某个共同使用的参与元素及所属的领域上下文产生间接关联。</p>
+
+
+<p><strong>注意：在实际的法律追责中，三方合约被视作双方合约的组合。所以在建模时，需要根据当事双方的不同将三方合约建模成多个合约上下文。</strong></p>
+<p>履约建模法简化建模图例</p>
+
+
+
+
+<h5 id="案例演示"><a href="#案例演示" class="headerlink" title="案例演示"></a>案例演示</h5><p>腾讯会员VIP视频服务：从合约分析结果可以了解到腾讯视频VIP会员服务的核心业务逻辑。</p>
+
+<p>腾讯视频VIP会员服务协议的关键合约内容</p>
+
+<p>其它合约的关键内容</p>
+
+<p>会员账号管理及使用</p>
+
+<p>会员服务特别约定的关键内容</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_74.png" class="">
+<p>会员个人信息收集、使用及保护的关键内容</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_75.png" class="">
+<p>自动续费服务规则(补充协议)的关键内容</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_76.png" class="">
+<p>与业务相关的部分(复杂度来自于业务流程本身，关注的是如何盈利和成本结构)</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_77.png" class="">
+<p>与领域相关的部分(复杂度来自于问题本身，关注的是如何解决问题)</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_78.png" class="">
+<p>与当前系统设计相关度不高的部分(通常是非系统承载的法务事项)</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_79.png" class="">
+
+<p><strong>通过分析合约，能够快速了解合约所承载的业务全景</strong></p>
+<p>按合约权责相关性可初步划分出上下文</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_80.png" class="">
+
+<p>腾讯视频VIP会员服务协议上下文分析：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_81.png" class="">
+
+<p>腾讯视频VIP会员服务协议上下文业务建模</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_82.png" class="">
+
+<p>自动续费服务规则(补充协议)上下文分析</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_83.png" class="">
+<p>自动续费服务规则(补充协议)上下文业务建模</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_84.png" class="">
+<p><strong>所有的业务凭证，都是可以借助纸质单据来演练业务追溯过程的</strong></p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_85.png" class="">
+
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_86.png" class="">
+
+
+<h5 id="业务宏流程与核心业务模式"><a href="#业务宏流程与核心业务模式" class="headerlink" title="业务宏流程与核心业务模式"></a>业务宏流程与核心业务模式</h5><p>其它的腾讯会员服务与腾讯视频VIP会员服务有何业务上的区别？</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_87.png" class="">
+<p>腾讯影视超级VIP会员服务的差异</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_88.png" class="">
+<p>腾讯体育系列VIP会员服务差异</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_89.png" class="">
+
+<p>腾讯视频付费会员服务的业务宏流程</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_90.png" class="">
+
+<h5 id="业务宏流程与核心业务模式-1"><a href="#业务宏流程与核心业务模式-1" class="headerlink" title="业务宏流程与核心业务模式"></a>业务宏流程与核心业务模式</h5><p>识别核心业务模式(包括业务与领域)，便于未来拓展腾讯视频付费会员服务额新业务能力。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_91.png" class="">
+
+<p><strong>由于履约建模法是一种以业务凭证追溯为核心的业务建模方法，而业务凭证是业务活动的结果，具有含义明确和不可变更的特性，所以履约建模法的本质是一种事件建模的方法</strong>。</p>
+<ul>
+<li>基于合约内容，理解业务</li>
+<li>依据合约内容，提取权责和履约关系</li>
+<li>按照合约上下文结构进行凭证分析和追溯</li>
+<li>补充凭证相关的关键参与元素，丰富上下文</li>
+<li>使用角色进行合理抽象，确定业务变化点</li>
+<li>识别并划分业务和领域上下文</li>
+<li>分析并提取业务宏流程，识别出核心业务模式</li>
+</ul>
+<p>在缺少合约作为参考或输入的情况下，如何实施履约建模？</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_92.png" class="">
+
+<p>在软件工程最佳实践的基础上，我们所期望的好的设计原则：</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_93.png" class="">
+
+<h5 id="面向业务设计-Business-Oriented-Design-简称BOD"><a href="#面向业务设计-Business-Oriented-Design-简称BOD" class="headerlink" title="面向业务设计(Business Oriented Design 简称BOD)"></a>面向业务设计(Business Oriented Design 简称BOD)</h5><p><strong>是一种以业务为核心，通过促进业务架构、系统架构、组织架构三者的同构性，从而解决业务系统设计和开发复杂性问题的软件系统架构设计思想</strong>。</p>
+<h5 id="履约建模法-FulFillment-Modeling-简称：FM"><a href="#履约建模法-FulFillment-Modeling-简称：FM" class="headerlink" title="履约建模法(FulFillment Modeling 简称：FM)"></a>履约建模法(FulFillment Modeling 简称：FM)</h5><p>是一种业务履约关系为视角，通过提取业务模式并引入变化点构建可复用业务模型的云原生时代的业务建模方法。</p>
+<h5 id="分层架构-Layered-Architecture"><a href="#分层架构-Layered-Architecture" class="headerlink" title="分层架构(Layered Architecture)"></a>分层架构(Layered Architecture)</h5><p>是依据隔离变化原则，将软件组件(广义)依据纵向结构进行分层组织的架构方式，其中上层能够依赖或调用下层，下层对上层一无所知，每一层都对自己的上层隐藏下层的细节。</p>
+<h4 id="云原生"><a href="#云原生" class="headerlink" title="云原生"></a>云原生</h4><h5 id="从业务建模到微服务架构设计"><a href="#从业务建模到微服务架构设计" class="headerlink" title="从业务建模到微服务架构设计"></a>从业务建模到微服务架构设计</h5><ul>
+<li>代码化(Infrastructure as code)<ul>
+<li>镜像(Image)：将基础设施和应用以代码化的形式进行定义并构建出的静态制品，可被存储、传输和复制。</li>
+<li>实例(Instance)：由镜像通过实例化所产生的运行时概念，工作在单一进程中。</li>
+<li>复制(Replication)：通过镜像并实例化的方式复制机器(应用+基础设施)，已实现弹性和水平伸缩。</li>
+</ul>
+</li>
+<li>不可变(Immutable)：镜像和实例一经创建不可修改</li>
+<li>可抛弃(Disposable)：实例只能创建和销毁，也仅能通过这两种方式实现替换(新的创建、老的销毁)</li>
+</ul>
+<h5 id="微服务与云原生"><a href="#微服务与云原生" class="headerlink" title="微服务与云原生"></a>微服务与云原生</h5><img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_94.png" class="">
+
+<h5 id="弹性边界的含义"><a href="#弹性边界的含义" class="headerlink" title="弹性边界的含义"></a>弹性边界的含义</h5><ul>
+<li>具有不同弹性扩缩容需求的架构元素之间的边界，即弹性边界。</li>
+<li>微服务架构风格可以被看作是一种以业务上下文为弹性边界的云原生架构模式。</li>
+</ul>
+<h5 id="微服务拆分的依据？"><a href="#微服务拆分的依据？" class="headerlink" title="微服务拆分的依据？"></a>微服务拆分的依据？</h5><p>以弹性边界为主，业务上下文为辅。</p>
+<p><strong>注意：云平台更擅长处理依赖于吞吐量的弹性依赖，而不擅长处理对依赖于响应时间的弹性依赖。</strong></p>
+<h5 id="业务天然的异步性，是弹性边界的天然设别点。"><a href="#业务天然的异步性，是弹性边界的天然设别点。" class="headerlink" title="业务天然的异步性，是弹性边界的天然设别点。"></a>业务天然的异步性，是弹性边界的天然设别点。</h5><h5 id="依据业务建模的业务与领域划分，可以指导相应的API能力设计。"><a href="#依据业务建模的业务与领域划分，可以指导相应的API能力设计。" class="headerlink" title="依据业务建模的业务与领域划分，可以指导相应的API能力设计。"></a>依据业务建模的业务与领域划分，可以指导相应的API能力设计。</h5><img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_95.png" class="">
+
+<p>从服用方式来说，业务逻辑的复用往往通过复制运营团队来实现，而领域逻辑的复用往往通过包装并被业务集成来实现。</p>
+<h5 id="从复用模式看业务中台与组织划分"><a href="#从复用模式看业务中台与组织划分" class="headerlink" title="从复用模式看业务中台与组织划分"></a>从复用模式看业务中台与组织划分</h5><p>按照变化频率实施分层</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_96.png" class="">
+<p>从云原生的视角来看，不同的业务可以看做不同的云分区</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_97.png" class="">
+<p>业务核心模式是业务中台的核心</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_91.png" class="">
+<p>不同差异化业务和领域可以运行在不同的云分区</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_98.png" class="">
+<p>用云原生的视角来看实现方式</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_99.png" class="">
+
+<p><strong>业务中台即企业核心业务模式的复用平台</strong></p>
+<h4 id="组织架构"><a href="#组织架构" class="headerlink" title="组织架构"></a>组织架构</h4><p>团队拓扑学与面向业务设计的惊人契合</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_100.png" class="">
+
+<h4 id="基于合约视角的SaaS化策略"><a href="#基于合约视角的SaaS化策略" class="headerlink" title="基于合约视角的SaaS化策略"></a>基于合约视角的SaaS化策略</h4><p>SaaS化的两种功能策略</p>
+<ul>
+<li>按功能实施</li>
+<li>按业务运营策略实施<ul>
+<li>一种特殊的合约视角：SLA：服务级别协议</li>
+</ul>
+</li>
+</ul>
+<p>按功能实施的SaaS服务</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_101.png" class="">
+<p>案业务运营策略实施SaaS化策略:灵感来源于篮球投篮的魔球理论：三分价值高，上篮把握性大；中距离很尴尬，所以要尽可能将出手转化为上篮或三分球，避免中距离</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_102.png" class="">
+
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_103.png" class="">
+
+<h5 id="什么时候切入面向业务设计？"><a href="#什么时候切入面向业务设计？" class="headerlink" title="什么时候切入面向业务设计？"></a>什么时候切入面向业务设计？</h5><p>服务蓝图(Service Blueprint)：是一个实用流程图，它从客户角度展示了服务交付过程。服务蓝图已经是管理服务运营、服务设计和服务定位最广泛使用的工具之一。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_104.png" class="">
+
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_107.png" class="">
+
+<p>在服务蓝图上拥有大量能够支撑下一步实施业务建模的直接参考信息。</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_105.png" class="">
+<p>另外：在应用DDD的时候也可以基于服务蓝图的变种基于事件风暴的领域建模</p>
+<img data-src="/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/example_106.png" class="">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>umbrella
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/" title="基于业务驱动设计方法">https://fresh88888888.github.io/2023/08/30/Design-Patterns/业务驱动设计/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/business-driven-design/" rel="tag"># business driven design</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/08/30/Design-Patterns/multi-runtime-architecture/" rel="prev" title="多运行时微服务架构">
+                  <i class="fa fa-chevron-left"></i> 多运行时微服务架构
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/09/04/Cloud-Native/ebpf/" rel="next" title="eBPF 介绍">
+                  eBPF 介绍 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">辽ICP备15012817号-2 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2022 – 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">umbrella</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">572k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">31:45</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/fresh88888888" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.0.8/medium-zoom.min.js" integrity="sha256-7PhEpEWEW0XXQ0k6kQrPKwuoIomz8R8IYyuU1Qew4P8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/comments.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/motion.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/next-boot.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/pjax.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/search/local-search.min.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.12/pdfobject.min.js","integrity":"sha256-g2xji1rlE3KsGVClvuxTbcR0Kn2+wtQADSff2Tbb4zA="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/tags/pdf.min.js"></script>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/fancybox.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/pace.min.js"></script>
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2023/08/30/Design-Patterns/%E4%B8%9A%E5%8A%A1%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1/"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
+
+</body>
+</html>
