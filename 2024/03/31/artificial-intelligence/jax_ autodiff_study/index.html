@@ -33,11 +33,15 @@
 <meta property="og:site_name" content="UMBRELLA">
 <meta property="og:description" content="今天，我们将研究另一个重要概念自动微分。我们已经在TensorFlow中看到了自动微分。自动微分的想法在所有框架中都非常相似，但IMO JAX比所有框架都做得更好。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/31/artificial-intelligence/jax_%20autodiff_study/ja_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/31/artificial-intelligence/jax_%20autodiff_study/ja_2.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/31/artificial-intelligence/jax_%20autodiff_study/ja_3.png">
 <meta property="article:published_time" content="2024-03-31T08:20:32.000Z">
 <meta property="article:modified_time" content="2024-03-31T08:20:32.000Z">
 <meta property="article:author" content="umbrella">
 <meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2024/03/31/artificial-intelligence/jax_%20autodiff_study/ja_1.png">
 
 
 <link rel="canonical" href="https://fresh88888888.github.io/2024/03/31/artificial-intelligence/jax_%20autodiff_study/">
@@ -299,14 +303,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.9k</span>
+      <span>2.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>6 分钟</span>
+      <span>8 分钟</span>
     </span>
 </div>
 
@@ -360,7 +364,22 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="number">0.5</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;First order derivative: &quot;</span>, grad(activate)(x))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Second order derivative: &quot;</span>, grad(grad(activate))(x))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Third order derivative: &quot;</span>, grad(grad(grad(activate)))(x))</span><br><span class="line"></span><br><span class="line"><span class="comment"># First order derivative:  0.7864477</span></span><br><span class="line"><span class="comment"># Second order derivative:  -0.726862</span></span><br><span class="line"><span class="comment"># Third order derivative:  -0.5652091</span></span><br></pre></td></tr></table></figure>
 <h4 id="梯度和数值稳定性"><a href="#梯度和数值稳定性" class="headerlink" title="梯度和数值稳定性"></a>梯度和数值稳定性</h4><p><strong>下溢</strong>和<strong>溢出</strong>是我们多次遇到的常见问题，尤其是在计算梯度时。我们将举一个例子（这个例子直接来自JAX文档，这是一个非常好的例子）来说明我们如何遇到数值不稳定以及<code>JAX</code>如何尝试帮助您克服它。当您计算某个值的梯度时会发生什么？</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># An example of a mathematical operation in your workflow</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">log1pexp</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Implements log(1 + exp(x))&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> jnp.log(<span class="number">1.</span> + jnp.exp(x))</span><br><span class="line"></span><br><span class="line"><span class="comment"># This works fine</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Gradients for a small value of x: &quot;</span>, grad(log1pexp)(<span class="number">5.0</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># But what about for very large values of x for which the</span></span><br><span class="line"><span class="comment"># exponent operation will explode</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Gradients for a large value of x: &quot;</span>, grad(log1pexp)(<span class="number">500.0</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Gradients for a small value of x:  0.9933072</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Gradients for a large value of x:  nan</span></span><br></pre></td></tr></table></figure>
-<p>刚刚发生了什么？让我们对其进行分解，以了解预期的输出以及返回<code>nan</code>的<code>JAX</code>幕后<code>gpoing</code>的内容。我们知道上述函数的导数可以写成这样：<br>$$\begin{equation}\label{eq1}<br>e&#x3D;mc^2<br>\end{equation}$$</p>
+<p>刚刚发生了什么？让我们对其进行分解，以了解预期的输出以及返回<code>nan</code>的<code>JAX</code>幕后<code>gpoing</code>的内容。我们知道上述函数的导数可以写成这样：</p>
+<img data-src="/2024/03/31/artificial-intelligence/jax_%20autodiff_study/ja_1.png" class="">
+
+<p>对于非常大的值，您会期望导数的值为<code>1</code>，但是当我们将<code>grad</code>与我们的函数实现结合起来时，它返回<code>nan</code>。为了获得更多信息，我们可以通过查看转换的<code>jaxpr</code>来分解梯度计算。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">make_jaxpr(grad(log1pexp))(<span class="number">500.0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># &#123; lambda  ; a.</span></span><br><span class="line"><span class="comment">#   let b = exp a</span></span><br><span class="line"><span class="comment">#       c = add b 1.0</span></span><br><span class="line"><span class="comment">#       _ = log c</span></span><br><span class="line"><span class="comment">#       d = div 1.0 c</span></span><br><span class="line"><span class="comment">#       e = mul d b</span></span><br><span class="line"><span class="comment">#   in (e,) &#125;</span></span><br></pre></td></tr></table></figure>
+<p>如果您仔细观察，您会发现计算等效于：</p>
+<img data-src="/2024/03/31/artificial-intelligence/jax_%20autodiff_study/ja_2.png" class="">
+
+<p>对于较大的值，右侧的项将四舍五入为<code>inf</code>，并且梯度计算将返回<code>nan</code>，如我们在上面看到的。在这种情况下，我们知道如何正确计算梯度，但<code>JAX</code>不知道。它正在研究标准自动差异规则。那么，我们如何告诉<code>JAX</code>，我们的函数应该按照我们想要的方式进行区分呢？我们可以使用<code>JAX</code>中的<code>custom_vjp</code>或<code>custom_vjp</code>函数来实现这一点。让我们看看它的实际效果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> jax <span class="keyword">import</span> custom_jvp</span><br><span class="line"></span><br><span class="line"><span class="meta">@custom_jvp</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">log1pexp</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Implements log(1 + exp(x))&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> jnp.log(<span class="number">1.</span> + jnp.exp(x))</span><br><span class="line"></span><br><span class="line"><span class="meta">@log1pexp.defjvp</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">log1pexp_jvp</span>(<span class="params">primals, tangents</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Tells JAX to differentiate the function in the way we want.&quot;&quot;&quot;</span></span><br><span class="line">    x, = primals</span><br><span class="line">    x_dot, = tangents</span><br><span class="line">    ans = log1pexp(x)</span><br><span class="line">    <span class="comment"># This is where we define the correct way to compute gradients</span></span><br><span class="line">    ans_dot = (<span class="number">1</span> - <span class="number">1</span>/(<span class="number">1</span> + jnp.exp(x))) * x_dot</span><br><span class="line">    <span class="keyword">return</span> ans, ans_dot</span><br><span class="line"></span><br><span class="line"><span class="comment"># Let&#x27;s now compute the gradients for large values</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Gradients for a small value of x: &quot;</span>, grad(log1pexp)(<span class="number">500.0</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># What about the Jaxpr?</span></span><br><span class="line">make_jaxpr(grad(log1pexp))(<span class="number">500.0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Gradients for a small value of x:  1.0</span></span><br><span class="line"><span class="comment"># &#123; lambda  ; a.</span></span><br><span class="line"><span class="comment">#   let _ = custom_jvp_call_jaxpr[ fun_jaxpr=&#123; lambda  ; a.</span></span><br><span class="line"><span class="comment">#                                              let b = exp a</span></span><br><span class="line"><span class="comment">#                                                  c = add b 1.0</span></span><br><span class="line"><span class="comment">#                                                  d = log c</span></span><br><span class="line"><span class="comment">#                                              in (d,) &#125;</span></span><br><span class="line"><span class="comment">#                                  jvp_jaxpr_thunk=&lt;function _memoize.&lt;locals&gt;.memoized at 0x7f79cc3f2dd0&gt;</span></span><br><span class="line"><span class="comment">#                                  num_consts=0 ] a</span></span><br><span class="line"><span class="comment">#       b = exp a</span></span><br><span class="line"><span class="comment">#       c = add b 1.0</span></span><br><span class="line"><span class="comment">#       d = div 1.0 c</span></span><br><span class="line"><span class="comment">#       e = sub 1.0 d</span></span><br><span class="line"><span class="comment">#       f = mul e 1.0</span></span><br><span class="line"><span class="comment">#   in (f,) &#125;</span></span><br></pre></td></tr></table></figure>
+<p>让我们分解一下步骤。</p>
+<ul>
+<li>我们用计算<strong>雅可比向量积</strong>（前向模式）的<code>custom_vjp</code>装饰了<code>log1pexp(...)</code>。</li>
+<li>然后我们定义了<code>log1pexp_jvp(...)</code>来计算梯度。重点关注该函数中的这行代码：<code>ans_dot = (1 - 1/(1 + jnp.exp(x))) * x_dot</code>。简单来说，我们所做的就是以这种方式<strong>重新排列导数</strong>：<img data-src="/2024/03/31/artificial-intelligence/jax_%20autodiff_study/ja_3.png" class=""></li>
+</ul>
+<p>我们用<code>log1pexp.defjvp</code>装饰<code>logp1exp_jvp(...)</code>函数，告诉<code>JAX</code>计算<code>JVP</code>，请使用我们定义的函数并返回预期的输出。</p>
 
     </div>
 
@@ -440,7 +459,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">31:45</span>
+    <span title="站点阅读时长">31:47</span>
   </span>
 </div>
 <div class="busuanzi-count">
