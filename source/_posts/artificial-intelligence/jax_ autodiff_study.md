@@ -239,6 +239,67 @@ print("Gradients for a large value of x: ", grad(log1pexp)(500.0))
 # Gradients for a large value of x:  nan
 ```
 刚刚发生了什么？让我们对其进行分解，以了解预期的输出以及返回`nan`的`JAX`幕后`gpoing`的内容。我们知道上述函数的导数可以写成这样：
-$$\begin{equation}\label{eq1}
-e=mc^2
-\end{equation}$$
+{% asset_img ja_1.png %}
+
+对于非常大的值，您会期望导数的值为`1`，但是当我们将`grad`与我们的函数实现结合起来时，它返回`nan`。为了获得更多信息，我们可以通过查看转换的`jaxpr`来分解梯度计算。
+```python
+make_jaxpr(grad(log1pexp))(500.0)
+
+# { lambda  ; a.
+#   let b = exp a
+#       c = add b 1.0
+#       _ = log c
+#       d = div 1.0 c
+#       e = mul d b
+#   in (e,) }
+```
+如果您仔细观察，您会发现计算等效于：
+{% asset_img ja_2.png %}
+
+对于较大的值，右侧的项将四舍五入为`inf`，并且梯度计算将返回`nan`，如我们在上面看到的。在这种情况下，我们知道如何正确计算梯度，但`JAX`不知道。它正在研究标准自动差异规则。那么，我们如何告诉`JAX`，我们的函数应该按照我们想要的方式进行区分呢？我们可以使用`JAX`中的`custom_vjp`或`custom_vjp`函数来实现这一点。让我们看看它的实际效果。
+```python
+from jax import custom_jvp
+
+@custom_jvp
+def log1pexp(x):
+    """Implements log(1 + exp(x))"""
+    return jnp.log(1. + jnp.exp(x))
+
+@log1pexp.defjvp
+def log1pexp_jvp(primals, tangents):
+    """Tells JAX to differentiate the function in the way we want."""
+    x, = primals
+    x_dot, = tangents
+    ans = log1pexp(x)
+    # This is where we define the correct way to compute gradients
+    ans_dot = (1 - 1/(1 + jnp.exp(x))) * x_dot
+    return ans, ans_dot
+
+# Let's now compute the gradients for large values
+print("Gradients for a small value of x: ", grad(log1pexp)(500.0))
+
+# What about the Jaxpr?
+make_jaxpr(grad(log1pexp))(500.0)
+
+# Gradients for a small value of x:  1.0
+# { lambda  ; a.
+#   let _ = custom_jvp_call_jaxpr[ fun_jaxpr={ lambda  ; a.
+#                                              let b = exp a
+#                                                  c = add b 1.0
+#                                                  d = log c
+#                                              in (d,) }
+#                                  jvp_jaxpr_thunk=<function _memoize.<locals>.memoized at 0x7f79cc3f2dd0>
+#                                  num_consts=0 ] a
+#       b = exp a
+#       c = add b 1.0
+#       d = div 1.0 c
+#       e = sub 1.0 d
+#       f = mul e 1.0
+#   in (f,) }
+```
+让我们分解一下步骤。
+- 我们用计算**雅可比向量积**（前向模式）的`custom_vjp`装饰了`log1pexp(...)`。
+- 然后我们定义了`log1pexp_jvp(...)`来计算梯度。重点关注该函数中的这行代码：`ans_dot = (1 - 1/(1 + jnp.exp(x))) * x_dot`。简单来说，我们所做的就是以这种方式**重新排列导数**：
+{% asset_img ja_3.png %}
+
+我们用`log1pexp.defjvp`装饰`logp1exp_jvp(...)`函数，告诉`JAX`计算`JVP`，请使用我们定义的函数并返回预期的输出。
