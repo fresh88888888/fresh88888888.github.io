@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+  <meta name="google-site-verification" content="lk2gSYFP_NyLNFob-fFnt7fm-I_n1ZYws-WZll7mshg">
+  <meta name="msvalidate.01" content="6Jdc01DjYOLguhS5">
+  <meta name="baidu-site-verification" content="code-NR10G09zww">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic%7Ccursive:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+
+    <meta name="description" content="如果我了解TensorFlow&#x2F;Torch，为什么还要去学习JAX？尽管有n个理由，但我将介绍JAX中的一个概念，足以说服您尝试一下。我们将研究自动矢量化。我们接下来将讨论两种转换，即vmap和pmap。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JAX（VMAP &amp; PMAP）">
+<meta property="og:url" content="https://fresh88888888.github.io/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/index.html">
+<meta property="og:site_name" content="UMBRELLA">
+<meta property="og:description" content="如果我了解TensorFlow&#x2F;Torch，为什么还要去学习JAX？尽管有n个理由，但我将介绍JAX中的一个概念，足以说服您尝试一下。我们将研究自动矢量化。我们接下来将讨论两种转换，即vmap和pmap。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/jvp_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/jvp_2.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/jvp_3.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/jvp_4.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/jvp_5.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/jvp_6.png">
+<meta property="article:published_time" content="2024-03-30T09:20:32.000Z">
+<meta property="article:modified_time" content="2024-03-30T09:20:32.000Z">
+<meta property="article:author" content="umbrella">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/jvp_1.png">
+
+
+<link rel="canonical" href="https://fresh88888888.github.io/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/","path":"2024/03/30/artificial-intelligence/jax_vmap_pmap_study/","title":"JAX（VMAP & PMAP）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>JAX（VMAP & PMAP） | UMBRELLA</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">UMBRELLA</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">未雨绸缪，举重若轻</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-算法"><a href="/Algorithm/" rel="section"><i class="fa fa-calendar fa-fw"></i>算法</a></li><li class="menu-item menu-item-c++-&nbsp;编程"><a href="/Programming-C++/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>C++ &nbsp;编程</a></li><li class="menu-item menu-item-rust-编程"><a href="/Programming-Rust/" rel="section"><i class="fa fa-cat fa-fw"></i>Rust 编程</a></li><li class="menu-item menu-item-go-&nbsp;&nbsp;&nbsp;编程"><a href="/Programming-Go/" rel="section"><i class="fa fa-hippo fa-fw"></i>Go &nbsp;&nbsp;&nbsp;编程</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E5%90%91%E9%87%8F%E7%9A%84%E7%82%B9%E7%A7%AF"><span class="nav-number">1.1.</span> <span class="nav-text">两个向量的点积</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%80%E6%89%B9%E5%90%91%E9%87%8F%E7%9A%84%E7%82%B9%E7%A7%AF"><span class="nav-number">1.2.</span> <span class="nav-text">一批向量的点积</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VMAP%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">VMAP介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Vmap-%E5%92%8C-Jaxpr"><span class="nav-number">3.</span> <span class="nav-text">Vmap 和 Jaxpr</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA-%E6%9E%84%E5%BB%BA%E7%AE%80%E5%8D%95%E3%80%81%E5%BF%AB%E9%80%9F%E4%B8%94%E5%8F%AF%E6%89%A9%E5%B1%95%E7%9A%84%E7%AE%A1%E9%81%93"><span class="nav-number">4.</span> <span class="nav-text">数据增强-构建简单、快速且可扩展的管道</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%AC%AC1%E6%AD%A5%EF%BC%9A%E4%B8%8B%E8%BD%BD%E4%B8%80%E6%89%B9%E5%9B%BE%E5%83%8F"><span class="nav-number">4.1.</span> <span class="nav-text">第1步：下载一批图像</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%AC%AC2%E6%AD%A5%EF%BC%9A%E8%AF%BB%E5%8F%96%E5%B9%B6%E8%B0%83%E6%95%B4%E5%9B%BE%E7%89%87%E5%A4%A7%E5%B0%8F"><span class="nav-number">4.2.</span> <span class="nav-text">第2步：读取并调整图片大小</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%AC%AC3%E6%AD%A5%EF%BC%9A%E4%B8%80%E4%B8%AA%E9%9D%9E%E5%B8%B8%E7%AE%80%E5%8D%95%E7%9A%84%E5%A2%9E%E5%BC%BA%E7%AE%A1%E9%81%93"><span class="nav-number">4.3.</span> <span class="nav-text">第3步：一个非常简单的增强管道</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A44%EF%BC%9A%E4%BB%8E%E5%8D%95%E4%B8%AA%E5%9B%BE%E7%89%87%E7%94%9F%E6%88%90%E5%A4%9A%E4%B8%AA%E5%A2%9E%E5%BC%BA%E5%9B%BE%E7%89%87"><span class="nav-number">4.4.</span> <span class="nav-text">步骤4：从单个图片生成多个增强图片</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A45%EF%BC%9A%E4%BD%BF%E7%94%A8%E7%9B%B8%E5%90%8C%E7%9A%84%E5%A2%9E%E5%BC%BA%E7%AE%A1%E9%81%93%E6%9D%A5%E5%A2%9E%E5%BC%BA%E4%B8%80%E6%89%B9%E5%9B%BE%E7%89%87"><span class="nav-number">4.5.</span> <span class="nav-text">步骤5：使用相同的增强管道来增强一批图片</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%AC%AC6%E6%AD%A5%EF%BC%9A%E5%BF%AB%E9%80%9F%E4%B8%94%E5%8F%AF%E6%89%A9%E5%B1%95%E7%9A%84%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA%E7%AE%A1%E9%81%93"><span class="nav-number">4.6.</span> <span class="nav-text">第6步：快速且可扩展的数据增强管道</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8pmap%E5%9C%A8%E5%A4%9A%E4%B8%AA%E8%AE%BE%E5%A4%87%E4%B8%8A%E5%B9%B6%E8%A1%8C%E5%8C%96%E6%95%B4%E4%B8%AA%E8%BF%87%E7%A8%8B"><span class="nav-number">5.</span> <span class="nav-text">使用pmap在多个设备上并行化整个过程</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="umbrella"
+      src="/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">umbrella</p>
+  <div class="site-description" itemprop="description">没事就多看看书</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">133</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fresh88888888" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fresh88888888" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fresh888888@foxmail.com" title="E-Mail → mailto:fresh888888@foxmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.rust-lang.org/zh-CN/" title="https:&#x2F;&#x2F;www.rust-lang.org&#x2F;zh-CN&#x2F;" rel="noopener" target="_blank">Rust</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://go.dev/" title="https:&#x2F;&#x2F;go.dev&#x2F;" rel="noopener" target="_blank">Golang</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://isocpp.org/" title="https:&#x2F;&#x2F;isocpp.org&#x2F;" rel="noopener" target="_blank">C++</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.python.org/" title="https:&#x2F;&#x2F;www.python.org&#x2F;" rel="noopener" target="_blank">Python</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://doc.rust-lang.org/cargo/index.html" title="https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;cargo&#x2F;index.html" rel="noopener" target="_blank">Cargo</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://gist.github.com/rxaviers/7360908" title="https:&#x2F;&#x2F;gist.github.com&#x2F;rxaviers&#x2F;7360908" rel="noopener" target="_blank">Emoji</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="JAX（VMAP & PMAP） | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JAX（VMAP & PMAP）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-03-30 17:20:32" itemprop="dateCreated datePublished" datetime="2024-03-30T17:20:32+08:00">2024-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>如果我了解<code>TensorFlow/Torch</code>，为什么还要去学习<code>JAX</code>？尽管有<code>n</code>个理由，但我将介绍<code>JAX</code>中的一个概念，足以说服您尝试一下。我们将研究<strong>自动矢量化</strong>。我们接下来将讨论两种转换，即<code>vmap</code>和<code>pmap</code>。</p>
+<span id="more"></span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> urllib</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> jax</span><br><span class="line"><span class="keyword">import</span> jax.numpy <span class="keyword">as</span> jnp</span><br><span class="line"><span class="keyword">from</span> jax <span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">from</span> jax <span class="keyword">import</span> make_jaxpr</span><br><span class="line"><span class="keyword">from</span> jax.config <span class="keyword">import</span> config</span><br><span class="line"><span class="keyword">from</span> jax <span class="keyword">import</span> grad, vmap, pmap, jit</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="string">&#x27;TPU_NAME&#x27;</span> <span class="keyword">in</span> os.environ:</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;TPU_DRIVER_MODE&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> <span class="built_in">globals</span>():</span><br><span class="line">        url = <span class="string">&#x27;http:&#x27;</span> + os.environ[<span class="string">&#x27;TPU_NAME&#x27;</span>].split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">1</span>] + <span class="string">&#x27;:8475/requestversion/tpu_driver_nightly&#x27;</span></span><br><span class="line">        resp = requests.post(url)</span><br><span class="line">        TPU_DRIVER_MODE = <span class="number">1</span></span><br><span class="line">        config.FLAGS.jax_xla_backend = <span class="string">&quot;tpu_driver&quot;</span></span><br><span class="line">        config.FLAGS.jax_backend_target = os.environ[<span class="string">&#x27;TPU_NAME&#x27;</span>]</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Registered TPU:&#x27;</span>, config.FLAGS.jax_backend_target)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;TPU devices found:&quot;</span>)</span><br><span class="line">        <span class="keyword">for</span> device <span class="keyword">in</span> jax.devices():</span><br><span class="line">            <span class="built_in">print</span>(device)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;No TPUs found!&quot;.&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Registered TPU: grpc://10.0.0.2:8470</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># TPU devices found:</span></span><br><span class="line"><span class="comment"># TPU_0(host=0,(0,0,0,0))</span></span><br><span class="line"><span class="comment"># TPU_1(host=0,(0,0,0,1))</span></span><br><span class="line"><span class="comment"># TPU_2(host=0,(1,0,0,0))</span></span><br><span class="line"><span class="comment"># TPU_3(host=0,(1,0,0,1))</span></span><br><span class="line"><span class="comment"># TPU_4(host=0,(0,1,0,0))</span></span><br><span class="line"><span class="comment"># TPU_5(host=0,(0,1,0,1))</span></span><br><span class="line"><span class="comment"># TPU_6(host=0,(1,1,0,0))</span></span><br><span class="line"><span class="comment"># TPU_7(host=0,(1,1,0,1))</span></span><br></pre></td></tr></table></figure>
+<h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>简单地说，<strong>自动向量化</strong>是一种将对单个示例进行操作的过程转换为可以对向量进行操作的方法。让我们举一个非常基本的例子来理解这一点。假设您有两个数组：</p>
+<ul>
+<li>Array 1 &#x3D;&gt; 1 2 3 4 5</li>
+<li>Array 2 &#x3D;&gt; 10 20 30 40 50</li>
+</ul>
+<p>您想要对这两个数组执行元素加法运算。一种方法是使用循环。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">result = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">    result.append(array_1[i] + array_2[i])</span><br></pre></td></tr></table></figure>
+<p>虽然这是对的，但这只是一次执行一项操作。所有元素的添加过程都是相同的。因此，这是一种一次性执行所有元素加法。例如，您在numpy中执行此操作的方式：<code>res = array_1 + array_2</code>，在开始<code>vmap</code>转换之前，我们将通过一些基本示例来演示<code>vmap</code>的需求和优点。第一个示例重点关注两个向量的简单点积。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">dot_product</span>(<span class="params">array1, array2</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Performs dot product on two jax arrays.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> jnp.dot(array1, array2)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">print_results</span>(<span class="params">array1, array2, res, title=<span class="string">&quot;&quot;</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Utility to print arrays and results&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> title:</span><br><span class="line">        <span class="built_in">print</span>(title)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;First array =&gt; Shape: &quot;</span>, array1.shape)</span><br><span class="line">    <span class="built_in">print</span>(array1)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Second array =&gt; Shape: &quot;</span>, array2.shape)</span><br><span class="line">    <span class="built_in">print</span>(array2)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Results =&gt; Shape: &quot;</span>, res.shape)</span><br><span class="line">    <span class="built_in">print</span>(res)</span><br></pre></td></tr></table></figure>
+<h5 id="两个向量的点积"><a href="#两个向量的点积" class="headerlink" title="两个向量的点积"></a>两个向量的点积</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">array1 =  jnp.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])</span><br><span class="line">array2 =  jnp.array([<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>])</span><br><span class="line">res = dot_product(array1, array2)</span><br><span class="line"></span><br><span class="line">print_results(array1, array2, res, title=<span class="string">&quot;Dot product of two vectors&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Dot product of two vectors</span><br><span class="line"></span><br><span class="line">First array =&gt; Shape:  (4,)</span><br><span class="line">[1 2 3 4]</span><br><span class="line"></span><br><span class="line">Second array =&gt; Shape:  (4,)</span><br><span class="line">[5 6 7 8]</span><br><span class="line"></span><br><span class="line">Results =&gt; Shape:  ()</span><br><span class="line">70</span><br></pre></td></tr></table></figure>
+<h5 id="一批向量的点积"><a href="#一批向量的点积" class="headerlink" title="一批向量的点积"></a>一批向量的点积</h5><p>如果您有一批向量，您将如何对两个数组中的每对向量执行点积？</p>
+<ul>
+<li>使用循环：循环批量大小并对每对执行点积，存储结果并返回。</li>
+<li>使用像<code>einsum</code>这样的矢量化运算。</li>
+<li>使用两个或多个向量化运算的组合，例如元素乘积，后跟元素求和。这里的<code>element</code>指的是<code>batch</code>中的一个向量。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># What if we want to do this for a batch of vectors?</span></span><br><span class="line">array1 = jnp.stack([jnp.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>)])</span><br><span class="line">array2 = jnp.stack([jnp.array([<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>]) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>)])</span><br><span class="line"></span><br><span class="line"><span class="comment"># First way to do batch vector product using loops</span></span><br><span class="line">res1 = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">    res1.append(dot_product(array1[i], array2[i]))</span><br><span class="line">res1 = jnp.stack(res1)</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line"><span class="comment"># In numpy, we can use `einsum` for the same</span></span><br><span class="line">res2 = np.einsum(<span class="string">&#x27;ij,ij-&gt; i&#x27;</span>, array1, array2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># We can even simplify einsum and chain two oprations to</span></span><br><span class="line"><span class="comment"># achieve the same</span></span><br><span class="line">res3 = np.<span class="built_in">sum</span>(array1*array2, axis=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Let&#x27;s check the results</span></span><br><span class="line">print_results(array1,</span><br><span class="line">              array2,</span><br><span class="line">              res1,</span><br><span class="line">              title=<span class="string">&quot;1. Dot product on a batch of vectors using loop&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">70</span>, <span class="string">&quot;\n&quot;</span>)</span><br><span class="line">print_results(array1,</span><br><span class="line">              array2,</span><br><span class="line">              res2,</span><br><span class="line">              title=<span class="string">&quot;2. Dot product on a batch of vectors in numpy using einsum&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">70</span>, <span class="string">&quot;\n&quot;</span>)</span><br><span class="line">print_results(array1,</span><br><span class="line">              array2,</span><br><span class="line">              res3,</span><br><span class="line">              title=<span class="string">&quot;3. Dot product on a batch of vectors using elementwise multiplication and sum&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="VMAP介绍"><a href="#VMAP介绍" class="headerlink" title="VMAP介绍"></a>VMAP介绍</h4><p><code>vmap</code>只是像<code>jit</code>一样的另一种转换。它将函数作为输入以及输入和输出的维度，函数将在其中映射以创建向量化函数。vmap的语法是这样的：<code>vmap(function, in_axes, out_axes, ...)</code>这里的<code>function</code>是您要向量化的函数。<code>in_axes</code>是表示原始函数输入中的批次维度的轴索引。同样，<code>out_axes</code>是表示输出中批次维度的轴索引。提示：仔细阅读位置参数和关键字参数及其对<code>in_axes</code>和<code>out_axes</code>的影响。当您使用<code>vmap</code>转换函数时，它返回的函数是原始函数的矢量化版本。让我们看看它的实际效果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Transform the `dot_product` function defined above</span></span><br><span class="line"><span class="comment"># using the `vmap` transformation</span></span><br><span class="line">batch_dot_product = vmap(dot_product, in_axes=(<span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># What does the transformation return?</span></span><br><span class="line">batch_dot_product</span><br><span class="line"><span class="comment"># &lt;function __main__.dot_product(array1, array2)&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>batch_dot_product</code>只是另一个函数，是原始<code>dot_product</code>函数的转换版本。这就是获得以矢量化方式运行的版本所需要做的全部工作。现在让我们使用转换后的版本<code>batch_dot_product</code>来对一批向量进行点积。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Using vmap transformed function</span></span><br><span class="line">res4 = batch_dot_product(array1, array2)</span><br><span class="line">print_results(array1, array2, res4, title=<span class="string">&quot;Dot product of a batch of vectors using vmap&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Dot product of a batch of vectors using vmap</span><br><span class="line">First array =&gt; Shape:  (5, 4)</span><br><span class="line">[[1 2 3 4]</span><br><span class="line"> [1 2 3 4]</span><br><span class="line"> [1 2 3 4]</span><br><span class="line"> [1 2 3 4]</span><br><span class="line"> [1 2 3 4]]</span><br><span class="line">Second array =&gt; Shape:  (5, 4)</span><br><span class="line">[[5 6 7 8]</span><br><span class="line"> [5 6 7 8]</span><br><span class="line"> [5 6 7 8]</span><br><span class="line"> [5 6 7 8]</span><br><span class="line"> [5 6 7 8]]</span><br><span class="line">Results =&gt; Shape:  (5,)</span><br><span class="line">[70 70 70 70 70]</span><br></pre></td></tr></table></figure>
+<div class="note warning"><p><strong>注意</strong>：这两个参数不一定需要具有批量维度。例如，我们可以采用一个向量并与一批向量执行点积。对于没有批量维度的输入，您可以在<code>in_axes(..)</code>参数中传递<code>None</code>。举个例子就清楚了。</p>
+</div>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># A vector</span></span><br><span class="line">array1 = jnp.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># We have a batch of vectors as well already `array2` which looks like this</span></span><br><span class="line"><span class="comment"># [[5 6 7 8]</span></span><br><span class="line"><span class="comment"># [5 6 7 8]</span></span><br><span class="line"><span class="comment"># [5 6 7 8]</span></span><br><span class="line"><span class="comment"># [5 6 7 8]</span></span><br><span class="line"><span class="comment"># [5 6 7 8]]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># We will now perform the dot product of array1 (a single vetor) with a batch</span></span><br><span class="line"><span class="comment"># of vectors (array2 in this case). We will pass `None` in the `in_axes(..)` argument</span></span><br><span class="line"><span class="comment"># to say that the first input doesn&#x27;t have a batch dimension</span></span><br><span class="line"></span><br><span class="line">res5 = vmap(dot_product, in_axes=(<span class="literal">None</span>, <span class="number">0</span>))(array1, array2)</span><br><span class="line">print_results(array1, array2, res5, title=<span class="string">&quot;Only one of the inputs in batched&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Only one of the inputs <span class="keyword">in</span> batched</span><br><span class="line">First array =&gt; Shape:  (4,)</span><br><span class="line">[1 2 3 4]</span><br><span class="line"></span><br><span class="line">Second array =&gt; Shape:  (5, 4)</span><br><span class="line">[[5 6 7 8]</span><br><span class="line"> [5 6 7 8]</span><br><span class="line"> [5 6 7 8]</span><br><span class="line"> [5 6 7 8]</span><br><span class="line"> [5 6 7 8]]</span><br><span class="line"></span><br><span class="line">Results =&gt; Shape:  (5,)</span><br><span class="line">[70 70 70 70 70]</span><br></pre></td></tr></table></figure>
+<h4 id="Vmap-和-Jaxpr"><a href="#Vmap-和-Jaxpr" class="headerlink" title="Vmap 和 Jaxpr"></a>Vmap 和 Jaxpr</h4><p>与<code>JIT</code>一样，您可以采用<code>vmap</code>转换函数并检查相应的<code>jaxpr</code>以了解操作的执行方式。这是<code>JAX</code>的另一件很酷的地方。您可以采用任何转换后的函数<code>jaxpr</code>。让<code>batch_dot_product</code>函数执行此操作。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Like JIT, you can inpsect the transformation using jaxprs</span></span><br><span class="line">make_jaxpr(vmap(dot_product, in_axes=(<span class="literal">None</span>, <span class="number">0</span>)))(array1, array2)</span><br></pre></td></tr></table></figure>
+<h4 id="数据增强-构建简单、快速且可扩展的管道"><a href="#数据增强-构建简单、快速且可扩展的管道" class="headerlink" title="数据增强-构建简单、快速且可扩展的管道"></a>数据增强-构建简单、快速且可扩展的管道</h4><p>到目前为止我们所做的几乎没有表现出<code>vmap</code>的真正威力。我们将通过一个更复杂的操作示例来展示<code>vmap</code>的真正强大和灵活性。这也会让您了解为什么使用<code>vmap</code>和<code>pmap</code>感觉像是一种超能力。因为我喜欢图像，所以我们将在JAX中构建图像数据增强管道。然后我们将使用<code>vmap</code>和<code>pmap</code>对其进行缩放。在整个过程中我们将执行以下步骤：</p>
+<ul>
+<li>从<code>Google images</code>下载一批图片。</li>
+<li>查看图片并将其调整为适当的尺寸。</li>
+<li>我们将构建一个管道来对单个图片进行增强。</li>
+<li>我们将使用相同的管道为同一图片生成一批增强。</li>
+<li>然后，我们将使用相同的管道对一批图片进行增强。</li>
+<li>然后，我们将扩展相同的管道，在并行设备（<code>GPU/TPU</code>）上对更大的批量图片进行增强。</li>
+</ul>
+<h5 id="第1步：下载一批图像"><a href="#第1步：下载一批图像" class="headerlink" title="第1步：下载一批图像"></a>第1步：下载一批图像</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">download_images</span>():</span><br><span class="line">    urllib.request.urlretrieve(<span class="string">&quot;https://i.imgur.com/Bvro0YD.png&quot;</span>, <span class="string">&quot;elephant.png&quot;</span>)</span><br><span class="line">    urllib.request.urlretrieve(<span class="string">&quot;https://images-eu.ssl-images-amazon.com/images/I/A1WuED4KiRL.jpg&quot;</span>, <span class="string">&quot;cat.jpg&quot;</span>)</span><br><span class="line">    urllib.request.urlretrieve(<span class="string">&quot;https://upload.wikimedia.org/wikipedia/commons/1/18/Dog_Breeds.jpg&quot;</span>, <span class="string">&quot;dog.jpg&quot;</span>)</span><br><span class="line">    urllib.request.urlretrieve(<span class="string">&quot;https://upload.wikimedia.org/wikipedia/commons/1/1e/The_Korean_Lucky_Bird_%28182632069%29.jpeg&quot;</span>, <span class="string">&quot;bird.jpg&quot;</span>)</span><br><span class="line">    urllib.request.urlretrieve(<span class="string">&quot;https://upload.wikimedia.org/wikipedia/commons/e/ea/Vervet_Monkey_%28Chlorocebus_pygerythrus%29.jpg&quot;</span>, <span class="string">&quot;monkey.jpg&quot;</span>)</span><br><span class="line">    urllib.request.urlretrieve(<span class="string">&quot;https://upload.wikimedia.org/wikipedia/commons/f/fa/Puppy.JPG&quot;</span>, <span class="string">&quot;puppy.jpg&quot;</span>)</span><br><span class="line">    urllib.request.urlretrieve(<span class="string">&quot;https://upload.wikimedia.org/wikipedia/commons/2/2c/Lion-1.jpg&quot;</span>, <span class="string">&quot;lion.jpg&quot;</span>)</span><br><span class="line">    urllib.request.urlretrieve(<span class="string">&quot;https://upload.wikimedia.org/wikipedia/commons/4/41/Siberischer_tiger_de_edit02.jpg&quot;</span>, <span class="string">&quot;tiger.jpg&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Downloading finished&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># Download the images</span></span><br><span class="line">download_images()</span><br><span class="line"><span class="comment"># Downloading finished</span></span><br></pre></td></tr></table></figure>
+<h5 id="第2步：读取并调整图片大小"><a href="#第2步：读取并调整图片大小" class="headerlink" title="第2步：读取并调整图片大小"></a>第2步：读取并调整图片大小</h5><p>虽然我们可以即时读取并调整大小，但我们只有<code>8</code>张图片，因此我们将在增强图片之前读取图片并调整其大小。同样，这两个步骤应该成为您的管道的一部分，我们只是为了简化示例。使用 (<code>800, 800</code>) 作为图片的最终尺寸。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">read_images</span>(<span class="params">size=(<span class="params"><span class="number">800</span>, <span class="number">800</span></span>)</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Read jpg/png images from the disk.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        size: Size to be used while resizing</span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        A JAX array of images</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    png_images = <span class="built_in">sorted</span>(glob.glob(<span class="string">&quot;*.png&quot;</span>))</span><br><span class="line">    jpg_images = <span class="built_in">sorted</span>(glob.glob(<span class="string">&quot;*.jpg&quot;</span>))</span><br><span class="line">    all_images = png_images + jpg_images</span><br><span class="line">    </span><br><span class="line">    images = []</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> img <span class="keyword">in</span> all_images:</span><br><span class="line">        img = cv2.imread(img)</span><br><span class="line">        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)</span><br><span class="line">        img = cv2.resize(img, size)</span><br><span class="line">        images.append(img)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">return</span> jnp.array(images)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Read and resize</span></span><br><span class="line">images = read_images()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Total number of images: &quot;</span>, <span class="built_in">len</span>(images))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Utility function for plotting the images</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">plot_images</span>(<span class="params">images, batch_size, num_cols=<span class="number">4</span>, figsize=(<span class="params"><span class="number">15</span>, <span class="number">8</span></span>), title=<span class="string">&quot;Images &quot;</span></span>):</span><br><span class="line">    num_rows = batch_size // num_cols</span><br><span class="line">    </span><br><span class="line">    _, ax = plt.subplots(num_rows, num_cols, figsize=figsize)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> i, img <span class="keyword">in</span> <span class="built_in">enumerate</span>(images):</span><br><span class="line">        ax[i // num_cols, i % num_cols].imshow(images[i])</span><br><span class="line">        ax[i // num_cols, i % num_cols].axis(<span class="string">&quot;off&quot;</span>)</span><br><span class="line">        <span class="comment">#ax[i // num_cols, i % num_cols].set_title(str(i+1))</span></span><br><span class="line">        </span><br><span class="line">    plt.tight_layout()</span><br><span class="line">    plt.suptitle(title, x=<span class="number">0.5</span>, y=<span class="number">1.0</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+<h5 id="第3步：一个非常简单的增强管道"><a href="#第3步：一个非常简单的增强管道" class="headerlink" title="第3步：一个非常简单的增强管道"></a>第3步：一个非常简单的增强管道</h5><p>我们将从一个非常基础且简单的增强管道开始。使用单个图片作为输入，管道将返回图片的增强版本。增强管道将旋转输入图片或保持原样，具体取决于布尔值，其中<code>0</code>表示不旋转，而<code>1</code>表示将图片旋转<code>90</code>度。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">rotate_img</span>(<span class="params">img</span>):</span><br><span class="line">    <span class="keyword">return</span> jnp.rot90(img, axes=(<span class="number">0</span>, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">identity</span>(<span class="params">img</span>):</span><br><span class="line">    <span class="keyword">return</span> img</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">random_rotate</span>(<span class="params">img, rotate</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Randomly rotate an image by 90 degrees.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        img: Array representing the image</span></span><br><span class="line"><span class="string">        rotate: Boolean for rotating or not</span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        Either Rotated or an identity image</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> jax.lax.cond(rotate, rotate_img, identity, img)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Run the pipeline on a single image</span></span><br><span class="line"><span class="comment"># Get an image</span></span><br><span class="line">img = images[<span class="number">0</span>]</span><br><span class="line">img_copy = img.copy()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Pass the image copy to augmentation pipeline</span></span><br><span class="line">augmented = random_rotate(img_copy, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Plot the original image and the augmented image</span></span><br><span class="line">_, ax = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, figsize=(<span class="number">12</span>, <span class="number">8</span>))</span><br><span class="line"></span><br><span class="line">ax[<span class="number">0</span>].imshow(img)</span><br><span class="line">ax[<span class="number">0</span>].axis(<span class="string">&quot;off&quot;</span>)</span><br><span class="line">ax[<span class="number">0</span>].set_title(<span class="string">&quot;Original Image&quot;</span>)</span><br><span class="line"></span><br><span class="line">ax[<span class="number">1</span>].imshow(augmented)</span><br><span class="line">ax[<span class="number">1</span>].axis(<span class="string">&quot;off&quot;</span>)</span><br><span class="line">ax[<span class="number">1</span>].set_title(<span class="string">&quot;Augmented Image&quot;</span>)</span><br><span class="line"></span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/jvp_1.png" class="">
+
+<h5 id="步骤4：从单个图片生成多个增强图片"><a href="#步骤4：从单个图片生成多个增强图片" class="headerlink" title="步骤4：从单个图片生成多个增强图片"></a>步骤4：从单个图片生成多个增强图片</h5><p>我们现在将使用<code>vmap</code>从同一管道生成<code>n</code>个图片。为了简单起见，我们将保持<code>n=8</code>。从这里你将认识到<code>vmap</code>的强大之处。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Using the same original image</span></span><br><span class="line">img_copy = img.copy()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Batch size of the output as well as for the boolean array</span></span><br><span class="line"><span class="comment"># used to tell whether to rotate an input image or not</span></span><br><span class="line">batch_size = <span class="number">8</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># We use seed for anything that involves `random`</span></span><br><span class="line">key = random.PRNGKey(<span class="number">1234</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Although splitting is not necessary as the key is only used once,</span></span><br><span class="line"><span class="comment"># I will just leave the original key as it is</span></span><br><span class="line">key, subkey = random.split(key)</span><br><span class="line">rotate = random.randint(key, shape=[batch_size], minval=<span class="number">0</span>, maxval=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Return identical or flipped image via augmentation pipeline</span></span><br><span class="line"><span class="comment"># We will transform the original `random_rotate(..)` function</span></span><br><span class="line"><span class="comment"># using vmap</span></span><br><span class="line">augmented = vmap(random_rotate, in_axes=(<span class="literal">None</span>, <span class="number">0</span>))(img_copy, rotate)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Number of images to generate: &quot;</span>, batch_size)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Rotate-or-not array: &quot;</span>, rotate)</span><br><span class="line">plot_images(augmented,</span><br><span class="line">            batch_size=<span class="number">8</span>,</span><br><span class="line">            title=<span class="string">&quot;Multiple augmenetd images from a single input image&quot;</span></span><br><span class="line">           )</span><br><span class="line"></span><br><span class="line"><span class="comment"># Number of images to generate:  8</span></span><br><span class="line"><span class="comment"># Rotate-or-not array:  [1 1 0 1 0 1 0 0]</span></span><br></pre></td></tr></table></figure>
+<img data-src="/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/jvp_2.png" class="">
+
+<p>因此，我们只是重用了相同的管道来增强单个图片。</p>
+<h5 id="步骤5：使用相同的增强管道来增强一批图片"><a href="#步骤5：使用相同的增强管道来增强一批图片" class="headerlink" title="步骤5：使用相同的增强管道来增强一批图片"></a>步骤5：使用相同的增强管道来增强一批图片</h5><p>在上一步中，我们使用一张图片一次性生成了一批增强图片。这与我们看到<code>vmapped</code>函数的输入与其他批处理的类似。我们将重用相同的管道来增强一批输入图片，即</p>
+<ul>
+<li>向管道提供一批输入图片。</li>
+<li>增加输入批次。</li>
+<li>获取一批增强图片。</li>
+</ul>
+<p>现在，我们使用一开始下载的<code>8</code>张图片作为输入批次。在我们对这些图片运行增强管道之前，让我们先绘制一次原始图片。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Original images</span></span><br><span class="line">plot_images(images, batch_size=<span class="number">8</span>, title=<span class="string">&quot;Original images&quot;</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/jvp_3.png" class="">
+
+<p>我们现在增加这批输入图片。仔细查看<code>in_axes()</code>参数的输入。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Augment a batch of input images using the same augmentation pipeline</span></span><br><span class="line">augmented = vmap(random_rotate, in_axes=(<span class="number">0</span>, <span class="number">0</span>))(images, rotate)</span><br><span class="line">plot_images(augmented, batch_size=<span class="number">8</span>, title=<span class="string">&quot;Augmented Images&quot;</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/jvp_4.png" class="">
+
+<p>由于<code>vmap</code>只是另一种转换，而且我们都知道<code>JAX</code>允许组合这些转换。为了使这个管道更快，我们可以使用<code>jit vmapped</code>函数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># JIT the vmapped function</span></span><br><span class="line">vmap_jitted = jit(vmap(random_rotate, in_axes=(<span class="number">0</span>, <span class="number">0</span>)))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Run the pipeline again using the jitted function</span></span><br><span class="line">augmented = (vmap_jitted(images, rotate)).block_until_ready()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Plot the images and check the results</span></span><br><span class="line">plot_images(augmented, batch_size=<span class="number">8</span>, title=<span class="string">&quot;Jitting vmapped function&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Use jaxpr to see how the transformation ops are executed</span></span><br><span class="line">make_jaxpr(jit(vmap(random_rotate, in_axes=(<span class="number">0</span>, <span class="number">0</span>))))(images, rotate)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/jvp_5.png" class="">
+
+<p>我们编写一个作用于单个图片的函数。</p>
+<ul>
+<li>使用<code>vmap</code>转换相同的函数以批量操作。</li>
+<li>可以从单个图像生成多个增强图片。</li>
+<li>可以批量对不同图片应用增强。</li>
+<li>我们可以<code>jit</code>整个<code>vmap</code>转换。</li>
+<li>我们可以使用<code>jaxprs</code>检查整个过程。</li>
+</ul>
+<h5 id="第6步：快速且可扩展的数据增强管道"><a href="#第6步：快速且可扩展的数据增强管道" class="headerlink" title="第6步：快速且可扩展的数据增强管道"></a>第6步：快速且可扩展的数据增强管道</h5><p>我们将添加更多增强功能，使其计算量更大。如果你愿意，你也可以定义你的增强，我们将使用三种不同的增强，即</p>
+<ul>
+<li>随机旋转度数。</li>
+<li>随机水平翻转。</li>
+<li>随机垂直翻转。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">rotate_90</span>(<span class="params">img</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Rotates an image by 90 degress k times.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> jnp.rot90(img, k=<span class="number">1</span>, axes=(<span class="number">0</span>, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">identity</span>(<span class="params">img</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Returns an image as it is.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> img</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">flip_left_right</span>(<span class="params">img</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Flips an image left/right direction.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> jnp.fliplr(img)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">flip_up_down</span>(<span class="params">img</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Flips an image in up/down direction.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> jnp.flipud(img)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">random_rotate</span>(<span class="params">img, rotate</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Randomly rotate an image by 90 degrees.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        img: Array representing the image</span></span><br><span class="line"><span class="string">        rotate: Boolean for rotating or not</span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        Rotated or an identity image</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> jax.lax.cond(rotate, rotate_90, identity, img)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">random_horizontal_flip</span>(<span class="params">img, flip</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Randomly flip an image vertically.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        img: Array representing the image</span></span><br><span class="line"><span class="string">        flip: Boolean for flipping or not</span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        Flipped or an identity image</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> jax.lax.cond(flip, flip_left_right, identity, img)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">random_vertical_flip</span>(<span class="params">img, flip</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Randomly flip an image vertically.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        img: Array representing the image</span></span><br><span class="line"><span class="string">        flip: Boolean for flipping or not</span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        Flipped or an identity image</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> jax.lax.cond(flip, flip_up_down, identity, img)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Get the jitted version of our augmentation functions</span></span><br><span class="line">random_rotate_jitted = jit(vmap(random_rotate, in_axes=(<span class="number">0</span>, <span class="number">0</span>)))</span><br><span class="line">random_horizontal_flip_jitted = jit(vmap(random_horizontal_flip, in_axes=(<span class="number">0</span>, <span class="number">0</span>)))</span><br><span class="line">random_vertical_flip_jitted = jit(vmap(random_vertical_flip, in_axes=(<span class="number">0</span>, <span class="number">0</span>)))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">augment_images</span>(<span class="params">images, key</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Augment a batch of input images.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        images: Batch of input images as a jax array</span></span><br><span class="line"><span class="string">        key: Seed/Key for random functions for generating booleans</span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        Augmented images with the same shape as the input images</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    </span><br><span class="line">    batch_size = <span class="built_in">len</span>(images)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 1. Rotation</span></span><br><span class="line">    key, subkey = random.split(key)</span><br><span class="line">    rotate = random.randint(key, shape=[batch_size], minval=<span class="number">0</span>, maxval=<span class="number">2</span>)</span><br><span class="line">    augmented = random_rotate_jitted(images, rotate)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 2. Flip horizontally</span></span><br><span class="line">    key, subkey = random.split(key)</span><br><span class="line">    flip = random.randint(key, shape=[batch_size], minval=<span class="number">0</span>, maxval=<span class="number">2</span>)</span><br><span class="line">    augmented = random_horizontal_flip_jitted(augmented, flip)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 3. Flip vertically</span></span><br><span class="line">    key, subkey = random.split(key)</span><br><span class="line">    flip = random.randint(key, shape=[batch_size], minval=<span class="number">0</span>, maxval=<span class="number">2</span>)</span><br><span class="line">    augmented = random_vertical_flip_jitted(augmented, flip)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> augmented.block_until_ready()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Because we are jitting the transformations, we will record the</span></span><br><span class="line"><span class="comment"># time taken for augmentation on subsequent calls</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Call: &quot;</span>, i + <span class="number">1</span>, end=<span class="string">&quot; =&gt; &quot;</span>)</span><br><span class="line">    key=random.PRNGKey(<span class="number">0</span>)</span><br><span class="line">    start_time = time.time()</span><br><span class="line">    augmented = augment_images(images, key)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Time taken to generate augmentations: <span class="subst">&#123;time.time()-start_time:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Plot the augmented images    </span></span><br><span class="line">plot_images(augmented, batch_size=<span class="number">8</span>, title=<span class="string">&quot;Augmenetd Images&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Call:  1 =&gt; Time taken to generate augmentations: 1.58</span><br><span class="line">Call:  2 =&gt; Time taken to generate augmentations: 0.02</span><br><span class="line">Call:  3 =&gt; Time taken to generate augmentations: 0.02</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/jvp_6.png" class="">
+
+<h4 id="使用pmap在多个设备上并行化整个过程"><a href="#使用pmap在多个设备上并行化整个过程" class="headerlink" title="使用pmap在多个设备上并行化整个过程"></a>使用pmap在多个设备上并行化整个过程</h4><p><code>pmap</code>在<code>API</code>方面与<code>vmap</code>非常相似。<code>vmap</code>执行<code>SIMD</code>，<code>pamp</code>执行<code>SMPD</code>。用最简单的术语来说，<code>pmap</code>获取您的<code>Python</code>程序并将其复制到多个设备上以并行运行所有内容。因此，您可以跨多个<code>GPU/TPU</code>并行化工作负载，而不是仅使用一个<code>GPU/TPU</code>。注意：<code>pmap</code>编译底层函数。虽然它可以与jit结合使用，但通常是不必要的。为了在我们的数据增强管道上应用<code>pamp</code>，我们将执行以下步骤：</p>
+<ul>
+<li>定义新版本的<code>augment_images</code>函数，因为我们不需要使用<code>pmap</code>进行<code>jit</code>。</li>
+<li>我们将使用<code>64</code>的批量大小（我们有<code>8</code>个<code>TPU</code>设备，并且我们将在单个设备上运行<code>8</code>的批量大小），而不是使用大小为<code>8</code>的批量（因为我们总共有<code>8</code>个图片）。</li>
+<li>我将使用相同的<code>8</code>个图片来堆叠它们以创建<code>64</code>的批量。您也可以使用不同的图片。</li>
+<li>因为我们原来的<code>augment_images(..)</code>函数接受一个<code>key</code>。我们还需要生成一批<code>key</code>。</li>
+</ul>
+<p>让我们看看它的实际效果:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Augment images function without `jit`</span></span><br><span class="line"><span class="comment"># as jitting is not required while using pmap</span></span><br><span class="line"><span class="comment"># Get the vmapped version of our augmentation functions</span></span><br><span class="line">random_rotate_vmapped = vmap(random_rotate, in_axes=(<span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line">random_horizontal_flip_vmapped = vmap(random_horizontal_flip, in_axes=(<span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line">random_vertical_flip_vmapped = vmap(random_vertical_flip, in_axes=(<span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">augment_images</span>(<span class="params">images, key</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Augment a batch of input images.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        images: Batch of input images as a jax array</span></span><br><span class="line"><span class="string">        key: Seed/Key for random functions for generating booleans</span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        Augmented images with the same shape as the input images</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    </span><br><span class="line">    batch_size = <span class="built_in">len</span>(images)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 1. Rotation</span></span><br><span class="line">    key, subkey = random.split(key)</span><br><span class="line">    rotate = random.randint(key, shape=[batch_size], minval=<span class="number">0</span>, maxval=<span class="number">2</span>)</span><br><span class="line">    augmented = random_rotate_vmapped(images, rotate)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 2. Flip horizontally</span></span><br><span class="line">    key, subkey = random.split(key)</span><br><span class="line">    flip = random.randint(key, shape=[batch_size], minval=<span class="number">0</span>, maxval=<span class="number">2</span>)</span><br><span class="line">    augmented = random_horizontal_flip_vmapped(augmented, flip)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 3. Flip vertically</span></span><br><span class="line">    key, subkey = random.split(key)</span><br><span class="line">    flip = random.randint(key, shape=[batch_size], minval=<span class="number">0</span>, maxval=<span class="number">2</span>)</span><br><span class="line">    augmented = random_vertical_flip_vmapped(augmented, flip)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> augmented</span><br><span class="line"></span><br><span class="line"><span class="comment"># Generate a big batch of 64</span></span><br><span class="line">big_batch_images = jnp.stack([images <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>)])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Number of images in batch: &quot;</span>, big_batch_images.shape[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># Generate a batch of keys as well as the augment_images</span></span><br><span class="line"><span class="comment"># function accepts a key as well</span></span><br><span class="line">key = random.PRNGKey(<span class="number">123</span>)</span><br><span class="line">big_batch_keys = [key]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">7</span>):</span><br><span class="line">    key, subkey = random.split(key)</span><br><span class="line">    big_batch_keys.append(key)</span><br><span class="line">    </span><br><span class="line">big_batch_keys = jnp.stack(big_batch_keys)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Augment images parallely on multiple devices</span></span><br><span class="line">pmapped_augment_images = pmap(augment_images, in_axes=(<span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># We will run it more than once</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Call: &quot;</span>, i + <span class="number">1</span>, end=<span class="string">&quot; =&gt; &quot;</span>)</span><br><span class="line">    start_time = time.time()</span><br><span class="line">    augmented_parallel = pmapped_augment_images(big_batch_images, big_batch_keys)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Time taken to generate augmentations: <span class="subst">&#123;time.time()-start_time:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># Plot the augmenetd images</span></span><br><span class="line">augmented_parallel = augmented_parallel.reshape(<span class="number">64</span>, <span class="number">800</span>, <span class="number">800</span>, <span class="number">3</span>)</span><br><span class="line">plot_images(augmented_parallel, batch_size=<span class="number">64</span>, title=<span class="string">&quot;Augmentation on parallel devices&quot;</span>, figsize=(<span class="number">20</span>, <span class="number">25</span>))</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Call:  1 =&gt; Time taken to generate augmentations: 4.02</span><br><span class="line">Call:  2 =&gt; Time taken to generate augmentations: 0.06</span><br><span class="line">Call:  3 =&gt; Time taken to generate augmentations: 0.05</span><br></pre></td></tr></table></figure>
+<p>我们不仅自动矢量化代码，而且还使其在多个设备上运行，而无需对代码进行任何更改。</p>
+<div class="note warning"><p><strong>注意以下几点</strong>：</p>
+<ul>
+<li>您可以编写适用于单个示例的代码，使用<code>vmap</code>将其矢量化并批量运行它，并且可以使用<code>pmap</code>在多个设备上运行相同的代码。</li>
+<li><code>vmap</code>背后的理念是：编写单个示例，批量运行它。</li>
+<li>请注意代码中种子的使用。因为随机序列保证是相同的，所以很容易端到端地调试整个过程。</li>
+<li>一旦您习惯了<code>vmap</code>和<code>pmap</code>的模型，就没有回头路了，因为您已经见证了这两种转换的强大。</li>
+</ul>
+</div>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>umbrella
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fresh88888888.github.io/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/" title="JAX（VMAP &amp; PMAP）">https://fresh88888888.github.io/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/03/29/artificial-intelligence/jax_jit_study/" rel="prev" title="JAX（JIT）">
+                  <i class="fa fa-chevron-left"></i> JAX（JIT）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/03/31/artificial-intelligence/jax_%20autodiff_study/" rel="next" title="JAX（Autodiff）">
+                  JAX（Autodiff） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">辽ICP备15012817号-2 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2022 – 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">umbrella</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">571k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">31:42</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/fresh88888888" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.0.8/medium-zoom.min.js" integrity="sha256-7PhEpEWEW0XXQ0k6kQrPKwuoIomz8R8IYyuU1Qew4P8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/comments.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/motion.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/next-boot.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/pjax.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/search/local-search.min.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.12/pdfobject.min.js","integrity":"sha256-g2xji1rlE3KsGVClvuxTbcR0Kn2+wtQADSff2Tbb4zA="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/tags/pdf.min.js"></script>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/fancybox.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/pace.min.js"></script>
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2024/03/30/artificial-intelligence/jax_vmap_pmap_study/"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
+
+</body>
+</html>
