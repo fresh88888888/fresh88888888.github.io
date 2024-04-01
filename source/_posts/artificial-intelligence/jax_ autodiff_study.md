@@ -88,7 +88,7 @@ Differentiating wrt y
 
 #### 停止梯度计算
 
-有时我们不希望梯度流过特定计算中涉及的某些变量。在这种情况下，我们需要明确告诉JAX我们不希望梯度流经指定的变量集。稍后我们将研究这方面的复杂示例，但现在，我将修改我们的`Product(...)`函数，其中我们不希望梯度流经`y`。
+有时我们不希望梯度流过特定计算中涉及的某些变量。在这种情况下，我们需要明确告诉`JAX`我们不希望梯度流经指定的变量集。稍后我们将研究这方面的复杂示例，但现在，我将修改我们的`Product(...)`函数，其中我们不希望梯度流经`y`。
 ```python
 # Modified product function. Explicity stopping the
 # flow of the gradients through `y`
@@ -220,7 +220,7 @@ print("Third order derivative: ", grad(grad(grad(activate)))(x))
 ```
 #### 梯度和数值稳定性
 
-**下溢**和**溢出**是我们多次遇到的常见问题，尤其是在计算梯度时。我们将举一个例子（这个例子直接来自JAX文档，这是一个非常好的例子）来说明我们如何遇到数值不稳定以及`JAX`如何尝试帮助您克服它。当您计算某个值的梯度时会发生什么？
+**下溢**和**溢出**是我们多次遇到的常见问题，尤其是在计算梯度时。我们将举一个例子（这个例子直接来自`JAX`文档，这是一个非常好的例子）来说明我们如何遇到数值不稳定以及`JAX`如何尝试帮助您克服它。当您计算某个值的梯度时会发生什么？
 ```python
 # An example of a mathematical operation in your workflow
 def log1pexp(x):
