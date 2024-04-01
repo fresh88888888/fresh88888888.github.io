@@ -144,3 +144,101 @@ Input shape:  (5,)
 Output shape:  (5,)
 TypeError Gradient only defined for scalar-output functions. Output had shape: (5,).
 ```
+那么解决办法是什么呢？`vmap`和`pmap`是几乎所有问题的解决方案，让我们看看它的实际效果：
+```python
+grads_batch = vmap(grad(activate))(x)
+print("Gradients for the batch: ", grads_batch)
+
+# Gradients for the batch:  [0.48228705 0.45585024 0.99329686 0.0953269  0.8153717 ]
+```
+让我们分解一下我们上面为达到预期结果所做的所有修改。
+- `grad(activate)(...)`适用于单个示例。
+- 添加`vmap`组合为我们的输入和输出添加批量维度（默认为`0`）。
+
+从单个示例到批量示例就这么简单，反之亦然。您所需要的只是专注于使用`vmap`。让我们看看这个转换的`jaxpr`是什么样子的。
+```python
+make_jaxpr(vmap(grad(activate)))(x)
+
+# { lambda  ; a.
+#   let b = tanh a
+#       c = sub 1.0 b
+#       d = mul 1.0 c
+#       e = mul d b
+#       f = add_any d e
+#   in (f,) }
+```
+#### 其他变换的组合
+
+我们可以将任何其他转换与`grad`组合起来。我们已经看到`vmap`与`grad`一起使用。让我们将jit应用到上面的转换中，以使其更加高效。
+```python
+jitted_grads_batch = jit(vmap(grad(activate)))
+
+for _ in range(3):
+    start_time = time.time()
+    print("Gradients for the batch: ", jitted_grads_batch(x))
+    print(f"Time taken: {time.time() - start_time:.2f} seconds")
+    print("="*50)
+    print()
+
+# Gradients for the batch:  [0.48228705 0.45585027 0.99329686 0.09532695 0.8153717 ]
+# Time taken: 0.03 seconds
+# ==================================================
+
+# Gradients for the batch:  [0.48228705 0.45585027 0.99329686 0.09532695 0.8153717 ]
+# Time taken: 0.00 seconds
+# ==================================================
+
+# Gradients for the batch:  [0.48228705 0.45585027 0.99329686 0.09532695 0.8153717 ]
+# Time taken: 0.00 seconds
+# ==================================================
+```
+#### 验证有限差分
+
+很多时候，我们想要用有限差分来验证梯度的计算，以再次检查我们所做的一切是否正确。因为这是处理导数时非常常见的健全性检查，所以JAX提供了一个方便的函数`check_grads`来检查任意阶梯度的有限差分。让我们来看看：
+```python
+try:
+    check_grads(jitted_grads_batch, (x,),  order=1)
+    print("Gradient match with gradient calculated using finite differences")
+except Exception as ex:
+    print(type(ex).__name__, ex)
+
+# Gradient match with gradient calculated using finite differences
+```
+#### 高阶梯度
+
+`grad`函数接受一个可调用函数作为输入并返回另一个函数。我们可以一次又一次地将变换返回的函数与`grad`组合起来，以计算任意阶的高阶导数。让我们举一个例子来看看它的实际效果。我们将使用`activate(...)`函数来演示这一点。
+```python
+x = 0.5
+
+print("First order derivative: ", grad(activate)(x))
+print("Second order derivative: ", grad(grad(activate))(x))
+print("Third order derivative: ", grad(grad(grad(activate)))(x))
+
+# First order derivative:  0.7864477
+# Second order derivative:  -0.726862
+# Third order derivative:  -0.5652091
+```
+#### 梯度和数值稳定性
+
+**下溢**和**溢出**是我们多次遇到的常见问题，尤其是在计算梯度时。我们将举一个例子（这个例子直接来自JAX文档，这是一个非常好的例子）来说明我们如何遇到数值不稳定以及`JAX`如何尝试帮助您克服它。当您计算某个值的梯度时会发生什么？
+```python
+# An example of a mathematical operation in your workflow
+def log1pexp(x):
+    """Implements log(1 + exp(x))"""
+    return jnp.log(1. + jnp.exp(x))
+
+# This works fine
+print("Gradients for a small value of x: ", grad(log1pexp)(5.0))
+
+# But what about for very large values of x for which the
+# exponent operation will explode
+print("Gradients for a large value of x: ", grad(log1pexp)(500.0))
+
+# Gradients for a small value of x:  0.9933072
+
+# Gradients for a large value of x:  nan
+```
+刚刚发生了什么？让我们对其进行分解，以了解预期的输出以及返回`nan`的`JAX`幕后`gpoing`的内容。我们知道上述函数的导数可以写成这样：
+$$\begin{equation}\label{eq1}
+e=mc^2
+\end{equation}$$
