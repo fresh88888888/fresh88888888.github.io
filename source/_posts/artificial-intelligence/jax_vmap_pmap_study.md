@@ -1,6 +1,6 @@
 ---
 title: JAX（VMAP & PMAP）
-date: 2024-03-29 17:20:32
+date: 2024-03-30 17:20:32
 tags:
   - AI
 categories:
