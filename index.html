@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">134</span>
+          <span class="site-state-item-count">135</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -240,6 +240,218 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/04/01/artificial-intelligence/nlp_begineer_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/04/01/artificial-intelligence/nlp_begineer_study/" class="post-title-link" itemprop="url">NLP（初级）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-04-01 17:28:32" itemprop="dateCreated datePublished" datetime="2024-04-01T17:28:32+08:00">2024-04-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>过去几年深度学习取得显着进步的一个领域是自然语言处理（<code>NLP</code>）。计算机现在可以生成文本、自动从一种语言翻译成另一种语言、分析评论、标记句子中的单词等等。也许<code>NLP</code>最广泛的实际应用是<strong>分类</strong>——将文档自动分类到某个类别。例如，这可以用于：</p>
+<ul>
+<li>情绪分析（例如，人们对您的产品有正面还是负面评价）。</li>
+<li>作者识别（最有可能是哪个作者写了一些文档）。</li>
+<li>法律发现（哪些文件属于审判范围）。</li>
+<li>按主题组织文档。</li>
+<li>对电子邮件进行分类。</li>
+<li>…以及更多！</li>
+</ul>
+<p>分类模型还可以用于解决起初不合适的问题。在此，我们的任务是比较两个单词或短语，并根据它们是否相似以及它们所使用的专利类别对它们进行评分。得分为<code>1</code>时，认为这两个输入具有相同含义，<code>0</code>表示含义完全不同。例如，减少和消除过程的得分为0.5，这意味着它们有些相似，但不完全相同。对于以下文本…：“<code>TEXT1</code>：减少；T<code>EXT2</code>：消除过程”…选择意义相似的类别：<strong>“不同；相似；相同”</strong>。我们如何通过将专利短语匹配问题视为分类任务，并以上面所示的方式来解决它。<code>NLP</code>数据集中的文档通常采用以下两种主要形式之一：</p>
+<ul>
+<li>较大的文档：每个文档一个文本文件，通常按类别组织到一个文件夹中。</li>
+<li>较小的文档：CSV 文件中每行一个文档（或文档对，可选地包含元数据）。</li>
+</ul>
+<p>创建一个<code>DataFrame</code>，它是一个命名列的表，有点像数据库表。要查看<code>DataFrame</code>的第一行和最后一行以及行数，只需输入其名称：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">df = pd.read_csv(<span class="string">&#x27;train.csv&#x27;</span>)</span><br><span class="line">df.describe(include=<span class="string">&#x27;object&#x27;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">	<span class="built_in">id</span>	anchor	target	context</span><br><span class="line">count	36473	36473	36473	36473</span><br><span class="line">unique	36473	733	29340	106</span><br><span class="line">top	37d61fd2272659b1	component composite coating	composition	H01</span><br><span class="line">freq	1	152	24	2186</span><br></pre></td></tr></table></figure>
+<p><code>DataFrame</code>最有用的功能之一是<code>describe()</code>方法。我们可以看到，在<code>36473</code>行中，有<code>733</code>个唯一的<code>anchor</code>、<code>106</code>个上下文和近<code>30000</code>个目标。有些<code>anchors</code>非常常见，例如“组件复合涂层”就出现了<code>152</code>次。我建议可以将模型的输入表示为“<code>TEXT1</code>：减少；<code>TEXT2</code>：消除过程”之类的内容。我们还需要为其添加上下文。在<code>Pandas</code>中，我们只使用<code>+</code>来连接，如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df[<span class="string">&#x27;input&#x27;</span>] = <span class="string">&#x27;TEXT1: &#x27;</span> + df.context + <span class="string">&#x27;; TEXT2: &#x27;</span> + df.target + <span class="string">&#x27;; ANC1: &#x27;</span> + df.anchor</span><br></pre></td></tr></table></figure>
+<p>我们可以使用常规的<code>Python</code>“点分”表示法来引用列，或者像字典一样访问它。要获取前几行，请使用<code>head()</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df.<span class="built_in">input</span>.head()</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">0    TEXT1: A47; TEXT2: abatement of pollution; ANC...</span><br><span class="line">1    TEXT1: A47; TEXT2: act of abating; ANC1: abate...</span><br><span class="line">2    TEXT1: A47; TEXT2: active catalyst; ANC1: abat...</span><br><span class="line">3    TEXT1: A47; TEXT2: eliminating process; ANC1: ...</span><br><span class="line">4    TEXT1: A47; TEXT2: forest region; ANC1: abatement</span><br><span class="line">Name: input, dtype: object</span><br></pre></td></tr></table></figure>
+<h4 id="Tokenization"><a href="#Tokenization" class="headerlink" title="Tokenization"></a>Tokenization</h4><p>当然，<code>Transformers</code>使用<code>Dataset</code>对象来存储以上数据集！我们可以像这样创建一个：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datasets <span class="keyword">import</span> Dataset,DatasetDict</span><br><span class="line"></span><br><span class="line">ds = Dataset.from_pandas(df)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ds</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Dataset(&#123;</span></span><br><span class="line"><span class="comment">#     features: [&#x27;id&#x27;, &#x27;anchor&#x27;, &#x27;target&#x27;, &#x27;context&#x27;, &#x27;score&#x27;, &#x27;input&#x27;],</span></span><br><span class="line"><span class="comment">#     num_rows: 36473</span></span><br><span class="line"><span class="comment"># &#125;)</span></span><br></pre></td></tr></table></figure>
+<p>但我们不能将文本直接传递到模型中。深度学习模型需要数字作为输入，所以我们需要做两件事：</p>
+<ul>
+<li><strong>标记化</strong>：将每个文本分割成单词（或者实际上，正如我们将看到的，分割成标记）。</li>
+<li><strong>数值化</strong>：将每个单词（或标记）转换为数字。</li>
+</ul>
+<p>有关如何完成此操作的详细信息实际上取决于我们使用的特定模型。所以首先我们需要选择一个模型。有数千种可用模型，但几乎所有<code>NLP</code>问题的合理起点都是使用此模型（完成探索后，将“小”替换为“大”，以获得较慢但更准确的模型）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">model_nm = <span class="string">&#x27;microsoft/deberta-v3-small&#x27;</span></span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForSequenceClassification,AutoTokenizer</span><br><span class="line">tokz = AutoTokenizer.from_pretrained(model_nm)</span><br></pre></td></tr></table></figure>
+<p><code>AutoTokenizer</code>将创建适合给定模型的分词器。词汇表中添加了特殊标记，确保相关的词嵌入到<strong>微调或训练</strong>。下面是一个示例，说明分词器如何将文本拆分为“标记”（类似于单词，但可以是子单词片段，如下所示）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tokz.tokenize(<span class="string">&quot;G&#x27;day folks, I&#x27;m Jeremy from fast.ai!&quot;</span>)</span><br><span class="line">tokz.tokenize(<span class="string">&quot;A platypus is an ornithorhynchus anatinus.&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># [&#x27;▁A&#x27;,&#x27;▁platypus&#x27;,&#x27;▁is&#x27;,&#x27;▁an&#x27;,&#x27;▁or&#x27;,&#x27;ni&#x27;,&#x27;tho&#x27;,&#x27;rhynch&#x27;,&#x27;us&#x27;,&#x27;▁an&#x27;,&#x27;at&#x27;,&#x27;inus&#x27;,&#x27;.&#x27;]</span></span><br></pre></td></tr></table></figure>
+<p>不常见的单词将被分割成碎片。新单词的开头由<code>_</code>表示。这是一个简单的函数，可以标记我们的输入：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">tok_func</span>(<span class="params">x</span>): <span class="keyword">return</span> tokz(x[<span class="string">&quot;input&quot;</span>])</span><br><span class="line">tok_ds = ds.<span class="built_in">map</span>(tok_func, batched=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<p>要在数据集中的每一行并行运行此操作，请使用<code>map</code>。这会向我们的数据集添加一个名为<code>input_ids</code>的新<code>item</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">row = tok_ds[<span class="number">0</span>]</span><br><span class="line">row[<span class="string">&#x27;input&#x27;</span>], row[<span class="string">&#x27;input_ids&#x27;</span>]</span><br><span class="line">tokz.vocab[<span class="string">&#x27;▁of&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># (&#x27;TEXT1: A47; TEXT2: abatement of pollution; ANC1: abatement&#x27;,</span></span><br><span class="line"><span class="comment">#  [1,54453,435,294,336,5753,346,54453,445,294,47284,265,6435,346,23702,435,294,47284,2])</span></span><br></pre></td></tr></table></figure>
+<p>那么，这些<code>ID</code>是什么?它们来自哪里？秘密在于标记生成器中有一个名为<code>vocab</code>的列表，其中包含每个的标记字符串的唯一整数。我们可以像这样查找它们，例如查找单词“<code>of</code>”的标记：<code>265</code>。<br>查看上面的输入<code>ID</code>，我们确实看到<code>265</code>。最后，我们需要准备标签。<code>Transformers</code>始终假设标签都有列名称标签，但在我们的数据集中，它当前是得分。因此，我们需要将其重命名：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tok_ds = tok_ds.rename_columns(&#123;<span class="string">&#x27;score&#x27;</span>:<span class="string">&#x27;labels&#x27;</span>&#125;)</span><br></pre></td></tr></table></figure>
+<p>现在我们已经准备好了令牌和标签，我们需要创建验证集。</p>
+<h4 id="测试和验证集"><a href="#测试和验证集" class="headerlink" title="测试和验证集"></a>测试和验证集</h4><p>您可能已经注意到我们的目录包含另一个文件。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">eval_df = pd.read_csv(path/<span class="string">&#x27;test.csv&#x27;</span>)</span><br><span class="line">eval_df.describe()</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">	<span class="built_in">id</span>	anchor	target	context</span><br><span class="line">count	36	36	36	36</span><br><span class="line">unique	36	34	36	29</span><br><span class="line">top	4112d61851461f60	el display	inorganic photoconductor drum	G02</span><br><span class="line">freq	1	2	1	3</span><br></pre></td></tr></table></figure>
+<p>这是测试集。机器学习中最重要的想法可能是拥有单独的训练、验证和测试数据集。</p>
+<h5 id="验证集"><a href="#验证集" class="headerlink" title="验证集"></a>验证集</h5><p>为了解释动机，让我们从简单的开始，想象我们正在尝试拟合一个模型，关系是<code>x</code>的二次方：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>(<span class="params">x</span>): <span class="keyword">return</span> -<span class="number">3</span>*x**<span class="number">2</span> + <span class="number">2</span>*x + <span class="number">20</span></span><br></pre></td></tr></table></figure>
+<p><code>matplotlib</code>没有提供可视化函数的方法，因此我们将自己编写一些代码来执行此操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np, matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">plot_function</span>(<span class="params">f, <span class="built_in">min</span>=-<span class="number">2.1</span>, <span class="built_in">max</span>=<span class="number">2.1</span>, color=<span class="string">&#x27;r&#x27;</span></span>):</span><br><span class="line">    x = np.linspace(<span class="built_in">min</span>,<span class="built_in">max</span>, <span class="number">100</span>)[:,<span class="literal">None</span>]</span><br><span class="line">    plt.plot(x, f(x), color)</span><br><span class="line"></span><br><span class="line">plot_function(f)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/01/artificial-intelligence/nlp_begineer_study/nb_1.png" class="">
+
+<p>也许我们在某个事件之前和之后测量了物体离地面的高度。测量结果会存在一些随机误差。我们可以使用<code>numpy</code>的随机数生成器来模拟它。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> numpy.random <span class="keyword">import</span> normal,seed,uniform</span><br><span class="line"></span><br><span class="line">np.random.seed(<span class="number">42</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">noise</span>(<span class="params">x, scale</span>): <span class="keyword">return</span> normal(scale=scale, size=x.shape)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add_noise</span>(<span class="params">x, mult, add</span>): <span class="keyword">return</span> x * (<span class="number">1</span>+noise(x,mult)) + noise(x,add)</span><br><span class="line">x = np.linspace(-<span class="number">2</span>, <span class="number">2</span>, num=<span class="number">20</span>)[:,<span class="literal">None</span>]</span><br><span class="line">y = add_noise(f(x), <span class="number">0.2</span>, <span class="number">1.3</span>)</span><br><span class="line">plt.scatter(x,y)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p>这是一个函数<code>add_noise</code>，它向数组添加一些随机变化。让我们用它来模拟一些随时间均匀分布的测量值。</p>
+<img data-src="/2024/04/01/artificial-intelligence/nlp_begineer_study/nb_2.png" class="">
+
+<p>现在让我们看看如果我们对这些预测拟合不足或过度拟合会发生什么。为此，我们将创建一个拟合某个次数多项式的函数（例如，直线为<code>1</code>次，二次为<code>2</code>次，三次为<code>3</code>次，等等）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression</span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> PolynomialFeatures</span><br><span class="line"><span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> make_pipeline</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">plot_poly</span>(<span class="params">degree</span>):</span><br><span class="line">    model = make_pipeline(PolynomialFeatures(degree), LinearRegression())</span><br><span class="line">    model.fit(x, y)</span><br><span class="line">    plt.scatter(x,y)</span><br><span class="line">    plot_function(model.predict)</span><br><span class="line"></span><br><span class="line">plot_poly(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/01/artificial-intelligence/nlp_begineer_study/nb_3.png" class="">
+
+<p>正如您所看到的，红线（我们拟合的线）上的点根本不是很接近。这是<strong>欠拟合的</strong>——我们的函数没有足够的细节来匹配我们的数据。如果我们将<code>10</code>次多项式拟合到我们的测量结果会发生什么？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plot_poly(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/01/artificial-intelligence/nlp_begineer_study/nb_4.png" class="">
+
+<p>好吧，现在它更适合我们的数据，但它看起来并不能很好地预测我们测量以外的点——尤其是那些较早或较晚时间段的点。这是<strong>过度拟合</strong>——有太多细节使得模型符合我们的观点，但不符合我们真正关心的基本过程。让我们尝试使用<code>2</code>次多项式，并将其与我们的“真实”函数（蓝色）进行比较：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">plot_poly(<span class="number">2</span>)</span><br><span class="line">plot_function(f, color=<span class="string">&#x27;b&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/01/artificial-intelligence/nlp_begineer_study/nb_5.png" class="">
+
+<p>那么，我们如何识别我们的模型是欠拟合、过度拟合还是“恰到好处”呢？<strong>我们使用验证集</strong>。 这是我们在训练中“保留”的一组数据——根本不让我们的模型看到它。如果您使用<code>fastai</code>库，如果您没有验证集，它会自动为您创建一个验证集，并且始终使用验证集报告指标（模型准确性的测量）。验证集仅用于查看我们的性能表现。 它永远不会用作训练模型的输入。<code>Transformers</code>使用 <code>DatasetDict</code>来保存训练集和验证集。要创建一个包含<code>25%</code>的验证集数据和<code>75%</code>的训练集数据的数据集，请使用<code>train_test_split</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">dds = tok_ds.train_test_split(<span class="number">0.25</span>, seed=<span class="number">42</span>)</span><br><span class="line">dds</span><br><span class="line"></span><br><span class="line"><span class="comment"># DatasetDict(&#123;</span></span><br><span class="line"><span class="comment">#     train: Dataset(&#123;</span></span><br><span class="line"><span class="comment">#         features: [&#x27;id&#x27;, &#x27;anchor&#x27;, &#x27;target&#x27;, &#x27;context&#x27;, &#x27;labels&#x27;, &#x27;input&#x27;, &#x27;input_ids&#x27;, &#x27;token_type_ids&#x27;, &#x27;attention_mask&#x27;],</span></span><br><span class="line"><span class="comment">#         num_rows: 27354</span></span><br><span class="line"><span class="comment">#     &#125;)</span></span><br><span class="line"><span class="comment">#     test: Dataset(&#123;</span></span><br><span class="line"><span class="comment">#         features: [&#x27;id&#x27;, &#x27;anchor&#x27;, &#x27;target&#x27;, &#x27;context&#x27;, &#x27;labels&#x27;, &#x27;input&#x27;, &#x27;input_ids&#x27;, &#x27;token_type_ids&#x27;, &#x27;attention_mask&#x27;],</span></span><br><span class="line"><span class="comment">#         num_rows: 9119</span></span><br><span class="line"><span class="comment">#     &#125;)</span></span><br><span class="line"><span class="comment"># &#125;)</span></span><br></pre></td></tr></table></figure>
+<p>正如你在上面看到的，这里的验证集称为<strong>测试</strong>而不是验证，所以要小心！在实践中，像我们在这里使用的随机分割可能不是一个好主意：“导致开发结果与生产结果之间脱节的最可能的罪魁祸首之一是验证集选择不当（或者更糟糕的是，根本没有验证集）。根据数据的性质，选择验证集是最重要的一步。虽然<code>sklearn</code>提供了<code>train_test_split</code>方法，但该方法采用数据的随机子集，这对于许多现实问题来说是一个糟糕的选择。”</p>
+<h5 id="测试集"><a href="#测试集" class="headerlink" title="测试集"></a>测试集</h5><p>“<strong>测试集</strong>”——它是用来做什么的？<strong>测试集</strong>是训练中保留的另一个数据集。但它也被排除在报告指标之外！仅在完成整个训练过程（包括尝试不同的模型、训练方法、数据处理等）后才会检查模型在测试集上的准确性。您会发现，当您尝试所有这些不同的事情时，为了了解它们对验证集指标的影响，您可能会意外地发现一些完全巧合地改善验证集指标的事情，但在实践中并没有更好。如果有足够的时间和实验，您会发现这些巧合的改进。意味着您过度拟合了验证集！这就是我们保留测试集的原因。我们将使用<code>eval</code>作为测试集的名称，以避免与上面创建的测试数据集混淆。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">eval_df[<span class="string">&#x27;input&#x27;</span>] = <span class="string">&#x27;TEXT1: &#x27;</span> + eval_df.context + <span class="string">&#x27;; TEXT2: &#x27;</span> + eval_df.target + <span class="string">&#x27;; ANC1: &#x27;</span> + eval_df.anchor</span><br><span class="line">eval_ds = Dataset.from_pandas(eval_df).<span class="built_in">map</span>(tok_func, batched=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="指标和相关性"><a href="#指标和相关性" class="headerlink" title="指标和相关性"></a>指标和相关性</h4><p>当我们训练模型时，我们会对最大化或最小化一个或多个指标感兴趣。希望这些测量值能够代表我们的模型。从本质上讲，当前大多数人工智能方法的作用是<strong>优化指标</strong>。优化指标的做法对于人工智能来说并不新鲜，也不是独一无二的，但人工智能在这方面特别有效。理解这一点很重要，因为人工智能会加剧优化指标的任何风险。虽然指标在适当的地方可能有用，但如果不加思考地应用它们就会产生危害。一些最可怕的算法失控实例都是由于过度强调指标造成的。让我们看一些使用加州住房数据集的示例，其中显示“加州各地区的房屋价值中位数，以数十万美元表示”。该数据集由优秀的 <code>scikit-learn</code>库提供，该库是深度学习之外使用最广泛的机器学习库。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> fetch_california_housing</span><br><span class="line">housing = fetch_california_housing(as_frame=<span class="literal">True</span>)</span><br><span class="line">housing = housing[<span class="string">&#x27;data&#x27;</span>].join(housing[<span class="string">&#x27;target&#x27;</span>]).sample(<span class="number">1000</span>, random_state=<span class="number">52</span>)</span><br><span class="line">housing.head()</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<img data-src="/2024/04/01/artificial-intelligence/nlp_begineer_study/nb_6.png" class="">
+
+<p>我们可以通过调用<code>np.corrcoef</code>来查看该数据集中每个列组合的所有相关系数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">np.set_printoptions(precision=<span class="number">2</span>, suppress=<span class="literal">True</span>)</span><br><span class="line">np.corrcoef(housing, rowvar=<span class="literal">False</span>)</span><br><span class="line">np.corrcoef(housing.MedInc, housing.MedHouseVal)</span><br><span class="line"></span><br><span class="line"><span class="comment"># array([[ 1.  , -0.12,  0.43, -0.08,  0.01, -0.07, -0.12,  0.04,  0.68],</span></span><br><span class="line"><span class="comment">#        [-0.12,  1.  , -0.17, -0.06, -0.31,  0.  ,  0.03, -0.13,  0.12],</span></span><br><span class="line"><span class="comment">#        [ 0.43, -0.17,  1.  ,  0.76, -0.09, -0.07,  0.12, -0.03,  0.21],</span></span><br><span class="line"><span class="comment">#        [-0.08, -0.06,  0.76,  1.  , -0.08, -0.07,  0.09,  0.  , -0.04],</span></span><br><span class="line"><span class="comment">#        [ 0.01, -0.31, -0.09, -0.08,  1.  ,  0.16, -0.15,  0.13,  0.  ],</span></span><br><span class="line"><span class="comment">#        [-0.07,  0.  , -0.07, -0.07,  0.16,  1.  , -0.16,  0.17, -0.27],</span></span><br><span class="line"><span class="comment">#        [-0.12,  0.03,  0.12,  0.09, -0.15, -0.16,  1.  , -0.93, -0.16],</span></span><br><span class="line"><span class="comment">#        [ 0.04, -0.13, -0.03,  0.  ,  0.13,  0.17, -0.93,  1.  , -0.03],</span></span><br><span class="line"><span class="comment">#        [ 0.68,  0.12,  0.21, -0.04,  0.  , -0.27, -0.16, -0.03,  1.  ]])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># array([[1.  , 0.68], [0.68, 1.  ]])</span></span><br></pre></td></tr></table></figure>
+<p>我们将创建这个小函数，以便在给定一对变量的情况下返回我们需要的单个数字：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">corr</span>(<span class="params">x,y</span>): <span class="keyword">return</span> np.corrcoef(x,y)[<span class="number">0</span>][<span class="number">1</span>]</span><br><span class="line">corr(housing.MedInc, housing.MedHouseVal)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 0.6760250732906</span></span><br></pre></td></tr></table></figure>
+<p>现在我们将使用这个函数看一些相关性的例子（函数的细节并不重要）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">show_corr</span>(<span class="params">df, a, b</span>):</span><br><span class="line">    x,y = df[a],df[b]</span><br><span class="line">    plt.scatter(x,y, alpha=<span class="number">0.5</span>, s=<span class="number">4</span>)</span><br><span class="line">    plt.title(<span class="string">f&#x27;<span class="subst">&#123;a&#125;</span> vs <span class="subst">&#123;b&#125;</span>; r: <span class="subst">&#123;corr(x, y):<span class="number">.2</span>f&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">show_corr(housing, <span class="string">&#x27;MedInc&#x27;</span>, <span class="string">&#x27;MedHouseVal&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>我们来看看收入和房价的相关性： </p>
+<img data-src="/2024/04/01/artificial-intelligence/nlp_begineer_study/nb_7.png" class="">
+
+<p>这就是<code>0.68</code>的相关性。这是一种相当密切的关系，但仍然存在很多差异。（顺便说一句，这也说明了为什么查看数据如此重要-我们可以在该图中清楚地看到，<code>500,000</code>美元以上的房价似乎已被截断至该最大值）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show_corr(housing, <span class="string">&#x27;MedInc&#x27;</span>, <span class="string">&#x27;AveRooms&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/01/artificial-intelligence/nlp_begineer_study/nb_8.png" class="">
+
+<p>该关系看起来与前面的示例类似，但<code>r</code>远低于收入与估值情况。这是为什么？原因是存在很多异常值——<code>AveRooms</code>的值远远超出平均值。<code>r</code>对异常值非常敏感。如果数据中存在异常值，那么它们之间的关系将主导指标。在这种情况下，房间数量非常多的房屋往往不会那么有价值，因此<code>r</code>会比原本的情况有所减少。让我们删除异常值并重试：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">subset = housing[housing.AveRooms&lt;<span class="number">15</span>]</span><br><span class="line">show_corr(subset, <span class="string">&#x27;MedInc&#x27;</span>, <span class="string">&#x27;AveRooms&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/01/artificial-intelligence/nlp_begineer_study/nb_9.png" class="">
+
+<p>正如我们所预期的，现在的相关性与我们的第一次比较非常相似。这是在子集上使用<code>AveRooms</code>的另一个关系：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">show_corr(subset, <span class="string">&#x27;MedHouseVal&#x27;</span>, <span class="string">&#x27;AveRooms&#x27;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/01/artificial-intelligence/nlp_begineer_study/nb_10.png" class="">
+
+<p>在<code>r</code>为<code>0.34</code>的这个值上，关系变得相当弱。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">show_corr(subset, <span class="string">&#x27;HouseAge&#x27;</span>, <span class="string">&#x27;AveRooms&#x27;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/01/artificial-intelligence/nlp_begineer_study/nb_11.png" class="">
+
+<p>正如您在此处看到的，<code>-0.2</code>的相关性显示出非常弱的负趋势。我们现在已经看到了各种相关系数级别的示例，因此希望您能够很好地理解该指标的含义。<code>Transformers</code>希望指标以字典形式返回，因为这样训练器就知道要使用什么标签，所以让我们创建一个函数来执行此操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">corr_d</span>(<span class="params">eval_pred</span>): <span class="keyword">return</span> &#123;<span class="string">&#x27;pearson&#x27;</span>: corr(*eval_pred)&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h4><p>要在<code>Transformers</code>中训练模型，我们需要引入<code>transformers</code>包，我们选择适合的<code>GPU</code>的批量大小和少量的<code>epoch</code>，以便我们可以快速运行实验。<strong>最重要的超参数是学习率</strong>。<code>fastai </code>提供了一个学习率查找器来帮助您解决这个问题，但<code>Transformers</code>没有，所以您只能反复试验。这个想法是找到尽可能大的值，但这不会导致训练失败。<code>Transformers</code>使用 <code>TrainingArguments</code>类来设置参数。对于不同的型号，您可能需要更改上述<code>3</code>个参数。我们现在可以创建我们的模型和<code>Trainer</code>，它是一个将数据和模型结合在一起的类（就像<code>fastai</code>中的 <code>Learner</code>一样）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> TrainingArguments,Trainer</span><br><span class="line"></span><br><span class="line">bs = <span class="number">128</span></span><br><span class="line">epochs = <span class="number">4</span></span><br><span class="line">lr = <span class="number">8e-5</span></span><br><span class="line"></span><br><span class="line">args = TrainingArguments(<span class="string">&#x27;outputs&#x27;</span>, learning_rate=lr, warmup_ratio=<span class="number">0.1</span>, lr_scheduler_type=<span class="string">&#x27;cosine&#x27;</span>, fp16=<span class="literal">True</span>,</span><br><span class="line">    evaluation_strategy=<span class="string">&quot;epoch&quot;</span>, per_device_train_batch_size=bs, per_device_eval_batch_size=bs*<span class="number">2</span>,</span><br><span class="line">    num_train_epochs=epochs, weight_decay=<span class="number">0.01</span>, report_to=<span class="string">&#x27;none&#x27;</span>)</span><br><span class="line"></span><br><span class="line">model = AutoModelForSequenceClassification.from_pretrained(model_nm, num_labels=<span class="number">1</span>)</span><br><span class="line">trainer = Trainer(model, args, train_dataset=dds[<span class="string">&#x27;train&#x27;</span>], eval_dataset=dds[<span class="string">&#x27;test&#x27;</span>], tokenizer=tokz, compute_metrics=corr_d)</span><br></pre></td></tr></table></figure>
+<p>让我们训练模型吧。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">trainer.train()</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Epoch	Training Loss	Validation Loss	Pearson</span><br><span class="line">1	No <span class="built_in">log</span>	0.024492	0.800443</span><br><span class="line">2	No <span class="built_in">log</span>	0.022003	0.826113</span><br><span class="line">3	0.041600	0.021423	0.834453</span><br><span class="line">4	0.041600	0.022275	0.834767</span><br></pre></td></tr></table></figure>
+<p>需要注意的是表中的“<code>Pearson</code>”值。 正如您所看到的，它正在增加，并且已经超过<code>0.8</code>。让我们对测试集进行一些预测：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">preds = trainer.predict(eval_ds).predictions.astype(<span class="built_in">float</span>)</span><br><span class="line"><span class="built_in">print</span>(preds)</span><br><span class="line"></span><br><span class="line"><span class="comment"># array([[ 0.51],[ 0.65],[ 0.5 ],[ 0.32],[-0.04],[ 0.52],[ 0.52],[ 0.07],[ 0.28],[ 1.11],[ 0.25],[ 0.22],[ 0.71],[ 0.88],</span></span><br><span class="line"><span class="comment">#        [ 0.73],[ 0.41],[ 0.33],[ 0.  ],[ 0.69],[ 0.35],[ 0.4 ],[ 0.25],[ 0.12],[ 0.27],[ 0.56],[-0.  ],[-0.03],[-0.01],</span></span><br><span class="line"><span class="comment">#        [-0.03],[ 0.59],[ 0.29],[ 0.03],[ 0.74],[ 0.57],[ 0.46],[ 0.21]])</span></span><br></pre></td></tr></table></figure>
+<p>请注意：我们的一些预测是<code>&lt;0</code>或<code>&gt;1</code>。再次体现了记住实际查看数据的价值。让我们修复这些越界预测：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">preds = np.clip(preds, <span class="number">0</span>, <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>现在我们准备创建提交文件。如果您在笔记本中保存<code>CSV</code>，您将可以选择稍后提交。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> datasets</span><br><span class="line"></span><br><span class="line">submission = datasets.Dataset.from_dict(&#123;</span><br><span class="line">    <span class="string">&#x27;id&#x27;</span>: eval_ds[<span class="string">&#x27;id&#x27;</span>],</span><br><span class="line">    <span class="string">&#x27;score&#x27;</span>: preds</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">submission.to_csv(<span class="string">&#x27;submission.csv&#x27;</span>, index=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/04/01/artificial-intelligence/jax_%20pytrees_study/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -288,14 +500,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>13k</span>
+      <span>2.5k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>11 分钟</span>
+      <span>8 分钟</span>
     </span>
 </div>
 
@@ -388,14 +600,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>8.8k</span>
+      <span>2.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
+      <span>8 分钟</span>
     </span>
 </div>
 
@@ -488,14 +700,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>20k</span>
+      <span>4.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>16 分钟</span>
+      <span>14 分钟</span>
     </span>
 </div>
 
@@ -588,14 +800,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>11k</span>
+      <span>3.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>9 分钟</span>
+      <span>10 分钟</span>
     </span>
 </div>
 
@@ -688,7 +900,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>13k</span>
+      <span>3.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -710,111 +922,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2024/03/29/artificial-intelligence/jax_prng_study/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/28/artificial-intelligence/jax_pure_function_study/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/03/28/artificial-intelligence/jax_pure_function_study/" class="post-title-link" itemprop="url">JAX（Pure Functions）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-03-28 10:10:32" itemprop="dateCreated datePublished" datetime="2024-03-28T10:10:32+08:00">2024-03-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>7.1k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>6 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="纯函数（Pure-Functions）"><a href="#纯函数（Pure-Functions）" class="headerlink" title="纯函数（Pure Functions）"></a>纯函数（Pure Functions）</h4><p>函数就是纯函数：</p>
-<ul>
-<li>当使用相同的输入调用时，该函数返回相同的值。</li>
-<li>函数调用没有观察到副作用。</li>
-</ul>
-<p>虽然这个定义看起来很简单，但如果没有示例可能很难理解，而且听起来很模糊（尤其是对于初学者）。<strong>副作用</strong>是什么意思呢？是什么导致了副作用？做什么可以来避免副作用？让我们举几个例子，看一下产生副作用的错误。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/03/28/artificial-intelligence/jax_pure_function_study/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -893,7 +1000,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>9.4k</span>
+      <span>2.5k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -915,6 +1022,111 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2024/03/28/artificial-intelligence/jax_study/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/28/artificial-intelligence/jax_pure_function_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/03/28/artificial-intelligence/jax_pure_function_study/" class="post-title-link" itemprop="url">JAX（Pure Functions）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-03-28 10:10:32" itemprop="dateCreated datePublished" datetime="2024-03-28T10:10:32+08:00">2024-03-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="纯函数（Pure-Functions）"><a href="#纯函数（Pure-Functions）" class="headerlink" title="纯函数（Pure Functions）"></a>纯函数（Pure Functions）</h4><p>函数就是纯函数：</p>
+<ul>
+<li>当使用相同的输入调用时，该函数返回相同的值。</li>
+<li>函数调用没有观察到副作用。</li>
+</ul>
+<p>虽然这个定义看起来很简单，但如果没有示例可能很难理解，而且听起来很模糊（尤其是对于初学者）。<strong>副作用</strong>是什么意思呢？是什么导致了副作用？做什么可以来避免副作用？让我们举几个例子，看一下产生副作用的错误。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/03/28/artificial-intelligence/jax_pure_function_study/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -993,14 +1205,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>26k</span>
+      <span>5.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>22 分钟</span>
+      <span>19 分钟</span>
     </span>
 </div>
 
@@ -1093,14 +1305,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>25k</span>
+      <span>7.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>21 分钟</span>
+      <span>24 分钟</span>
     </span>
 </div>
 
@@ -1116,106 +1328,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2024/03/27/artificial-intelligence/game_ai_study/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/26/artificial-intelligence/data_cleaning_study/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/03/26/artificial-intelligence/data_cleaning_study/" class="post-title-link" itemprop="url">数据清理（Pandas）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-03-26 09:20:32" itemprop="dateCreated datePublished" datetime="2024-03-26T09:20:32+08:00">2024-03-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>19k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>16 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="处理缺失值"><a href="#处理缺失值" class="headerlink" title="处理缺失值"></a>处理缺失值</h4><p>数据清理是数据科学的关键部分，但它可能会令人深感沮丧。为什么有些文本字段出现乱码？对于那些缺失的值你应该做什么？为什么您的日期格式不正确？如何快速清理不一致的数据输入？您将学习如何解决一些最常见的数据清理问题，以便您可以更快地分析数据。 您将使用真实、混乱的数据完成五个实践练习，并解决一些最常见的数据清理问题。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/03/26/artificial-intelligence/data_cleaning_study/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1264,14 +1376,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">1.7m</span>
+    <span title="站点总字数">579k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">23:15</span>
+    <span title="站点阅读时长">32:09</span>
   </span>
 </div>
 <div class="busuanzi-count">
