@@ -28,7 +28,7 @@ categories:
 - 代码实现。
 - 代码说明。
 
-#### 配置 TPU's
+#### 配置TPU
 
 我们将使用TPU，因为我们需要构建`BERT`模型。
 ```python
