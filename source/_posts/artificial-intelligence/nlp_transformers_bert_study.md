@@ -454,7 +454,7 @@ Auc: 0.97%
 
 ##### 基本概述
 
-`RNN`有多种类型，不同的架构用于不同的目的。这里有一个视频，解释了不同类型的[模型架构](https://www.coursera.org/learn/nlp-sequence-models/lecture/BO8PS/ different-types-of-rnns)。`Seq2Seq`是一个多对多的`RNN`架构，其中输入是一个序列，输出也是一个序列。该架构用于许多应用，如机器翻译、文本摘要、问答等。
+`RNN`有多种类型，不同的架构用于不同的目的。这里有一个视频解释了不同类型的[模型架构](https://www.coursera.org/learn/nlp-sequence-models/lecture/BO8PS/different-types-of-rnns)。`Seq2Seq`是一个多对多的`RNN`架构，其中输入是一个序列，输出也是一个序列。该架构用于许多应用，如机器翻译、文本摘要、问答等。
 
 ##### 深入理解
 
@@ -676,7 +676,7 @@ class PositionwiseFeedForward(nn.Module):
     def forward(self, x):
         return self.w_2(self.dropout(F.relu(self.w_1(x))))
 ```
-* Embeddings & Softmax
+* `Embeddings & Softmax`
 与其他序列转导模型类似，我们使用学习嵌入将输入标记和输出标记转换为维度向量。我们还使用通常学习的线性变换和`softmax`函数将解码器输出转换为预测的下一个令牌概率。在我们的模型中，我们在两个嵌入层和`pre-softmax`线性变换之间共享相同的权重矩阵。
 ```python
 class Embeddings(nn.Module):
@@ -742,11 +742,11 @@ tmp_model = make_model(10, 10, 2)
 ```
 #### BERT
 
-[BERT详解](https://jalammar.github.io/illustrated-bert/)
+[`BERT`详解](https://jalammar.github.io/illustrated-bert/)
 
 我们将使用`Hugging Face`和`KERAS`实现`BERT`模型。涉及步骤：
 - 数据准备：数据的标记化和编码。
-- 配置TPU。
+- 配置`TPU`。
 - 构建一个函数用于模型训练并且添加分类输出层。
 - 训练模型并得到结果。
 
