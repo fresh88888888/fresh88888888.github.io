@@ -532,7 +532,7 @@ class Generator(nn.Module):
     def forward(self, x):
         return F.log_softmax(self.proj(x), dim=-1)
 ```
-{% asset_img ntb_8.png %}
+{% asset_img ntb_8.png [Transformer 架构] %}
 
 ###### 编码器&解码器栈
 
