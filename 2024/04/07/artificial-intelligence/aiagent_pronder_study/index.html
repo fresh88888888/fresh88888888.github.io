@@ -151,7 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A5%BD%E7%9C%8B%E7%9A%84%E7%9A%AE%E5%9B%8A%EF%BC%9A%E5%A4%9A%E6%A8%A1%E6%80%81%E7%90%86%E8%A7%A3%E8%83%BD%E5%8A%9B"><span class="nav-number">1.</span> <span class="nav-text">好看的皮囊：多模态理解能力</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A5%BD%E7%9C%8B%E7%9A%84%E7%9A%AE%E5%9B%8A%EF%BC%9A%E5%A4%9A%E6%A8%A1%E6%80%81%E7%94%9F%E6%88%90%E8%83%BD%E5%8A%9B"><span class="nav-number">2.</span> <span class="nav-text">好看的皮囊：多模态生成能力</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%89%E8%B6%A3%E7%9A%84%E7%81%B5%E9%AD%82%EF%BC%9A%E6%85%A2%E6%80%9D%E8%80%83%E4%B8%8E%E8%AE%B0%E5%BF%86"><span class="nav-number">3.</span> <span class="nav-text">有趣的灵魂：慢思考与记忆</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A5%BD%E7%9C%8B%E7%9A%84%E7%9A%AE%E5%9B%8A%EF%BC%9A%E5%A4%9A%E6%A8%A1%E6%80%81%E7%90%86%E8%A7%A3%E8%83%BD%E5%8A%9B"><span class="nav-number">1.</span> <span class="nav-text">好看的皮囊：多模态理解能力</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A5%BD%E7%9C%8B%E7%9A%84%E7%9A%AE%E5%9B%8A%EF%BC%9A%E5%A4%9A%E6%A8%A1%E6%80%81%E7%94%9F%E6%88%90%E8%83%BD%E5%8A%9B"><span class="nav-number">2.</span> <span class="nav-text">好看的皮囊：多模态生成能力</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%89%E8%B6%A3%E7%9A%84%E7%81%B5%E9%AD%82%EF%BC%9A%E6%85%A2%E6%80%9D%E8%80%83%E4%B8%8E%E8%AE%B0%E5%BF%86"><span class="nav-number">3.</span> <span class="nav-text">有趣的灵魂：慢思考与记忆</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%89%E7%94%A8%E7%9A%84-AI"><span class="nav-number">4.</span> <span class="nav-text">有用的 AI</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AI-Agent%EF%BC%9A%E8%B7%AF%E5%9C%A8%E4%BD%95%E6%96%B9"><span class="nav-number">5.</span> <span class="nav-text">AI Agent：路在何方</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -299,14 +299,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>4.3k</span>
+      <span>6.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>14 分钟</span>
+      <span>20 分钟</span>
     </span>
 </div>
 
@@ -347,6 +347,17 @@
 <p>大家最熟悉的事实性记忆方案可能是<code>RAG（Retrieval Augmented Generation）</code>了。<code>RAG</code>就是搜索相关的信息片段，再把搜索结果放到大模型的上下文里，让大模型基于搜索结果回答问题。很多人说<code>RAG</code>就等于向量数据库，但我认为<code>RAG</code>背后一定是一整套信息检索系统，<code>RAG</code>一定不是向量数据库这么简单。因为大规模语料库仅仅使用向量数据库的匹配准确率是非常低的。向量数据库比较适合语义匹配，传统的<code>BM25</code>之类基于关键词的检索比较适合细节匹配。而且不同信息片段的重要程度不同，需要有个搜索结果排序的能力。</p>
 <p>长上下文前面已经提到了，可能是一种终极方案。如果长上下文结合持久化<code>KV Cache、KV Cache</code>的压缩技术和一些<code>attention</code>的优化技术，可以做到足够便宜，那么只要把所有对话的历史和<code>AI</code> 当时的思考和心情记录下来，就可以实现一个记忆力比人还好的<code>AI Agent</code>。但是有趣的<code>AI Agent</code>记忆力如果太好，比如能清楚的记得一年前的早上吃了什么，会不会显得不太正常，这就是需要产品设计方面思考了。</p>
 <p>这三种技术也不是互斥的，它们是互相补充的。比如说总结和 RAG 就是可以结合在一起的，我们可以分门别类的做总结，对每一次聊天做总结，一年下来这些总结也会有很多内容，需要<code>RAG</code>的方法提取有关的总结，作为大模型的上下文。</p>
+<h5 id="有用的-AI"><a href="#有用的-AI" class="headerlink" title="有用的 AI"></a>有用的 AI</h5><p><strong>有用的AI其实更多是一个大模型基础能力的问题，比如复杂任务的规划和分解、遵循复杂指令、自主使用工具以及减少幻觉等等，并不能通过一个外部的系统简单解决</strong>。比如<code>GPT-4</code>的幻觉就比 <code>GPT-3.5</code>少很多。区分哪些问题是模型基础能力问题，哪些问题是可以通过一套外部系统来解决的，也是很需要智慧的。其实有一篇很著名的文章叫做<code>The Bitter Lesson</code>，它讲的是凡是能够用算力的增长解决的问题，最后发现充分利用更大的算力可能就是一个终极的解决方案。<code>Scaling law</code>是<code>OpenAI</code>最重要的发现，但是很多人对<code>Scaling law</code>还是缺少足够的信仰和敬畏之心。</p>
+<p>要搞清楚大模型适合做什么，我们需要先想清楚一点：有用<code>AI</code>的竞争对手不是机器，而是人。工业革命里面的机器是取代人的体力劳动，计算机是取代人的简单重复脑力劳动，而大模型则是用来取代人更复杂一些的脑力劳动。所有大模型能做的事情，人理论上都能做，只是效率和成本的问题。因此，要让<code>AI</code>有用，就要搞清楚大模型到底哪里比人强，扬长避短，拓展人类能力的边界。</p>
+<p>比如，<strong>大模型阅读理解长文本的能力是远远比人强的</strong>。给它一本几十万字的小说或者文档，它几十秒就能读完，而且能回答出<code>90%</code>以上的细节问题。这个大海捞针的能力就比人强很多。那么让大模型做资料总结、调研分析之类的任务，那就是在拓展人类能力的边界。<code>Google</code>是最强的上一代互联网公司，它也是利用了计算机信息检索的能力远比人强这个能力。</p>
+<p>再如，<strong>大模型的知识面是远比人广阔的</strong>。现在不可能有任何人的知识面比<code>GPT-4</code>还广，因此<code>ChatGPT</code>已经证明，通用的<code>chatbot</code>是大模型一个很好的应用。生活中的常见问题和各个领域的简单问题，问大模型比问人更靠谱，这也是在拓展人类能力的边界。很多创意性工作需要多个领域的知识交叉碰撞，这也是大模型适合做的事情，真人因为知识面的局限，很难碰撞出这么多火花来。但有些人非要把大模型局限在一个狭窄的专业领域里，说大模型的能力不如领域专家，因此认为大模型不实用，那就是没有用好大模型。</p>
+<p>在严肃的商业场景下，我们更多希望用大模型辅助人，而不是代替人。也就是说人是最终的守门员。比如说大模型阅读理解长文本的能力比人强，但我们也不应该把它做的总结直接拿去作为商业决策，而要让人<code>review</code>一下，由人做最终的决定。</p>
+<p>这里边有两个原因，第一个是准确性问题；另外一个方面，大模型的能力目前只是达到一个入门级的水平，达不到专家级。我们可以把大模型当成一个干活非常快但不太靠谱的初级员工。我们可以让大模型做一些初级的工作，比如写一些基础的<code>CRUD</code>代码，比人写得还快。但是你让他去设计系统架构，去做研究解决技术前沿问题，那是不靠谱的。我们在公司里也不会让初级员工去做这些事情。有了大模型之后，相当于有了大量又便宜干活又快的初级员工。怎么把这些初级员工用好，是一个管理问题。</p>
+<p>当前有用的<code>AI Agent</code>大致可以分成两类：个人助理和商业智能。记忆是有趣和有用<code>AI</code>都必须具备的公共能力。情感是有趣<code>AI</code>需要的。而解决复杂任务和使用工具更多是有用<code>AI</code>所需的能力。</p>
+<p>幻觉是大模型的基础问题，更大的模型幻觉相对会较少，幻觉的消除根本上还是要靠<code>scaling law</code>，靠基础模型的进步。但也有一些工程方法减少现有模型的幻觉。这里介绍两种典型的方法：<strong>事实性校验和多次生成</strong>。</p>
+<p><strong>事实性校验</strong>（<code>Factual Checking</code>）就是首先用大模型生成回答，然后用 RAG 的方法，用搜索引擎、向量数据库、倒排索引或者知识图谱找出与回答内容匹配的原始语料，然后将回答内容和原始语料送进大模型，让大模型判断回答与原始语料是否相符。事实性校验方法有两个问题：首先，幻觉有多种种类，事实性校验只能发现编造事实类的幻觉，但不能发现答非所问类的幻觉。比如我问中国的首都是哪里，它回答中国是一个有悠久历史的大国，用事实性校验也挑不出毛病，但这并没有正确回答问题。其次，原始语料的内容不一定就是事实，互联网上有大量不准确的信息。</p>
+<p><strong>多次生成</strong>是<code>SelfCheckGPT</code>这篇论文提出的，它的思想也很简单，就是多次生成同一问题的回答，然后把这些回答都放进大模型里，让大模型从中挑出最一致的那个。多次生成方法可以解决偶发的幻觉问题，但不能解决系统性偏差。例如让<code>GPT-3.5 Turbo</code>讲讲 “林黛玉倒拔垂杨柳” 的故事，几乎每次都会编一个类似的出来，而没有发现这个事件在历史上就不存在，这种幻觉就是多次生成很难消除的。</p>
+<h5 id="AI-Agent：路在何方"><a href="#AI-Agent：路在何方" class="headerlink" title="AI Agent：路在何方"></a>AI Agent：路在何方</h5><p>我认为长期来看有用的价值更高，短期来看有趣的价值更高。这就是我们为什么在商业模式上选择有趣的<code>AI</code>，同时持续探索有用的<code>AI</code>。因为比如说语音闲聊，一块钱一个小时已经很不容易了，<code>Character AI</code>可能有上千万的用户，但是它每个月实际收入只有上千万美金，大多数是不付费的。但是如果一些在线教育、甚至是更专业领域的比如心理咨询、法律咨询等等它可能收入更高，但是这里边更关键的问题是需要质量和品牌才能产生一个更高的附加价值。更长远来看，我们的终极目标是<code>AGI</code>，那么<code>AGI</code>一定更多是有用的，可以扩展人类能力的边界，让人类做到之前做不到的事情。</p>
 
     </div>
 
@@ -419,14 +430,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">600k</span>
+    <span title="站点总字数">602k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">33:20</span>
+    <span title="站点阅读时长">33:26</span>
   </span>
 </div>
 <div class="busuanzi-count">
