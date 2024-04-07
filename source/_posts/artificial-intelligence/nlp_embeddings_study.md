@@ -132,7 +132,7 @@ oov[:20]
 #  ('counselling', 634),('btech', 632),('didnt', 600),('Brexit', 493),('cryptocurrencies', 481),('blockchain', 474),
 #  ('behaviour', 468)]
 
-# 现在，我们在使用美国/英国词汇时处理常见的拼写错误，并用“social media”替换一些“modern”单词。对于此任务，我使用我不久前在堆栈溢出上发现的多正则表达式脚本。
+# 现在，我们在使用美国/英国词汇时处理常见的拼写错误，并用“social media”替换一些“modern”单词。对于此任务，我使用我不久前在堆栈溢出发现的多正则表达式脚本。
 # 此外，我们将简单地删除单词“a”、“to”、“and”和“of”，因为在训练GoogleNews嵌入时这些词显然已经被采样了。
 
 def _get_mispell(mispell_dict):
