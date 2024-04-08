@@ -103,7 +103,7 @@ for i in labels:
             break
         j+=1
 ```
-{% asset_img ccm_1.png %}
+{% asset_img cm_1.png %}
 
 将数据集分为训练集和测试集。将标签转换为数值后进行`One Hot Encoding`：
 ```python
@@ -191,7 +191,7 @@ ax[1].set_ylabel('Training & Validation Loss')
 
 fig.show()
 ```
-{% asset_img ccm_2.png %}
+{% asset_img cm_2.png %}
 
 #### 预测
 
@@ -232,7 +232,7 @@ fig.text(s='Heatmap of the Confusion Matrix',size=18,fontweight='bold',
 
 plt.show()
 ```
-{% asset_img ccm_3.png %}
+{% asset_img cm_3.png %}
 
 我制作了一个组件，可以从本机上传图片并预测`MRI`扫描是否有脑肿瘤，并对它是哪种肿瘤进行分类。
 ```python
