@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+  <meta name="google-site-verification" content="lk2gSYFP_NyLNFob-fFnt7fm-I_n1ZYws-WZll7mshg">
+  <meta name="msvalidate.01" content="6Jdc01DjYOLguhS5">
+  <meta name="baidu-site-verification" content="code-NR10G09zww">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic%7Ccursive:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+
+    <meta name="description" content="介绍我使用CNN对脑肿瘤数据集执行图像分类。由于这个数据集很小，如果我们对其训练神经网络，它不会真正给我们带来好的结果。因此，我将使用迁移学习的概念来训练模型以获得真正准确的结果。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="脑肿瘤MRI — 分类（TensorFlow &amp; CNN）">
+<meta property="og:url" content="https://fresh88888888.github.io/2024/04/08/artificial-intelligence/classifictation_mri_study/index.html">
+<meta property="og:site_name" content="UMBRELLA">
+<meta property="og:description" content="介绍我使用CNN对脑肿瘤数据集执行图像分类。由于这个数据集很小，如果我们对其训练神经网络，它不会真正给我们带来好的结果。因此，我将使用迁移学习的概念来训练模型以获得真正准确的结果。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-08T02:37:11.000Z">
+<meta property="article:modified_time" content="2024-04-08T02:37:11.000Z">
+<meta property="article:author" content="umbrella">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://fresh88888888.github.io/2024/04/08/artificial-intelligence/classifictation_mri_study/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/04/08/artificial-intelligence/classifictation_mri_study/","path":"2024/04/08/artificial-intelligence/classifictation_mri_study/","title":"脑肿瘤MRI — 分类（TensorFlow & CNN）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>脑肿瘤MRI — 分类（TensorFlow & CNN） | UMBRELLA</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">UMBRELLA</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">未雨绸缪，举重若轻</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-算法"><a href="/Algorithm/" rel="section"><i class="fa fa-calendar fa-fw"></i>算法</a></li><li class="menu-item menu-item-c++-&nbsp;编程"><a href="/Programming-C++/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>C++ &nbsp;编程</a></li><li class="menu-item menu-item-rust-编程"><a href="/Programming-Rust/" rel="section"><i class="fa fa-cat fa-fw"></i>Rust 编程</a></li><li class="menu-item menu-item-go-&nbsp;&nbsp;&nbsp;编程"><a href="/Programming-Go/" rel="section"><i class="fa fa-hippo fa-fw"></i>Go &nbsp;&nbsp;&nbsp;编程</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E5%BA%93"><span class="nav-number">2.</span> <span class="nav-text">导入库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%9C%E8%89%B2%E8%AE%BE%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">颜色设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87"><span class="nav-number">4.</span> <span class="nav-text">数据准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0"><span class="nav-number">5.</span> <span class="nav-text">迁移学习</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B"><span class="nav-number">6.</span> <span class="nav-text">训练模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%84%E6%B5%8B"><span class="nav-number">7.</span> <span class="nav-text">预测</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%84%E4%BC%B0"><span class="nav-number">8.</span> <span class="nav-text">评估</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="umbrella"
+      src="/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">umbrella</p>
+  <div class="site-description" itemprop="description">没事就多看看书</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">142</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fresh88888888" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fresh88888888" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fresh888888@foxmail.com" title="E-Mail → mailto:fresh888888@foxmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.rust-lang.org/zh-CN/" title="https:&#x2F;&#x2F;www.rust-lang.org&#x2F;zh-CN&#x2F;" rel="noopener" target="_blank">Rust</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://go.dev/" title="https:&#x2F;&#x2F;go.dev&#x2F;" rel="noopener" target="_blank">Golang</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://isocpp.org/" title="https:&#x2F;&#x2F;isocpp.org&#x2F;" rel="noopener" target="_blank">C++</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.python.org/" title="https:&#x2F;&#x2F;www.python.org&#x2F;" rel="noopener" target="_blank">Python</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://doc.rust-lang.org/cargo/index.html" title="https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;cargo&#x2F;index.html" rel="noopener" target="_blank">Cargo</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://gist.github.com/rxaviers/7360908" title="https:&#x2F;&#x2F;gist.github.com&#x2F;rxaviers&#x2F;7360908" rel="noopener" target="_blank">Emoji</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/04/08/artificial-intelligence/classifictation_mri_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="脑肿瘤MRI — 分类（TensorFlow & CNN） | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          脑肿瘤MRI — 分类（TensorFlow & CNN）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-04-08 10:37:11" itemprop="dateCreated datePublished" datetime="2024-04-08T10:37:11+08:00">2024-04-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>我使用<code>CNN</code>对脑肿瘤数据集执行图像分类。由于这个数据集很小，如果我们对其训练神经网络，它不会真正给我们带来好的结果。因此，我将使用迁移学习的概念来训练模型以获得真正准确的结果。</p>
+<span id="more"></span>
+<h4 id="导入库"><a href="#导入库" class="headerlink" title="导入库"></a>导入库</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">from</span> tensorflow.keras.preprocessing.image <span class="keyword">import</span> ImageDataGenerator</span><br><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> sklearn.utils <span class="keyword">import</span> shuffle</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line"><span class="keyword">from</span> tensorflow.keras.applications <span class="keyword">import</span> EfficientNetB0</span><br><span class="line"><span class="keyword">from</span> tensorflow.keras.callbacks <span class="keyword">import</span> EarlyStopping, ReduceLROnPlateau, TensorBoard, ModelCheckpoint</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> classification_report,confusion_matrix</span><br><span class="line"><span class="keyword">import</span> ipywidgets <span class="keyword">as</span> widgets</span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">from</span> IPython.display <span class="keyword">import</span> display,clear_output</span><br><span class="line"><span class="keyword">from</span> warnings <span class="keyword">import</span> filterwarnings</span><br><span class="line"><span class="keyword">for</span> dirname, _, filenames <span class="keyword">in</span> os.walk(<span class="string">&#x27;/kaggle/input&#x27;</span>):</span><br><span class="line">    <span class="keyword">for</span> filename <span class="keyword">in</span> filenames:</span><br><span class="line">        <span class="built_in">print</span>(os.path.join(dirname, filename))</span><br></pre></td></tr></table></figure>
+<h4 id="颜色设置"><a href="#颜色设置" class="headerlink" title="颜色设置"></a>颜色设置</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">colors_dark = [<span class="string">&quot;#1F1F1F&quot;</span>, <span class="string">&quot;#313131&quot;</span>, <span class="string">&#x27;#636363&#x27;</span>, <span class="string">&#x27;#AEAEAE&#x27;</span>, <span class="string">&#x27;#DADADA&#x27;</span>]</span><br><span class="line">colors_red = [<span class="string">&quot;#331313&quot;</span>, <span class="string">&quot;#582626&quot;</span>, <span class="string">&#x27;#9E1717&#x27;</span>, <span class="string">&#x27;#D35151&#x27;</span>, <span class="string">&#x27;#E9B4B4&#x27;</span>]</span><br><span class="line">colors_green = [<span class="string">&#x27;#01411C&#x27;</span>,<span class="string">&#x27;#4B6F44&#x27;</span>,<span class="string">&#x27;#4F7942&#x27;</span>,<span class="string">&#x27;#74C365&#x27;</span>,<span class="string">&#x27;#D0F0C0&#x27;</span>]</span><br><span class="line"></span><br><span class="line">sns.palplot(colors_dark)</span><br><span class="line">sns.palplot(colors_green)</span><br><span class="line">sns.palplot(colors_red)</span><br></pre></td></tr></table></figure>
+<h4 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h4><p>我们首先将目录中的所有图像附加到<code>Python</code>列表中，调整大小后将它们转换为<code>numpy</code>数组。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">labels = [<span class="string">&#x27;glioma_tumor&#x27;</span>,<span class="string">&#x27;no_tumor&#x27;</span>,<span class="string">&#x27;meningioma_tumor&#x27;</span>,<span class="string">&#x27;pituitary_tumor&#x27;</span>]</span><br><span class="line"></span><br><span class="line">X_train = []</span><br><span class="line">y_train = []</span><br><span class="line">image_size = <span class="number">150</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> labels:</span><br><span class="line">    folderPath = os.path.join(<span class="string">&#x27;../input/brain-tumor-classification-mri&#x27;</span>,<span class="string">&#x27;Training&#x27;</span>,i)</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> tqdm(os.listdir(folderPath)):</span><br><span class="line">        img = cv2.imread(os.path.join(folderPath,j))</span><br><span class="line">        img = cv2.resize(img,(image_size, image_size))</span><br><span class="line">        X_train.append(img)</span><br><span class="line">        y_train.append(i)</span><br><span class="line">        </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> labels:</span><br><span class="line">    folderPath = os.path.join(<span class="string">&#x27;../input/brain-tumor-classification-mri&#x27;</span>,<span class="string">&#x27;Testing&#x27;</span>,i)</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> tqdm(os.listdir(folderPath)):</span><br><span class="line">        img = cv2.imread(os.path.join(folderPath,j))</span><br><span class="line">        img = cv2.resize(img,(image_size,image_size))</span><br><span class="line">        X_train.append(img)</span><br><span class="line">        y_train.append(i)</span><br><span class="line">        </span><br><span class="line">X_train = np.array(X_train)</span><br><span class="line">y_train = np.array(y_train)</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">100%|██████████| 826/826 [00:06&lt;00:00, 120.44it/s]</span><br><span class="line">100%|██████████| 395/395 [00:02&lt;00:00, 151.18it/s]</span><br><span class="line">100%|██████████| 822/822 [00:06&lt;00:00, 133.61it/s]</span><br><span class="line">100%|██████████| 827/827 [00:06&lt;00:00, 119.68it/s]</span><br><span class="line">100%|██████████| 100/100 [00:00&lt;00:00, 137.21it/s]</span><br><span class="line">100%|██████████| 105/105 [00:00&lt;00:00, 206.29it/s]</span><br><span class="line">100%|██████████| 115/115 [00:00&lt;00:00, 156.10it/s]</span><br><span class="line">100%|██████████| 74/74 [00:00&lt;00:00, 94.34it/s]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">k=<span class="number">0</span></span><br><span class="line">fig, ax = plt.subplots(<span class="number">1</span>,<span class="number">4</span>,figsize=(<span class="number">20</span>,<span class="number">20</span>))</span><br><span class="line">fig.text(s=<span class="string">&#x27;Sample Image From Each Label&#x27;</span>,size=<span class="number">16</span>,fontweight=<span class="string">&#x27;bold&#x27;</span>,</span><br><span class="line">             fontname=<span class="string">&#x27;monospace&#x27;</span>,color=colors_dark[<span class="number">1</span>],y=<span class="number">0.62</span>,x=<span class="number">0.4</span>,alpha=<span class="number">0.8</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> labels:</span><br><span class="line">    j=<span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span> :</span><br><span class="line">        <span class="keyword">if</span> y_train[j]==i:</span><br><span class="line">            ax[k].imshow(X_train[j])</span><br><span class="line">            ax[k].set_title(y_train[j])</span><br><span class="line">            ax[k].axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">            k+=<span class="number">1</span></span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        j+=<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+
+<p>将数据集分为训练集和测试集。将标签转换为数值后进行<code>One Hot Encoding</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">X_train, y_train = shuffle(X_train,y_train, random_state=<span class="number">101</span>)</span><br><span class="line">X_train,X_test,y_train,y_test = train_test_split(X_train,y_train, test_size=<span class="number">0.1</span>,random_state=<span class="number">101</span>)</span><br><span class="line"></span><br><span class="line">y_train_new = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> y_train:</span><br><span class="line">    y_train_new.append(labels.index(i))</span><br><span class="line">y_train = y_train_new</span><br><span class="line">y_train = tf.keras.utils.to_categorical(y_train)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">y_test_new = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> y_test:</span><br><span class="line">    y_test_new.append(labels.index(i))</span><br><span class="line">y_test = y_test_new</span><br><span class="line">y_test = tf.keras.utils.to_categorical(y_test)</span><br></pre></td></tr></table></figure>
+<h4 id="迁移学习"><a href="#迁移学习" class="headerlink" title="迁移学习"></a>迁移学习</h4><p>深度卷积神经网络模型可能需要几天甚至几周的时间才能完成在非常大的数据集上进行训练。缩短此过程的一种方法是复用为标准计算机视觉基准数据集（例如<code>ImageNet</code>图像识别任务）开发的预训练模型中的模型权重。性能最佳的模型可以直接下载和使用，也可以集成到新模型中来解决您自己的计算机视觉问题。在本例中，我将使用<code>EfficientNetB0</code>模型，该模型将使用<code>ImageNet</code>数据集的权重。<code>include_top</code>参数设置为<code>False</code>，以便网络不包含预构建模型中的顶层&#x2F;输出层，这允许我们根据我们的用例添加自己的输出层！</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">effnet = EfficientNetB0(weights=<span class="string">&#x27;imagenet&#x27;</span>,include_top=<span class="literal">False</span>,input_shape=(image_size,image_size,<span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong><code>GlobalAveragePooling2D</code></strong> -&gt; 该层的作用类似于<code>CNN</code>中的最大池化层，唯一的区别是它在池化时使用平均值而不是最大值。这确实有助于减少训练时机器的计算负载。</li>
+<li><strong><code>Dropout</code></strong> -&gt; 在该层的每一步中省略一些神经元，使神经元更加独立于邻近的神经元。它有助于避免过度拟合。被省略的神经元是随机选择的。速率参数是神经元激活被设置为<code>0</code>的可能性，从而丢弃该神经元</li>
+<li><strong><code>Dense</code></strong> -&gt; 这是输出层，它将图像分类为<code>4</code>个类别中的<code>1</code>个类别。它使用<code>softmax</code>函数，该函数是<code>sigmoid</code>函数的泛化。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">model = effnet.output</span><br><span class="line">model = tf.keras.layers.GlobalAveragePooling2D()(model)</span><br><span class="line">model = tf.keras.layers.Dropout(rate=<span class="number">0.5</span>)(model)</span><br><span class="line">model = tf.keras.layers.Dense(<span class="number">4</span>,activation=<span class="string">&#x27;softmax&#x27;</span>)(model)</span><br><span class="line">model = tf.keras.models.Model(inputs=effnet.<span class="built_in">input</span>, outputs = model)</span><br><span class="line">model.summary()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编译模型。</span></span><br><span class="line">model.<span class="built_in">compile</span>(loss=<span class="string">&#x27;categorical_crossentropy&#x27;</span>,optimizer = <span class="string">&#x27;Adam&#x27;</span>, metrics= [<span class="string">&#x27;accuracy&#x27;</span>])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>回调</strong>-&gt; 回调可以帮助您更快地修复错误，并且可以帮助您构建更好的模型。它们可以帮助您可视化模型的训练进展情况，甚至可以通过实施提前停止或自定义每次迭代的学习率来帮助防止过度拟合。根据定义，“<strong>回调是在训练过程的给定阶段应用的一组函数。您可以使用回调来查看训练期间模型的内部状态和统计数据</strong>”。在此例中，我将使用<code>TensorBoard、ModelCheckpoint</code>和 <code>ReduceLROnPlateau</code>回调函数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tensorboard = TensorBoard(log_dir = <span class="string">&#x27;logs&#x27;</span>)</span><br><span class="line">checkpoint = ModelCheckpoint(<span class="string">&quot;effnet.h5&quot;</span>,monitor=<span class="string">&quot;val_accuracy&quot;</span>,save_best_only=<span class="literal">True</span>,mode=<span class="string">&quot;auto&quot;</span>,verbose=<span class="number">1</span>)</span><br><span class="line">reduce_lr = ReduceLROnPlateau(monitor = <span class="string">&#x27;val_accuracy&#x27;</span>, factor = <span class="number">0.3</span>, patience = <span class="number">2</span>, min_delta = <span class="number">0.001</span>, mode=<span class="string">&#x27;auto&#x27;</span>,verbose=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<h4 id="训练模型"><a href="#训练模型" class="headerlink" title="训练模型"></a>训练模型</h4><p>注意：训练需要很长时间！对我来说大约2小时（使用<code>CPU</code>），<code>GPU</code>只用了<code>5</code>分钟。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 训练模型</span></span><br><span class="line">history = model.fit(X_train,y_train,validation_split=<span class="number">0.1</span>, epochs =<span class="number">12</span>, verbose=<span class="number">1</span>, batch_size=<span class="number">32</span>,</span><br><span class="line">                   callbacks=[tensorboard,checkpoint,reduce_lr])</span><br><span class="line"></span><br><span class="line">filterwarnings(<span class="string">&#x27;ignore&#x27;</span>)</span><br><span class="line"></span><br><span class="line">epochs = [i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">12</span>)]</span><br><span class="line">fig, ax = plt.subplots(<span class="number">1</span>,<span class="number">2</span>,figsize=(<span class="number">14</span>,<span class="number">7</span>))</span><br><span class="line">train_acc = history.history[<span class="string">&#x27;accuracy&#x27;</span>]</span><br><span class="line">train_loss = history.history[<span class="string">&#x27;loss&#x27;</span>]</span><br><span class="line">val_acc = history.history[<span class="string">&#x27;val_accuracy&#x27;</span>]</span><br><span class="line">val_loss = history.history[<span class="string">&#x27;val_loss&#x27;</span>]</span><br><span class="line"></span><br><span class="line">fig.text(s=<span class="string">&#x27;Epochs vs. Training and Validation Accuracy/Loss&#x27;</span>,size=<span class="number">18</span>,fontweight=<span class="string">&#x27;bold&#x27;</span>,</span><br><span class="line">             fontname=<span class="string">&#x27;monospace&#x27;</span>,color=colors_dark[<span class="number">1</span>],y=<span class="number">1</span>,x=<span class="number">0.28</span>,alpha=<span class="number">0.8</span>)</span><br><span class="line"></span><br><span class="line">sns.despine()</span><br><span class="line">ax[<span class="number">0</span>].plot(epochs, train_acc, marker=<span class="string">&#x27;o&#x27;</span>,markerfacecolor=colors_green[<span class="number">2</span>],color=colors_green[<span class="number">3</span>],</span><br><span class="line">           label = <span class="string">&#x27;Training Accuracy&#x27;</span>)</span><br><span class="line">ax[<span class="number">0</span>].plot(epochs, val_acc, marker=<span class="string">&#x27;o&#x27;</span>,markerfacecolor=colors_red[<span class="number">2</span>],color=colors_red[<span class="number">3</span>],</span><br><span class="line">           label = <span class="string">&#x27;Validation Accuracy&#x27;</span>)</span><br><span class="line">ax[<span class="number">0</span>].legend(frameon=<span class="literal">False</span>)</span><br><span class="line">ax[<span class="number">0</span>].set_xlabel(<span class="string">&#x27;Epochs&#x27;</span>)</span><br><span class="line">ax[<span class="number">0</span>].set_ylabel(<span class="string">&#x27;Accuracy&#x27;</span>)</span><br><span class="line"></span><br><span class="line">sns.despine()</span><br><span class="line">ax[<span class="number">1</span>].plot(epochs, train_loss, marker=<span class="string">&#x27;o&#x27;</span>,markerfacecolor=colors_green[<span class="number">2</span>],color=colors_green[<span class="number">3</span>],</span><br><span class="line">           label =<span class="string">&#x27;Training Loss&#x27;</span>)</span><br><span class="line">ax[<span class="number">1</span>].plot(epochs, val_loss, marker=<span class="string">&#x27;o&#x27;</span>,markerfacecolor=colors_red[<span class="number">2</span>],color=colors_red[<span class="number">3</span>],</span><br><span class="line">           label = <span class="string">&#x27;Validation Loss&#x27;</span>)</span><br><span class="line">ax[<span class="number">1</span>].legend(frameon=<span class="literal">False</span>)</span><br><span class="line">ax[<span class="number">1</span>].set_xlabel(<span class="string">&#x27;Epochs&#x27;</span>)</span><br><span class="line">ax[<span class="number">1</span>].set_ylabel(<span class="string">&#x27;Training &amp; Validation Loss&#x27;</span>)</span><br><span class="line"></span><br><span class="line">fig.show()</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="预测"><a href="#预测" class="headerlink" title="预测"></a>预测</h4><p>使用了<code>argmax</code>函数，因为预测数组中的每一行都包含相应标签的四个值。每行中的最大值描述了<code>4</code>个结果中的预测输出。因此，通过<code>argmax</code>，我能够找出与预测结果相关的索引。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pred = model.predict(X_test)</span><br><span class="line">pred = np.argmax(pred,axis=<span class="number">1</span>)</span><br><span class="line">y_test_new = np.argmax(y_test,axis=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<h4 id="评估"><a href="#评估" class="headerlink" title="评估"></a>评估</h4><ul>
+<li><code>0</code> - <code>Glioma Tumor</code></li>
+<li><code>1</code> - <code>No Tumor</code></li>
+<li><code>2</code> - <code>Meningioma Tumor</code></li>
+<li><code>3</code> - <code>Pituitary Tumor</code><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(classification_report(y_test_new,pred))</span><br></pre></td></tr></table></figure>
+结果输出为：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">              precision    recall  f1-score   support</span><br><span class="line"></span><br><span class="line">           0       0.98      0.96      0.97        93</span><br><span class="line">           1       0.96      1.00      0.98        51</span><br><span class="line">           2       0.98      0.98      0.98        96</span><br><span class="line">           3       1.00      1.00      1.00        87</span><br><span class="line"></span><br><span class="line">    accuracy                           0.98       327</span><br><span class="line">   macro avg       0.98      0.98      0.98       327</span><br><span class="line">weighted avg       0.98      0.98      0.98       327</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">fig,ax=plt.subplots(<span class="number">1</span>,<span class="number">1</span>,figsize=(<span class="number">14</span>,<span class="number">7</span>))</span><br><span class="line">sns.heatmap(confusion_matrix(y_test_new,pred),ax=ax,xticklabels=labels,yticklabels=labels,annot=<span class="literal">True</span>,</span><br><span class="line">           cmap=colors_green[::-<span class="number">1</span>],alpha=<span class="number">0.7</span>,linewidths=<span class="number">2</span>,linecolor=colors_dark[<span class="number">3</span>])</span><br><span class="line">fig.text(s=<span class="string">&#x27;Heatmap of the Confusion Matrix&#x27;</span>,size=<span class="number">18</span>,fontweight=<span class="string">&#x27;bold&#x27;</span>,</span><br><span class="line">             fontname=<span class="string">&#x27;monospace&#x27;</span>,color=colors_dark[<span class="number">1</span>],y=<span class="number">0.92</span>,x=<span class="number">0.28</span>,alpha=<span class="number">0.8</span>)</span><br><span class="line"></span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>我制作了一个组件，可以从本机上传图片并预测<code>MRI</code>扫描是否有脑肿瘤，并对它是哪种肿瘤进行分类。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">img_pred</span>(<span class="params">upload</span>):</span><br><span class="line">    <span class="keyword">for</span> name, file_info <span class="keyword">in</span> uploader.value.items():</span><br><span class="line">        img = Image.<span class="built_in">open</span>(io.BytesIO(file_info[<span class="string">&#x27;content&#x27;</span>]))</span><br><span class="line">    opencvImage = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)</span><br><span class="line">    img = cv2.resize(opencvImage,(<span class="number">150</span>,<span class="number">150</span>))</span><br><span class="line">    img = img.reshape(<span class="number">1</span>,<span class="number">150</span>,<span class="number">150</span>,<span class="number">3</span>)</span><br><span class="line">    p = model.predict(img)</span><br><span class="line">    p = np.argmax(p,axis=<span class="number">1</span>)[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> p==<span class="number">0</span>:</span><br><span class="line">        p=<span class="string">&#x27;Glioma Tumor&#x27;</span></span><br><span class="line">    <span class="keyword">elif</span> p==<span class="number">1</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;The model predicts that there is no tumor&#x27;</span>)</span><br><span class="line">    <span class="keyword">elif</span> p==<span class="number">2</span>:</span><br><span class="line">        p=<span class="string">&#x27;Meningioma Tumor&#x27;</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        p=<span class="string">&#x27;Pituitary Tumor&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> p!=<span class="number">1</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27;The Model predicts that it is a <span class="subst">&#123;p&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 您可以在此处单击“上传”按钮来上传图像：</span></span><br><span class="line">uploader = widgets.FileUpload()</span><br><span class="line">display(uploader)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 上传图片后，您可以点击下面的预测按钮进行预测：</span></span><br><span class="line">button = widgets.Button(description=<span class="string">&#x27;Predict&#x27;</span>)</span><br><span class="line">out = widgets.Output()</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_button_clicked</span>(<span class="params">_</span>):</span><br><span class="line">    <span class="keyword">with</span> out:</span><br><span class="line">        clear_output()</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            img_pred(uploader)</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;No Image Uploaded/Invalid Image File&#x27;</span>)</span><br><span class="line">button.on_click(on_button_clicked)</span><br><span class="line">widgets.VBox([button,out])</span><br></pre></td></tr></table></figure>
+<p>在<code>CNN</code>的帮助下使用迁移学习进行图像分类，准确率约为<code>98%</code>。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>umbrella
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fresh88888888.github.io/2024/04/08/artificial-intelligence/classifictation_mri_study/" title="脑肿瘤MRI — 分类（TensorFlow &amp; CNN）">https://fresh88888888.github.io/2024/04/08/artificial-intelligence/classifictation_mri_study/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/08/artificial-intelligence/ml_model_study/" rel="prev" title="机器学习模型 — 介绍">
+                  <i class="fa fa-chevron-left"></i> 机器学习模型 — 介绍
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">辽ICP备15012817号-2 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2022 – 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">umbrella</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">604k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">33:35</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/fresh88888888" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.0.8/medium-zoom.min.js" integrity="sha256-7PhEpEWEW0XXQ0k6kQrPKwuoIomz8R8IYyuU1Qew4P8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/comments.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/motion.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/next-boot.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/pjax.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/search/local-search.min.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.12/pdfobject.min.js","integrity":"sha256-g2xji1rlE3KsGVClvuxTbcR0Kn2+wtQADSff2Tbb4zA="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/tags/pdf.min.js"></script>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/fancybox.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/pace.min.js"></script>
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2024/04/08/artificial-intelligence/classifictation_mri_study/"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
+
+</body>
+</html>
