@@ -1,5 +1,5 @@
 ---
-title: Mask R-CNN（PyTorch）
+title: 情绪检测（TensorFlow）
 date: 2024-04-09 10:45:11
 tags:
   - AI
