@@ -465,7 +465,7 @@ avg_precision(logit,pboxes,tboxes)
 ```
 #### 训练函数
 
-DETR的训练是独特的，与`FasteRRcnn`和`EfficientDET`不同：
+`DETR`的训练是独特的，与`FasteRRcnn`和`EfficientDET`不同：
 ```python
 def train_fn(data_loader,model,criterion,optimizer,device,scheduler,epoch):
     model.train()
