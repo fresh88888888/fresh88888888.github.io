@@ -320,6 +320,7 @@
     
     
     <div class="post-body" itemprop="articleBody"><h4 id="DETR-Detection-Transformer"><a href="#DETR-Detection-Transformer" class="headerlink" title="DETR (Detection Transformer)"></a>DETR (Detection Transformer)</h4><p><strong>物体检测</strong>是一个不仅复杂而且计算成本较高的问题。《<code>Attention is all you need</code>》，是<code>Transformers</code>的论文，推动了了<code>NLP</code>的发展，并且达到了很高的高度。虽然主要是为<code>NLP</code>开发的，但围绕它的最新研究重点是如何在深度学习的不同垂直领域利用它。<code>Transformer</code>架构非常非常强大，这就是我有动力探索使用<code>Transformer</code>的原因。<code>Detection Transformer</code>利用<code>Transformer</code>网络（编码器和解码器）来检测图片中的物体。<code>Facebook</code>的研究人员认为，对于物体检测，图片的一部分应该与图片的另一部分接触以获得更好的结果，特别是对于被遮挡的物体和部分可见的物体，这比使用<code>Transformer</code>更好。<code>DETR</code>背后的主要动机是有效地消除对许多手工设计组件的需求，例如非极大值抑制过程或锚点生成，这些组件显式编码有关任务的先验知识，并使过程变得复杂且计算成本高昂。新框架的主要组成名为<code>DEtection TRansformer</code>或<code>DETR</code>，是基于集合的全局损失，通过二分匹配强制进行的预测，以及<code>Transformer</code>编码器-解码器架构。</p>
+<span id="more"></span>
 <img data-src="/2024/04/08/artificial-intelligence/transformer_od_study/tod_1.png" class="">
 
 <p>从<code>gitHub</code>仓库中克隆<code>detr</code>的损失：</p>
