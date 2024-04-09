@@ -359,7 +359,7 @@ model.parameter_groups().keys()
 现在我们利用模型使用的独特损失，为此我们需要定义匹配器。` DETR`计算三个单独的损失：
 - 标签的分类损失（其权重可以通过`loss_ce`设置）。
 - `Bbox Loss`（其权重可以通过`loss_bbox`设置）。
-- 背景类损失。
+- 背景分类损失。
 
 ```python
 '''
