@@ -19,8 +19,7 @@ import pandas as pd, numpy as np
 import tensorflow as tf
 import tensorflow.keras.backend as K
 from sklearn.model_selection import StratifiedKFold
-from transformers import *
-import tokenizers
+from tokenizers import Tokenizer, models, pre_tokenizers, decoders, trainers, processors
 
 MAX_LEN = 96
 PATH = '../input/tf-roberta/'
