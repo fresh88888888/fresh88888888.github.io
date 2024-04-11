@@ -26,12 +26,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="在本例中，利用数据科学技能帮助识别突Breakthrough Listen目标扫描中的异常信号。由于没有确认的外星信号可用于训练机器学习算法，因此在如大海捞针般的望远镜数据中加入了一些模拟信号（称之为“针”）。目前已经识别出一些隐藏的针，以便您可以训练模型以找到更多的”针“。数据由二维数组组成，因此计算机视觉、数字信号处理、异常检测等方法可能很有优势。">
+    <meta name="description" content="在本例中，利用数据科学技能帮助识别Breakthrough Listen目标扫描中的异常信号。由于没有已确认的外星信号，训练机器学习算法，因此在如大海捞针般的望远镜数据中加入了一些模拟信号（称之为“针”）。目前已经识别出一些隐藏的针，以便您可以训练模型找到更多隐藏的”针“。数据由二维数组组成，因此计算机视觉、数字信号处理、异常检测等方法可能很有优势。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SETI-BL:通道方向对齐（TensorFlow &amp; TPU）">
 <meta property="og:url" content="https://fresh88888888.github.io/2024/04/11/artificial-intelligence/Channelwise_Alignment_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="在本例中，利用数据科学技能帮助识别突Breakthrough Listen目标扫描中的异常信号。由于没有确认的外星信号可用于训练机器学习算法，因此在如大海捞针般的望远镜数据中加入了一些模拟信号（称之为“针”）。目前已经识别出一些隐藏的针，以便您可以训练模型以找到更多的”针“。数据由二维数组组成，因此计算机视觉、数字信号处理、异常检测等方法可能很有优势。">
+<meta property="og:description" content="在本例中，利用数据科学技能帮助识别Breakthrough Listen目标扫描中的异常信号。由于没有已确认的外星信号，训练机器学习算法，因此在如大海捞针般的望远镜数据中加入了一些模拟信号（称之为“针”）。目前已经识别出一些隐藏的针，以便您可以训练模型找到更多隐藏的”针“。数据由二维数组组成，因此计算机视觉、数字信号处理、异常检测等方法可能很有优势。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/04/11/artificial-intelligence/Channelwise_Alignment_study/ca_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/04/11/artificial-intelligence/Channelwise_Alignment_study/ca_2.png">
@@ -330,7 +330,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>在本例中，利用数据科学技能帮助识别突<code>Breakthrough Listen</code>目标扫描中的异常信号。由于没有确认的外星信号可用于训练机器学习算法，因此在如大海捞针般的望远镜数据中加入了一些模拟信号（称之为“针”）。目前已经识别出一些隐藏的针，以便您可以训练模型以找到更多的”针“。数据由二维数组组成，因此计算机视觉、数字信号处理、异常检测等方法可能很有优势。</p>
+    <div class="post-body" itemprop="articleBody"><p>在本例中，利用数据科学技能帮助识别<code>Breakthrough Listen</code>目标扫描中的异常信号。由于没有已确认的外星信号，训练机器学习算法，因此在如大海捞针般的望远镜数据中加入了一些模拟信号（称之为“针”）。目前已经识别出一些隐藏的针，以便您可以训练模型找到更多隐藏的”针“。数据由二维数组组成，因此计算机视觉、数字信号处理、异常检测等方法可能很有优势。</p>
 <span id="more"></span>
 
 <h4 id="方法论"><a href="#方法论" class="headerlink" title="方法论"></a>方法论</h4><ul>
