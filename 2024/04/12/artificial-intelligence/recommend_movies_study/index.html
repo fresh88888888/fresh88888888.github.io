@@ -26,12 +26,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="TensorFlow Ranking是一个开源库，用于开发可扩展的神经学习排序 (LTR) 模型。 排名模型通常用于搜索和推荐系统，但也已成功应用于各种领域，包括机器翻译、对话系统电子商务、SAT 求解器、智能城市规划，甚至计算生物学。排名模型采用项目列表（网页、文档、产品、电影等）并以优化的顺序生成列表，例如最相关的项目位于顶部，最不相关的项目位于底部，通常应用于 用户查询：">
+    <meta name="description" content="TensorFlow Ranking是一个开源库，用于开发可扩展的神经学习排名 (LTR) 模型。 排名模型通常用于搜索和推荐系统，但也已成功应用于各种领域，包括机器翻译、对话系统、SAT求解器、智能城市规划，甚至计算生物学。排名模型采用项目列表（网页、文档、产品、电影等）并以优化的顺序生成列表，例如最相关的项目位于顶部，最不相关的项目位于底部，通常应用于用户搜索：">
 <meta property="og:type" content="article">
 <meta property="og:title" content="电影推荐（TensorFlow Ranking）">
 <meta property="og:url" content="https://fresh88888888.github.io/2024/04/12/artificial-intelligence/recommend_movies_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="TensorFlow Ranking是一个开源库，用于开发可扩展的神经学习排序 (LTR) 模型。 排名模型通常用于搜索和推荐系统，但也已成功应用于各种领域，包括机器翻译、对话系统电子商务、SAT 求解器、智能城市规划，甚至计算生物学。排名模型采用项目列表（网页、文档、产品、电影等）并以优化的顺序生成列表，例如最相关的项目位于顶部，最不相关的项目位于底部，通常应用于 用户查询：">
+<meta property="og:description" content="TensorFlow Ranking是一个开源库，用于开发可扩展的神经学习排名 (LTR) 模型。 排名模型通常用于搜索和推荐系统，但也已成功应用于各种领域，包括机器翻译、对话系统、SAT求解器、智能城市规划，甚至计算生物学。排名模型采用项目列表（网页、文档、产品、电影等）并以优化的顺序生成列表，例如最相关的项目位于顶部，最不相关的项目位于底部，通常应用于用户搜索：">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/04/12/artificial-intelligence/recommend_movies_study/rm_2.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/04/12/artificial-intelligence/recommend_movies_study/rm_1.png">
@@ -319,12 +319,12 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p><code>TensorFlow Ranking</code>是一个开源库，用于开发可扩展的神经学习排序 (<code>LTR</code>) 模型。 排名模型通常用于搜索和推荐系统，但也已成功应用于各种领域，包括机器翻译、对话系统电子商务、<code>SAT</code> 求解器、智能城市规划，甚至计算生物学。排名模型采用项目列表（网页、文档、产品、电影等）并以优化的顺序生成列表，例如最相关的项目位于顶部，最不相关的项目位于底部，通常应用于 用户查询：</p>
+    <div class="post-body" itemprop="articleBody"><p><code>TensorFlow Ranking</code>是一个开源库，用于开发可扩展的神经学习排名 (<code>LTR</code>) 模型。 排名模型通常用于搜索和推荐系统，但也已成功应用于各种领域，包括机器翻译、对话系统、<code>SAT</code>求解器、智能城市规划，甚至计算生物学。排名模型采用项目列表（网页、文档、产品、电影等）并以优化的顺序生成列表，例如最相关的项目位于顶部，最不相关的项目位于底部，通常应用于用户搜索：</p>
 <img data-src="/2024/04/12/artificial-intelligence/recommend_movies_study/rm_2.png" class="">
 <span id="more"></span>
 
 <p>该库支持<code>LTR</code>模型的标准逐点、成对和列表损失函数。它还支持广泛的排名指标，包括平均倒数排名(<code>MRR</code>)和标准化贴现累积增益(<code>NDCG</code>)，因此您可以针对排名任务评估和比较这些方法。排名库还提供了由<code>Google</code>机器学习工程师研究、测试和构建的增强排名方法的函数。</p>
-<p><code>TensorFlow Ranking</code>库可帮助您构建可扩展的学习，以使用最新研究中成熟的方法和技术对机器学习模型进行排名。排名模型采用相似项目的列表（例如网页），并生成这些项目的优化列表，例如最相关的页面与最不相关的页面。学习排序模型在搜索、问答、推荐系统和对话系统中都有应用。您可以使用此库通过<code>Keras API</code>加速为您的应用程序构建排名模型。排名库还提供工作流实用程序，使您可以更轻松地扩展模型实现，从而使用分布式处理策略有效地处理大型数据集。</p>
+<p><code>TensorFlow Ranking</code>库可帮助您构建可扩展的神经学习排名模型，使用最新研究中成熟的方法和技术对机器学习模型进行排名。排名模型采用相似项目的列表（例如网页），并生成这些项目的优化列表，例如最相关的页面与最不相关的页面。学习排序模型在搜索、问答、推荐系统和对话系统中都有应用。您可以使用此库通过<code>Keras API</code>加速为您的应用程序构建排名模型。排名库还提供工作流实用程序，使您可以更轻松地扩展模型实现，从而使用分布式处理策略有效地处理大型数据集。</p>
 <h4 id="BERT列表输入排序"><a href="#BERT列表输入排序" class="headerlink" title="BERT列表输入排序"></a>BERT列表输入排序</h4><p><code>Ranking</code>库提供了<code>TFR-BERT</code>的实现，这是一种将<code>BERT</code>与<code>LTR</code>建模结合起来的评分架构，以优化列表输入的排序。作为此方法的一个示例应用程序，请考虑一个查询和一个包含<code>n</code>个文档的列表，您希望根据该查询对这些文档进行排名。<code>LTR</code>模型不是<code>&lt;query, document&gt;</code>独立评分的<code>BERT</code>表示，而是应用排名损失来联合学习<code>BERT</code>表示，从而最大化整个排名列表相对于真实标签的效果。下图说明了该技术原理：</p>
 <img data-src="/2024/04/12/artificial-intelligence/recommend_movies_study/rm_1.png" class="">
 
