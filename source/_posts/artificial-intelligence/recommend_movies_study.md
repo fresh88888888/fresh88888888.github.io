@@ -40,10 +40,11 @@ import tensorflow_ranking as tfr
 
 通过创建评级数据集和电影数据集来准备训练模型。使用`user_id`作为查询输入特征，`movie_title`作为文档输入特征，`user_rating`作为标签来训练排名模型。构建词汇表，将所有用户`ID`和所有电影标题转换为嵌入层的整数索引：
 ```python
+gcs_utils._is_gcs_disabled = True
 # Ratings data.
-ratings = tfds.load('movielens/100k-ratings', split="train")
+ratings = tfds.load('movielens/100k-ratings', split="train", try_gcs=False)
 # Features of all the available movies.
-movies = tfds.load('movielens/100k-movies', split="train")
+movies = tfds.load('movielens/100k-movies', split="train", try_gcs=False)
 
 # Select the basic features.
 ratings = ratings.map(lambda x: {
@@ -182,7 +183,7 @@ scores = model(inputs)
 titles = tfr.utils.sort_by_scores(scores,[tf.expand_dims(movie_titles, axis=0)])[0]
 print(f"Top 5 recommendations for user 42: {titles[0, :5]}")
 ```
-结果输出为：
+电影推荐结果显示为：
 ```bash
 Top 5 recommendations for user 42: 
 [
