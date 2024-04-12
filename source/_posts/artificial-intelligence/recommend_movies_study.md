@@ -21,7 +21,7 @@ categories:
 
 `TensorFlow Ranking BERT`架构图显示了使用各个`<query,document>`对的`BERT`表示在`n`个文档列表上的联合`LTR`模型。此方法将响应查询的文档列表展平为`<query, document>`元组列表。然后将这些元组输入到`BERT`预训练语言模型中。然后，整个文档列表的汇总`BERT`输出将与`TensorFlow Ranking`中可用的专门排名损失联合微调。该架构可以显着提高预训练语言模型的性能，为多种流行的排名任务提供最先进的性能，尤其是在组合多个预训练语言模型时。
 
-在本例中，我们使用`MovieLens 100K`数据集和`TF-Ranking`构建一个简单的两塔排名模型。我们可以使用这个模型根据给定用户的预测用户评分对电影进行排名和推荐。
+在传统的检索排名管道中，我们在检索阶段来过滤大量候选者。然后，仅将相关的候选者传递到排名阶段。需要检索阶段是因为候选池太大，如果你直接对所有项目进行排名，则需要花费太多的时间，并且你将受到延迟的影响。这就是为什么我们需要检索阶段来缩小项目的排名。但是，如果你一开始就没有很多项目，换句话说，如果你的排名阶段可以在延迟要求范围内对所有项目进行排名，该怎么办？还需要检索阶段吗？答案是否定的。在这种情况下你可以只进行排名而忽略检索。在工具方面 你可以使用：`TensorFlow Recommenders`进行逐点排名，也可以使用`TensorFlow Ranking`执行更复杂的排名。如果单独使用`TensorFlow Ranking`进行推荐，可以帮助你有效地对候选项目列表进行排名，并且在`Google`内部广泛使用。有了这个背景，我们来看看下面这个例子。我们使用`MovieLens 100K`数据集和`TF-Ranking`构建一个简单的两塔排名模型。我们可以使用这个模型根据给定用户的预测用户评分对电影进行排名和推荐。
 
 #### 安装 & 导入包
 
@@ -53,6 +53,7 @@ ratings = ratings.map(lambda x: {
     "user_rating": x["user_rating"]
 })
 
+# 我们为嵌入层构建了用户ID和电影标题词汇表
 movies = movies.map(lambda x: x["movie_title"])
 users = ratings.map(lambda x: x["user_id"])
 
@@ -62,11 +63,12 @@ user_ids_vocabulary.adapt(users.batch(1000))
 movie_titles_vocabulary = tf.keras.layers.experimental.preprocessing.StringLookup(mask_token=None)
 movie_titles_vocabulary.adapt(movies.batch(1000))
 
-# 按user_id分组以形成排名模型的列表：
+# 接下来，我们按user_id对评分数据集进行分组，形成排名模型列表
 key_func = lambda x: user_ids_vocabulary(x["user_id"])
 reduce_func = lambda key, dataset: dataset.batch(100)
 ds_train = ratings.group_by_window(key_func=key_func, reduce_func=reduce_func, window_size=100)
 
+# 让我们看一下处理之后的训练数据集，user_id和列表都是四个或者五个，本例中有一个电影标题列表，以及四个或五个用户给出的各自评分
 for x in ds_train.take(1):
   for key, value in x.items():
     print(f"Shape of {key}: {value.shape}")
@@ -84,7 +86,8 @@ for x in ds_train.take(1):
 # Shape of user_rating: (100,)
 # Example values of user_rating: [1. 4. 1. 5. 5.]
 
-# 生成批量特征和标签：
+# 接下来我们定义一个辅助函数，来解压评分数据集并分离特征和标签，请注意这里使用的是：dense_to_ragged_batch方法。
+# 因为user_id和电影标题列表有时会给出评分小于100的情况
 def _features_and_labels(
     x: Dict[str, tf.Tensor]) -> Tuple[Dict[str, tf.Tensor], tf.Tensor]:
   labels = x.pop("user_rating")
@@ -95,6 +98,7 @@ ds_train = ds_train.apply(tf.data.experimental.dense_to_ragged_batch(batch_size=
 ```
 `ds_train`中生成的`user_id`和`movie_title`张量的形状为`[32, None]`，其中第二个维度在大多数情况下为`100`，但列表中分组的项目少于`100`个时的批次除外。因此使用了研究不规则张量的模型。
 ```python
+# 我们再看一下处理后的特征和标签。
 for x, label in ds_train.take(1):
   for key, value in x.items():
     print(f"Shape of {key}: {value.shape}")
@@ -122,10 +126,10 @@ for x, label in ds_train.take(1):
 ```
 #### 定义模型
 
-继承`tf.keras.Model`并实现了`call`方法，定义排名模型：
+继承`tf.keras.Model`并实现了`call`方法，构建排名模型：
 ```python
 class MovieLensRankingModel(tf.keras.Model):
-
+  # 我们在init函数中定义用户和电影嵌入
   def __init__(self, user_vocab, movie_vocab):
     super().__init__()
 
@@ -135,6 +139,7 @@ class MovieLensRankingModel(tf.keras.Model):
     self.user_embed = tf.keras.layers.Embedding(user_vocab.vocabulary_size(),64)
     self.movie_embed = tf.keras.layers.Embedding(movie_vocab.vocabulary_size(),64)
 
+  # 在此方法中，我们计算用户和电影的嵌入点积
   def call(self, features: Dict[str, tf.Tensor]) -> tf.Tensor:
     # Define how the ranking scores are computed: 
     # Take the dot-product of the user embeddings with the movie embeddings.
@@ -148,9 +153,12 @@ class MovieLensRankingModel(tf.keras.Model):
 ```python
 # Create the ranking model, trained with a ranking loss and evaluated with
 # ranking metrics.
+# 接下来我们创建模型并使用优化器、损失和指标进行编译，这里我们使用的是特定于排名的SOFTMAX_LOSS
+# 与分类问题中的SOFTMAX_LOSS有所不同，其中只有一类是正类。其它都是负类
 model = MovieLensRankingModel(user_ids_vocabulary, movie_titles_vocabulary)
 optimizer = tf.keras.optimizers.Adagrad(0.5)
 loss = tfr.keras.losses.get(loss=tfr.keras.losses.RankingLossKey.SOFTMAX_LOSS, ragged=True)
+# 对于指标我们使用的是ndcg和mrr，都是常用指标
 eval_metrics = [
     tfr.keras.metrics.get(key="ndcg", name="metric/ndcg", ragged=True),
     tfr.keras.metrics.get(key="mrr", name="metric/mrr", ragged=True)
@@ -159,7 +167,7 @@ model.compile(optimizer=optimizer, loss=loss, metrics=eval_metrics)
 
 # 训练模型
 model.fit(ds_train, epochs=3)
-
+# 可以看到损失正在下降
 # Epoch 1/3
 # 48/48 [==============================] - 9s 63ms/step - loss: 998.7556 - metric/ndcg: 0.8240 - metric/mrr: 1.0000
 # Epoch 2/3
@@ -168,6 +176,7 @@ model.fit(ds_train, epochs=3)
 # 48/48 [==============================] - 4s 61ms/step - loss: 994.8118 - metric/ndcg: 0.9394 - metric/mrr: 1.0000
 
 # 生成预测并评估
+# 训练完之后，我们可以通过用户ID和电影标题来获得推荐，根据预测分数对结果进行排序，并将排名靠前的作为推荐项作为返回。
 # Get movie title candidate list.
 for movie_titles in movies.batch(2000):
   break
@@ -194,3 +203,6 @@ Top 5 recommendations for user 42:
     b'Sound of Music, The (1965)'
 ]
 ```
+#### 结论
+
+`TF Recommenders`和`TF Ranking`比较。`TF Recommenders`更专注于推荐系统，他包括专门为推荐器设计的工具和程序，例如检索和排名任务。`TF Ranking`专注于对项目进行排名，并且可以在推荐系统之外使用，例如文档搜索和问答。`TF Recommenders`和`TF Ranking`都是独立的库，但它们在推荐系统的排名阶段有交叉。如果您在进行文档搜索、问答等，只需使用`TF Ranking`；如果你正在构建推荐系统并需要检索阶段，请选择`TF Recommenders`；在推荐器中你可以选择其中任何一个。
