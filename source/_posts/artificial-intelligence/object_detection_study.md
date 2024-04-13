@@ -41,7 +41,7 @@ bounding_boxes = {
 
 #### 使用预训练模型执行检测
 
-**`KerasCV`**对象检测`API`中最高级别的`API`是`keras_cv.models API`。此`API`包括完全预训练的对象检测模型，例如`keras_cv.models.YOLOV8Detector`。让我们开始构建一个在 `pascalvoc`数据集上预训练的`YOLOV8Detector`。
+`KerasCV`对象检测`API`中最高级别的`API`是`keras_cv.models API`。此`API`包括完全预训练的对象检测模型，例如`keras_cv.models.YOLOV8Detector`。让我们开始构建一个在 `pascalvoc`数据集上预训练的`YOLOV8Detector`。
 ```python
 import os
 from tensorflow import data as tf_data
