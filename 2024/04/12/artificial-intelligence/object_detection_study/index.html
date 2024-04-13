@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+  <meta name="google-site-verification" content="lk2gSYFP_NyLNFob-fFnt7fm-I_n1ZYws-WZll7mshg">
+  <meta name="msvalidate.01" content="6Jdc01DjYOLguhS5">
+  <meta name="baidu-site-verification" content="code-NR10G09zww">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic%7Ccursive:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+
+    <meta name="description" content="对象检测是在给定的图像中识别、分类和定位对象的过程。通常，你的输入是图像，标签是带有可选类标签的边界框。对象检测可以被认为是分类的扩展，但是您必须检测和定位任意数量的类，而不是图像的一个类标签。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对象检测（KerasCV）">
+<meta property="og:url" content="https://fresh88888888.github.io/2024/04/12/artificial-intelligence/object_detection_study/index.html">
+<meta property="og:site_name" content="UMBRELLA">
+<meta property="og:description" content="对象检测是在给定的图像中识别、分类和定位对象的过程。通常，你的输入是图像，标签是带有可选类标签的边界框。对象检测可以被认为是分类的扩展，但是您必须检测和定位任意数量的类，而不是图像的一个类标签。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/12/artificial-intelligence/object_detection_study/od_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/12/artificial-intelligence/object_detection_study/od_3.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/12/artificial-intelligence/object_detection_study/od_4.png">
+<meta property="article:published_time" content="2024-04-12T10:20:11.000Z">
+<meta property="article:modified_time" content="2024-04-12T10:20:11.000Z">
+<meta property="article:author" content="umbrella">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2024/04/12/artificial-intelligence/object_detection_study/od_1.png">
+
+
+<link rel="canonical" href="https://fresh88888888.github.io/2024/04/12/artificial-intelligence/object_detection_study/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/04/12/artificial-intelligence/object_detection_study/","path":"2024/04/12/artificial-intelligence/object_detection_study/","title":"对象检测（KerasCV）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>对象检测（KerasCV） | UMBRELLA</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">UMBRELLA</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">未雨绸缪，举重若轻</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-算法"><a href="/Algorithm/" rel="section"><i class="fa fa-calendar fa-fw"></i>算法</a></li><li class="menu-item menu-item-c++-&nbsp;编程"><a href="/Programming-C++/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>C++ &nbsp;编程</a></li><li class="menu-item menu-item-rust-编程"><a href="/Programming-Rust/" rel="section"><i class="fa fa-cat fa-fw"></i>Rust 编程</a></li><li class="menu-item menu-item-go-&nbsp;&nbsp;&nbsp;编程"><a href="/Programming-Go/" rel="section"><i class="fa fa-hippo fa-fw"></i>Go &nbsp;&nbsp;&nbsp;编程</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E6%89%A7%E8%A1%8C%E6%A3%80%E6%B5%8B"><span class="nav-number">1.</span> <span class="nav-text">使用预训练模型执行检测</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E8%87%AA%E5%AE%9A%E4%B9%89%E5%AF%B9%E8%B1%A1%E6%A3%80%E6%B5%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">训练自定义对象检测模型</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="umbrella"
+      src="/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">umbrella</p>
+  <div class="site-description" itemprop="description">没事就多看看书</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">152</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fresh88888888" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fresh88888888" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fresh888888@foxmail.com" title="E-Mail → mailto:fresh888888@foxmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.rust-lang.org/zh-CN/" title="https:&#x2F;&#x2F;www.rust-lang.org&#x2F;zh-CN&#x2F;" rel="noopener" target="_blank">Rust</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://go.dev/" title="https:&#x2F;&#x2F;go.dev&#x2F;" rel="noopener" target="_blank">Golang</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://isocpp.org/" title="https:&#x2F;&#x2F;isocpp.org&#x2F;" rel="noopener" target="_blank">C++</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.python.org/" title="https:&#x2F;&#x2F;www.python.org&#x2F;" rel="noopener" target="_blank">Python</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://doc.rust-lang.org/cargo/index.html" title="https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;cargo&#x2F;index.html" rel="noopener" target="_blank">Cargo</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://gist.github.com/rxaviers/7360908" title="https:&#x2F;&#x2F;gist.github.com&#x2F;rxaviers&#x2F;7360908" rel="noopener" target="_blank">Emoji</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/04/12/artificial-intelligence/object_detection_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="对象检测（KerasCV） | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          对象检测（KerasCV）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-04-12 18:20:11" itemprop="dateCreated datePublished" datetime="2024-04-12T18:20:11+08:00">2024-04-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><strong>对象检测</strong>是在给定的图像中识别、分类和定位对象的过程。通常，你的输入是图像，标签是带有可选类标签的边界框。对象检测可以被认为是分类的扩展，但是您必须检测和定位任意数量的类，而不是图像的一个类标签。</p>
+<span id="more"></span>
+<img data-src="/2024/04/12/artificial-intelligence/object_detection_study/od_1.png" class="">
+
+<p>上图的数据可能如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> tensorflow <span class="keyword">import</span> data <span class="keyword">as</span> tf_data</span><br><span class="line"><span class="keyword">import</span> tensorflow_datasets <span class="keyword">as</span> tfds</span><br><span class="line"><span class="keyword">import</span> keras</span><br><span class="line"><span class="keyword">import</span> keras_cv</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> keras_cv <span class="keyword">import</span> bounding_box</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> keras_cv <span class="keyword">import</span> visualization</span><br><span class="line"><span class="keyword">import</span> tqdm</span><br><span class="line"></span><br><span class="line">os.environ[<span class="string">&quot;KERAS_BACKEND&quot;</span>] = <span class="string">&quot;jax&quot;</span>  <span class="comment"># @param [&quot;tensorflow&quot;, &quot;jax&quot;, &quot;torch&quot;]</span></span><br><span class="line"></span><br><span class="line">image = [height, width, <span class="number">3</span>]</span><br><span class="line">bounding_boxes = &#123;</span><br><span class="line">  <span class="string">&quot;classes&quot;</span>: [<span class="number">0</span>], <span class="comment"># 0 is an arbitrary class ID representing &quot;cat&quot;</span></span><br><span class="line">  <span class="string">&quot;boxes&quot;</span>: [[<span class="number">0.25</span>, <span class="number">0.4</span>, <span class="number">.15</span>, <span class="number">.1</span>]]</span><br><span class="line">   <span class="comment"># bounding box is in &quot;rel_xywh&quot; format</span></span><br><span class="line">   <span class="comment"># so 0.25 represents the start of the bounding box 25% of</span></span><br><span class="line">   <span class="comment"># the way across the image.</span></span><br><span class="line">   <span class="comment"># The .15 represents that the width is 15% of the image width.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>自从<code>You Only Look Once</code>（又名<code>YOLO</code>）问世以来，对象检测主要是通过深度学习来解决的。大多数深度学习架构通过巧妙地将对象检测问题构建为许多小型分类问题和许多回归问题的组合来实现这一点。更具体地说，这是通过在输入图像上生成许多不同形状和大小的锚框并为每个锚框分配一个类标签以及<code>x、y、width</code>和<code>height</code>偏移来完成的。该模型经过训练可以预测每个框的类标签，以及预测对象的每个框的<code>x、y、width</code>和<code>height</code>偏移。实际上，输入的图像可能更复杂，并且包含更多对象，在这种情况下，对象检测是通过在输入图像上生成许多不同形状和大小的锚框，并为每个锚框分配一个类标签以及四个数据点来精确定位边界框来完成的，如下图所示：</p>
+
+
+<h4 id="使用预训练模型执行检测"><a href="#使用预训练模型执行检测" class="headerlink" title="使用预训练模型执行检测"></a>使用预训练模型执行检测</h4><p>**<code>KerasCV</code>**对象检测<code>API</code>中最高级别的<code>API</code>是<code>keras_cv.models API</code>。此<code>API</code>包括完全预训练的对象检测模型，例如<code>keras_cv.models.YOLOV8Detector</code>。让我们开始构建一个在 <code>pascalvoc</code>数据集上预训练的<code>YOLOV8Detector</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> tensorflow <span class="keyword">import</span> data <span class="keyword">as</span> tf_data</span><br><span class="line"><span class="keyword">import</span> tensorflow_datasets <span class="keyword">as</span> tfds</span><br><span class="line"><span class="keyword">import</span> keras</span><br><span class="line"><span class="keyword">import</span> keras_cv</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> keras_cv <span class="keyword">import</span> bounding_box</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> keras_cv <span class="keyword">import</span> visualization</span><br><span class="line"><span class="keyword">import</span> tqdm</span><br><span class="line"></span><br><span class="line">os.environ[<span class="string">&quot;KERAS_BACKEND&quot;</span>] = <span class="string">&quot;jax&quot;</span>  <span class="comment"># @param [&quot;tensorflow&quot;, &quot;jax&quot;, &quot;torch&quot;]</span></span><br><span class="line"></span><br><span class="line">image = keras.utils.load_img(path=<span class="string">&#x27;dog.jpg&#x27;</span>)</span><br><span class="line">image = np.array(keras.utils.img_to_array(image))</span><br><span class="line"></span><br><span class="line">visualization.plot_image_gallery(</span><br><span class="line">    np.array([image]),</span><br><span class="line">    value_range=(<span class="number">0</span>, <span class="number">255</span>),</span><br><span class="line">    rows=<span class="number">1</span>,</span><br><span class="line">    cols=<span class="number">1</span>,</span><br><span class="line">    scale=<span class="number">5</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 要将YOLOV8Detector架构与ResNet50主干结合使用，您需要将图像大小调整为可被64整除的大小。</span></span><br><span class="line"><span class="comment"># 这是为了确保与ResNet中卷积层完成的缩小操作数量兼容。如果调整大小操作扭曲了输入的纵横比，则模型的性能将明显变差。 </span></span><br><span class="line"><span class="comment"># 对于我们使用的预训练“yolo_v8_m_pascalvoc”预设，当使用简单的调整大小操作时，pascalvoc/2012 评估集的最终MeanAveragePrecision从0.38下降到0.15。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 此外，如果您想在分类中那样进行裁剪以保留纵横比，您的模型可能会完全错过一些边界框。 </span></span><br><span class="line"><span class="comment"># 因此，在对象检测模型上运行推理时，我们建议使用填充到所需的大小，同时调整最长大小以匹配长宽比。</span></span><br><span class="line"><span class="comment"># KerasCV使调整大小变得容易；只需将pad_to_aspect_ratio=True 传递给keras_cv.layers.Resizing层即可。</span></span><br><span class="line"></span><br><span class="line">inference_resizing = keras_cv.layers.Resizing(</span><br><span class="line">    <span class="number">640</span>, <span class="number">640</span>, pad_to_aspect_ratio=<span class="literal">True</span>, bounding_box_format=<span class="string">&quot;xywh&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这可以作为推理预处理管道</span></span><br><span class="line">image_batch = inference_resizing([image])</span><br><span class="line"></span><br><span class="line"><span class="comment"># keras_cv.visualization.plot_bounding_box_gallery()支持class_mapping参数来突出显示每个框分配给哪个类。现在让我们组装一个类映射。</span></span><br><span class="line">class_ids = [</span><br><span class="line">    <span class="string">&quot;Aeroplane&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Bicycle&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Bird&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Boat&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Bottle&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Bus&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Car&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Cat&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Chair&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Cow&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Dining Table&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Dog&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Horse&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Motorbike&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Person&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Potted Plant&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Sheep&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Sofa&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Train&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Tvmonitor&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Total&quot;</span>,</span><br><span class="line">]</span><br><span class="line">class_mapping = <span class="built_in">dict</span>(<span class="built_in">zip</span>(<span class="built_in">range</span>(<span class="built_in">len</span>(class_ids)), class_ids))</span><br><span class="line"><span class="comment"># 为了支持这种简单直观的推理工作流程，KerasCV在YOLOV8Detector类内部执行非最大值抑制。 </span></span><br><span class="line"><span class="comment"># 非极大值抑制是一种传统的计算算法，解决模型检测同一对象的多个框的问题。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 非极大值抑制是一种高度可配置的算法，在大多数情况下，您需要自定义模型的非极大值抑制操作的设置。 </span></span><br><span class="line"><span class="comment"># 这可以通过覆盖Prediction_decoder参数来完成。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 为了展示这个概念，让我们暂时禁用YOLOV8Detector上的非最大抑制。 </span></span><br><span class="line"><span class="comment"># 这可以通过写入Prediction_decoder属性来完成。</span></span><br><span class="line">prediction_decoder = keras_cv.layers.NonMaxSuppression(</span><br><span class="line">    bounding_box_format=<span class="string">&quot;xywh&quot;</span>,</span><br><span class="line">    from_logits=<span class="literal">True</span>,</span><br><span class="line">    iou_threshold=<span class="number">1.0</span>,</span><br><span class="line">    confidence_threshold=<span class="number">0.0</span>,</span><br><span class="line">)</span><br><span class="line">pretrained_model = keras_cv.models.YOLOV8Detector.from_preset(</span><br><span class="line">    <span class="string">&quot;yolo_v8_m_pascalvoc&quot;</span>,</span><br><span class="line">    bounding_box_format=<span class="string">&quot;xywh&quot;</span>,</span><br><span class="line">    prediction_decoder=prediction_decoder,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">y_pred = pretrained_model.predict(image_batch)</span><br><span class="line">visualization.plot_bounding_box_gallery(</span><br><span class="line">    image_batch,</span><br><span class="line">    value_range=(<span class="number">0</span>, <span class="number">255</span>),</span><br><span class="line">    rows=<span class="number">1</span>,</span><br><span class="line">    cols=<span class="number">1</span>,</span><br><span class="line">    y_pred=y_pred,</span><br><span class="line">    scale=<span class="number">5</span>,</span><br><span class="line">    font_scale=<span class="number">0.7</span>,</span><br><span class="line">    bounding_box_format=<span class="string">&quot;xywh&quot;</span>,</span><br><span class="line">    class_mapping=class_mapping,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 接下来，让我们的用例重新配置keras_cv.layers.NonMaxSuppression。</span></span><br><span class="line"><span class="comment"># 我们将iou_threshold调整为0.2，将confidence_threshold调整为0.7。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 提高confidence_threshold将导致模型仅输出具有较高置信度分数的框。 </span></span><br><span class="line"><span class="comment"># iou_threshold 控制两个框必须具有的交并集 (IoU) 阈值，以便剪除其中一个框。 </span></span><br><span class="line">prediction_decoder = keras_cv.layers.NonMaxSuppression(</span><br><span class="line">    bounding_box_format=<span class="string">&quot;xywh&quot;</span>,</span><br><span class="line">    from_logits=<span class="literal">True</span>,</span><br><span class="line">    <span class="comment"># Decrease the required threshold to make predictions get pruned out</span></span><br><span class="line">    iou_threshold=<span class="number">0.2</span>,</span><br><span class="line">    <span class="comment"># Tune confidence threshold for predictions to pass NMS</span></span><br><span class="line">    confidence_threshold=<span class="number">0.7</span>,</span><br><span class="line">)</span><br><span class="line">pretrained_model = keras_cv.models.YOLOV8Detector.from_preset(</span><br><span class="line">    <span class="string">&quot;yolo_v8_m_pascalvoc&quot;</span>,</span><br><span class="line">    bounding_box_format=<span class="string">&quot;xywh&quot;</span>,</span><br><span class="line">    prediction_decoder=prediction_decoder,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">y_pred = pretrained_model.predict(image_batch)</span><br><span class="line">visualization.plot_bounding_box_gallery(</span><br><span class="line">    image_batch,</span><br><span class="line">    value_range=(<span class="number">0</span>, <span class="number">255</span>),</span><br><span class="line">    rows=<span class="number">1</span>,</span><br><span class="line">    cols=<span class="number">1</span>,</span><br><span class="line">    y_pred=y_pred,</span><br><span class="line">    scale=<span class="number">5</span>,</span><br><span class="line">    font_scale=<span class="number">0.7</span>,</span><br><span class="line">    bounding_box_format=<span class="string">&quot;xywh&quot;</span>,</span><br><span class="line">    class_mapping=class_mapping,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>结果输出为：</p>
+<img data-src="/2024/04/12/artificial-intelligence/object_detection_study/od_3.png" class="">
+<img data-src="/2024/04/12/artificial-intelligence/object_detection_study/od_4.png" class="">
+
+<h4 id="训练自定义对象检测模型"><a href="#训练自定义对象检测模型" class="headerlink" title="训练自定义对象检测模型"></a>训练自定义对象检测模型</h4><p>设置对象检测管道通常具有挑战性，但是，<code>KerasCV</code>正在使其变得简单。我们首先加载<code>PASCAL VOC</code>数据集，可视化数据集确保看起来都是正常的。在执行此操作之前这一步非常重要，因为有时边界框格式会导致出问题。与图像分类类似，我们也可以执行数据增强。我们在<code>tf.data</code>管道内以边界框的方式执行此操作。我们可以看一下结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br></pre></td><td class="code"><pre><span class="line">BATCH_SIZE = <span class="number">4</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">visualize_dataset</span>(<span class="params">inputs, value_range, rows, cols, bounding_box_format</span>):</span><br><span class="line">    inputs = <span class="built_in">next</span>(<span class="built_in">iter</span>(inputs.take(<span class="number">1</span>)))</span><br><span class="line">    images, bounding_boxes = inputs[<span class="string">&quot;images&quot;</span>], inputs[<span class="string">&quot;bounding_boxes&quot;</span>]</span><br><span class="line">    visualization.plot_bounding_box_gallery(</span><br><span class="line">        images,</span><br><span class="line">        value_range=value_range,</span><br><span class="line">        rows=rows,</span><br><span class="line">        cols=cols,</span><br><span class="line">        y_true=bounding_boxes,</span><br><span class="line">        scale=<span class="number">5</span>,</span><br><span class="line">        font_scale=<span class="number">0.7</span>,</span><br><span class="line">        bounding_box_format=bounding_box_format,</span><br><span class="line">        class_mapping=class_mapping,</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">unpackage_raw_tfds_inputs</span>(<span class="params">inputs, bounding_box_format</span>):</span><br><span class="line">    image = inputs[<span class="string">&quot;image&quot;</span>]</span><br><span class="line">    boxes = keras_cv.bounding_box.convert_format(</span><br><span class="line">        inputs[<span class="string">&quot;objects&quot;</span>][<span class="string">&quot;bbox&quot;</span>],</span><br><span class="line">        images=image,</span><br><span class="line">        source=<span class="string">&quot;rel_yxyx&quot;</span>,</span><br><span class="line">        target=bounding_box_format,</span><br><span class="line">    )</span><br><span class="line">    bounding_boxes = &#123;</span><br><span class="line">        <span class="string">&quot;classes&quot;</span>: inputs[<span class="string">&quot;objects&quot;</span>][<span class="string">&quot;label&quot;</span>],</span><br><span class="line">        <span class="string">&quot;boxes&quot;</span>: boxes,</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;images&quot;</span>: image, <span class="string">&quot;bounding_boxes&quot;</span>: bounding_boxes&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">load_pascal_voc</span>(<span class="params">split, dataset, bounding_box_format</span>):</span><br><span class="line">    ds = tfds.load(dataset, split=split, with_info=<span class="literal">False</span>, shuffle_files=<span class="literal">True</span>)</span><br><span class="line">    ds = ds.<span class="built_in">map</span>(</span><br><span class="line">        <span class="keyword">lambda</span> x: unpackage_raw_tfds_inputs(x, bounding_box_format=bounding_box_format),</span><br><span class="line">        num_parallel_calls=tf_data.AUTOTUNE,</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> ds</span><br><span class="line"></span><br><span class="line">train_ds = load_pascal_voc(split=<span class="string">&quot;train&quot;</span>, dataset=<span class="string">&quot;voc/2007&quot;</span>, bounding_box_format=<span class="string">&quot;xywh&quot;</span>)</span><br><span class="line">eval_ds = load_pascal_voc(split=<span class="string">&quot;test&quot;</span>, dataset=<span class="string">&quot;voc/2007&quot;</span>, bounding_box_format=<span class="string">&quot;xywh&quot;</span>)</span><br><span class="line">train_ds = train_ds.shuffle(BATCH_SIZE * <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">train_ds = train_ds.ragged_batch(BATCH_SIZE, drop_remainder=<span class="literal">True</span>)</span><br><span class="line">eval_ds = eval_ds.ragged_batch(BATCH_SIZE, drop_remainder=<span class="literal">True</span>)</span><br><span class="line">visualize_dataset(train_ds, bounding_box_format=<span class="string">&quot;xywh&quot;</span>, value_range=(<span class="number">0</span>, <span class="number">255</span>), rows=<span class="number">2</span>, cols=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">visualize_dataset(</span><br><span class="line">    eval_ds,</span><br><span class="line">    bounding_box_format=<span class="string">&quot;xywh&quot;</span>,</span><br><span class="line">    value_range=(<span class="number">0</span>, <span class="number">255</span>),</span><br><span class="line">    rows=<span class="number">2</span>,</span><br><span class="line">    cols=<span class="number">2</span>,</span><br><span class="line">    <span class="comment"># If you are not running your experiment on a local machine, you can also</span></span><br><span class="line">    <span class="comment"># make `visualize_dataset()` dump the plot to a file using `path`:</span></span><br><span class="line">    <span class="comment"># path=&quot;eval.png&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">augmenters = [</span><br><span class="line">    keras_cv.layers.RandomFlip(mode=<span class="string">&quot;horizontal&quot;</span>, bounding_box_format=<span class="string">&quot;xywh&quot;</span>),</span><br><span class="line">    keras_cv.layers.JitteredResize(</span><br><span class="line">        target_size=(<span class="number">640</span>, <span class="number">640</span>), scale_factor=(<span class="number">0.75</span>, <span class="number">1.3</span>), bounding_box_format=<span class="string">&quot;xywh&quot;</span></span><br><span class="line">    ),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_augmenter_fn</span>(<span class="params">augmenters</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">augmenter_fn</span>(<span class="params">inputs</span>):</span><br><span class="line">        <span class="keyword">for</span> augmenter <span class="keyword">in</span> augmenters:</span><br><span class="line">            inputs = augmenter(inputs)</span><br><span class="line">        <span class="keyword">return</span> inputs</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> augmenter_fn</span><br><span class="line"></span><br><span class="line">augmenter_fn = create_augmenter_fn(augmenters)</span><br><span class="line">train_ds = train_ds.<span class="built_in">map</span>(augmenter_fn, num_parallel_calls=tf_data.AUTOTUNE)</span><br><span class="line">visualize_dataset(train_ds, bounding_box_format=<span class="string">&quot;xywh&quot;</span>, value_range=(<span class="number">0</span>, <span class="number">255</span>), rows=<span class="number">2</span>, cols=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">inference_resizing = keras_cv.layers.Resizing(<span class="number">640</span>, <span class="number">640</span>, bounding_box_format=<span class="string">&quot;xywh&quot;</span>, pad_to_aspect_ratio=<span class="literal">True</span>)</span><br><span class="line">eval_ds = eval_ds.<span class="built_in">map</span>(inference_resizing, num_parallel_calls=tf_data.AUTOTUNE)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dict_to_tuple</span>(<span class="params">inputs</span>):</span><br><span class="line">    <span class="keyword">return</span> inputs[<span class="string">&quot;images&quot;</span>], bounding_box.to_dense(inputs[<span class="string">&quot;bounding_boxes&quot;</span>], max_boxes=<span class="number">32</span>)</span><br><span class="line"></span><br><span class="line">train_ds = train_ds.<span class="built_in">map</span>(dict_to_tuple, num_parallel_calls=tf_data.AUTOTUNE)</span><br><span class="line">eval_ds = eval_ds.<span class="built_in">map</span>(dict_to_tuple, num_parallel_calls=tf_data.AUTOTUNE)</span><br><span class="line"></span><br><span class="line">train_ds = train_ds.prefetch(tf_data.AUTOTUNE)</span><br><span class="line">eval_ds = eval_ds.prefetch(tf_data.AUTOTUNE)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义SGD优化器</span></span><br><span class="line">base_lr = <span class="number">0.005</span></span><br><span class="line"><span class="comment"># including a global_clipnorm is extremely important in object detection tasks</span></span><br><span class="line">optimizer = keras.optimizers.SGD(</span><br><span class="line">    learning_rate=base_lr, momentum=<span class="number">0.9</span>, global_clipnorm=<span class="number">10.0</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">pretrained_model.<span class="built_in">compile</span>(</span><br><span class="line">    classification_loss=<span class="string">&quot;binary_crossentropy&quot;</span>,</span><br><span class="line">    box_loss=<span class="string">&quot;ciou&quot;</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最流行的对象检测指标是COCO指标，它与MSCOCO数据集一起发布。 </span></span><br><span class="line"><span class="comment"># KerasCV在 keras_cv.callbacks.PyCOCOCallback下提供了一套易于使用的COCO指标。 </span></span><br><span class="line"><span class="comment"># 请注意，我们使用Keras回调而不是Keras指标来计算COCO指标。 </span></span><br><span class="line"><span class="comment"># 这是因为计算COCO指标需要将模型对整个评估数据集的所有预测立即存储在内存中，这在训练期间是不切实际的。</span></span><br><span class="line">coco_metrics_callback = keras_cv.callbacks.PyCOCOCallback(eval_ds.take(<span class="number">20</span>), bounding_box_format=<span class="string">&quot;xywh&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 模型创建</span></span><br><span class="line"><span class="comment"># 接下来，我们使用KerasCV API构建一个未经训练的YOLOV8Detector模型。</span></span><br><span class="line">model = keras_cv.models.YOLOV8Detector.from_preset(</span><br><span class="line">    <span class="string">&quot;resnet50_imagenet&quot;</span>,</span><br><span class="line">    <span class="comment"># For more info on supported bounding box formats, visit</span></span><br><span class="line">    bounding_box_format=<span class="string">&quot;xywh&quot;</span>,</span><br><span class="line">    num_classes=<span class="number">20</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 剩下要做的就是训练我们的模型。KerasCV对象检测模型遵循标准Keras工作流程，利用compile()和fit()。让我们编译模型：</span></span><br><span class="line">model.<span class="built_in">compile</span>(</span><br><span class="line">    classification_loss=<span class="string">&quot;binary_crossentropy&quot;</span>,</span><br><span class="line">    box_loss=<span class="string">&quot;ciou&quot;</span>,</span><br><span class="line">    optimizer=optimizer,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果您想完全训练模型，请输入train_ds.take(20)：</span></span><br><span class="line">model.fit(</span><br><span class="line">    train_ds.take(<span class="number">20</span>),</span><br><span class="line">    <span class="comment"># Run for 10-35~ epochs to achieve good scores.</span></span><br><span class="line">    epochs=<span class="number">1</span>,</span><br><span class="line">    callbacks=[coco_metrics_callback],</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># model.predict(images)返回边界框张量。默认情况下，YOLOV8Detector.predict()将为您执行非极大值抑制操作。</span></span><br><span class="line">model = keras_cv.models.YOLOV8Detector.from_preset(<span class="string">&quot;yolo_v8_m_pascalvoc&quot;</span>, bounding_box_format=<span class="string">&quot;xywh&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 接下来，我们构建一个具有更大批次的数据集：</span></span><br><span class="line">visualization_ds = eval_ds.unbatch()</span><br><span class="line">visualization_ds = visualization_ds.ragged_batch(<span class="number">16</span>)</span><br><span class="line">visualization_ds = visualization_ds.shuffle(<span class="number">8</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">visualize_detections</span>(<span class="params">model, dataset, bounding_box_format</span>):</span><br><span class="line">    images, y_true = <span class="built_in">next</span>(<span class="built_in">iter</span>(dataset.take(<span class="number">1</span>)))</span><br><span class="line">    y_pred = model.predict(images)</span><br><span class="line">    visualization.plot_bounding_box_gallery(</span><br><span class="line">        images,</span><br><span class="line">        value_range=(<span class="number">0</span>, <span class="number">255</span>),</span><br><span class="line">        bounding_box_format=bounding_box_format,</span><br><span class="line">        y_true=y_true,</span><br><span class="line">        y_pred=y_pred,</span><br><span class="line">        scale=<span class="number">4</span>,</span><br><span class="line">        rows=<span class="number">2</span>,</span><br><span class="line">        cols=<span class="number">2</span>,</span><br><span class="line">        show=<span class="literal">True</span>,</span><br><span class="line">        font_scale=<span class="number">0.7</span>,</span><br><span class="line">        class_mapping=class_mapping,</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="comment"># 您可能需要配置NonMaxSuppression操作以获得更好的结果。</span></span><br><span class="line">model.prediction_decoder = keras_cv.layers.NonMaxSuppression(</span><br><span class="line">    bounding_box_format=<span class="string">&quot;xywh&quot;</span>,</span><br><span class="line">    from_logits=<span class="literal">True</span>,</span><br><span class="line">    iou_threshold=<span class="number">0.5</span>,</span><br><span class="line">    confidence_threshold=<span class="number">0.75</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">visualize_detections(model, dataset=visualization_ds, bounding_box_format=<span class="string">&quot;xywh&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><code>KerasCV</code>可以轻松构建最先进的对象检测管道。我们首先使用<code>KerasCV</code>边界框规范编写数据加载器。接下来，我们使用<code>KerasCV</code>预处理层在不到<code>50</code>行的代码中组装了一个生产级数据增强管道。<code>KerasCV</code>对象检测组件可以独立使用，也可以深度集成。<code>KerasCV</code>使创作生产级边界框增强、模型训练、可视化和指标评估变得更容易。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>umbrella
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fresh88888888.github.io/2024/04/12/artificial-intelligence/object_detection_study/" title="对象检测（KerasCV）">https://fresh88888888.github.io/2024/04/12/artificial-intelligence/object_detection_study/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/12/artificial-intelligence/recommend_movies_study/" rel="prev" title="电影推荐（TensorFlow Ranking）">
+                  <i class="fa fa-chevron-left"></i> 电影推荐（TensorFlow Ranking）
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">辽ICP备15012817号-2 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2022 – 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">umbrella</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">628k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">34:52</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/fresh88888888" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.0.8/medium-zoom.min.js" integrity="sha256-7PhEpEWEW0XXQ0k6kQrPKwuoIomz8R8IYyuU1Qew4P8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/comments.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/motion.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/next-boot.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/pjax.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/search/local-search.min.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.12/pdfobject.min.js","integrity":"sha256-g2xji1rlE3KsGVClvuxTbcR0Kn2+wtQADSff2Tbb4zA="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/tags/pdf.min.js"></script>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/fancybox.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/pace.min.js"></script>
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2024/04/12/artificial-intelligence/object_detection_study/"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
+
+</body>
+</html>
