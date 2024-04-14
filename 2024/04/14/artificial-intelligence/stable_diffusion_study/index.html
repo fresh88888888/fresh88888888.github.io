@@ -34,6 +34,11 @@
 <meta property="og:description" content="使用KerasCV的稳定扩散图像生成。Stable Diffusion是一个强大的文本 -&gt; 图像模型，有Stability AI开源。虽然存在多种开源实现，可以轻松地根据文本提示创建图像，但KerasCV提供了一些优势：其中包括XLA编译和混合精度支持，他们共同实现最优的生成，使用KerasCV调用Stable Diffusion非常简单。我们传入一个字符串，通常称为提示，批量大小为3。模">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/stable_diffusion_study/sd_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/stable_diffusion_study/sd_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/stable_diffusion_study/sd_2.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/stable_diffusion_study/sd_3.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/stable_diffusion_study/sd_4.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/stable_diffusion_study/sd_5.png">
 <meta property="article:published_time" content="2024-04-14T11:06:11.000Z">
 <meta property="article:modified_time" content="2024-04-14T11:06:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -140,7 +145,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -153,6 +158,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%99%E5%88%B0%E5%BA%95%E6%98%AF%E6%80%8E%E4%B9%88%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">这到底是怎么工作的？</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -300,14 +306,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>148</span>
+      <span>1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
@@ -321,6 +327,36 @@
 <span id="more"></span>
 <img data-src="/2024/04/14/artificial-intelligence/stable_diffusion_study/sd_1.png" class="">
 
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> keras_cv</span><br><span class="line"><span class="keyword">import</span> keras</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 首先，我们构建一个模型</span></span><br><span class="line">model = keras_cv.models.StableDiffusion(img_width=<span class="number">512</span>, img_height=<span class="number">512</span>, jit_compile=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 接下来，我们给它一个提示：</span></span><br><span class="line">images = model.text_to_image(<span class="string">&quot;photograph of an astronaut riding a horse&quot;</span>, batch_size=<span class="number">3</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">plot_images</span>(<span class="params">images</span>):</span><br><span class="line">    plt.figure(figsize=(<span class="number">20</span>, <span class="number">20</span>))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(images)):</span><br><span class="line">        ax = plt.subplot(<span class="number">1</span>, <span class="built_in">len</span>(images), i + <span class="number">1</span>)</span><br><span class="line">        plt.imshow(images[i])</span><br><span class="line">        plt.axis(<span class="string">&quot;off&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">plot_images(images)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 但这并不是该模型所能做的全部。让我们尝试一个更复杂的提示：</span></span><br><span class="line">images = model.text_to_image(</span><br><span class="line">    <span class="string">&quot;cute magical flying dog, fantasy art, &quot;</span></span><br><span class="line">    <span class="string">&quot;golden color, high quality, highly detailed, elegant, sharp focus, &quot;</span></span><br><span class="line">    <span class="string">&quot;concept art, character concepts, digital painting, mystery, adventure&quot;</span>,</span><br><span class="line">    batch_size=<span class="number">3</span>,</span><br><span class="line">)</span><br><span class="line">plot_images(images)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/14/artificial-intelligence/stable_diffusion_study/sd_1.png" class="">
+<img data-src="/2024/04/14/artificial-intelligence/stable_diffusion_study/sd_2.png" class="">
+
+<h4 id="这到底是怎么工作的？"><a href="#这到底是怎么工作的？" class="headerlink" title="这到底是怎么工作的？"></a>这到底是怎么工作的？</h4><p>要从潜在扩散文本 <code>—&gt;</code> 图像，您需要添加一个关键特征：通过提示关键字控制生成的视觉内容的能力。这是通过“调节”来完成的，这是一种经典的深度学习技术，其中包括将一段文本的向量连接到噪声补丁，然后在<code>&#123;image:caption&#125;</code>的数据集上训练模型。这就产生了稳定扩散架构。 稳定扩散由三部分组成：</p>
+<ul>
+<li>文本编码器，可将您的提示转换为潜在向量。</li>
+<li>扩散模型，反复对<code>64x64</code>潜在图像块进行“去噪”。</li>
+<li>解码器，将最终的<code>64x64</code>潜在补丁转换为更高分辨率的<code>512x512</code>图像。</li>
+</ul>
+<p>首先，您的文本提示由文本编码器投影到潜在向量空间中，这只是一个预训练的冻结语言模型。然后，将该提示向量连接到随机生成的<strong>噪声块</strong>，该噪声块通过<strong>扩散模型</strong>在一系列“步骤”上重复“去噪”（运行的步骤越多，图像就会越清晰、越好-默认值为<code>50</code>次）。最后，<code>64x64</code>潜在图像通过解码器发送，用高分辨率渲染它。</p>
+<img data-src="/2024/04/14/artificial-intelligence/stable_diffusion_study/sd_3.png" class="">
+
+<p>上图中有一个文本编码器将，可以将提示字符串转换潜在的向量，该向量连接到随机生成的噪声补丁。新的向量将通过扩散模型重复去噪，最后潜在图像通过解码器，将<code>64 x 64</code><strong>图像块</strong>转换为更高分辨率的<code>512 x 512</code>图像。</p>
+<p>总而言之，这是一个非常简单的系统 — <code>Keras</code>实现包含在四个文件中，总共不到<code>500</code>行代码：</p>
+<ul>
+<li><code>text_encoder.py: 87 LOC</code></li>
+<li><code>diffusion_model.py: 181 LOC</code></li>
+<li><code>decoder.py: 86 LOC</code></li>
+<li><code>stable_diffusion.py: 106 LOC</code></li>
+</ul>
+<p>但一旦你训练了数十亿张图片及其标题，这个相对简单的系统就开始看起来像<strong>魔法</strong>一样。 正如费曼对宇宙的评价：<strong>“宇宙并不复杂，只是很多！”</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">benchmark_result = []</span><br><span class="line">start = time.time()</span><br><span class="line">images = model.text_to_image(</span><br><span class="line">    <span class="string">&quot;A cute otter in a rainbow whirlpool holding shells, watercolor&quot;</span>,</span><br><span class="line">    batch_size=<span class="number">3</span>,</span><br><span class="line">)</span><br><span class="line">end = time.time()</span><br><span class="line">benchmark_result.append([<span class="string">&quot;Standard&quot;</span>, end - start])</span><br><span class="line">plot_images(images)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Standard model: <span class="subst">&#123;(end - start):<span class="number">.2</span>f&#125;</span> seconds&quot;</span>)</span><br><span class="line">keras.backend.clear_session()  <span class="comment"># Clear session to preserve memory.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 50/50 ━━━━━━━━━━━━━━━━━━━━ 10s 209ms/step</span></span><br><span class="line"><span class="comment"># Standard model: 10.57 seconds</span></span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/14/artificial-intelligence/stable_diffusion_study/sd_4.png" class="">
+
+<p>现在我们打开混合精度，使用float16精度执行计算，同时存储float32存储权重。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Warm up model to run graph tracing before benchmarking.</span></span><br><span class="line">model.text_to_image(<span class="string">&quot;warming up the model&quot;</span>, batch_size=<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">start = time.time()</span><br><span class="line">images = model.text_to_image(</span><br><span class="line">    <span class="string">&quot;a cute magical flying dog, fantasy art, &quot;</span></span><br><span class="line">    <span class="string">&quot;golden color, high quality, highly detailed, elegant, sharp focus, &quot;</span></span><br><span class="line">    <span class="string">&quot;concept art, character concepts, digital painting, mystery, adventure&quot;</span>,</span><br><span class="line">    batch_size=<span class="number">3</span>,</span><br><span class="line">)</span><br><span class="line">end = time.time()</span><br><span class="line">benchmark_result.append([<span class="string">&quot;Mixed Precision&quot;</span>, end - start])</span><br><span class="line">plot_images(images)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Mixed precision model: <span class="subst">&#123;(end - start):<span class="number">.2</span>f&#125;</span> seconds&quot;</span>)</span><br><span class="line">keras.backend.clear_session()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 50/50 ━━━━━━━━━━━━━━━━━━━━ 42s 132ms/step</span></span><br><span class="line"><span class="comment"># 50/50 ━━━━━━━━━━━━━━━━━━━━ 6s 129ms/step</span></span><br><span class="line"><span class="comment"># Mixed precision model: 6.65 seconds</span></span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/14/artificial-intelligence/stable_diffusion_study/sd_5.png" class="">
+
+<p>这更快是因为<code>NVIDIA GPU</code>具有专门的<code>FP16</code>运算内核。其运行速度比FP32同类产品更快。接下来我们尝试一下<code>XLA</code>编译，我们可以通过</p>
 
     </div>
 
@@ -393,14 +429,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">630k</span>
+    <span title="站点总字数">631k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">35:01</span>
+    <span title="站点阅读时长">35:04</span>
   </span>
 </div>
 <div class="busuanzi-count">
