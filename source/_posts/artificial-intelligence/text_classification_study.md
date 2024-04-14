@@ -118,4 +118,4 @@ model.summary()
 model.fit(imdb_train_preprocessed,validation_data=imdb_test_preprocessed,epochs=3,
 )
 ```
-以上这就是微调自定义模型的方法。无论你想使用线程的预训练模型，还是创建自定义模型以提高准确性，`KerasNLP`都能满足你的需求。这里忽略了从头开始创建`Transformer`模型。
+以上这就是微调自定义模型的方法。无论你想使用现成的预训练模型，还是创建自定义模型以提高准确性，`KerasNLP`都能满足你的需求。这里忽略了从头开始创建`Transformer`模型。
