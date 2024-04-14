@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+  <meta name="google-site-verification" content="lk2gSYFP_NyLNFob-fFnt7fm-I_n1ZYws-WZll7mshg">
+  <meta name="msvalidate.01" content="6Jdc01DjYOLguhS5">
+  <meta name="baidu-site-verification" content="code-NR10G09zww">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic%7Ccursive:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+
+    <meta name="description" content="如果你正在构建大规模推荐系统，那么最大的挑战必定是模型当中的大型嵌入表，这些嵌入表是关键组件。但对他们的嵌入查询操作通常执行起来非常昂贵，这使他们成为性能的瓶颈。因此，接下来我们将讨论：”如何使用TPU embeddings来应对这一挑战？“。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TPU embeddings（利用TensorFlow构建推荐系统）">
+<meta property="og:url" content="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/TPU_embeddings_study/index.html">
+<meta property="og:site_name" content="UMBRELLA">
+<meta property="og:description" content="如果你正在构建大规模推荐系统，那么最大的挑战必定是模型当中的大型嵌入表，这些嵌入表是关键组件。但对他们的嵌入查询操作通常执行起来非常昂贵，这使他们成为性能的瓶颈。因此，接下来我们将讨论：”如何使用TPU embeddings来应对这一挑战？“。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/TPU_embeddings_study/te_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/TPU_embeddings_study/te_2.png">
+<meta property="article:published_time" content="2024-04-14T03:40:11.000Z">
+<meta property="article:modified_time" content="2024-04-14T03:40:11.000Z">
+<meta property="article:author" content="umbrella">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/TPU_embeddings_study/te_1.png">
+
+
+<link rel="canonical" href="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/TPU_embeddings_study/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/04/14/artificial-intelligence/TPU_embeddings_study/","path":"2024/04/14/artificial-intelligence/TPU_embeddings_study/","title":"TPU embeddings（利用TensorFlow构建推荐系统）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>TPU embeddings（利用TensorFlow构建推荐系统） | UMBRELLA</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">UMBRELLA</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">未雨绸缪，举重若轻</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-算法"><a href="/Algorithm/" rel="section"><i class="fa fa-calendar fa-fw"></i>算法</a></li><li class="menu-item menu-item-c++-&nbsp;编程"><a href="/Programming-C++/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>C++ &nbsp;编程</a></li><li class="menu-item menu-item-rust-编程"><a href="/Programming-Rust/" rel="section"><i class="fa fa-cat fa-fw"></i>Rust 编程</a></li><li class="menu-item menu-item-go-&nbsp;&nbsp;&nbsp;编程"><a href="/Programming-Go/" rel="section"><i class="fa fa-hippo fa-fw"></i>Go &nbsp;&nbsp;&nbsp;编程</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="umbrella"
+      src="/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">umbrella</p>
+  <div class="site-description" itemprop="description">没事就多看看书</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">153</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fresh88888888" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fresh88888888" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fresh888888@foxmail.com" title="E-Mail → mailto:fresh888888@foxmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.rust-lang.org/zh-CN/" title="https:&#x2F;&#x2F;www.rust-lang.org&#x2F;zh-CN&#x2F;" rel="noopener" target="_blank">Rust</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://go.dev/" title="https:&#x2F;&#x2F;go.dev&#x2F;" rel="noopener" target="_blank">Golang</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://isocpp.org/" title="https:&#x2F;&#x2F;isocpp.org&#x2F;" rel="noopener" target="_blank">C++</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.python.org/" title="https:&#x2F;&#x2F;www.python.org&#x2F;" rel="noopener" target="_blank">Python</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://doc.rust-lang.org/cargo/index.html" title="https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;cargo&#x2F;index.html" rel="noopener" target="_blank">Cargo</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://gist.github.com/rxaviers/7360908" title="https:&#x2F;&#x2F;gist.github.com&#x2F;rxaviers&#x2F;7360908" rel="noopener" target="_blank">Emoji</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/TPU_embeddings_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="TPU embeddings（利用TensorFlow构建推荐系统） | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          TPU embeddings（利用TensorFlow构建推荐系统）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-04-14 11:40:11" itemprop="dateCreated datePublished" datetime="2024-04-14T11:40:11+08:00">2024-04-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>如果你正在构建大规模推荐系统，那么最大的挑战必定是<strong>模型当中的大型嵌入表</strong>，这些嵌入表是关键组件。但对他们的嵌入查询操作通常执行起来非常昂贵，这使他们成为性能的瓶颈。因此，接下来我们将讨论：”如何使用<code>TPU embeddings</code>来应对这一挑战？“。</p>
+<span id="more"></span>
+<p>让我们回顾一下，在现代大规模推荐系统是如何工作的：</p>
+<ul>
+<li>第一步，训练神经网络模型（离线），例如经典的两塔模型（查询塔、数据库塔），学习如何将查询项目映射到联合嵌入。</li>
+<li>第二步，映射数据库数据项到嵌入空间（离线），我们映射所有的数据库项目到嵌入空间的项目。</li>
+<li>第三步，在运行时，我们将将计算查询嵌入并且进行向量相似性搜索在嵌入空间中查找最近的项目。</li>
+</ul>
+<p>首先，训练嵌入表可能非常具有挑战性，如果你有大量的项目词汇量，比如要推荐超过<code>1</code>亿个项目，或者一些高维的稀疏特征。您将需要大型嵌入表来存储它们的嵌入，这些嵌入表可能通常不适合单个加速器，因此，您必须在多个加速器之间共享它们，这会带来通信开销，并使查找操作代价变得昂贵。虽然有一些软件的解决方案，但最好从硬件和软件方面解决这个问题，这最终导致我们会使用<code>TPU embeddings</code>，专门设计的硬件<code>Sparse Core</code>，专用于加速嵌入查找操作。</p>
+<img data-src="/2024/04/14/artificial-intelligence/TPU_embeddings_study/te_1.png" class="">
+
+<p><code>TPU embeddings</code>可以显著提高推荐系统的速度。以下是<code>Google</code>内部生产推荐模型的性能基准测试：</p>
+<img data-src="/2024/04/14/artificial-intelligence/TPU_embeddings_study/te_2.png" class="">
+
+<p>正如你所看到的，通过<code>TPU v3</code>和<code>v4</code>上使用了<code>Sparse Core</code>与CPU上的嵌入相比，速度提高了<code>10~30</code>倍，接下来了解如何使用<code>TPU embeddings</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">import</span> tensorflow_recommenders <span class="keyword">as</span> tfrs</span><br><span class="line"><span class="keyword">import</span> tensorflow_datasets <span class="keyword">as</span> tfds</span><br><span class="line"><span class="keyword">from</span> google.colab <span class="keyword">import</span> auth</span><br><span class="line"></span><br><span class="line"><span class="comment"># 预定义的TPU策略对象</span></span><br><span class="line">resolver = tf.distribute.cluster_resolver.TPUClusterResolver(<span class="string">&#x27;&#x27;</span>).connect(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">strategy = tf.distribute.TPUStrategy(resolver)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 需要一个GCS存储桶来讲数据提供给TPU</span></span><br><span class="line">gcs_bucket = <span class="string">&#x27;gs://YOUR-BUCKET-NAME&#x27;</span>  <span class="comment">#@param &#123;type:&quot;string&quot;&#125;</span></span><br><span class="line">auth.authenticate_user()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 首先我们使用tensorflow_dataset获取数据。我们需要的数据是movie_id、user_id和user_ rating。然后对数据进行预处理并将其转换为整数。</span></span><br><span class="line"><span class="comment"># Ratings data.</span></span><br><span class="line">ratings = tfds.load(</span><br><span class="line">    <span class="string">&quot;movielens/100k-ratings&quot;</span>, data_dir=gcs_bucket, split=<span class="string">&quot;train&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 我们将user_id和movie_id转换为整数。</span></span><br><span class="line">ratings = ratings.<span class="built_in">map</span>(</span><br><span class="line">    <span class="keyword">lambda</span> x: &#123;</span><br><span class="line">        <span class="string">&quot;movie_id&quot;</span>: tf.strings.to_number(x[<span class="string">&quot;movie_id&quot;</span>]),</span><br><span class="line">        <span class="string">&quot;user_id&quot;</span>: tf.strings.to_number(x[<span class="string">&quot;user_id&quot;</span>]),</span><br><span class="line">        <span class="string">&quot;user_rating&quot;</span>: x[<span class="string">&quot;user_rating&quot;</span>],</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为模型定义一些超参数。</span></span><br><span class="line">per_replica_batch_size = <span class="number">16</span></span><br><span class="line">movie_vocabulary_size = <span class="number">2048</span></span><br><span class="line">movie_embedding_size = <span class="number">64</span></span><br><span class="line">user_vocabulary_size = <span class="number">2048</span></span><br><span class="line">user_embedding_size = <span class="number">64</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 我们将通过将80%的评级放入训练集，将20%放入测试集来分割数据。</span></span><br><span class="line">shuffled = ratings.shuffle(<span class="number">100_000</span>, seed=<span class="number">42</span>, reshuffle_each_iteration=<span class="literal">False</span>)</span><br><span class="line">train = shuffled.take(<span class="number">80_000</span>)</span><br><span class="line">test = shuffled.skip(<span class="number">80_000</span>).take(<span class="number">20_000</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 对数据集进行批处理缓存并将其转换为分布式数据集。</span></span><br><span class="line">train_dataset = train.batch(per_replica_batch_size * strategy.num_replicas_in_sync,drop_remainder=<span class="literal">True</span>).cache()</span><br><span class="line">test_dataset = test.batch(per_replica_batch_size * strategy.num_replicas_in_sync,drop_remainder=<span class="literal">True</span>).cache()</span><br><span class="line"></span><br><span class="line">distribute_train_dataset = strategy.experimental_distribute_dataset(train_dataset,options=tf.distribute.InputOptions        (experimental_fetch_to_device=<span class="literal">False</span>))</span><br><span class="line">distribute_test_dataset = strategy.experimental_distribute_dataset(test_dataset,options=tf.distribute.InputOptions</span><br><span class="line">(experimental_fetch_to_device=<span class="literal">False</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义优化器和表配置，为了将嵌入放置在Sparse Core上</span></span><br><span class="line">optimizer = tf.keras.optimizers.Adagrad(learning_rate=<span class="number">0.1</span>)</span><br><span class="line"><span class="comment"># 指定词汇表大小和嵌入维度，然后通过特征配置将特征和表配置关联起来。</span></span><br><span class="line"><span class="comment"># movie_id放置在电影表中、user_id放置在用户表中。</span></span><br><span class="line">user_table = tf.tpu.experimental.embedding.TableConfig(vocabulary_size=user_vocabulary_size, dim=user_embedding_size)</span><br><span class="line">movie_table = tf.tpu.experimental.embedding.TableConfig(vocabulary_size=movie_vocabulary_size, dim=movie_embedding_size)</span><br><span class="line">feature_config = &#123;</span><br><span class="line">    <span class="string">&quot;movie_id&quot;</span>: tf.tpu.experimental.embedding.FeatureConfig(table=movie_table),</span><br><span class="line">    <span class="string">&quot;user_id&quot;</span>: tf.tpu.experimental.embedding.FeatureConfig(table=user_table)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在这里我们创建优化器，指定特征和表配置。然后我们创建带有嵌入层的模型。</span></span><br><span class="line"><span class="comment"># Define a ranking model with embedding layer.</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmbeddingModel</span>(tfrs.models.Model):</span><br><span class="line"></span><br><span class="line">  <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">    <span class="built_in">super</span>().__init__()</span><br><span class="line">    <span class="comment"># 将特征配置和优化器一起传递到TPU嵌入层</span></span><br><span class="line">    self.embedding_layer = tfrs.layers.embedding.TPUEmbedding(feature_config=feature_config, optimizer=optimizer)</span><br><span class="line">    self.ratings = tf.keras.Sequential([</span><br><span class="line">        <span class="comment"># Learn multiple dense layers.</span></span><br><span class="line">        tf.keras.layers.Dense(<span class="number">256</span>, activation=<span class="string">&quot;relu&quot;</span>),</span><br><span class="line">        tf.keras.layers.Dense(<span class="number">64</span>, activation=<span class="string">&quot;relu&quot;</span>),</span><br><span class="line">        <span class="comment"># Make rating predictions in the final layer.</span></span><br><span class="line">        tf.keras.layers.Dense(<span class="number">1</span>)</span><br><span class="line">    ])</span><br><span class="line">    self.task: tf.keras.layers.Layer = tfrs.tasks.Ranking(loss=tf.keras.losses.MeanSquaredError(reduction=tf.keras.losses.Reduction.NONE),</span><br><span class="line">        metrics=[tf.keras.metrics.RootMeanSquaredError()])</span><br><span class="line"></span><br><span class="line">  <span class="keyword">def</span> <span class="title function_">compute_loss</span>(<span class="params">self, features, training=<span class="literal">False</span></span>):</span><br><span class="line">    embedding = self.embedding_layer(&#123;</span><br><span class="line">        <span class="string">&quot;user_id&quot;</span>: features[<span class="string">&quot;user_id&quot;</span>],</span><br><span class="line">        <span class="string">&quot;movie_id&quot;</span>: features[<span class="string">&quot;movie_id&quot;</span>]</span><br><span class="line">    &#125;)</span><br><span class="line">    rating_predictions = self.ratings(tf.concat([embedding[<span class="string">&quot;user_id&quot;</span>], embedding[<span class="string">&quot;movie_id&quot;</span>]], axis=<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 我们需要将其缩小全局批量大小的一个因子，该因子等于每个副本的批量大小和strategy.num_replicas_in_sync的乘积</span></span><br><span class="line">    <span class="keyword">return</span> tf.reduce_sum(self.task(labels=features[<span class="string">&quot;user_rating&quot;</span>], predictions=rating_predictions)) * (</span><br><span class="line">                <span class="number">1</span> / (per_replica_batch_size * strategy.num_replicas_in_sync))</span><br><span class="line"></span><br><span class="line">  <span class="keyword">def</span> <span class="title function_">call</span>(<span class="params">self, features, serving_config=<span class="literal">None</span></span>):</span><br><span class="line">    embedding = self.embedding_layer(</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;user_id&quot;</span>: features[<span class="string">&quot;user_id&quot;</span>],</span><br><span class="line">            <span class="string">&quot;movie_id&quot;</span>: features[<span class="string">&quot;movie_id&quot;</span>]</span><br><span class="line">        &#125;,</span><br><span class="line">        serving_config=serving_config)</span><br><span class="line">    <span class="keyword">return</span> self.ratings(tf.concat([embedding[<span class="string">&quot;user_id&quot;</span>], embedding[<span class="string">&quot;movie_id&quot;</span>]], axis=<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 确保在TPUStrategy下初始化模型。</span></span><br><span class="line"><span class="keyword">with</span> strategy.scope():</span><br><span class="line">  model = EmbeddingModel()</span><br><span class="line">  model.<span class="built_in">compile</span>(optimizer=optimizer)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练模型</span></span><br><span class="line">model.fit(distribute_train_dataset, steps_per_epoch=<span class="number">10</span>, epochs=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试数据集上评估模型</span></span><br><span class="line">model.evaluate(distribute_test_dataset, steps=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练完成之后，我们可以将模型保存到GCS存储桶之中</span></span><br><span class="line">model_dir = os.path.join(gcs_bucket, <span class="string">&quot;saved_model&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为TPU模型创建检查点并将模型保存到存储桶中。</span></span><br><span class="line">checkpoint = tf.train.Checkpoint(optimizer=optimizer, model=model)</span><br><span class="line">saved_tpu_model_path = checkpoint.save(os.path.join(model_dir, <span class="string">&quot;ckpt&quot;</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Restore the embedding on TPU</span></span><br><span class="line"><span class="keyword">with</span> strategy.scope():</span><br><span class="line">  checkpoint.restore(saved_tpu_model_path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 我们还可以在CPU上恢复TPU训练的权重</span></span><br><span class="line">cpu_model = EmbeddingModel()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create the cpu checkpoint and restore the tpu checkpoint.</span></span><br><span class="line">cpu_checkpoint = tf.train.Checkpoint(optimizer=optimizer, model=cpu_model)</span><br><span class="line">cpu_checkpoint.restore(saved_tpu_model_path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为saved_model提供服务</span></span><br><span class="line"><span class="meta">@tf.function</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">serve_tensors</span>(<span class="params">features</span>):</span><br><span class="line">  <span class="keyword">return</span> cpu_model(features)</span><br><span class="line"></span><br><span class="line">signatures = &#123;</span><br><span class="line">    <span class="string">&#x27;serving&#x27;</span>:</span><br><span class="line">        serve_tensors.get_concrete_function(</span><br><span class="line">            features=&#123;</span><br><span class="line">                <span class="string">&#x27;movie_id&#x27;</span>:</span><br><span class="line">                    tf.TensorSpec(shape=(<span class="number">1</span>,), dtype=tf.int32, name=<span class="string">&#x27;movie_id&#x27;</span>),</span><br><span class="line">                <span class="string">&#x27;user_id&#x27;</span>:</span><br><span class="line">                    tf.TensorSpec(shape=(<span class="number">1</span>,), dtype=tf.int32, name=<span class="string">&#x27;user_id&#x27;</span>),</span><br><span class="line">            &#125;),</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">tf.saved_model.save(</span><br><span class="line">    cpu_model,</span><br><span class="line">    export_dir=os.path.join(model_dir, <span class="string">&#x27;exported_model&#x27;</span>),</span><br><span class="line">    signatures=signatures)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 我们换可以将movie_id和user_id传递给加载的模型，然后获得评分预测。</span></span><br><span class="line">imported = tf.saved_model.load(os.path.join(model_dir, <span class="string">&#x27;exported_model&#x27;</span>))</span><br><span class="line">predict_fn = imported.signatures[<span class="string">&#x27;serving&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># Dummy serving data.</span></span><br><span class="line">input_batch = &#123;</span><br><span class="line">    <span class="string">&#x27;movie_id&#x27;</span>: tf.constant(np.array([<span class="number">100</span>]), dtype=tf.int32),</span><br><span class="line">    <span class="string">&#x27;user_id&#x27;</span>: tf.constant(np.array([<span class="number">30</span>]), dtype=tf.int32)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># The prediction it generates.</span></span><br><span class="line">prediction = predict_fn(**input_batch)[<span class="string">&#x27;output_0&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>umbrella
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/TPU_embeddings_study/" title="TPU embeddings（利用TensorFlow构建推荐系统）">https://fresh88888888.github.io/2024/04/14/artificial-intelligence/TPU_embeddings_study/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/12/artificial-intelligence/object_detection_study/" rel="prev" title="对象检测（KerasCV）">
+                  <i class="fa fa-chevron-left"></i> 对象检测（KerasCV）
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">辽ICP备15012817号-2 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2022 – 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">umbrella</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">629k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">34:56</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/fresh88888888" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.0.8/medium-zoom.min.js" integrity="sha256-7PhEpEWEW0XXQ0k6kQrPKwuoIomz8R8IYyuU1Qew4P8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/comments.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/motion.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/next-boot.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/pjax.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/search/local-search.min.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.12/pdfobject.min.js","integrity":"sha256-g2xji1rlE3KsGVClvuxTbcR0Kn2+wtQADSff2Tbb4zA="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/tags/pdf.min.js"></script>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/fancybox.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/pace.min.js"></script>
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2024/04/14/artificial-intelligence/TPU_embeddings_study/"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
+
+</body>
+</html>
