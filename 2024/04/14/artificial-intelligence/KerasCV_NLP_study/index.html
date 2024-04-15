@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+  <meta name="google-site-verification" content="lk2gSYFP_NyLNFob-fFnt7fm-I_n1ZYws-WZll7mshg">
+  <meta name="msvalidate.01" content="6Jdc01DjYOLguhS5">
+  <meta name="baidu-site-verification" content="code-NR10G09zww">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic%7Ccursive:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+
+    <meta name="description" content="在深入了解KerasCV和KerasNLP之前，先向你介绍Keras的一个新功能：Keras Core。允许你在任意框架（TensorFlow、JAX和PyTorch）之上运行Keras代码。Keras组件，例如层、模型或指标，作为低级TensorFlow、JAX和PyTorch工作流程的一部分。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KerasCV &amp; KerasNLP 介绍">
+<meta property="og:url" content="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/KerasCV_NLP_study/index.html">
+<meta property="og:site_name" content="UMBRELLA">
+<meta property="og:description" content="在深入了解KerasCV和KerasNLP之前，先向你介绍Keras的一个新功能：Keras Core。允许你在任意框架（TensorFlow、JAX和PyTorch）之上运行Keras代码。Keras组件，例如层、模型或指标，作为低级TensorFlow、JAX和PyTorch工作流程的一部分。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/KerasCV_NLP_study/cn_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/KerasCV_NLP_study/cn_2.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/KerasCV_NLP_study/cn_3.png">
+<meta property="article:published_time" content="2024-04-14T11:06:11.000Z">
+<meta property="article:modified_time" content="2024-04-14T11:06:11.000Z">
+<meta property="article:author" content="umbrella">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/KerasCV_NLP_study/cn_1.png">
+
+
+<link rel="canonical" href="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/KerasCV_NLP_study/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/04/14/artificial-intelligence/KerasCV_NLP_study/","path":"2024/04/14/artificial-intelligence/KerasCV_NLP_study/","title":"KerasCV & KerasNLP 介绍"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>KerasCV & KerasNLP 介绍 | UMBRELLA</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">UMBRELLA</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">未雨绸缪，举重若轻</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-算法"><a href="/Algorithm/" rel="section"><i class="fa fa-calendar fa-fw"></i>算法</a></li><li class="menu-item menu-item-c++-&nbsp;编程"><a href="/Programming-C++/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>C++ &nbsp;编程</a></li><li class="menu-item menu-item-rust-编程"><a href="/Programming-Rust/" rel="section"><i class="fa fa-cat fa-fw"></i>Rust 编程</a></li><li class="menu-item menu-item-go-&nbsp;&nbsp;&nbsp;编程"><a href="/Programming-Go/" rel="section"><i class="fa fa-hippo fa-fw"></i>Go &nbsp;&nbsp;&nbsp;编程</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">图像分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E6%A3%80%E6%B5%8B"><span class="nav-number">2.</span> <span class="nav-text">对象检测</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="nav-number">3.</span> <span class="nav-text">数据增强</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%90"><span class="nav-number">4.</span> <span class="nav-text">图像生成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB"><span class="nav-number">5.</span> <span class="nav-text">文本分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E7%94%9F%E6%88%90"><span class="nav-number">6.</span> <span class="nav-text">文本生成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">7.</span> <span class="nav-text">自定义预处理</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="umbrella"
+      src="/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">umbrella</p>
+  <div class="site-description" itemprop="description">没事就多看看书</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">156</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fresh88888888" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fresh88888888" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fresh888888@foxmail.com" title="E-Mail → mailto:fresh888888@foxmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.rust-lang.org/zh-CN/" title="https:&#x2F;&#x2F;www.rust-lang.org&#x2F;zh-CN&#x2F;" rel="noopener" target="_blank">Rust</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://go.dev/" title="https:&#x2F;&#x2F;go.dev&#x2F;" rel="noopener" target="_blank">Golang</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://isocpp.org/" title="https:&#x2F;&#x2F;isocpp.org&#x2F;" rel="noopener" target="_blank">C++</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.python.org/" title="https:&#x2F;&#x2F;www.python.org&#x2F;" rel="noopener" target="_blank">Python</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://doc.rust-lang.org/cargo/index.html" title="https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;cargo&#x2F;index.html" rel="noopener" target="_blank">Cargo</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://gist.github.com/rxaviers/7360908" title="https:&#x2F;&#x2F;gist.github.com&#x2F;rxaviers&#x2F;7360908" rel="noopener" target="_blank">Emoji</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/KerasCV_NLP_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="KerasCV & KerasNLP 介绍 | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          KerasCV & KerasNLP 介绍
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-04-14 19:06:11" itemprop="dateCreated datePublished" datetime="2024-04-14T19:06:11+08:00">2024-04-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>在深入了解<code>KerasCV</code>和<code>KerasNLP</code>之前，先向你介绍<code>Keras</code>的一个新功能：<code>Keras Core</code>。允许你在任意框架（<code>TensorFlow、JAX</code>和<code>PyTorch</code>）之上运行<code>Keras</code>代码。<code>Keras</code>组件，例如层、模型或指标，作为低级<code>TensorFlow、JAX</code>和<code>PyTorch</code>工作流程的一部分。</p>
+<span id="more"></span>
+<p><code>KerasCV &amp; KerasNLP</code>的后台环境变量设置：</p>
+<img data-src="/2024/04/14/artificial-intelligence/KerasCV_NLP_study/cn_1.png" class="">
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Classify text</span></span><br><span class="line">model = BertClassifier.from_preset(<span class="string">&#x27;bert_base_on_uncased&#x27;</span>, num_classes=<span class="number">2</span>)</span><br><span class="line">model.<span class="built_in">compile</span>(...)</span><br><span class="line">model.fit(movie_review_dataset)</span><br><span class="line">model.predict([<span class="string">&#x27;What an amazing movie!&#x27;</span>],)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Text to image</span></span><br><span class="line">model = StableDiffusion(img_width=<span class="number">512</span>, img_height=<span class="number">512</span>)</span><br><span class="line">image = model.text_to_image(</span><br><span class="line">    <span class="string">&quot;photograph of an astronaut &quot;</span></span><br><span class="line">    <span class="string">&quot;riding a horse&quot;</span>,</span><br><span class="line">    batch_size=<span class="number">3</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>了解最新模型以保持竞争力至关重要，与此同时，最先进的模型变得越来越复杂，通常需要昂贵的资源。<code>KerasCV &amp; KerasNLP</code>可以帮助你完成许多机器学习任务。</p>
+<img data-src="/2024/04/14/artificial-intelligence/KerasCV_NLP_study/cn_2.png" class="">
+
+<p><code>KerasCV &amp; KerasNLP</code>中最高级别的模型是任务，任务（如图像分类器）是一个<code>Keras</code>模型，由主干子模型解决特定问题所需特定任务的层组成。反过来，主干模型是一组重用层。通常在单独的任务上进行预训练，从输入数据中提取信息丰富的特征，从而大大减少在任务中获得有竞争力的性能所需的标记数据量和计算资源。</p>
+<h4 id="图像分类"><a href="#图像分类" class="headerlink" title="图像分类"></a>图像分类</h4><p>在此示例中我们以<code>ResNet</code>架构为主干，在<code>KerasCV</code>和<code>KerasNLP</code>中加载具有预训练权重的模型，并使用带有预设名称的<code>from_preset</code>构造函数。在此示例中<code>ResNet50 ImageNet</code>是在<code>ImageNet</code>数据集上预训练<code>50</code>层<code>ResNet</code>模型。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> eras_cv.models <span class="keyword">import</span> &#123;ResNetBackone, ImageClassifier,&#125;</span><br><span class="line"></span><br><span class="line">backbone = ResNetBackone.from_preset(<span class="string">&#x27;resnet50_imagenet&#x27;</span>,)</span><br><span class="line">model = ImageClassifier(backbone=backbone, num_classes=<span class="number">2</span>)</span><br><span class="line">model.<span class="built_in">compile</span>(...)</span><br><span class="line">model.fit(cat_vs_dog_dataset)</span><br></pre></td></tr></table></figure>
+<p>创建主干模型之后，我们将其连同我们想要预测的类的数量一起传递给图像分类器构造函数，之后编译和拟合模型。</p>
+<h4 id="对象检测"><a href="#对象检测" class="headerlink" title="对象检测"></a>对象检测</h4><p><code>KerasCV</code>还支持对象检测，这是一项比图像分类更复杂的任务，因为该模型可以检测任意数量的对象，并且必须为每个对象预测一个类和一个边界框。尽管增加了复杂性，但使用<code>RetinaNet</code>架构创建对象检测模型与图像分类非常相似。我们再次使用<code>from_preset</code>构造函数选择预训练的<code>ResNet50</code>主干网络。主要区别在于需要在训练集中标记边界框并在任务构造函数中指定边界框格式之后。与其他<code>Keras</code>工作流程一样编译并拟合模型。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> eras_cv.models <span class="keyword">import</span> &#123;ResNetBackone, RetinaNet&#125;</span><br><span class="line"></span><br><span class="line">backbone = ResNetBackone.from_preset(<span class="string">&#x27;resnet50_imagenet&#x27;</span>,)</span><br><span class="line">model = RetinaNet(backbone=backbone, num_classes=<span class="number">20</span>, bounding_box_format=<span class="string">&#x27;xywh&#x27;</span>)</span><br><span class="line">model.<span class="built_in">compile</span>(...)</span><br><span class="line">model.fit(dataset)</span><br></pre></td></tr></table></figure>
+<h4 id="数据增强"><a href="#数据增强" class="headerlink" title="数据增强"></a>数据增强</h4><p>数据增强（<code>Data Augmentation</code>）是最大限度提高计算机视觉任务准确性所必须的关键预处理步骤。为了避免过度拟合训练集的光照、裁剪和其他特殊性，旋转噪声甚至将原始图像混合在一起增加训练目标的鲁棒性非常重要，这里边包括了用于旋转的<code>RandomFlip</code>、用于强度扰动的随机增强（<code>RandomAugment</code>）、用于创建合成图像的<code>CutMix</code>和<code>MixUp</code>等等。只需将您所需的增强层组合到<code>Keras</code>模型中，并在训练模型之前映射你的数据集即可。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras_cv.layers <span class="keyword">import</span> &#123;CutMix, MixUp, RandomAugment, RandomFlip&#125;</span><br><span class="line"></span><br><span class="line">augmenter = keras.Sequential(</span><br><span class="line">    [</span><br><span class="line">        RandomFlip(),</span><br><span class="line">        RandomAugment(value_range=(<span class="number">0</span>,<span class="number">255</span>)),</span><br><span class="line">        CutMix(),</span><br><span class="line">        MixUp(),</span><br><span class="line">    ],</span><br><span class="line">)</span><br><span class="line">train_dataset = flowers_dataset.<span class="built_in">map</span>(augmenter)</span><br></pre></td></tr></table></figure>
+<h4 id="图像生成"><a href="#图像生成" class="headerlink" title="图像生成"></a>图像生成</h4><p>文本到图像模型（例如稳定扩散）提供了简单接口，可以根据文本提示生成新颖的图片。使用所需的输出，并提示生成多个输出图片。文本反转是一种通过示例教授稳定扩散模型。提示 <code>-&gt;</code> 提示是一种将提示修改为稳定扩散同时保持图像视觉一致的方法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> eras_cv.models <span class="keyword">import</span> &#123;StableDiffusion&#125;</span><br><span class="line"></span><br><span class="line">model = StableDiffusion(jit_compile=<span class="literal">True</span>)</span><br><span class="line">images = model.text_to_image(</span><br><span class="line">    <span class="string">&quot;A mysterious dark stranger visits the great pyramids of egypt, &quot;</span></span><br><span class="line">    <span class="string">&quot;high quality, highly detailed, elegant, sharp focus, &quot;</span></span><br><span class="line">    <span class="string">&quot;concept art, character concepts, digital painting&quot;</span>,</span><br><span class="line">    batch_size=<span class="number">3</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h4 id="文本分类"><a href="#文本分类" class="headerlink" title="文本分类"></a>文本分类</h4><p>让我们首先训练情感分析分类器，来预测电影评论是正面还是负面。我们使用<code>from_preset</code>构造函数实例化<code>BERT</code>分类器任务模型。与<code>KerasCV</code>的区别之一是<code>KerasNLP</code>任务模型（如<code>BERT</code>分类器）默认包含预处理，在训练和服务时传递原始字符串而不必担心使用正确的标记化和打包方法。因此，最好在任务模型上调用<code>from_preset</code>，而不是传递显示主干。这将自动为你提供一个匹配的于处理器类，它将标记并填充输入。该骨干网络已经过千兆字节文本数据的预训练，以理解上下文中单词的含义，并从我们标记的示例中提取更多信息。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras_nlp.models <span class="keyword">import</span> &#123;BertClassifier&#125;</span><br><span class="line"></span><br><span class="line">model = BertClassifier.from_preset(<span class="string">&#x27;bert_base_en_uncased&#x27;</span>,num_classes=<span class="number">2</span>,activation=<span class="string">&#x27;softmax&#x27;</span>,)</span><br><span class="line"></span><br><span class="line">model.<span class="built_in">compile</span>(...)</span><br><span class="line">model.fit(imdb_movie_review_dataset)</span><br><span class="line">model.predict(</span><br><span class="line">    [</span><br><span class="line">        <span class="string">&#x27;What an amazing movie!&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;A total waste of my time&#x27;</span>,</span><br><span class="line">    ]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>array([[<span class="number">0.004137</span>, <span class="number">0.9956</span>],[<span class="number">0.997</span>, <span class="number">0.0028</span>]], dtype=float16)</span><br></pre></td></tr></table></figure>
+<p>在根据<code>IMDB</code>的情感标记电影评论数据集微调我们的模型后，我们可以预测两条新电影评论的情感，获得积极情绪的概率为<code>99.6%</code>。</p>
+<h4 id="文本生成"><a href="#文本生成" class="headerlink" title="文本生成"></a>文本生成</h4><p>微调文本生成模型，就像分类一样简单，只需传递你希望模型，模仿的文本数据集，预处理就会自动处理。因果LM是一种任务模型，他在给定所有前面的标记的情况下预测输入序列的每个标记，这是训练生成文本模型的规范方法，可以根据用户提示预测新的标记。在此示例中，我们使用<code>from_preset</code>构造函数加载预训练的<code>GPT-2</code>模型。与其他<code>Keras</code>工作流程一样编译并拟合模型。因果任务附带一个生成方法，允许你指定提示和最大输出长度来生成新文本。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras_nlp.models <span class="keyword">import</span> &#123;GPT2CausalLM&#125;</span><br><span class="line"></span><br><span class="line">model = BertClassifier.from_preset(<span class="string">&#x27;gpt2_base_en&#x27;</span>,)</span><br><span class="line">model.<span class="built_in">compile</span>(...)</span><br><span class="line">model.fit(cnn_dailymail_dataset)</span><br><span class="line"></span><br><span class="line">model.generate(<span class="string">&#x27;Snowfall in Buffalo&#x27;</span>,max_length=<span class="number">40</span>,)</span><br></pre></td></tr></table></figure>
+<h4 id="自定义预处理"><a href="#自定义预处理" class="headerlink" title="自定义预处理"></a>自定义预处理</h4><img data-src="/2024/04/14/artificial-intelligence/KerasCV_NLP_study/cn_3.png" class="">
+
+<p>我们从一组较低级别的模块构建最高级别的<code>API</code>来实现这一目标。例如，假设你的数据集包含相对较短的文本段，并且训练需要多次遍历数据。在这种情况下，<code>BERT</code>分类器中的构建预处理器可能不太适合你，因为他将所有序列填充到了<code>512</code>个标记并在每个训练周期中重新计算预处理。对于这种情况从头开始主干、<code>BERT</code>预处理器和<code>BERT</code>分词器类构建而成，每个类都有自己的预设方法，要访问预处理器目录只需使用与分类器相同的预设名称以及你想要指定的任何自定义参数（例如较短的序列），然后你可以自己应用预处理。在此示例中，包含了缓存，在每个时期都不会重新计算标记。为了避免在工作流程中调用预处理器两次，只需要在人物构造函数中设置为<code>None</code>即可。与其他<code>Keras</code>工作流程一样编译并拟合模型。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras_nlp.models <span class="keyword">import</span> &#123;BertClassifier, BertPreprocessor&#125;</span><br><span class="line"></span><br><span class="line">preprocessor = BertPreprocessor.from_preset(<span class="string">&#x27;bert_base_en_uncased&#x27;</span>,squence_length=<span class="number">128</span>,)</span><br><span class="line"></span><br><span class="line">train_dataset = train_dataset.<span class="built_in">map</span>(</span><br><span class="line">    preprocessor,</span><br><span class="line">).cache()</span><br><span class="line"></span><br><span class="line">model = BertClassifier.from_preset(<span class="string">&#x27;bert_base_en_uncased&#x27;</span>,preprocessor=<span class="literal">None</span>, num_classes=<span class="number">2</span>,activation=<span class="string">&#x27;softmax&#x27;</span>,)</span><br><span class="line">model.<span class="built_in">compile</span>(...)</span><br><span class="line">model.fit(train_dataset, epochs=<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<p>如果需要更多灵活性，则使用<code>Keras</code>函数式<code>API</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras_nlp.models <span class="keyword">import</span> &#123;TokenAndPositionEmbedding, TransformerEncoder&#125;</span><br><span class="line"></span><br><span class="line">token_id_input = keras.Input(</span><br><span class="line">    shape=(<span class="literal">None</span>,),</span><br><span class="line">    dtype = <span class="string">&#x27;int32&#x27;</span>,</span><br><span class="line">    name = <span class="string">&#x27;token_ids&#x27;</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">outputs = TokenAndPositionEmbedding(</span><br><span class="line">    vocabulary_size=<span class="number">30_000</span>,</span><br><span class="line">    sequence_length = <span class="number">512</span>,</span><br><span class="line">    embedding_dim = <span class="number">64</span>,</span><br><span class="line">)(token_id_input)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> _<span class="keyword">in</span> <span class="built_in">range</span>(num_layers):</span><br><span class="line">    ouputs = TransformerEncoder(</span><br><span class="line">        num_heads=<span class="number">2</span>,</span><br><span class="line">        intermediate_dim =<span class="number">128</span>,</span><br><span class="line">        dropout = <span class="number">0.1</span></span><br><span class="line">    )(outputs)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Use placeholder token embedding to classify </span></span><br><span class="line">outputs = keras.layers.Dense(<span class="number">2</span>)(outputs[:,<span class="number">0</span>,:])</span><br><span class="line">model = keras.Model(</span><br><span class="line">    inputs = token_id_input,</span><br><span class="line">    outputs = outputs,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>创建新模型的第一步是声明输入张量。在本例中，我们的输入是令牌<code>ID</code>的可变长度序列，然后，我们将此序列传入到嵌入层学习每个标记<code>ID</code>和序列位置的唯一向量表示，并返回序列中每个标记的总和。然后我们将嵌入输出传递到一堆可配置的<code>Transformer</code>编码器层，该编码器层将一系列多头注意力和前馈层应用于输入。该堆栈的输出使我们最终的序列表示。为了让令牌序列生成单个分类输出，常见的做法是在每个序列的开头放置一个占位符令牌，并将该令牌的表示作为输入传递到前馈层，该前馈层具有与要预测的类相同数量的输出。与任何<code>Keras</code>模型一样我们将特征输入和输出传递给构造函数以获取模型实例。与其他<code>Keras</code>工作流程一样编译并拟合模型。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>umbrella
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fresh88888888.github.io/2024/04/14/artificial-intelligence/KerasCV_NLP_study/" title="KerasCV &amp; KerasNLP 介绍">https://fresh88888888.github.io/2024/04/14/artificial-intelligence/KerasCV_NLP_study/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/14/artificial-intelligence/stable_diffusion_study/" rel="prev" title="Stable Diffusion（KerasCV）">
+                  <i class="fa fa-chevron-left"></i> Stable Diffusion（KerasCV）
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">辽ICP备15012817号-2 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2022 – 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">umbrella</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">633k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">35:12</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/fresh88888888" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.0.8/medium-zoom.min.js" integrity="sha256-7PhEpEWEW0XXQ0k6kQrPKwuoIomz8R8IYyuU1Qew4P8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/comments.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/motion.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/next-boot.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/pjax.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/search/local-search.min.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.12/pdfobject.min.js","integrity":"sha256-g2xji1rlE3KsGVClvuxTbcR0Kn2+wtQADSff2Tbb4zA="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/tags/pdf.min.js"></script>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/fancybox.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/pace.min.js"></script>
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2024/04/14/artificial-intelligence/KerasCV_NLP_study/"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
+
+</body>
+</html>
