@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">156</span>
+          <span class="site-state-item-count">157</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -231,6 +231,108 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/04/17/%E3%80%90Rust%E3%80%91foreign-function/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/04/17/%E3%80%90Rust%E3%80%91foreign-function/" class="post-title-link" itemprop="url">【Rust】Foreign Function</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-04-17 18:09:25" itemprop="dateCreated datePublished" datetime="2022-04-17T18:09:25+08:00">2022-04-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>36 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>世界上的每个程序并非都是用 <code>Rust</code> 编写的，我们希望能够在我们的 <code>Rust</code> 程序中使用许多用其他语言实现的关键库和接口。<code>Rust</code> 的外部函数接口 (<code>FFI</code>) 允许 <code>Rust</code> 代码调用用 <code>C</code> 编写的函数，也可以是 <code>C++</code>。由于大多数操作系统都提供 <code>C</code> 接口，<code>Rust</code> 的外部函数接口允许立即访问各种低级功能。</p>
+<p>在本章中，我们将编写一个与 <code>libgit2</code> 链接的程序，<code>libgit2</code> 是一个用于与 <code>Git</code> 版本控制系统一起工作的 <code>C</code> 库。首先，我们使用前一章中展示的 <code>unsafe</code> 特性展示直接从 <code>Rust</code> 使用 <code>C</code> 函数的例子，然后，我们将展示如何构建 <code>libgit2</code> 的安全接口，灵感来自开源 <code>git2-rs</code>。本文假设你熟悉 <code>C</code> 以及编译和链接 <code>C</code> 程序的机制，还假设熟悉 <code>Git</code> 版本控制系统。</p>
+<p>现实中确实存在用于与许多其他语言进行通信的 <code>Rust</code> 包，包括 <code>Python</code>、<code>JavaScript</code>、<code>Lua</code> 和 <code>Java</code>。这里没有篇幅介绍它们，但归根结底，所有这些接口都是使用 <code>C</code> 外来函数接口构建的。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/04/17/%E3%80%90Rust%E3%80%91foreign-function/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -878,14 +980,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">633k</span>
+    <span title="站点总字数">635k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">35:12</span>
+    <span title="站点阅读时长">35:15</span>
   </span>
 </div>
 <div class="busuanzi-count">
