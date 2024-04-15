@@ -82,7 +82,7 @@ keras.backend.clear_session()  # Clear session to preserve memory.
 ```
 {% asset_img sd_4.png %}
 
-现在我们打开混合精度，使用float16精度执行计算，同时存储float32存储权重。
+现在我们打开混合精度，使用`float16`精度执行计算，同时存储`float32`存储权重。
 ```python
 # Warm up model to run graph tracing before benchmarking.
 model.text_to_image("warming up the model", batch_size=3)
@@ -107,7 +107,7 @@ keras.backend.clear_session()
 ```
 {% asset_img sd_5.png %}
 
-这更快是因为`NVIDIA GPU`具有专门的`FP16`运算内核。其运行速度比FP32同类产品更快。接下来我们尝试一下`XLA`编译，我们可以通过再次构建模型时将`jit_compile`标志设置为`true`来做到这一点。让我们对`XLA`模型进行基准测试：
+这更快是因为`NVIDIA GPU`具有专门的`FP16`运算内核。其运行速度比`FP32`同类产品更快。接下来我们尝试一下`XLA`编译，我们可以通过再次构建模型时将`jit_compile`标志设置为`true`来做到这一点。让我们对`XLA`模型进行基准测试：
 ```python
 # Set back to the default for benchmarking purposes.
 keras.mixed_precision.set_global_policy("float32")
@@ -130,7 +130,7 @@ keras.backend.clear_session()
 ```
 {% asset_img sd_6.png %}
 
-在`A100 GPU`上，我们获得了大约`2`倍的加速。最后我们可以将所有内容放在一起，并打开混合精度和`XLA`编译，这次只花了大约`6.66`s：
+在`A100 GPU`上，我们获得了大约`2`倍的加速。最后我们可以将所有内容放在一起，并打开混合精度和`XLA`编译，这次只花了大约`6.66s`：
 ```python
 keras.mixed_precision.set_global_policy("mixed_float16")
 model = keras_cv.models.StableDiffusion(jit_compile=True)
