@@ -107,4 +107,53 @@ keras.backend.clear_session()
 ```
 {% asset_img sd_5.png %}
 
-这更快是因为`NVIDIA GPU`具有专门的`FP16`运算内核。其运行速度比FP32同类产品更快。接下来我们尝试一下`XLA`编译，我们可以通过
+这更快是因为`NVIDIA GPU`具有专门的`FP16`运算内核。其运行速度比FP32同类产品更快。接下来我们尝试一下`XLA`编译，我们可以通过再次构建模型时将`jit_compile`标志设置为`true`来做到这一点。让我们对`XLA`模型进行基准测试：
+```python
+# Set back to the default for benchmarking purposes.
+keras.mixed_precision.set_global_policy("float32")
+model = keras_cv.models.StableDiffusion(jit_compile=True)
+
+start = time.time()
+# Before we benchmark the model, we run inference once to make sure the TensorFlow
+# graph has already been traced.
+images = model.text_to_image("A cute otter in a rainbow whirlpool holding shells, watercolor",batch_size=3,)
+end = time.time()
+
+benchmark_result.append(["XLA", end - start])
+plot_images(images)
+
+print(f"With XLA: {(end - start):.2f} seconds")
+keras.backend.clear_session()
+
+# 50/50 ━━━━━━━━━━━━━━━━━━━━ 11s 210ms/step
+# With XLA: 10.63 seconds
+```
+{% asset_img sd_6.png %}
+
+在`A100 GPU`上，我们获得了大约`2`倍的加速。最后我们可以将所有内容放在一起，并打开混合精度和`XLA`编译，这次只花了大约`6.66`s：
+```python
+keras.mixed_precision.set_global_policy("mixed_float16")
+model = keras_cv.models.StableDiffusion(jit_compile=True)
+
+start = time.time()
+images = model.text_to_image(
+    "A mysterious dark stranger visits the great pyramids of egypt, "
+    "high quality, highly detailed, elegant, sharp focus, "
+    "concept art, character concepts, digital painting",
+    batch_size=3,
+)
+end = time.time()
+benchmark_result.append(["XLA + Mixed Precision", end - start])
+plot_images(images)
+
+print(f"XLA + mixed precision: {(end - start):.2f} seconds")
+
+# 50/50 ━━━━━━━━━━━━━━━━━━━━ 6s 130ms/step
+# XLA + mixed precision: 6.66 seconds
+```
+{% asset_img sd_7.png %}
+
+#### 结论
+
+`KerasCV`提供了最先进的稳定扩散实现 - 通过使用`XLA`和混合精度，它提供了截至`2022`年`9`月可用的最快的稳定扩散管道。
+
