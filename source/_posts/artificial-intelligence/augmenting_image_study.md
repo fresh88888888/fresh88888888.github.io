@@ -176,6 +176,7 @@ test_dataset = load_dataset(split="test").map(preprocess_for_model, num_parallel
 train_dataset = train_dataset.prefetch(AUTOTUNE)
 test_dataset = test_dataset.prefetch(AUTOTUNE)
 
+# 我们使用Efficientnetv2作为骨干网络模型&编译。
 # 请注意，我们在损失函数中使用label_smoothing=0.1。使用MixUp时，强烈建议进行标签平滑。
 def get_model():
     model = keras_cv.models.ImageClassifier.from_preset("efficientnetv2_s", num_classes=num_classes)
