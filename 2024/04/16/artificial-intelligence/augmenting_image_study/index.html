@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+  <meta name="google-site-verification" content="lk2gSYFP_NyLNFob-fFnt7fm-I_n1ZYws-WZll7mshg">
+  <meta name="msvalidate.01" content="6Jdc01DjYOLguhS5">
+  <meta name="baidu-site-verification" content="code-NR10G09zww">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic%7Ccursive:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+
+    <meta name="description" content="KerasCV可以轻松组装最先进的工业级数据增强管道，用于图像分类和对象检测任务。KerasCV提供了广泛的预处理层，可实现常见的数据增强技术。也许最有用的三个层是keras_cv.layers.CutMix、keras_cv.layers.MixUp和keras_cv.layers.RandAugment。这些层几乎用于所有最先进的图像分类流程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图像数据增强（KerasCV）">
+<meta property="og:url" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/augmenting_image_study/index.html">
+<meta property="og:site_name" content="UMBRELLA">
+<meta property="og:description" content="KerasCV可以轻松组装最先进的工业级数据增强管道，用于图像分类和对象检测任务。KerasCV提供了广泛的预处理层，可实现常见的数据增强技术。也许最有用的三个层是keras_cv.layers.CutMix、keras_cv.layers.MixUp和keras_cv.layers.RandAugment。这些层几乎用于所有最先进的图像分类流程。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/augmenting_image_study/ai_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/augmenting_image_study/ai_2.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/augmenting_image_study/ai_3.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/augmenting_image_study/ai_4.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/augmenting_image_study/ai_5.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/augmenting_image_study/ai_6.png">
+<meta property="article:published_time" content="2024-04-16T02:00:11.000Z">
+<meta property="article:modified_time" content="2024-04-16T02:00:11.000Z">
+<meta property="article:author" content="umbrella">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/augmenting_image_study/ai_1.png">
+
+
+<link rel="canonical" href="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/augmenting_image_study/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/04/16/artificial-intelligence/augmenting_image_study/","path":"2024/04/16/artificial-intelligence/augmenting_image_study/","title":"图像数据增强（KerasCV）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>图像数据增强（KerasCV） | UMBRELLA</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">UMBRELLA</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">未雨绸缪，举重若轻</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-算法"><a href="/Algorithm/" rel="section"><i class="fa fa-calendar fa-fw"></i>算法</a></li><li class="menu-item menu-item-c++-&nbsp;编程"><a href="/Programming-C++/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>C++ &nbsp;编程</a></li><li class="menu-item menu-item-rust-编程"><a href="/Programming-Rust/" rel="section"><i class="fa fa-cat fa-fw"></i>Rust 编程</a></li><li class="menu-item menu-item-go-&nbsp;&nbsp;&nbsp;编程"><a href="/Programming-Go/" rel="section"><i class="fa fa-hippo fa-fw"></i>Go &nbsp;&nbsp;&nbsp;编程</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%85%E5%AF%BC%E5%85%A5-%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD"><span class="nav-number">1.</span> <span class="nav-text">包导入 &amp;&amp; 数据加载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RandAugment"><span class="nav-number">2.</span> <span class="nav-text">RandAugment</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CutMix-%E5%92%8C-MixUp"><span class="nav-number">3.</span> <span class="nav-text">CutMix 和 MixUp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E5%88%B6%E5%A2%9E%E5%BC%BA%E7%AE%A1%E9%81%93"><span class="nav-number">4.</span> <span class="nav-text">定制增强管道</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E4%B8%80%E4%B8%AA%E5%B8%A6%E6%9C%89%E5%A2%9E%E5%BC%BA%E5%8A%9F%E8%83%BD%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88CNN%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">训练一个带有增强功能卷积神经网络（CNN）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">6.</span> <span class="nav-text">结论</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="umbrella"
+      src="/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">umbrella</p>
+  <div class="site-description" itemprop="description">没事就多看看书</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">159</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fresh88888888" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fresh88888888" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fresh888888@foxmail.com" title="E-Mail → mailto:fresh888888@foxmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.rust-lang.org/zh-CN/" title="https:&#x2F;&#x2F;www.rust-lang.org&#x2F;zh-CN&#x2F;" rel="noopener" target="_blank">Rust</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://go.dev/" title="https:&#x2F;&#x2F;go.dev&#x2F;" rel="noopener" target="_blank">Golang</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://isocpp.org/" title="https:&#x2F;&#x2F;isocpp.org&#x2F;" rel="noopener" target="_blank">C++</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.python.org/" title="https:&#x2F;&#x2F;www.python.org&#x2F;" rel="noopener" target="_blank">Python</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://doc.rust-lang.org/cargo/index.html" title="https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;cargo&#x2F;index.html" rel="noopener" target="_blank">Cargo</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://gist.github.com/rxaviers/7360908" title="https:&#x2F;&#x2F;gist.github.com&#x2F;rxaviers&#x2F;7360908" rel="noopener" target="_blank">Emoji</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/augmenting_image_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="图像数据增强（KerasCV） | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          图像数据增强（KerasCV）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-04-16 10:00:11" itemprop="dateCreated datePublished" datetime="2024-04-16T10:00:11+08:00">2024-04-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><code>KerasCV</code>可以轻松组装最先进的工业级数据增强管道，用于图像分类和对象检测任务。<code>KerasCV</code>提供了广泛的预处理层，可实现常见的数据增强技术。也许最有用的三个层是<code>keras_cv.layers.CutMix、keras_cv.layers.MixUp</code>和<code>keras_cv.layers.RandAugment</code>。这些层几乎用于所有最先进的图像分类流程。</p>
+<span id="more"></span>
+
+<h4 id="包导入-数据加载"><a href="#包导入-数据加载" class="headerlink" title="包导入 &amp;&amp; 数据加载"></a>包导入 &amp;&amp; 数据加载</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">import</span> tensorflow_datasets <span class="keyword">as</span> tfds</span><br><span class="line"><span class="keyword">import</span> keras</span><br><span class="line"><span class="keyword">import</span> keras_cv</span><br><span class="line"></span><br><span class="line">os.environ[<span class="string">&quot;KERAS_BACKEND&quot;</span>] = <span class="string">&quot;jax&quot;</span>  <span class="comment"># @param [&quot;tensorflow&quot;, &quot;jax&quot;, &quot;torch&quot;]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 为了演示如何执行数据增强，我们首先加载`Oxford Flowers102`数据集，其中包含所有种类的花卉我们通过清洗和批处理进一步预处理数据集。</span></span><br><span class="line">BATCH_SIZE = <span class="number">32</span></span><br><span class="line">AUTOTUNE = tf.data.AUTOTUNE</span><br><span class="line">tfds.disable_progress_bar()</span><br><span class="line">data, dataset_info = tfds.load(<span class="string">&quot;oxford_flowers102&quot;</span>, with_info=<span class="literal">True</span>, as_supervised=<span class="literal">True</span>)</span><br><span class="line">train_steps_per_epoch = dataset_info.splits[<span class="string">&quot;train&quot;</span>].num_examples // BATCH_SIZE</span><br><span class="line">val_steps_per_epoch = dataset_info.splits[<span class="string">&quot;test&quot;</span>].num_examples // BATCH_SIZE</span><br><span class="line"></span><br><span class="line"><span class="comment"># 接下来，我们将图像大小调整为恒定大小 (224, 224)，并对标签进行one-hot编码。 </span></span><br><span class="line"><span class="comment"># 请注意，keras_cv.layers.CutMix 和 keras_cv.layers.MixUp 期望目标是one-hot编码的。 </span></span><br><span class="line"><span class="comment"># 这是因为它们以稀疏标签表示无法实现的方式修改目标值。</span></span><br><span class="line">IMAGE_SIZE = (<span class="number">224</span>, <span class="number">224</span>)</span><br><span class="line">num_classes = dataset_info.features[<span class="string">&quot;label&quot;</span>].num_classes</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">to_dict</span>(<span class="params">image, label</span>):</span><br><span class="line">    image = tf.image.resize(image, IMAGE_SIZE)</span><br><span class="line">    image = tf.cast(image, tf.float32)</span><br><span class="line">    label = tf.one_hot(label, num_classes)</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;images&quot;</span>: image, <span class="string">&quot;labels&quot;</span>: label&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">prepare_dataset</span>(<span class="params">dataset, split</span>):</span><br><span class="line">    <span class="keyword">if</span> split == <span class="string">&quot;train&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            dataset.shuffle(<span class="number">10</span> * BATCH_SIZE)</span><br><span class="line">            .<span class="built_in">map</span>(to_dict, num_parallel_calls=AUTOTUNE)</span><br><span class="line">            .batch(BATCH_SIZE)</span><br><span class="line">        )</span><br><span class="line">    <span class="keyword">if</span> split == <span class="string">&quot;test&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> dataset.<span class="built_in">map</span>(to_dict, num_parallel_calls=AUTOTUNE).batch(BATCH_SIZE)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">load_dataset</span>(<span class="params">split=<span class="string">&quot;train&quot;</span></span>):</span><br><span class="line">    dataset = data[split]</span><br><span class="line">    <span class="keyword">return</span> prepare_dataset(dataset, split)</span><br><span class="line"></span><br><span class="line">train_dataset = load_dataset()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">visualize_dataset</span>(<span class="params">dataset, title</span>):</span><br><span class="line">    plt.figure(figsize=(<span class="number">6</span>, <span class="number">6</span>)).suptitle(title, fontsize=<span class="number">18</span>)</span><br><span class="line">    <span class="keyword">for</span> i, samples <span class="keyword">in</span> <span class="built_in">enumerate</span>(<span class="built_in">iter</span>(dataset.take(<span class="number">9</span>))):</span><br><span class="line">        images = samples[<span class="string">&quot;images&quot;</span>]</span><br><span class="line">        plt.subplot(<span class="number">3</span>, <span class="number">3</span>, i + <span class="number">1</span>)</span><br><span class="line">        plt.imshow(images[<span class="number">0</span>].numpy().astype(<span class="string">&quot;uint8&quot;</span>))</span><br><span class="line">        plt.axis(<span class="string">&quot;off&quot;</span>)</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 让我们检查一下数据集中的一些样本：</span></span><br><span class="line">visualize_dataset(train_dataset, title=<span class="string">&quot;Before Augmentation&quot;</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/16/artificial-intelligence/augmenting_image_study/ai_1.png" class="">
+
+<h4 id="RandAugment"><a href="#RandAugment" class="headerlink" title="RandAugment"></a>RandAugment</h4><p><code>RandAugment</code>已被证明可以在众多数据集中提供改进的图像分类结果。它对图像执行一组标准的增强。<code>KerasCV</code>提供了大量的数据增强层，其中最有用的三个层可能是<code>RandAugment,CutMix,MixUp</code>。RandAugment选择一个随机操作。然后它对随机数进行采样，如果随机数小于速率参数，它将对给定图像应用随机操作。除了塑料参数值之外，值范围参数指定图像的值范围，每个图像的增强指定幅度和幅度stddev基本上决定了用于对每个数据增强进行采样的正态分布。应用<code>RandAugment</code>之后你可以看到一些示例。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">rand_augment = keras_cv.layers.RandAugment(</span><br><span class="line">    value_range=(<span class="number">0</span>, <span class="number">255</span>),</span><br><span class="line">    augmentations_per_image=<span class="number">3</span>,</span><br><span class="line">    magnitude=<span class="number">0.3</span>,</span><br><span class="line">    magnitude_stddev=<span class="number">0.2</span>,</span><br><span class="line">    rate=<span class="number">1.0</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">apply_rand_augment</span>(<span class="params">inputs</span>):</span><br><span class="line">    inputs[<span class="string">&quot;images&quot;</span>] = rand_augment(inputs[<span class="string">&quot;images&quot;</span>])</span><br><span class="line">    <span class="keyword">return</span> inputs</span><br><span class="line"></span><br><span class="line">train_dataset = load_dataset().<span class="built_in">map</span>(apply_rand_augment, num_parallel_calls=AUTOTUNE)</span><br><span class="line"><span class="comment"># 让我们检查一下结果</span></span><br><span class="line">visualize_dataset(train_dataset, title=<span class="string">&quot;After RandAugment&quot;</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/16/artificial-intelligence/augmenting_image_study/ai_2.png" class="">
+
+<h4 id="CutMix-和-MixUp"><a href="#CutMix-和-MixUp" class="headerlink" title="CutMix 和 MixUp"></a>CutMix 和 MixUp</h4><p><code>CutMix</code>和<code>MixUp</code>是另外两个重要的增强操作。<code>CutMix</code>随机剪切一张图像的一部分并将其放置在另一张图像上，<code>MixUp</code>则在两幅图像之间插入像素值。这两者都可以防止模型过度拟合训练分布，并提高模型泛化的可能性。此外，<code>CutMix</code>还可以防止您的模型过度依赖任何特定特征来进行分类。在下边的示例中，我们将在手动创建的预处理管道中独立使用<code>CutMix</code>和<code>MixUp</code>。在大多数最先进的管道中，图像是通过<code>CutMix、MixUp</code>或两者都不随机增强。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cut_mix = keras_cv.layers.CutMix()</span><br><span class="line">mix_up = keras_cv.layers.MixUp()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cut_mix_and_mix_up</span>(<span class="params">samples</span>):</span><br><span class="line">    samples = cut_mix(samples, training=<span class="literal">True</span>)</span><br><span class="line">    samples = mix_up(samples, training=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> samples</span><br><span class="line"></span><br><span class="line">train_dataset = load_dataset().<span class="built_in">map</span>(cut_mix_and_mix_up, num_parallel_calls=AUTOTUNE)</span><br><span class="line">visualize_dataset(train_dataset, title=<span class="string">&quot;After CutMix and MixUp&quot;</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/16/artificial-intelligence/augmenting_image_study/ai_3.png" class="">
+
+<h4 id="定制增强管道"><a href="#定制增强管道" class="headerlink" title="定制增强管道"></a>定制增强管道</h4><p>默写情况下你可能需要自定义它。例如，你想要排除某个增强或添加另一个增强，在这种情况下，你可以随机增强管道。随机增强管道是一个与<code>RandAugment</code>类似的层但它可以灵活地自定义增强管道，例如我们在这里删除随机旋转层并在管道中添加网格遮罩层，现在我们可以应用定制的管道。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">layers = keras_cv.layers.RandAugment.get_standard_policy(value_range=(<span class="number">0</span>, <span class="number">255</span>), magnitude=<span class="number">0.75</span>, magnitude_stddev=<span class="number">0.3</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除随机旋转层</span></span><br><span class="line">layers = [</span><br><span class="line">    layer <span class="keyword">for</span> layer <span class="keyword">in</span> layers <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(layer, keras_cv.layers.RandomRotation)</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加网格遮罩层</span></span><br><span class="line">layers = layers + [keras_cv.layers.GridMask()]</span><br><span class="line"></span><br><span class="line">pipeline = keras_cv.layers.RandomAugmentationPipeline(</span><br><span class="line">    layers=layers, augmentations_per_image=<span class="number">3</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">apply_pipeline</span>(<span class="params">inputs</span>):</span><br><span class="line">    inputs[<span class="string">&quot;images&quot;</span>] = pipeline(inputs[<span class="string">&quot;images&quot;</span>])</span><br><span class="line">    <span class="keyword">return</span> inputs</span><br><span class="line"></span><br><span class="line"><span class="comment"># 让我们看看结果吧</span></span><br><span class="line">train_dataset = load_dataset().<span class="built_in">map</span>(apply_pipeline, num_parallel_calls=AUTOTUNE)</span><br><span class="line">visualize_dataset(train_dataset, title=<span class="string">&quot;After custom pipeline&quot;</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/16/artificial-intelligence/augmenting_image_study/ai_4.png" class="">
+
+<p>正如您所看到的，没有图像被随机旋转。您可以根据需要自定义管道：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 该管道将​​应用 GrayScale(蒙版和灰度层) 或 GridMask(网格层)：</span></span><br><span class="line">pipeline = keras_cv.layers.RandomAugmentationPipeline(</span><br><span class="line">    layers=[keras_cv.layers.GridMask(), keras_cv.layers.Grayscale(output_channels=<span class="number">3</span>)],</span><br><span class="line">    augmentations_per_image=<span class="number">1</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 让我们看看结果吧</span></span><br><span class="line">train_dataset = load_dataset().<span class="built_in">map</span>(apply_pipeline, num_parallel_calls=AUTOTUNE)</span><br><span class="line">visualize_dataset(train_dataset, title=<span class="string">&quot;After custom pipeline&quot;</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/16/artificial-intelligence/augmenting_image_study/ai_5.png" class="">
+
+<h4 id="训练一个带有增强功能卷积神经网络（CNN）"><a href="#训练一个带有增强功能卷积神经网络（CNN）" class="headerlink" title="训练一个带有增强功能卷积神经网络（CNN）"></a>训练一个带有增强功能卷积神经网络（CNN）</h4><p>我们将使用<code>CutMix、MixUp</code>和<code>RandAugment</code>在<code>Oxford</code>花卉数据集上训练<code>ResNet50</code>图像分类器。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">preprocess_for_model</span>(<span class="params">inputs</span>):</span><br><span class="line">    images, labels = inputs[<span class="string">&quot;images&quot;</span>], inputs[<span class="string">&quot;labels&quot;</span>]</span><br><span class="line">    images = tf.cast(images, tf.float32)</span><br><span class="line">    <span class="keyword">return</span> images, labels</span><br><span class="line"></span><br><span class="line">train_dataset = (</span><br><span class="line">    load_dataset()</span><br><span class="line">    .<span class="built_in">map</span>(apply_rand_augment, num_parallel_calls=AUTOTUNE)</span><br><span class="line">    .<span class="built_in">map</span>(cut_mix_and_mix_up, num_parallel_calls=AUTOTUNE)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">visualize_dataset(train_dataset, <span class="string">&quot;CutMix, MixUp and RandAugment&quot;</span>)</span><br><span class="line"></span><br><span class="line">train_dataset = train_dataset.<span class="built_in">map</span>(preprocess_for_model, num_parallel_calls=AUTOTUNE)</span><br><span class="line">test_dataset = load_dataset(split=<span class="string">&quot;test&quot;</span>).<span class="built_in">map</span>(preprocess_for_model, num_parallel_calls=AUTOTUNE)</span><br><span class="line"></span><br><span class="line">train_dataset = train_dataset.prefetch(AUTOTUNE)</span><br><span class="line">test_dataset = test_dataset.prefetch(AUTOTUNE)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 请注意，我们在损失函数中使用label_smoothing=0.1。使用MixUp时，强烈建议进行标签平滑。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_model</span>():</span><br><span class="line">    model = keras_cv.models.ImageClassifier.from_preset(<span class="string">&quot;efficientnetv2_s&quot;</span>, num_classes=num_classes)</span><br><span class="line">    model.<span class="built_in">compile</span>(</span><br><span class="line">        loss=keras.losses.CategoricalCrossentropy(label_smoothing=<span class="number">0.1</span>),</span><br><span class="line">        optimizer=keras.optimizers.SGD(momentum=<span class="number">0.9</span>),</span><br><span class="line">        metrics=[<span class="string">&quot;accuracy&quot;</span>],</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> model</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义和训练模型</span></span><br><span class="line">model = get_model()</span><br><span class="line">model.fit(train_dataset,epochs=<span class="number">1</span>,validation_data=test_dataset,)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 32/32 ━━━━━━━━━━━━━━━━━━━━ 103s 2s/step - accuracy: 0.0059 - loss: 4.6941 - val_accuracy: 0.0114 - val_loss: 10.4028</span></span><br></pre></td></tr></table></figure>
+<img data-src="/2024/04/16/artificial-intelligence/augmenting_image_study/ai_6.png" class="">
+
+<h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h4><p>这就是使用<code>KerasCV</code>组装图像增强管道所需的全部！</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>umbrella
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/augmenting_image_study/" title="图像数据增强（KerasCV）">https://fresh88888888.github.io/2024/04/16/artificial-intelligence/augmenting_image_study/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/15/artificial-intelligence/image_classification_study/" rel="prev" title="图像分类（KerasCV）">
+                  <i class="fa fa-chevron-left"></i> 图像分类（KerasCV）
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">辽ICP备15012817号-2 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2022 – 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">umbrella</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">639k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">35:29</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/fresh88888888" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.0.8/medium-zoom.min.js" integrity="sha256-7PhEpEWEW0XXQ0k6kQrPKwuoIomz8R8IYyuU1Qew4P8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/comments.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/motion.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/next-boot.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/pjax.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/search/local-search.min.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.12/pdfobject.min.js","integrity":"sha256-g2xji1rlE3KsGVClvuxTbcR0Kn2+wtQADSff2Tbb4zA="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/tags/pdf.min.js"></script>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/fancybox.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/pace.min.js"></script>
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2024/04/16/artificial-intelligence/augmenting_image_study/"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
+
+</body>
+</html>
