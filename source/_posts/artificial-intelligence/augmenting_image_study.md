@@ -7,7 +7,7 @@ categories:
   - 人工智能
 ---
 
-`KerasCV`可以轻松组装最先进的工业级数据增强管道，用于图像分类和对象检测任务。`KerasCV`提供了广泛的预处理层，可实现常见的数据增强技术。也许最有用的三个层是`keras_cv.layers.CutMix、keras_cv.layers.MixUp`和`keras_cv.layers.RandAugment`。这些层几乎用于所有最先进的图像分类流程。
+`KerasCV`可以轻松组装最先进的工业级数据增强管道，用于图像分类和对象检测任务。`KerasCV`提供了广泛的预处理层，可实现常见的数据增强技术。最有用的三个层是`keras_cv.layers.CutMix、keras_cv.layers.MixUp`和`keras_cv.layers.RandAugment`。这些层几乎用于所有图像分类流程。
 <!-- more -->
 
 #### 包导入 && 数据加载
@@ -30,8 +30,8 @@ data, dataset_info = tfds.load("oxford_flowers102", with_info=True, as_supervise
 train_steps_per_epoch = dataset_info.splits["train"].num_examples // BATCH_SIZE
 val_steps_per_epoch = dataset_info.splits["test"].num_examples // BATCH_SIZE
 
-# 接下来，我们将图像大小调整为恒定大小 (224, 224)，并对标签进行one-hot编码。 
-# 请注意，keras_cv.layers.CutMix 和 keras_cv.layers.MixUp 期望目标是one-hot编码的。 
+# 接下来，我们将图像大小调整为恒定大小(224, 224)，并对标签进行one-hot编码。 
+# 请注意，keras_cv.layers.CutMix和keras_cv.layers.MixUp要求是one-hot编码的。 
 # 这是因为它们以稀疏标签表示无法实现的方式修改目标值。
 IMAGE_SIZE = (224, 224)
 num_classes = dataset_info.features["label"].num_classes
@@ -141,7 +141,7 @@ visualize_dataset(train_dataset, title="After custom pipeline")
 
 正如您所看到的，没有图像被随机旋转。您可以根据需要自定义管道：
 ```python
-# 该管道将​​应用 GrayScale(蒙版和灰度层) 或 GridMask(网格层)：
+# 该管道将​​应用 GrayScale(蒙板和灰度层) 或 GridMask(网格层)：
 pipeline = keras_cv.layers.RandomAugmentationPipeline(
     layers=[keras_cv.layers.GridMask(), keras_cv.layers.Grayscale(output_channels=3)],
     augmentations_per_image=1,
@@ -153,7 +153,7 @@ visualize_dataset(train_dataset, title="After custom pipeline")
 ```
 {% asset_img ai_5.png %}
 
-#### 训练一个带有增强功能卷积神经网络（CNN）
+#### 训练带有增强功能卷积神经网络（CNN）
 
 我们将使用`CutMix、MixUp`和`RandAugment`在`Oxford`花卉数据集上训练`ResNet50`图像分类器。
 ```python
