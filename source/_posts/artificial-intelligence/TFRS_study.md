@@ -1,5 +1,5 @@
 ---
-title: 检索模型（TensorFlow Recommenders）
+title: 检索模型（TensorFlow 构建推荐系统）
 date: 2024-04-17 10:50:11
 tags:
   - AI
