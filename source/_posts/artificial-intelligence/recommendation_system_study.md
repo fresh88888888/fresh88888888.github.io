@@ -5,6 +5,7 @@ tags:
   - AI
 categories:
   - 人工智能
+mathjax: true
 ---
 
 #### 内容过滤
