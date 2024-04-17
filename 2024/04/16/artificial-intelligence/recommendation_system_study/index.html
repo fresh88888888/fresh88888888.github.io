@@ -26,12 +26,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="内容过滤用于构建推荐系统。一种常见的方法是内容过滤。基于内容过滤是根据用户的先前操作或明确的反馈，使用推荐功能推荐其他与用户喜欢的内容类似的商品。例如，这里我们展示了四个具有不同功能的应用程序。每一行代表一个应用，每一列代表一个特征。特征可能包括类别（例如教育、休闲、健康）、应用的发布商等。为简单起见，假设此特征矩阵是二进制文件：非零值表示应用具有该特征。有些应用与教育或科学相关，有些则与健康或医">
+    <meta name="description" content="内容过滤用于构建推荐系统。一种常见的方法是内容过滤。基于内容过滤是根据用户的先前操作或明确的反馈，使用推荐功能，推荐其它与用户喜欢的内容类似的商品。例如，这里我们展示了四个具有不同功能的应用。每一行代表一个应用，每一列代表一个特征。特征可能包括类别（例如教育、休闲、健康）等。为了简单起见，假设此特征矩阵是二进制的：非零值表示应用具有该特征。有些应用与教育或科学相关，有些则与健康或医疗保健相关。当用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="推荐系统（Building recommendation systems with TensorFlow）">
 <meta property="og:url" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/recommendation_system_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="内容过滤用于构建推荐系统。一种常见的方法是内容过滤。基于内容过滤是根据用户的先前操作或明确的反馈，使用推荐功能推荐其他与用户喜欢的内容类似的商品。例如，这里我们展示了四个具有不同功能的应用程序。每一行代表一个应用，每一列代表一个特征。特征可能包括类别（例如教育、休闲、健康）、应用的发布商等。为简单起见，假设此特征矩阵是二进制文件：非零值表示应用具有该特征。有些应用与教育或科学相关，有些则与健康或医">
+<meta property="og:description" content="内容过滤用于构建推荐系统。一种常见的方法是内容过滤。基于内容过滤是根据用户的先前操作或明确的反馈，使用推荐功能，推荐其它与用户喜欢的内容类似的商品。例如，这里我们展示了四个具有不同功能的应用。每一行代表一个应用，每一列代表一个特征。特征可能包括类别（例如教育、休闲、健康）等。为了简单起见，假设此特征矩阵是二进制的：非零值表示应用具有该特征。有些应用与教育或科学相关，有些则与健康或医疗保健相关。当用">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/recommendation_system_study/rs_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/recommendation_system_study/rs_2.png">
@@ -322,11 +322,11 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h4 id="内容过滤"><a href="#内容过滤" class="headerlink" title="内容过滤"></a>内容过滤</h4><p>用于构建推荐系统。一种常见的方法是<strong>内容过滤</strong>。基于内容过滤是根据用户的先前操作或明确的反馈，使用推荐功能推荐其他与用户喜欢的内容类似的商品。例如，这里我们展示了四个具有不同功能的应用程序。每一行代表一个应用，每一列代表一个特征。特征可能包括类别（例如教育、休闲、健康）、应用的发布商等。为简单起见，假设此特征矩阵是二进制文件：非零值表示应用具有该特征。有些应用与教育或科学相关，有些则与健康或医疗保健相关。有些只是浪费时间。当用户安装了健康应用时，我们可以向该用户推荐其它与健康相关的应用，因为它们与安装的健康应用类似。</p>
+    <div class="post-body" itemprop="articleBody"><h4 id="内容过滤"><a href="#内容过滤" class="headerlink" title="内容过滤"></a>内容过滤</h4><p>用于构建推荐系统。一种常见的方法是<strong>内容过滤</strong>。基于内容过滤是根据用户的先前操作或明确的反馈，使用推荐功能，推荐其它与用户喜欢的内容类似的商品。例如，这里我们展示了四个具有不同功能的应用。每一行代表一个应用，每一列代表一个特征。特征可能包括类别（例如教育、休闲、健康）等。为了简单起见，假设此特征矩阵是二进制的：非零值表示应用具有该特征。有些应用与教育或科学相关，有些则与健康或医疗保健相关。当用户安装了健康类应用时，我们可以向该用户推荐其它与健康相关的应用，因为它们与安装的健康应用类似。</p>
 <span id="more"></span>
 <img data-src="/2024/04/16/artificial-intelligence/recommendation_system_study/rs_1.png" class="">
 
-<p>为简单起见，假设此特征矩阵是二进制文件：非零值表示应用具有该特征。您还在同一特征空间中代表用户。部分与用户相关的特征可以由用户明确提供。例如，用户在个人资料中选择了“娱乐应用”。其他特征可能是隐式的，具体取决于它们之前安装的应用。例如，用户安装了<code>Science R Us</code>发布的另一款应用。模型应推荐与此用户相关的商品。为此，您必须先选择相似度指标（例如，点积）。然后，您必须设置，根据此相似度指标为每个候选项目评分。请注意，这些建议是针对具体用户的，因为该模型未使用有关其他用户的任何信息。使用点积作为相似度衡量指标，考虑用户嵌入$x$和和应用嵌入$y$都是二元矢量的情况。自$\langle x, y \rangle &#x3D; \sum_{i&#x3D;1}^d x_iy_i$起，同时出现在$x$和$y$中的特征对总和为<code>1</code>。对比一下：</p>
+<p>为了简单起见，假设此特征矩阵是二进制：非零值表示应用具有该特征。您还在同一特征空间中代表用户。部分与用户相关的特征可以由用户明确提供。例如，用户在个人资料中选择了“娱乐应用”。其他特征可能是隐式的，具体取决于它们之前安装的应用。例如，用户安装了<code>Science R Us</code>发布的另一款应用。模型应推荐与此用户相关的商品。为此，您必须先选择相似度指标（例如，点积）。然后，您必须根据此相似度指标为每个候选项目评分。请注意，这些建议是针对具体用户的，因为该模型未使用有关其他用户的任何信息。使用点积作为<strong>相似度衡量指标</strong>，考虑用户嵌入$x$和和应用嵌入$y$都是二元矢量的情况。自$\langle x, y \rangle &#x3D; \sum_{i&#x3D;1}^d x_iy_i$起，同时出现在$x$和$y$中的特征对总和为<code>1</code>。对比一下：</p>
 <ul>
 <li>优点：<ul>
 <li>该模型不需要关于其他用户的任何数据，因为建议是针对具体用户的。这样可以更轻松地针对大量用户进行扩缩。</li>
