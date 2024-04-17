@@ -28,7 +28,7 @@
 
     <meta name="description" content="内容过滤用于构建推荐系统。一种常见的方法是内容过滤。基于内容过滤是根据用户的先前操作或明确的反馈，使用推荐功能，推荐其它与用户喜欢的内容类似的商品。例如，这里我们展示了四个具有不同功能的应用。每一行代表一个应用，每一列代表一个特征。特征可能包括类别（例如教育、休闲、健康）等。为了简单起见，假设此特征矩阵是二进制的：非零值表示应用具有该特征。有些应用与教育或科学相关，有些则与健康或医疗保健相关。当用">
 <meta property="og:type" content="article">
-<meta property="og:title" content="推荐系统（Building recommendation systems with TensorFlow）">
+<meta property="og:title" content="内容过滤 &amp; 协同过滤（TensorFlow 构建推荐系统）">
 <meta property="og:url" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/recommendation_system_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
 <meta property="og:description" content="内容过滤用于构建推荐系统。一种常见的方法是内容过滤。基于内容过滤是根据用户的先前操作或明确的反馈，使用推荐功能，推荐其它与用户喜欢的内容类似的商品。例如，这里我们展示了四个具有不同功能的应用。每一行代表一个应用，每一列代表一个特征。特征可能包括类别（例如教育、休闲、健康）等。为了简单起见，假设此特征矩阵是二进制的：非零值表示应用具有该特征。有些应用与教育或科学相关，有些则与健康或医疗保健相关。当用">
@@ -50,10 +50,10 @@
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/04/16/artificial-intelligence/recommendation_system_study/","path":"2024/04/16/artificial-intelligence/recommendation_system_study/","title":"推荐系统（Building recommendation systems with TensorFlow）"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/04/16/artificial-intelligence/recommendation_system_study/","path":"2024/04/16/artificial-intelligence/recommendation_system_study/","title":"内容过滤 & 协同过滤（TensorFlow 构建推荐系统）"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>推荐系统（Building recommendation systems with TensorFlow） | UMBRELLA</title>
+<title>内容过滤 & 协同过滤（TensorFlow 构建推荐系统） | UMBRELLA</title>
   
 
 
@@ -172,7 +172,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -263,12 +263,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="推荐系统（Building recommendation systems with TensorFlow） | UMBRELLA">
+      <meta itemprop="name" content="内容过滤 & 协同过滤（TensorFlow 构建推荐系统） | UMBRELLA">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          推荐系统（Building recommendation systems with TensorFlow）
+          内容过滤 & 协同过滤（TensorFlow 构建推荐系统）
         </h1>
 
         <div class="post-meta-container">
@@ -372,7 +372,7 @@
 <li>观察到的条目的总和。</li>
 <li>未观测到的条目的总和（被视为零）。</li>
 </ul>
-<div class="note warning"><p><strong>注意</strong>：在实际应用中，您还需要仔细观测观察到的配对。例如，频繁使用的项目（例如，非常受欢迎的<code>YouTube</code>视频）或频繁的查询（例如，频繁使用的用户）可能会成为目标功能的主要组成部分。您可以通过对训练样本进行加权来考虑项目频率，从而更正此问题。换言之，您可以将目标函数替换为：</p>
+<div class="note warning"><p><strong>注意</strong>：在实际应用中，您还需要仔细观测观察到的配对。例如，频繁使用的项目（例如，非常受欢迎的<code>YouTube</code>视频）或频繁的查询（例如，频繁使用的用户）可能会成为目标特征的主要组成部分。您可以通过对训练样本进行加权来考虑项目频率，从而更正此问题。换言之，您可以将目标函数替换为：</p>
 </div>
 
 <p>$$<br>\min_{U \in \mathbb R^{m \times d},\ V \in \mathbb R^{n \times d}} \sum_{(i, j) \in \text{obs}} (A_{ij} - \langle U_{i}, V_{j} \rangle)^2 + w_0 \sum_{(i, j) \not \in \text{obs}} (\langle U_i, V_j\rangle)^2.<br>$$<br>这里$w_0$是一个超参数，用于为两个术语加权，这样目标就不会被其中一个占据主导地位。调整此超参数非常重要。<br>$$<br>\sum_{(i, j) \in \text{obs}} w_{i,j}(A_{i, j} - \langle U_{i}, V_{j} \rangle)^2 + w_0 \sum_{i, j \not \in \text{obs}}(\langle U_i, V_j\rangle)^2.<br>$$</p>
@@ -394,7 +394,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/recommendation_system_study/" title="推荐系统（Building recommendation systems with TensorFlow）">https://fresh88888888.github.io/2024/04/16/artificial-intelligence/recommendation_system_study/</a>
+      <a href="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/recommendation_system_study/" title="内容过滤 &amp; 协同过滤（TensorFlow 构建推荐系统）">https://fresh88888888.github.io/2024/04/16/artificial-intelligence/recommendation_system_study/</a>
   </li>
   <li class="post-copyright-license">
       <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -415,6 +415,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2024/04/17/artificial-intelligence/TFRS_study/" rel="next" title="">
+                   <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
