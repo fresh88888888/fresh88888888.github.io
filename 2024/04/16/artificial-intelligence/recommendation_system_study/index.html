@@ -37,6 +37,7 @@
 <meta property="og:image" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/recommendation_system_study/rs_2.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/recommendation_system_study/rs_3.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/recommendation_system_study/rs_4.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/04/16/artificial-intelligence/recommendation_system_study/rs_5.png">
 <meta property="article:published_time" content="2024-04-16T06:32:11.000Z">
 <meta property="article:modified_time" content="2024-04-16T06:32:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -156,7 +157,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AE%B9%E8%BF%87%E6%BB%A4"><span class="nav-number">1.</span> <span class="nav-text">内容过滤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%8F%E5%90%8C%E8%BF%87%E6%BB%A4"><span class="nav-number">2.</span> <span class="nav-text">协同过滤</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AE%B9%E8%BF%87%E6%BB%A4"><span class="nav-number">1.</span> <span class="nav-text">内容过滤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%8F%E5%90%8C%E8%BF%87%E6%BB%A4"><span class="nav-number">2.</span> <span class="nav-text">协同过滤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E5%8C%96%E7%9B%AE%E6%A0%87%E5%87%BD%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">最小化目标函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E5%87%BD%E6%95%B0"><span class="nav-number">4.</span> <span class="nav-text">目标函数</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -304,14 +305,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2k</span>
+      <span>2.7k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
+      <span>9 分钟</span>
     </span>
 </div>
 
@@ -356,7 +357,26 @@
 <div class="note warning"><p><strong>注意</strong>：矩阵分解通常会提供比学习整个矩阵更紧凑的表示法。完整的矩阵有$O(nm)$个条目，而嵌入矩阵有$U$，$V$个$O((n+m)d)$条目，其中嵌入维度$d$通常小于$m$和$n$ 。因此，矩阵分解分解出数据中的潜在结构，并假设观察结果位于低维度子空间附近。在前面的示例中，<code>n、m</code>和<code>d</code>的值非常低，因此优势可以忽略不计。不过，在现实世界的推荐系统中，矩阵分解可能比学习整个矩阵要小得多。</p>
 </div>
 
-<p>例如如果我们取$U$的第一行：<code>1，0.1和</code>$V$的第一列：<code>0.9，0.2</code>并计算点积，则得到<code>0.88</code>，这是预测反馈矩阵中最左上角的元素，因此我们的优化目标:<br>$$<br>A\approx U\times V^T \longrightarrow min_{U,V}\sum_{(i,j)}(A_{ij}-U_i\cdot V_j)^2<br>$$<br>变成最小化。反馈标签和预测反馈之间的平方差之和，正如你在蓝色的数学公式中看到的那样。</p>
+<p>例如如果我们取$U$的第一行：<code>1，0.1</code>和$V$的第一列：<code>0.9，0.2</code>并计算点积，则得到<code>0.88</code>，这是预测反馈矩阵中最左上角的元素，因此我们的优化目标:<br>$$<br>A\approx U\times V^T \longrightarrow min_{U,V}\sum_{(i,j)}(A_{ij}-U_i\cdot V_j)^2<br>$$</p>
+<h4 id="最小化目标函数"><a href="#最小化目标函数" class="headerlink" title="最小化目标函数"></a>最小化目标函数</h4><p>变成最小化。降低目标函数的常见算法包括：</p>
+<ul>
+<li><strong>随机梯度下降法</strong>(<code>SGD</code>)是一种最大限度减小损失函数的通用方法。</li>
+<li><strong>加权交替最小二乘</strong>(<code>WALS</code>)专用于此特定目标。</li>
+</ul>
+<p>反馈标签和预测反馈之间的平方差之和，正如你在上边的数学公式中看到的那样。我们可以使用随机梯度，下降（<code>SGD</code>）或加权交替最小二乘法（<code>WALS</code>）来解决这个问题。<code>SGD</code>是通用的，而<code>WALS</code>是专门针对此问题的。<code>WALS</code>的方法是对于每次迭代我们交替固定<code>U</code>，求解<code>V</code>；然后固定<code>V</code>，求解<code>U</code>。**随机梯度下降法(SGD)和加权交替最小二乘(WALS)**都有自己的优点和缺点：<code>WALS</code>通常比<code>SGD</code>收敛的更快，而<code>SGD</code>更灵活可以处理其它损失函数。目前观察到仅仅是矩阵分解是不好的，因为你将嵌入全都为1，你就最小化了目标函数，这显然不是我们想要的。因此我们需要考虑未观察到的条目。</p>
+<h4 id="目标函数"><a href="#目标函数" class="headerlink" title="目标函数"></a>目标函数</h4><p>有两种方法可以处理这个问题。首先，我们可以将所有为观察到的条目设置为<code>0</code>，然后使用<code>SVD</code>（<strong>奇异值分解</strong>）来求解。因为A矩阵在现实中往往非常稀疏，因此<code>SVD</code>的泛化能力往往较差，更好的方法是<strong>加权矩阵分解</strong>。在这种情况下，我们仍然将未观察到的条目设为<code>0</code>，但我们缩放了目标函数的未观察到的部分（以橙色突出显示），以便它的权重不会过大。</p>
+<img data-src="/2024/04/16/artificial-intelligence/recommendation_system_study/rs_5.png" class="">
+
+<p><strong>加权目标分解</strong>将目标分解成以下两个总和：</p>
+<ul>
+<li>观察到的条目的总和。</li>
+<li>未观测到的条目的总和（被视为零）。</li>
+</ul>
+<div class="note warning"><p><strong>注意</strong>：在实际应用中，您还需要仔细观测观察到的配对。例如，频繁使用的项目（例如，非常受欢迎的<code>YouTube</code>视频）或频繁的查询（例如，频繁使用的用户）可能会成为目标功能的主要组成部分。您可以通过对训练样本进行加权来考虑项目频率，从而更正此问题。换言之，您可以将目标函数替换为：</p>
+</div>
+
+<p>$$<br>\min_{U \in \mathbb R^{m \times d},\ V \in \mathbb R^{n \times d}} \sum_{(i, j) \in \text{obs}} (A_{ij} - \langle U_{i}, V_{j} \rangle)^2 + w_0 \sum_{(i, j) \not \in \text{obs}} (\langle U_i, V_j\rangle)^2.<br>$$<br>这里$w_0$是一个超参数，用于为两个术语加权，这样目标就不会被其中一个占据主导地位。调整此超参数非常重要。<br>$$<br>\sum_{(i, j) \in \text{obs}} w_{i,j}(A_{i, j} - \langle U_{i}, V_{j} \rangle)^2 + w_0 \sum_{i, j \not \in \text{obs}}(\langle U_i, V_j\rangle)^2.<br>$$</p>
+<p>其中$w_{i, j}$是查询<code>i</code>和项目<code>j</code>的频率的函数。</p>
 
     </div>
 
@@ -429,14 +449,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">641k</span>
+    <span title="站点总字数">642k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">35:36</span>
+    <span title="站点阅读时长">35:38</span>
   </span>
 </div>
 <div class="busuanzi-count">
