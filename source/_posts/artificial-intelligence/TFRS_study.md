@@ -110,7 +110,7 @@ Epoch 3/3
 
 Top 3 recommendations for user 42: [b'Just Cause (1995)' b'Rent-a-Kid (1995)' b'Cobb (1994)']
 ```
-#### 检索（Retrieval）
+#### 检索模型（Retrieval Model）
 
 检索模型通常由两个子模型组成：
 - 使用查询特征计算查询表示（`normally a fixed-dimensionality embedding vector`）的**查询模型**。
