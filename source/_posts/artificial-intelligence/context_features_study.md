@@ -177,4 +177,226 @@ print(f"Top-100 accuracy (test): {test_accuracy:.2f}.")
 #### 多任务学习
 
 我们构建了一个使用电影观看作为积极交互信号的检索系统。然而，在许多应用中，有多种丰富的反馈来源可供利用。例如，电商网站可能会记录用户对产品页面的访问、图片点击、添加到购物车以及最后的购买。它甚至可以记录购买后的信号，例如评论和退货。集成所有这些不同形式的反馈对于构建用户喜欢使用的电商网站至关重要，并且不会以牺牲整体性能为代价来优化任何一项指标。此外，为多个任务构建联合模型比构建多个特定任务模型产生更好的效果。当某些数据丰富（例如点击）而某些数据稀疏（购买、退货、评论）时尤其如此。在这些场景中，联合模型能够使用从丰富任务中学习到的模式，称为**迁移学习**的现象来改进其对稀疏任务的预测。例如，通过添加大量点击日志数据的辅助任务，可以大大改进从稀疏用户调查中预测显式用户评分的模型。在本示例中，我们将使用隐式信号（电影观看）和显式信号（评分）为`Movielens`构建**多目标推荐器**。
+{% asset_img cf_1.png %}
 
+**多任务学习**并不是一项新技术，早在`1997`年，`Rich Caruana`就发表了一篇被广泛引用的关于多任务学习的论文。这个想法是通过利用任务之间的共性和差异来同时解决多个机器学习任务。这是有道理的，因为在许多应用中，有多种反馈来源可供利用。例如，在`YouTube`上，用户可以提供各种不同的信号。用户可能会看一些视频，但跳过其它视频，提供了隐式反馈。他们可能喜欢可能不喜欢、在视频上添加评论，甚至将视频分享到其他社交平台。集成所有这些不同形式的反馈构建用户喜欢使用的系统。避免牺牲整体性能为代价来优化单个指标至关重要。此外，为多个任务构建联合模型可能比构建多个特定任务模型产生更好的结果。例如评论和分享。在这些场景中，联合模型从丰富的任务中学习，通过迁移学习改进对稀疏任务的预测。接下来构建一个包含检索任务和使用隐式和显式反馈的排名任务。
+
+##### 导入包 & 准备数据集
+
+```python
+import os
+import pprint
+import tempfile
+from typing import Dict, Text
+import numpy as np
+import tensorflow as tf
+import tensorflow_datasets as tfds
+import tensorflow_recommenders as tfrs
+
+ratings = tfds.load('movielens/100k-ratings', split="train")
+movies = tfds.load('movielens/100k-movies', split="train")
+
+# 我们使用 Movielens 100K 数据集。
+# Select the basic features.
+ratings = ratings.map(lambda x: {
+    "movie_title": x["movie_title"],
+    "user_id": x["user_id"],
+    "user_rating": x["user_rating"],
+})
+movies = movies.map(lambda x: x["movie_title"])
+
+# 重复构建词汇表并将数据拆分为训练集和测试集的准备工作：
+# Randomly shuffle data and split between train and test.
+tf.random.set_seed(42)
+shuffled = ratings.shuffle(100_000, seed=42, reshuffle_each_iteration=False)
+
+train = shuffled.take(80_000)
+test = shuffled.skip(80_000).take(20_000)
+
+movie_titles = movies.batch(1_000)
+user_ids = ratings.batch(1_000_000).map(lambda x: x["user_id"])
+
+unique_movie_titles = np.unique(np.concatenate(list(movie_titles)))
+unique_user_ids = np.unique(np.concatenate(list(user_ids)))
+```
+##### 多任务模型
+
+多任务推荐器有两个关键部分：
+- 他们针对两个或更多目标进行优化，因此有两个或更多损失。
+- 它们在任务之间共享变量，从而允许迁移学习。
+
+我们将有两个任务，而不是单个任务：一个预测收视率；另一个预测电影观看次数。
+```python
+user_model = tf.keras.Sequential([
+  tf.keras.layers.StringLookup(
+      vocabulary=unique_user_ids, mask_token=None),
+  # We add 1 to account for the unknown token.
+  tf.keras.layers.Embedding(len(unique_user_ids) + 1, embedding_dimension)
+])
+
+movie_model = tf.keras.Sequential([
+  tf.keras.layers.StringLookup(
+      vocabulary=unique_movie_titles, mask_token=None),
+  tf.keras.layers.Embedding(len(unique_movie_titles) + 1, embedding_dimension)
+])
+
+# 现在我们有两个任务。首先是评分任务：其目标是尽可能准确地预测收视率。
+tfrs.tasks.Ranking(
+    loss=tf.keras.losses.MeanSquaredError(),
+    metrics=[tf.keras.metrics.RootMeanSquaredError()],
+)
+
+# 第二个是检索任务：此任务的目标是预测用户将观看或不会观看哪些电影。
+tfrs.tasks.Retrieval(
+    metrics=tfrs.metrics.FactorizedTopK(candidates=movies.batch(128))
+)
+```
+##### 模型组合
+
+由于我们有两个任务和两个损失-我们需要决定每个损失的重要性。我们通过给每个损失一个权重，并将这些权重视为超参数。如果我们为评级任务分配较大的损失权重，我们的模型将专注于预测评级（但仍使用检索任务中的一些信息）；如果我们为检索任务分配较大的损失权重，它将转而专注于检索。
+```python
+class MovielensModel(tfrs.models.Model):
+
+  def __init__(self, rating_weight: float, retrieval_weight: float) -> None:
+    # We take the loss weights in the constructor: this allows us to instantiate
+    # several model objects with different loss weights.
+    super().__init__()
+
+    embedding_dimension = 32
+    # User and movie models.
+    self.movie_model: tf.keras.layers.Layer = tf.keras.Sequential([
+      tf.keras.layers.StringLookup(
+        vocabulary=unique_movie_titles, mask_token=None),
+      tf.keras.layers.Embedding(len(unique_movie_titles) + 1, embedding_dimension)
+    ])
+    self.user_model: tf.keras.layers.Layer = tf.keras.Sequential([
+      tf.keras.layers.StringLookup(
+        vocabulary=unique_user_ids, mask_token=None),
+      tf.keras.layers.Embedding(len(unique_user_ids) + 1, embedding_dimension)
+    ])
+
+    # A small model to take in user and movie embeddings and predict ratings.
+    # We can make this as complicated as we want as long as we output a scalar
+    # as our prediction.
+    self.rating_model = tf.keras.Sequential([
+        tf.keras.layers.Dense(256, activation="relu"),
+        tf.keras.layers.Dense(128, activation="relu"),
+        tf.keras.layers.Dense(1),
+    ])
+
+    # The tasks.
+    self.rating_task: tf.keras.layers.Layer = tfrs.tasks.Ranking(
+        loss=tf.keras.losses.MeanSquaredError(),
+        metrics=[tf.keras.metrics.RootMeanSquaredError()],
+    )
+    self.retrieval_task: tf.keras.layers.Layer = tfrs.tasks.Retrieval(
+        metrics=tfrs.metrics.FactorizedTopK(
+            candidates=movies.batch(128).map(self.movie_model)
+        )
+    )
+
+    # The loss weights.
+    self.rating_weight = rating_weight
+    self.retrieval_weight = retrieval_weight
+
+  def call(self, features: Dict[Text, tf.Tensor]) -> tf.Tensor:
+    # We pick out the user features and pass them into the user model.
+    user_embeddings = self.user_model(features["user_id"])
+    # And pick out the movie features and pass them into the movie model.
+    movie_embeddings = self.movie_model(features["movie_title"])
+
+    return (
+        user_embeddings,
+        movie_embeddings,
+        # We apply the multi-layered rating model to a concatentation of
+        # user and movie embeddings.
+        self.rating_model(
+            tf.concat([user_embeddings, movie_embeddings], axis=1)
+        ),
+    )
+
+  def compute_loss(self, features: Dict[Text, tf.Tensor], training=False) -> tf.Tensor:
+    ratings = features.pop("user_rating")
+    user_embeddings, movie_embeddings, rating_predictions = self(features)
+    # We compute the loss for each task.
+    rating_loss = self.rating_task(
+        labels=ratings,
+        predictions=rating_predictions,
+    )
+    retrieval_loss = self.retrieval_task(user_embeddings, movie_embeddings)
+
+    # And combine them using the loss weights.
+    return (self.rating_weight * rating_loss + self.retrieval_weight * retrieval_loss)
+```
+##### 评级专用模型
+
+根据我们分配的权重，模型将对任务的不同平衡进行编码。让我们从一个只考虑评级的模型开始。
+```python
+model = MovielensModel(rating_weight=1.0, retrieval_weight=0.0)
+model.compile(optimizer=tf.keras.optimizers.Adagrad(0.1))
+
+cached_train = train.shuffle(100_000).batch(8192).cache()
+cached_test = test.batch(4096).cache()
+
+# 模型训练
+model.fit(cached_train, epochs=3)
+metrics = model.evaluate(cached_test, return_dict=True)
+
+print(f"Retrieval top-100 accuracy: {metrics['factorized_top_k/top_100_categorical_accuracy']:.3f}.")
+print(f"Ranking RMSE: {metrics['root_mean_squared_error']:.3f}.")
+
+# Retrieval top-100 accuracy: 0.060.
+# Ranking RMSE: 1.113.
+```
+该模型在预测收视率方面表现良好（`RMSE`约为`1.11`），但在预测哪些电影将被观看或不被观看方面表现不佳：其准确率几乎比仅训练用于预测观看次数的模型差`4`倍。
+##### 检索专用模型
+
+让我们尝试一个仅专注于检索的模型。
+```python
+model = MovielensModel(rating_weight=0.0, retrieval_weight=1.0)
+model.compile(optimizer=tf.keras.optimizers.Adagrad(0.1))
+
+model.fit(cached_train, epochs=3)
+metrics = model.evaluate(cached_test, return_dict=True)
+
+print(f"Retrieval top-100 accuracy: {metrics['factorized_top_k/top_100_categorical_accuracy']:.3f}.")
+print(f"Ranking RMSE: {metrics['root_mean_squared_error']:.3f}.")
+
+# Retrieval top-100 accuracy: 0.233.
+# Ranking RMSE: 3.688.
+```
+我们得到了相反的结果：模型在检索方面表现良好，但在预测评级方面表现不佳。
+
+##### 联合模型
+
+现在让我们训练一个为这两项任务都分配权重的模型。
+```python
+model = MovielensModel(rating_weight=1.0, retrieval_weight=1.0)
+model.compile(optimizer=tf.keras.optimizers.Adagrad(0.1))
+
+model.fit(cached_train, epochs=3)
+metrics = model.evaluate(cached_test, return_dict=True)
+
+print(f"Retrieval top-100 accuracy: {metrics['factorized_top_k/top_100_categorical_accuracy']:.3f}.")
+print(f"Ranking RMSE: {metrics['root_mean_squared_error']:.3f}.")
+
+Retrieval top-100 accuracy: 0.235.
+Ranking RMSE: 1.110.
+```
+结果是一个模型在这两项任务上的表现与每个专用模型大致相同。
+
+#### 预测
+
+我们可以使用经过训练的多任务模型来获得经过用户和电影嵌入训练的预测的评分：
+```python
+trained_movie_embeddings, trained_user_embeddings, predicted_rating = model({
+      "user_id": np.array(["42"]),
+      "movie_title": np.array(["Dances with Wolves (1990)"])
+  })
+print("Predicted rating:")
+print(predicted_rating)
+
+# Predicted rating:
+# tf.Tensor([[4.604047]], shape=(1, 1), dtype=float32)
+```
+虽然此处的结果并未表现出联合模型在这种情况下具有明显的准确性优势，但多任务学习通常是一种非常有用的工具。当我们可以将知识从数据密集的任务（例如点击）转移到密切相关的数据稀疏任务（例如购买）时，可以期待更好的结果。
