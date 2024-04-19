@@ -26,12 +26,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="数字   符号 描述     标量    向量    矩阵    张量    单位矩阵    向量第个元素    矩阵第行第列的元素">
+    <meta name="description" content="为了解决各种各样的机器学习问题，深度学习提供了强大的工具。虽然许多深度学习方法都是最近才有重大突破，但使用数据和神经网络编程的核心思想已经研究了几个世纪。事实上，人类长期以来就有分析数据和预测未来结果的愿望，而自然科学大部分都植根于此。例如，伯努利分布是以雅各布•伯努利（1654-1705）命名的。而高斯分布是由卡尔•弗里德里希•高斯（1777-1855）发现的，他发明了最小均方算法，至今仍用于解">
 <meta property="og:type" content="article">
 <meta property="og:title" content="数学符号—说明（机器学习）">
 <meta property="og:url" content="https://fresh88888888.github.io/2024/04/19/artificial-intelligence/ml_symbol_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="数字   符号 描述     标量    向量    矩阵    张量    单位矩阵    向量第个元素    矩阵第行第列的元素">
+<meta property="og:description" content="为了解决各种各样的机器学习问题，深度学习提供了强大的工具。虽然许多深度学习方法都是最近才有重大突破，但使用数据和神经网络编程的核心思想已经研究了几个世纪。事实上，人类长期以来就有分析数据和预测未来结果的愿望，而自然科学大部分都植根于此。例如，伯努利分布是以雅各布•伯努利（1654-1705）命名的。而高斯分布是由卡尔•弗里德里希•高斯（1777-1855）发现的，他发明了最小均方算法，至今仍用于解">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-19T09:32:11.000Z">
 <meta property="article:modified_time" content="2024-04-19T09:32:11.000Z">
@@ -299,14 +299,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>722</span>
+      <span>1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
@@ -316,7 +316,16 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h4 id="数字"><a href="#数字" class="headerlink" title="数字"></a>数字</h4><table>
+    <div class="post-body" itemprop="articleBody"><p>为了解决各种各样的机器学习问题，深度学习提供了强大的工具。虽然许多深度学习方法都是最近才有重大突破，但使用数据和神经网络编程的核心思想已经研究了几个世纪。事实上，人类长期以来就有分析数据和预测未来结果的愿望，而自然科学大部分都植根于此。例如，伯努利分布是以雅各布•伯努利（<code>1654-1705</code>）命名的。而高斯分布是由卡尔•弗里德里希•高斯（<code>1777-1855</code>）发现的，他发明了最小均方算法，至今仍用于解决从保险计算到医疗诊断的许多问题。这些工具算法催生了自然科学中的一种实验方法——例如，电阻中电流和电压的欧姆定律可以用线性模型完美地描述。</p>
+<span id="more"></span>
+<p>机器学习的关键组件：</p>
+<ul>
+<li>可以用来学习的数据（data）。</li>
+<li>如何转换数据的模型（model）。</li>
+<li>一个目标函数（objective function），用来量化模型的有效性。</li>
+<li>调整模型参数以优化目标函数的算法（algorithm）。</li>
+</ul>
+<h4 id="数字"><a href="#数字" class="headerlink" title="数字"></a>数字</h4><table>
 <thead>
 <tr>
 <th align="left">符号</th>
@@ -352,7 +361,6 @@
 <td align="left">矩阵<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0;" xmlns="http://www.w3.org/2000/svg" width="1.966ex" height="1.552ex" role="img" focusable="false" viewBox="0 -686 869 686" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-1-TEX-B-1D417" d="M327 0Q306 3 174 3Q52 3 43 0H33V62H98L162 63L360 333L157 624H48V686H59Q80 683 217 683Q368 683 395 686H408V624H335L393 540L452 458L573 623Q573 624 528 624H483V686H494Q515 683 646 683Q769 683 778 686H787V624H658L575 511Q493 398 493 397L508 376Q522 356 553 312T611 229L727 62H835V0H824Q803 3 667 3Q516 3 489 0H476V62H513L549 63L401 274L247 63Q247 62 292 62H338V0H327Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D417" xlink:href="#MJX-1-TEX-B-1D417"></use></g></g></g></g></svg></mjx-container>第<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="0.781ex" height="1.52ex" role="img" focusable="false" viewBox="0 -661 345 672" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-1-TEX-I-1D456" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D456" xlink:href="#MJX-1-TEX-I-1D456"></use></g></g></g></svg></mjx-container>行第<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.462ex;" xmlns="http://www.w3.org/2000/svg" width="0.932ex" height="1.957ex" role="img" focusable="false" viewBox="0 -661 412 865" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-1-TEX-I-1D457" d="M297 596Q297 627 318 644T361 661Q378 661 389 651T403 623Q403 595 384 576T340 557Q322 557 310 567T297 596ZM288 376Q288 405 262 405Q240 405 220 393T185 362T161 325T144 293L137 279Q135 278 121 278H107Q101 284 101 286T105 299Q126 348 164 391T252 441Q253 441 260 441T272 442Q296 441 316 432Q341 418 354 401T367 348V332L318 133Q267 -67 264 -75Q246 -125 194 -164T75 -204Q25 -204 7 -183T-12 -137Q-12 -110 7 -91T53 -71Q70 -71 82 -81T95 -112Q95 -148 63 -167Q69 -168 77 -168Q111 -168 139 -140T182 -74L193 -32Q204 11 219 72T251 197T278 308T289 365Q289 372 288 376Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D457" xlink:href="#MJX-1-TEX-I-1D457"></use></g></g></g></svg></mjx-container>列的元素</td>
 </tr>
 </tbody></table>
-<span id="more"></span>
 <h4 id="集合论"><a href="#集合论" class="headerlink" title="集合论"></a>集合论</h4><table>
 <thead>
 <tr>
@@ -640,7 +648,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">36:26</span>
+    <span title="站点阅读时长">36:27</span>
   </span>
 </div>
 <div class="busuanzi-count">
