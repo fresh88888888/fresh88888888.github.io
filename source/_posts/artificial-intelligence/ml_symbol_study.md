@@ -41,4 +41,17 @@ mathjax:
 |符号|描述|
 |:--|:--|
 |{% mathjax %} f(\cdot){% endmathjax %}|函数|
-|{% mathjax %} x{% endmathjax %}||
+|{% mathjax %} log(\cdot){% endmathjax %}|自然对数|
+|{% mathjax %} exp(\cdot){% endmathjax %}|指数函数|
+|{% mathjax %} 1_x{% endmathjax %}|指示函数|
+|{% mathjax %} (\cdot)^T{% endmathjax %}|向量或矩阵的转置|
+|{% mathjax %} \mathbf {X^-1}{% endmathjax %}|矩阵的逆|
+|{% mathjax %} [\cdot ,\cdot]{% endmathjax %}|连结|
+|{% mathjax %} \mid \chi\mid{% endmathjax %}|集合的基数|
+|{% mathjax %} \parallel \cdot\parallel_p{% endmathjax %}|{% mathjax %} L_p{% endmathjax %}正则|
+|{% mathjax %} \parallel \cdot\parallel{% endmathjax %}|{% mathjax %} L_2{% endmathjax %}正则|
+|{% mathjax %} \langle x, y\rangle{% endmathjax %}|向量{% mathjax %} x(\cdot){% endmathjax %}和{% mathjax %} y{% endmathjax %}的点积|
+|{% mathjax %} \sum{% endmathjax %}|连加|
+|{% mathjax %} \prod{% endmathjax %}|连乘|
+|{% mathjax %} def_={% endmathjax %}|定义|
+
