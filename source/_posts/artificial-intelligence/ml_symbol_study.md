@@ -45,7 +45,7 @@ mathjax:
 |{% mathjax %} exp(\cdot){% endmathjax %}|指数函数|
 |{% mathjax %} 1_x{% endmathjax %}|指示函数|
 |{% mathjax %} (\cdot)^T{% endmathjax %}|向量或矩阵的转置|
-|{% mathjax %} \mathbf {X^-1}{% endmathjax %}|矩阵的逆|
+|{% mathjax %} \mathbf {X^{-1}}{% endmathjax %}|矩阵的逆|
 |{% mathjax %} [\cdot ,\cdot]{% endmathjax %}|连结|
 |{% mathjax %} \mid \chi\mid{% endmathjax %}|集合的基数|
 |{% mathjax %} \parallel \cdot\parallel_p{% endmathjax %}|{% mathjax %} L_p{% endmathjax %}正则|
