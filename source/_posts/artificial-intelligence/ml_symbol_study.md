@@ -53,7 +53,7 @@ mathjax:
 |{% mathjax %} \langle x, y\rangle{% endmathjax %}|向量{% mathjax %} x(\cdot){% endmathjax %}和{% mathjax %} y{% endmathjax %}的点积|
 |{% mathjax %} \sum{% endmathjax %}|连加|
 |{% mathjax %} \prod{% endmathjax %}|连乘|
-|{% mathjax %} {def}_{=}{% endmathjax %}|定义|
+|{% mathjax %} \defeq{% endmathjax %}|定义|
 #### 微积分
 
 |符号|描述|
@@ -62,5 +62,22 @@ mathjax:
 |{% mathjax %} \frac {\partial y}{\partial x}{% endmathjax %}|{% mathjax %} y{% endmathjax %}关于{% mathjax %} x{% endmathjax %}的偏导数|
 |{% mathjax %} \nabla_xy{% endmathjax %}|{% mathjax %} y{% endmathjax %}关于{% mathjax %} x{% endmathjax %}的梯度|
 |{% mathjax %} \int\nolimits_{a}^{b}f(x)dx{% endmathjax %}|{% mathjax %} f{% endmathjax %}在{% mathjax %} a{% endmathjax %}到{% mathjax %} b{% endmathjax %}区间上关于{% mathjax %} x{% endmathjax %}的定积分|
-|{% mathjax %} \intf(x)dx{% endmathjax %}|{% mathjax %} f{% endmathjax %}关于{% mathjax %} x{% endmathjax %}的不定积分|
+|{% mathjax %} \int f(x)dx{% endmathjax %}|{% mathjax %} f{% endmathjax %}关于{% mathjax %} x{% endmathjax %}的不定积分|
 
+#### 概率与信息论
+
+|符号|描述|
+|:--|:--|
+|{% mathjax %} P(\cdot){% endmathjax %}|概率分布|
+|{% mathjax %} z\sim P{% endmathjax %}|随机变量{% mathjax %} z{% endmathjax %}具有概率分布{% mathjax %} P{% endmathjax %}|
+|{% mathjax %} P(X\mid Y){% endmathjax %}|{% mathjax %} X\mid Y{% endmathjax %}的条件概率|
+|{% mathjax %} p(x){% endmathjax %}|概率的密度函数|
+|{% mathjax %} E_x[f(x)]{% endmathjax %}|函数{% mathjax %} f{% endmathjax %}对{% mathjax %} x{% endmathjax %}的数学期望|
+|{% mathjax %} X\angle Y{% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}和{% mathjax %} Y{% endmathjax %}是独立的|
+|{% mathjax %} X\angle Y\mid Z{% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}和{% mathjax %} Y{% endmathjax %}在给定随机变量{% mathjax %} Z{% endmathjax %}的条件下是独立的|
+|{% mathjax %} Var(X){% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}的方差|
+|{% mathjax %} \sigma x{% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}的标准差|
+|{% mathjax %} Cov(X,Y){% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}和{% mathjax %} Y{% endmathjax %}的协方差|
+|{% mathjax %} \rho (X,Y){% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}和{% mathjax %} Y{% endmathjax %}的相关性|
+|{% mathjax %} H(X){% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}的熵|
+|{% mathjax %} D_{KL}(P\parallel Q){% endmathjax %}|{% mathjax %} P{% endmathjax %}和{% mathjax %} Q{% endmathjax %}的KL散度|
