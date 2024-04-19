@@ -74,11 +74,11 @@ mathjax:
 |{% mathjax %} P(X\mid Y){% endmathjax %}|{% mathjax %} X\mid Y{% endmathjax %}的条件概率|
 |{% mathjax %} p(x){% endmathjax %}|概率的密度函数|
 |{% mathjax %} E_x[f(x)]{% endmathjax %}|函数{% mathjax %} f{% endmathjax %}对{% mathjax %} x{% endmathjax %}的数学期望|
-|{% mathjax %} X\angle Y{% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}和{% mathjax %} Y{% endmathjax %}是独立的|
-|{% mathjax %} X\angle Y\mid Z{% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}和{% mathjax %} Y{% endmathjax %}在给定随机变量{% mathjax %} Z{% endmathjax %}的条件下是独立的|
+|{% mathjax %} X\bot Y{% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}和{% mathjax %} Y{% endmathjax %}是独立的|
+|{% mathjax %} X\bot Y\mid Z{% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}和{% mathjax %} Y{% endmathjax %}在给定随机变量{% mathjax %} Z{% endmathjax %}的条件下是独立的|
 |{% mathjax %} Var(X){% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}的方差|
 |{% mathjax %} \sigma x{% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}的标准差|
-|{% mathjax %} Cov(X,Y){% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}和{% mathjax %} Y{% endmathjax %}的协方差|
+|{% mathjax %} Co\mathrm{v} (X,Y){% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}和{% mathjax %} Y{% endmathjax %}的协方差|
 |{% mathjax %} \rho (X,Y){% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}和{% mathjax %} Y{% endmathjax %}的相关性|
 |{% mathjax %} H(X){% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}的熵|
 |{% mathjax %} D_{KL}(P\parallel Q){% endmathjax %}|{% mathjax %} P{% endmathjax %}和{% mathjax %} Q{% endmathjax %}的`KL`散度|
