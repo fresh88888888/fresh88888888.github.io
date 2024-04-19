@@ -53,7 +53,7 @@ mathjax:
 |{% mathjax %} \langle x, y\rangle{% endmathjax %}|向量{% mathjax %} x(\cdot){% endmathjax %}和{% mathjax %} y{% endmathjax %}的点积|
 |{% mathjax %} \sum{% endmathjax %}|连加|
 |{% mathjax %} \prod{% endmathjax %}|连乘|
-|{% mathjax %} \defeq{% endmathjax %}|定义|
+|{% mathjax %} \stackrel{def}{=}{% endmathjax %}|定义|
 #### 微积分
 
 |符号|描述|
