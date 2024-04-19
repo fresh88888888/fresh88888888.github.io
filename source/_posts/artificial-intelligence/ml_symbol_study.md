@@ -59,8 +59,8 @@ mathjax:
 |符号|描述|
 |:--|:--|
 |{% mathjax %} \frac {dy}{dx}{% endmathjax %}|{% mathjax %} y{% endmathjax %}关于{% mathjax %} x{% endmathjax %}的导数|
-|{% mathjax %} x{% endmathjax %}||
-|{% mathjax %} x{% endmathjax %}||
-|{% mathjax %} x{% endmathjax %}||
-|{% mathjax %} x{% endmathjax %}||
+|{% mathjax %} \frac {\partial y}{\partial x}{% endmathjax %}|{% mathjax %} y{% endmathjax %}关于{% mathjax %} x{% endmathjax %}的偏导数|
+|{% mathjax %} \nabla_xy{% endmathjax %}|{% mathjax %} y{% endmathjax %}关于{% mathjax %} x{% endmathjax %}的梯度|
+|{% mathjax %} \int\nolimits_{a}^{b}f(x)dx{% endmathjax %}|{% mathjax %} f{% endmathjax %}在{% mathjax %} a{% endmathjax %}到{% mathjax %} b{% endmathjax %}区间上关于{% mathjax %} x{% endmathjax %}的定积分|
+|{% mathjax %} \intf(x)dx{% endmathjax %}|{% mathjax %} f{% endmathjax %}关于{% mathjax %} x{% endmathjax %}的不定积分|
 
