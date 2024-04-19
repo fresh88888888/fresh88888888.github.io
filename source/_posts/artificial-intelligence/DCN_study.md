@@ -5,6 +5,11 @@ tags:
   - AI
 categories:
   - 人工智能
+mathjax:
+  tex:
+    tags: 'ams'
+  svg:
+    exFactor: 0.03
 ---
 
 #### 介绍
@@ -25,16 +30,16 @@ categories:
 深度网络是传统的前馈多层感知器（`MLP`）。下面我们将首先通过一个示例展示`DCN`的优势，然后我们将引导您了解使用`MovieLen-1M`数据集利用`DCN`的一些常见方法。为了说明`DCN`的优势，让我们通过一个简单的示例来说明。假设我们有一个数据集，我们试图对客户点击搅拌机广告的可能性进行建模，其特征和标签如下所述。
 |特征/标签|描述|值类型/范围|
 |:--|:--|:--|
-|$x_1$=country|该客户居住的国家/地区|`Int in [0, 199]`|
-|$x_2$=bananas|顾客购买的香蕉|`Int in [0, 23]`|
-|$x_3=$|顾客购买的烹饪书籍|`Int in [0, 5]`|
-|$y$|点击搅拌机广告的可能性|`--`|
+|{% mathjax %}x_1{% endmathjax %}=country|该客户居住的国家/地区|`Int in [0, 199]`|
+|{% mathjax %}x_2{% endmathjax %}=bananas|顾客购买的香蕉|`Int in [0, 23]`|
+|{% mathjax %}x_3{% endmathjax %}=cooking book|顾客购买的烹饪书籍|`Int in [0, 5]`|
+|{% mathjax %}y{% endmathjax %}|点击搅拌机广告的可能性|`--`|
 
 然后，我们让数据遵循以下分布：
-$$
+{% mathjax '{"conversion":{"em":14}}' %}
 y= f(x_1, x_2, x_3) = 0.1x_1 + 0.4x_2 + 0.7x_3 + 0.1x_1x_2 + 0.1x_3^2
-$$
-我们首先定义$f(x_1, x_2, x_3)$：
+{% endmathjax %}
+我们首先定义{% mathjax %}f(x_1, x_2, x_3){% endmathjax %}：
 ```python
 def get_mixer_data(data_size=100_000, random_seed=42):
   # We need to fix the random seed
