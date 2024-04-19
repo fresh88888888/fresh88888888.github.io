@@ -12,6 +12,14 @@ mathjax:
     exFactor: 0.03
 ---
 
+为了解决各种各样的机器学习问题，深度学习提供了强大的工具。虽然许多深度学习方法都是最近才有重大突破，但使用数据和神经网络编程的核心思想已经研究了几个世纪。事实上，人类长期以来就有分析数据和预测未来结果的愿望，而自然科学大部分都植根于此。例如，伯努利分布是以雅各布•伯努利（`1654-1705`）命名的。而高斯分布是由卡尔•弗里德里希•高斯（`1777-1855`）发现的，他发明了最小均方算法，至今仍用于解决从保险计算到医疗诊断的许多问题。这些工具算法催生了自然科学中的一种实验方法——例如，电阻中电流和电压的欧姆定律可以用线性模型完美地描述。
+<!-- more -->
+机器学习的关键组件：
+- 可以用来学习的数据（data）。
+- 如何转换数据的模型（model）。
+- 一个目标函数（objective function），用来量化模型的有效性。
+- 调整模型参数以优化目标函数的算法（algorithm）。
+
 #### 数字
 
 |符号|描述|
@@ -23,7 +31,7 @@ mathjax:
 |{% mathjax %} \mathbf {I}{% endmathjax %}|单位矩阵|
 |{% mathjax %} x_i, \left [ \mathrm {x}_i \right ]{% endmathjax %}|向量{% mathjax %} x{% endmathjax %}第{% mathjax %} i{% endmathjax %}个元素|
 |{% mathjax %} x_{ij}, \left [ \mathbf {X}_{ij} \right ]{% endmathjax %}|矩阵{% mathjax %} \mathbf {X}{% endmathjax %}第{% mathjax %} i{% endmathjax %}行第{% mathjax %} j{% endmathjax %}列的元素|
-<!-- more -->
+
 #### 集合论
 
 |符号|描述|
