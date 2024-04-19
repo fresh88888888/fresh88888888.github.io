@@ -46,6 +46,7 @@ mathjax:
 |{% mathjax %} 1_x{% endmathjax %}|指示函数|
 |{% mathjax %} (\cdot)^T{% endmathjax %}|向量或矩阵的转置|
 |{% mathjax %} \mathbf {X^{-1}}{% endmathjax %}|矩阵的逆|
+|{% mathjax %} \odot{% endmathjax %}|按元素相乘|
 |{% mathjax %} [\cdot ,\cdot]{% endmathjax %}|连结|
 |{% mathjax %} \mid \chi\mid{% endmathjax %}|集合的基数|
 |{% mathjax %} \parallel \cdot\parallel_p{% endmathjax %}|{% mathjax %} L_p{% endmathjax %}正则|
@@ -80,4 +81,10 @@ mathjax:
 |{% mathjax %} Cov(X,Y){% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}和{% mathjax %} Y{% endmathjax %}的协方差|
 |{% mathjax %} \rho (X,Y){% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}和{% mathjax %} Y{% endmathjax %}的相关性|
 |{% mathjax %} H(X){% endmathjax %}|随机变量{% mathjax %} X{% endmathjax %}的熵|
-|{% mathjax %} D_{KL}(P\parallel Q){% endmathjax %}|{% mathjax %} P{% endmathjax %}和{% mathjax %} Q{% endmathjax %}的KL散度|
+|{% mathjax %} D_{KL}(P\parallel Q){% endmathjax %}|{% mathjax %} P{% endmathjax %}和{% mathjax %} Q{% endmathjax %}的`KL`散度|
+
+#### 复杂度
+
+|符号|描述|
+|:--|:--|
+|{% mathjax %} O{% endmathjax %}|复杂度标记|
