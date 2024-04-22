@@ -90,6 +90,6 @@ torch.tensor([[2, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
 
 我们的兴趣不仅限于读取数据和写入数据。我们想在这些数据上执行数学运算，其中最简单且最有用的操作是按元素（`elementwise`）运算。它们将标准标量运算符应用于数组的每个元素。对于将两个数组作为输入的函数，按元素运算将二元运算符应用于两个数组中的每对位置对应的元素。我们可以基于任何从标量到标量的函数来创建按元素函数。
 
-在数学的表示中，我们将通过符号{% mathjax %}f:\mathbb {R} \rightarrow \mathbb {R} {% endmathjax %}来表示一元标量运算符（只接收一个输入）
+在数学的表示中，我们将通过符号{% mathjax %}f:\mathbb {R} \rightarrow \mathbb {R} {% endmathjax %}来表示一元标量运算符(只接收一个输入)。这意味着该函数从任何实数({% mathjax %}\mathbb {R}{% endmathjax %})映射到另一个实数。同样，我们通过符号{% mathjax %} f:\mathbb {R},\mathbb {R} \rightarrow \mathbb {R}{% endmathjax %}表示二元标量运算符，这意味着，该函数接收两个输入，并产生一个输出。给定同一形状的任意两个向量{% mathjax %}u{% endmathjax %}和{% mathjax %}v{% endmathjax %}和二元运算符{% mathjax %}f{% endmathjax %}，我们可以得到向量{% mathjax %}c=F(u,v){% endmathjax %}。具体计算方法是{% mathjax %}c_i \leftarrow f(u_i,v_i){% endmathjax %}，其中{% mathjax %}c_i{% endmathjax %}、{% mathjax %}u_i{% endmathjax %}和{% mathjax %}v_i{% endmathjax %}分别是向量{% mathjax %}c{% endmathjax %}、{% mathjax %}u{% endmathjax %}和{% mathjax %}v{% endmathjax %}中的元素，在这里，我们将通过标量函数升级为按元素向量运算来生成向量值{% mathjax %}F:\mathbb {R^d},\mathbb {R^d}\rightarrow \mathbb {R^d}{% endmathjax %}。
 
-对于任意具有相同形状的张量，常见的标准算术运算符（`+、-、*、/`和`**`）都可以被升级为按元素运算。我们可以在同一形状的任意两个张量上调用按元素操作。在下面的例子中，我们使用逗号来表示一个具有5个元素的元组，其中每个元素都是按元素操作的结果。
+对于任意具有相同形状的张量，常见的标准算术运算符（`+、-、*、/`和`**`）都可以被升级为按元素运算。我们可以在同一形状的任意两个张量上调用按元素操作。在下面的例子中，我们使用逗号来表示一个具有`5`个元素的元组，其中每个元素都是按元素操作的结果。
