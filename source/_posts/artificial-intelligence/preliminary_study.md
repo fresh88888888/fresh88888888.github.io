@@ -453,7 +453,7 @@ a + X, (a * X).shape
 ```
 ##### 降维
 
-我们可以对任意张量进行的一个有用的操作是计算其元素的和。数学表示法使用{% mathjax %}\sum{% endmathjax %}来表示求和，为了表示长度为{% mathjax %}d{% endmathjax %}的向量中元素的总和，可以记为{% mathjax %}\sum_{i=1}^ x_i{% endmathjax %}。在代码中可以调用计算求和的函数：
+我们可以对任意张量进行的一个有用的操作是计算其元素的和。数学表示法使用{% mathjax %}\sum{% endmathjax %}来表示求和，为了表示长度为{% mathjax %}d{% endmathjax %}的向量中元素的总和，可以记为{% mathjax %}\sum_{i=1}^{x_i}{% endmathjax %}。在代码中可以调用计算求和的函数：
 ```python
 x = torch.arange(4, dtype=torch.float32)
 x, x.sum()
@@ -551,7 +551,7 @@ torch.sum(x * y)
 {% mathjax '{"conversion":{"em":14}}' %}
 \mathbf{Ax}=\begin{bmatrix}a_1^{\mathsf{T}} \\a_2^{\mathsf{T}} \\ \vdots \\ a_m^{\mathsf{T}}\end{bmatrix} \mathbf{x}=\begin{bmatrix}a_1^{\mathsf{T}}\mathbf{x} \\a_2^{\mathsf{T}}\mathbf{x} \\ \vdots \\ a_m^{\mathsf{T}}\mathbf{x}\end{bmatrix}
 {% endmathjax %}
-我们可以把一个矩阵{% mathjax %}\mathbf{A}\in \mathbb{R}^{m\times\n}{% endmathjax %}乘法看做一个从{% mathjax %}\mathbb{R}^n{% endmathjax %}到{% mathjax %}\mathbb{R}^m{% endmathjax %}向量的转换。这些转换是非常有用的，例如可以用方阵的乘法来表示旋转。我们也可以使用矩阵-向量积来描述在给定前一层的值时，求解神经网络每一层所需的复杂计算。在代码中使用张量表示矩阵-向量积，我们使用`mv`函数。当我们为矩阵A和向量`x`调用`torch.mv(A, x)`时，会执行矩阵-向量积。注意，`A`的列维数（沿轴`1`的长度）必须与`x`的维数（其长度）相同。
+我们可以把一个矩阵{% mathjax %}\mathbf{A}\in \mathbb{R}^{m\times n}{% endmathjax %}乘法看做一个从{% mathjax %}\mathbb{R}^n{% endmathjax %}到{% mathjax %}\mathbb{R}^m{% endmathjax %}向量的转换。这些转换是非常有用的，例如可以用方阵的乘法来表示旋转。我们也可以使用矩阵-向量积来描述在给定前一层的值时，求解神经网络每一层所需的复杂计算。在代码中使用张量表示矩阵-向量积，我们使用`mv`函数。当我们为矩阵A和向量`x`调用`torch.mv(A, x)`时，会执行矩阵-向量积。注意，`A`的列维数（沿轴`1`的长度）必须与`x`的维数（其长度）相同。
 ```python
 A.shape, x.shape, torch.mv(A, x)
 
@@ -559,6 +559,84 @@ A.shape, x.shape, torch.mv(A, x)
 ```
 ##### 矩阵-矩阵乘法
 
+在掌握点积和矩阵-向量积后，那么矩阵-矩阵乘法（`matrix-matrix multiplication`）应该很简单。假设有两个矩阵{% mathjax %}\mathbf{A}\in \mathbb{R}^{n\times k}{% endmathjax %}和{% mathjax %}\mathbf{B}\in \mathbb{R}^{k\times m}{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{A}\odot\mathbf{A}=\begin{bmatrix} a_{11} & a_{12} & \ldots & a_{1k} \\ a_{21} & a_{22} & \ldots & a_{2k} \\ \vdots & \vdots & \ddots & \vdots \\ b_{n1} & a_{n2} & \ldots & a_{nk}\end{bmatrix}, \mathbf{B}\odot\mathbf{B}=\begin{bmatrix} b_{11} & b_{12} & \ldots & b_{1m} \\ b_{21} & b_{22} & \ldots & a_{2m} \\ \vdots & \vdots & \ddots & \vdots \\ b_{k1} & b_{k2} & \ldots & b_{km}\end{bmatrix}
+{% endmathjax %}
+用行向量{% mathjax %}\mathbf{a}_i^{\mathsf{T}}\in \mathbb{R}^k{% endma让thjax %}表示矩阵{% mathjax %}\mathbf{A}{% endmathjax %}的第{% mathjax %}i{% endmathjax %}行，并让列向量{% mathjax %}\mathbf{b}_j\in \mathbb{R}^k{% endmathjax %}作为矩阵{% mathjax %}\mathbf{B}{% endmathjax %}的第{% mathjax %}j{% endmathjax %}列。要生成矩阵积{% mathjax %}\mathbf{C}= \mathbf{AB}{% endmathjax %}，最简单的方法是考虑{% mathjax %}\mathbf{A}{% endmathjax %}的行向量和{% mathjax %}\mathbf{B}{% endmathjax %}的列向量：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{A}=\begin{bmatrix}a_1^{\mathsf{T}} \\a_2^{\mathsf{T}} \\ \vdots \\ a_n^{\mathsf{T}}\end{bmatrix}, \mathbf{B}= [\mathbf{b}_1 & \mathbf{b}_2 \ldots & \mathbf{b}_m]
+{% endmathjax %}
+当我们将简单的每个元素{% mathjax %}c_{ij}{% endmathjax %}计算为点积{% mathjax %}\mathbf{a}_i^{\mathsf{T}} \mathbf{b}_j{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{C}=\mathbf{AB}=\begin{bmatrix}a_1^{\mathsf{T}} \\a_2^{\mathsf{T}} \\ \vdots \\ a_n^{\mathsf{T}}\end{bmatrix}[\mathbf{b}_1 & \mathbf{b}_2 \ldots & \mathbf{b}_m] = \begin{bmatrix} a_{1}^{\mathsf{T}}b_1 & a_{1}^{\mathsf{T}}b_2 & \ldots & a_{1}^{\mathsf{T}}b_m \\ a_{2}^{\mathsf{T}}b_1 & a_{2}^{\mathsf{T}}b_2 & \ldots & a_{2}^{\mathsf{T}}b_m \\ \vdots & \vdots & \ddots & \vdots \\ a_{n}^{\mathsf{T}}b_1 & a_{n}^{\mathsf{T}}b_2 & \ldots & a_{n}^{\mathsf{T}}b_m\end{bmatrix}
+{% endmathjax %}
+我么可以将矩阵-矩阵乘法{% mathjax %}\mathbf{AB}{% endmathjax %}看做简单的执行{% mathjax %}m{% endmathjax %}次矩阵向量积，并将结果拼接在一起，形成一个{% mathjax %}n\times m{% endmathjax %}的矩阵。在下面的代码中，我们在{% mathjax %}\mathbf{A}{% endmathjax %}和{% mathjax %}\mathbf{B}{% endmathjax %}上执行矩阵乘法。这里的{% mathjax %}\mathbf{A}{% endmathjax %}是一个`5`行`4`列的矩阵，{% mathjax %}\mathbf{B}{% endmathjax %}是一个`4`行`3`列的矩阵。 两者相乘后，我们得到了一个`5`行`3`列的矩阵。
+```python
+B = torch.ones(4, 3)
+torch.mm(A, B)
+
+# tensor([[ 6.,  6.,  6.],
+#         [22., 22., 22.],
+#         [38., 38., 38.],
+#         [54., 54., 54.],
+#         [70., 70., 70.]])
+```
+**矩阵-矩阵乘法**可以简单地称为矩阵乘法，不应与“`Hadamard积`”混淆。
+##### 范数
+
+线性代数中最有用的一些运算符是范数（`norm`）。非正式地说，向量的范数是表示一个向量有多大。这里考虑的大小（`size`）概念不涉及维度，而是分量的大小。在线性代数中，向量范数是将向量映射到标量的函数{% mathjax %}f{% endmathjax %}。给定任意向量{% mathjax %}\mathbf{x}{% endmathjax %}，向量范数要满足一些属性。 第一个性质是：如果我们按常数因子{% mathjax %}\alpha{% endmathjax %}缩放向量的所有元素，其范数也会按相同常数因子的绝对值缩放：
+{% mathjax '{"conversion":{"em":14}}' %}
+f(\alpha x) = \lvert\alpha\rvert f(x)
+{% endmathjax %}
+第二个性质是熟悉的三角不等式:
+{% mathjax '{"conversion":{"em":14}}' %}
+f(x+y)\leq f(x) + f(y)
+{% endmathjax %}
+第三个性质简单地说范数必须是非负的:
+{% mathjax '{"conversion":{"em":14}}' %}
+f(x)\geq 0
+{% endmathjax %}
+这是有道理的。因为在大多数情况下，任何东西的最小的大小是`0`。 最后一个性质要求范数最小为`0`，当且仅当向量全由`0`组成。
+{% mathjax '{"conversion":{"em":14}}' %}
+\forall i, [\mathbf{x}]_i = 0 \Leftrightarrow f(x) = 0
+{% endmathjax %}
+范数听起来很像距离的度量。欧几里得距离和毕达哥拉斯定理中的非负性概念和三角不等式可能会给出一些启发。事实上，欧几里得距离是一个{% mathjax %}L_2{% endmathjax %}范数：假设{% mathjax %}n{% endmathjax %}维向量{% mathjax %}\mathbf{x}{% endmathjax %}中的元素是{% mathjax %}x_1, \ldots ,x_n{% endmathjax %}，其{% mathjax %}L_2{% endmathjax %}范数是向量元素平方和的平方根：
+{% mathjax '{"conversion":{"em":14}}' %}
+\lVert\mathbf{x}\rVert_2 = \sqart{\sum_{i=1}^n x_i^2}
+{% endmathjax %}
+其中，在{% mathjax %}L_2{% endmathjax %}范数中常常省略下标{% mathjax %}2{% endmathjax %}，也就是说{% mathjax %}\lVert\mathbf{x}\rVert{% endmathjax %}等同于{% mathjax %}\lVert\mathbf{x}\rVert_2{% endmathjax %}。 在代码中，我们可以按如下方式计算向量的{% mathjax %}L_2{% endmathjax %}范数。
+```python
+u = torch.tensor([3.0, -4.0])
+torch.norm(u)
+
+# tensor(5.)
+```
+深度学习中经常使用{% mathjax %}L_2{% endmathjax %}范数的平方，也会经常遇到{% mathjax %}L_1{% endmathjax %}范数，他表示为向量元素的绝对值求和：
+{% mathjax '{"conversion":{"em":14}}' %}
+\lVert\mathbf{x}\rVert_1 = \sum_{i=1}^n \lvert x_i \rvert
+{% endmathjax %}
+与{% mathjax %}L_2{% endmathjax %}范数相比{% mathjax %}L_1{% endmathjax %}范数，我们将绝对值函数和按元素求和组合起来。
+```python
+torch.abs(u).sum()
+
+# tensor(7.)
+```
+{% mathjax %}L_2{% endmathjax %}范数和{% mathjax %}L_1{% endmathjax %}范数都是更一般的{% mathjax %}L_p{% endmathjax %}范数的特例：
+{% mathjax '{"conversion":{"em":14}}' %}
+\lVert\mathbf{x}\rVert_p = \Big( \sum_{i=1}^n \lvert x_i \rvert_p \Big)^{1/p}
+{% endmathjax %}
+类似于向量的{% mathjax %}L_2{% endmathjax %}范数，矩阵{% mathjax %}\mathbf{X}\in \mathbb{R}^{m\times n}{% endmathjax %}的`Frobenius`范数（`Frobenius norm`）是矩阵元素平方和的平方根：
+{% mathjax '{"conversion":{"em":14}}' %}
+\lVert\mathbf{x}\rVert_F = \sqart{\sum_{i=1}^m \sum_{j=1}^n x_{ij}^2}
+{% endmathjax %}
+`Frobenius`范数满足向量范数的所有性质，它就像是矩阵形向量的{% mathjax %}L_2{% endmathjax %}范数。调用以下函数将计算矩阵的`Frobenius`范数。
+```python
+torch.norm(torch.ones((4, 9)))
+
+# tensor(6.)
+```
+在深度学习中，我们经常试图解决优化问题：最大化分配给观测数据的概率; 最小化预测和真实观测之间的距离。用向量表示物品（如单词、产品或新闻文章），以便最小化相似项目之间的距离，最大化不同项目之间的距离。目标，或许是深度学习算法最重要的组成部分（除了数据），通常被表达为范数。线性代数还有很多，其中很多数学对于机器学习非常有用。例如，矩阵可以分解为因子，这些分解可以显示真实世界数据集中的低维结构。机器学习的整个子领域都侧重于使用矩阵分解及其向高阶张量的泛化，来发现数据集中的结构并解决预测问题。当开始动手尝试并在真实数据集上应用了有效的机器学习模型，你会更倾向于学习更多数学。
 
 #### 微积分
 
