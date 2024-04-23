@@ -565,11 +565,11 @@ A.shape, x.shape, torch.mv(A, x)
 {% endmathjax %}
 用行向量{% mathjax %}\mathbf{a}_i^{\mathsf{T}}\in \mathbb{R}^k{% endmathjax %}表示矩阵{% mathjax %}\mathbf{A}{% endmathjax %}的第{% mathjax %}i{% endmathjax %}行，并让列向量{% mathjax %}\mathbf{b}_j\in \mathbb{R}^k{% endmathjax %}作为矩阵{% mathjax %}\mathbf{B}{% endmathjax %}的第{% mathjax %}j{% endmathjax %}列。要生成矩阵积{% mathjax %}\mathbf{C}= \mathbf{AB}{% endmathjax %}，最简单的方法是考虑{% mathjax %}\mathbf{A}{% endmathjax %}的行向量和{% mathjax %}\mathbf{B}{% endmathjax %}的列向量：
 {% mathjax '{"conversion":{"em":14}}' %}
-\mathbf{A}=\begin{bmatrix}a_1^{\mathsf{T}} \\a_2^{\mathsf{T}} \\ \vdots \\ a_n^{\mathsf{T}}\end{bmatrix}, \mathbf{B}= [\mathbf{b}_1 & \mathbf{b}_2 \ldots & \mathbf{b}_m]
+\mathbf{A}=\begin{bmatrix}a_1^{\mathsf{T}} \\ a_2^{\mathsf{T}} \\ \vdots \\ a_n^{\mathsf{T}}\end{bmatrix}, \mathbf{B}= [\mathbf{b}_1 & \mathbf{b}_2 \ldots & \mathbf{b}_m]
 {% endmathjax %}
 当我们将简单的每个元素{% mathjax %}c_{ij}{% endmathjax %}计算为点积{% mathjax %}\mathbf{a}_i^{\mathsf{T}} \mathbf{b}_j{% endmathjax %}：
 {% mathjax '{"conversion":{"em":14}}' %}
-\mathbf{C}=\mathbf{AB}=\begin{bmatrix}a_1^{\mathsf{T}} \\a_2^{\mathsf{T}} \\ \vdots \\ a_n^{\mathsf{T}}\end{bmatrix}[\mathbf{b}_1 & \mathbf{b}_2 \ldots & \mathbf{b}_m] = \begin{bmatrix} a_{1}^{\mathsf{T}}b_1 & a_{1}^{\mathsf{T}}b_2 & \ldots & a_{1}^{\mathsf{T}}b_m \\ a_{2}^{\mathsf{T}}b_1 & a_{2}^{\mathsf{T}}b_2 & \ldots & a_{2}^{\mathsf{T}}b_m \\ \vdots & \vdots & \ddots & \vdots \\ a_{n}^{\mathsf{T}}b_1 & a_{n}^{\mathsf{T}}b_2 & \ldots & a_{n}^{\mathsf{T}}b_m\end{bmatrix}
+\mathbf{C}=\mathbf{AB}=\begin{bmatrix}a_1^{\mathsf{T}} \\ a_2^{\mathsf{T}} \\ \vdots \\ a_n^{\mathsf{T}}\end{bmatrix}[\mathbf{b}_1 & \mathbf{b}_2 \ldots & \mathbf{b}_m] = \begin{bmatrix} a_{1}^{\mathsf{T}}b_1 & a_{1}^{\mathsf{T}}b_2 & \ldots & a_{1}^{\mathsf{T}}b_m \\ a_{2}^{\mathsf{T}}b_1 & a_{2}^{\mathsf{T}}b_2 & \ldots & a_{2}^{\mathsf{T}}b_m \\ \vdots & \vdots & \ddots & \vdots \\ a_{n}^{\mathsf{T}}b_1 & a_{n}^{\mathsf{T}}b_2 & \ldots & a_{n}^{\mathsf{T}}b_m\end{bmatrix}
 {% endmathjax %}
 我么可以将矩阵-矩阵乘法{% mathjax %}\mathbf{AB}{% endmathjax %}看做简单的执行{% mathjax %}m{% endmathjax %}次矩阵向量积，并将结果拼接在一起，形成一个{% mathjax %}n\times m{% endmathjax %}的矩阵。在下面的代码中，我们在{% mathjax %}\mathbf{A}{% endmathjax %}和{% mathjax %}\mathbf{B}{% endmathjax %}上执行矩阵乘法。这里的{% mathjax %}\mathbf{A}{% endmathjax %}是一个`5`行`4`列的矩阵，{% mathjax %}\mathbf{B}{% endmathjax %}是一个`4`行`3`列的矩阵。 两者相乘后，我们得到了一个`5`行`3`列的矩阵。
 ```python
@@ -603,7 +603,7 @@ f(x)\geq 0
 {% endmathjax %}
 范数听起来很像距离的度量。欧几里得距离和毕达哥拉斯定理中的非负性概念和三角不等式可能会给出一些启发。事实上，欧几里得距离是一个{% mathjax %}L_2{% endmathjax %}范数：假设{% mathjax %}n{% endmathjax %}维向量{% mathjax %}\mathbf{x}{% endmathjax %}中的元素是{% mathjax %}x_1, \ldots ,x_n{% endmathjax %}，其{% mathjax %}L_2{% endmathjax %}范数是向量元素平方和的平方根：
 {% mathjax '{"conversion":{"em":14}}' %}
-\lVert\mathbf{x}\rVert_2 = \sqart{\sum_{i=1}^n x_i^2}
+\lVert\mathbf{x}\rVert_2 = \sqrt{\sum_{i=1}^n x_i^2}
 {% endmathjax %}
 其中，在{% mathjax %}L_2{% endmathjax %}范数中常常省略下标{% mathjax %}2{% endmathjax %}，也就是说{% mathjax %}\lVert\mathbf{x}\rVert{% endmathjax %}等同于{% mathjax %}\lVert\mathbf{x}\rVert_2{% endmathjax %}。 在代码中，我们可以按如下方式计算向量的{% mathjax %}L_2{% endmathjax %}范数。
 ```python
@@ -628,7 +628,7 @@ torch.abs(u).sum()
 {% endmathjax %}
 类似于向量的{% mathjax %}L_2{% endmathjax %}范数，矩阵{% mathjax %}\mathbf{X}\in \mathbb{R}^{m\times n}{% endmathjax %}的`Frobenius`范数（`Frobenius norm`）是矩阵元素平方和的平方根：
 {% mathjax '{"conversion":{"em":14}}' %}
-\lVert\mathbf{x}\rVert_F = \sqart{\sum_{i=1}^m \sum_{j=1}^n x_{ij}^2}
+\lVert\mathbf{x}\rVert_F = \sqrt{\sum_{i=1}^m \sum_{j=1}^n x_{ij}^2}
 {% endmathjax %}
 `Frobenius`范数满足向量范数的所有性质，它就像是矩阵形向量的{% mathjax %}L_2{% endmathjax %}范数。调用以下函数将计算矩阵的`Frobenius`范数。
 ```python
