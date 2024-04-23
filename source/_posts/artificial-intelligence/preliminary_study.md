@@ -393,6 +393,172 @@ B == B.T
 矩阵是有用的数据结构：它们允许我们组织具有不同模式的数据。例如，矩阵中的行可能对应于不同的房屋（数据样本），而列可能对应于不同的属性。因此，尽管单个向量的默认方向是列向量，但在表示表格数据集的矩阵中，将每个数据样本作为矩阵中的行向量更为常见。
 ##### 张量
 
+就像向量是标量的推广，矩阵是向量的推广一样，我们可以构建更多轴的数据结构。张量是描述具有任意数量轴的n为数组的通用方法，例如，向量是一阶张量，矩阵是二阶张量。张量用特殊字体的大写字母表示（例如，{% mathjax %}\mathsf{X,Y}{% endmathjax %}和{% mathjax %}\mathsf{Z}{% endmathjax %}），它们的索引机制（例如{% mathjax %}x_{ijk}{% endmathjax %}和{% mathjax %}[\mathsf{X}_{1,2i-1,3}]{% endmathjax %}）与矩阵类似。当我们开始处理图像时，张量将变得更加重要，图像以n维数组形式出现，其中3个轴对应于高度、宽度以及一个通道(channel)轴，用于表示颜色通道（红色，绿色和蓝色）。
+```python
+X = torch.arange(24).reshape(2, 3, 4)
+X
+
+# tensor([[[ 0,  1,  2,  3],
+#          [ 4,  5,  6,  7],
+#          [ 8,  9, 10, 11]],
+
+#         [[12, 13, 14, 15],
+#          [16, 17, 18, 19],
+#          [20, 21, 22, 23]]])
+```
+标量、向量、矩阵和任意数量轴的张量有一些实用的属性。例如，从按元素操作的定义中可以注意到，任何按元素的一元运算都不会改变其操作数的形状。同样，给定具有相同形状的任意两个张量，任何按元素二元运算的结果都将是相同形状的张量。例如，将两个相同形状的矩阵相加，会在这两个矩阵上执行元素加法。
+```python
+A = torch.arange(20, dtype=torch.float32).reshape(5, 4)
+B = A.clone()  # 通过分配新内存，将A的一个副本分配给B
+A, A + B
+
+# (tensor([[ 0.,  1.,  2.,  3.],
+#          [ 4.,  5.,  6.,  7.],
+#          [ 8.,  9., 10., 11.],
+#          [12., 13., 14., 15.],
+#          [16., 17., 18., 19.]]),
+
+#  tensor([[ 0.,  2.,  4.,  6.],
+#          [ 8., 10., 12., 14.],
+#          [16., 18., 20., 22.],
+#          [24., 26., 28., 30.],
+#          [32., 34., 36., 38.]]))
+```
+具体而言，连个矩阵的按元素乘法称为`Hadamard`积(`Hadamard product`) (数学符号为{% mathjax %}\odot{% endmathjax %})。对于矩阵{% mathjax %}\mathbf{B}\in\mathbb{R}^{m\times n}{% endmathjax %}，其中第{% mathjax %}i{% endmathjax %}和第{% mathjax %}j{% endmathjax %}列的元素是{% mathjax %}b_{ij}{% endmathjax %}。矩阵{% mathjax %}\mathbf{A}{% endmathjax %}和{% mathjax %}\mathbf{B}{% endmathjax %}的`Hadamard`积为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{A}\odot\mathbf{B}=\begin{bmatrix} a_{11}b{11} & a_{12}b{12} & \ldots & a_{1n}b{1n} \\ a_{21}b{21} & a_{22}b_{22} & \ldots & a_{2n}b_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ a_{m1}b_{m1} & a_{m2}b_{m2} & \ldots & a_{mn}b_{mn}\end{bmatrix}
+{% endmathjax %}
+```python
+A * B
+
+# tensor([[  0.,   1.,   4.,   9.],
+#         [ 16.,  25.,  36.,  49.],
+#         [ 64.,  81., 100., 121.],
+#         [144., 169., 196., 225.],
+#         [256., 289., 324., 361.]])
+
+# 将张量乘以或加上一个标量不会改变张量的形状，其中张量的每个元素都将与标量相加或相乘。
+a = 2
+X = torch.arange(24).reshape(2, 3, 4)
+a + X, (a * X).shape
+
+# (tensor([[[ 2,  3,  4,  5],
+#           [ 6,  7,  8,  9],
+#           [10, 11, 12, 13]],
+
+#          [[14, 15, 16, 17],
+#           [18, 19, 20, 21],
+#           [22, 23, 24, 25]]]),
+#  torch.Size([2, 3, 4]))
+```
+##### 降维
+
+我们可以对任意张量进行的一个有用的操作是计算其元素的和。数学表示法使用{% mathjax %}\sum{% endmathjax %}来表示求和，为了表示长度为{% mathjax %}d{% endmathjax %}的向量中元素的总和，可以记为{% mathjax %}\sum_{i=1}^ x_i{% endmathjax %}。在代码中可以调用计算求和的函数：
+```python
+x = torch.arange(4, dtype=torch.float32)
+x, x.sum()
+
+# (tensor([0., 1., 2., 3.]), tensor(6.))
+```
+我们可以表示任意形状张量的元素和。例如，矩阵{% mathjax %}\mathbf{A}{% endmathjax %}中元素的和可以记为{% mathjax %}\sum_{i=1}^m \sum_{j=1}^{n} a_{ij}{% endmathjax %}。
+```python
+A.shape, A.sum()
+
+# (torch.Size([5, 4]), tensor(190.))
+```
+默认情况下，调用求和函数会沿所有的轴降低张量的维度，使它变为一个标量。我们还可以指定张量沿哪一个轴来通过求和降低维度。以矩阵为例，为了通过求和所有行的元素来降维（轴`0`），可以在调用函数时指定`axis=0`。由于输入矩阵沿`0`轴降维以生成输出向量，因此输入轴`0`的维数在输出形状中消失。
+```python
+A_sum_axis0 = A.sum(axis=0)
+A_sum_axis0, A_sum_axis0.shape
+
+# (tensor([40., 45., 50., 55.]), torch.Size([4]))
+
+# 指定axis=1将通过汇总所有列的元素降维（轴1）。因此，输入轴1的维数在输出形状中消失。
+A_sum_axis1 = A.sum(axis=1)
+A_sum_axis1, A_sum_axis1.shape
+
+# (tensor([ 6., 22., 38., 54., 70.]), torch.Size([5]))
+
+# 沿着行和列对矩阵求和，等价于对矩阵的所有元素进行求和。
+A.sum(axis=[0, 1])  # 结果和A.sum()相同
+
+# tensor(190.)
+
+# 一个与求和相关的量是平均值（mean或average）。我们通过将总和除以元素总数来计算平均值。在代码中，我们可以调用函数来计算任意形状张量的平均值。
+A.mean(), A.sum() / A.numel()
+
+# (tensor(9.5000), tensor(9.5000))
+
+# 同样，计算平均值的函数也可以沿指定轴降低张量的维度。
+A.mean(axis=0), A.sum(axis=0) / A.shape[0]
+
+# (tensor([ 8.,  9., 10., 11.]), tensor([ 8.,  9., 10., 11.]))
+```
+##### 非降维求和
+
+但是，有时在调用函数来计算总和或均值时保持轴数不变会很有用。
+```python
+sum_A = A.sum(axis=1, keepdims=True)
+sum_A
+
+# tensor([[ 6.],
+#         [22.],
+#         [38.],
+#         [54.],
+#         [70.]])
+
+# 例如，由于sum_A在对每行进行求和后仍保持两个轴，我们可以通过广播将A除以sum_A。
+A / sum_A
+
+# tensor([[0.0000, 0.1667, 0.3333, 0.5000],
+#         [0.1818, 0.2273, 0.2727, 0.3182],
+#         [0.2105, 0.2368, 0.2632, 0.2895],
+#         [0.2222, 0.2407, 0.2593, 0.2778],
+#         [0.2286, 0.2429, 0.2571, 0.2714]])
+
+# 如果我们想沿某个轴计算A元素的累积总和，比如axis=0（按行计算），可以调用cumsum函数。此函数不会沿任何轴降低输入张量的维度。
+A.cumsum(axis=0)
+
+# tensor([[ 0.,  1.,  2.,  3.],
+#         [ 4.,  6.,  8., 10.],
+#         [12., 15., 18., 21.],
+#         [24., 28., 32., 36.],
+#         [40., 45., 50., 55.]])
+```
+##### 点积
+
+我们已经学习了按元素操作，、求和和平均值，另一个最基本的操作之一是**点积**。给定两个向量{% mathjax %}\mathbf{x,y}\in\mathbb{R}^d{% endmathjax %},它们的点积(`dot product`){% mathjax %}\mathbf{x}^{\mathsf{T}} \mathbf{y}{% endmathjax %}(或{% mathjax %}\langle\mathbf{x,y}\rangle{% endmathjax %})是相同位置按元素乘积的和：{% mathjax %}\mathbf{x}^{\mathsf{T}} \mathsf{y}=\sum_{i=1}^d x_iy_i{% endmathjax %}。
+```python
+x = torch.tensor(4, dytype=torch.float32)
+y = torch.ones(4, dtype = torch.float32)
+x, y, torch.dot(x, y)
+
+# (tensor([0., 1., 2., 3.]), tensor([1., 1., 1., 1.]), tensor(6.))
+
+# 注意，我们可以执行按元素乘法，然后进行求和来表示两个向量的点积：
+torch.sum(x * y)
+
+# tensor(6.)
+```
+点积在很多场合很有用。例如，给定一组向量{% mathjax %}\mathbf{x}\in \mathbb{R}^d{% endmathjax %}表示的值，和一组由{% mathjax %}\mathbf{w}\in \mathbb{R}^d{% endmathjax %}表示的权重。{% mathjax %}\mathbf{x}{% endmathjax %}中的值根据权重{% mathjax %}\mathbf{w}{% endmathjax %}的加权和，可以表示为点积{% mathjax %}\mathbf{x}^{\mathsf{T}} \mathbf{w}{% endmathjax %}。当权重为非负数且和为`1`（即{% mathjax %}\sum_{i=1}^d w_i = 1{% endmathjax %}）时，点击表示加权平均(`weighted average`)。将两个向量规范化得到单位长度后，点积表示它们夹角的余弦。
+##### 矩阵-向量积
+
+现在我们知道如何计算点积，可以开始理解矩阵-向量积（`matrix-vector product`）。让我们将矩阵{% mathjax %}\mathbf{A}{% endmathjax %}用它的行向量表示：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{A}=\begin{bmatrix}a_1^{\mathsf{T}} \\a_2^{\mathsf{T}} \\ \vdots \\ a_m^{\mathsf{T}}\end{bmatrix}
+{% endmathjax %}
+其中每个{% mathjax %}a_i^{\mathsf{T}} \in\mathbb{R}^n{% endmathjax %}都是行向量，表示矩阵的第{% mathjax %}i{% endmathjax %}。矩阵向量积{% mathjax %}\mathbf{Ax}{% endmathjax %}是一个长度为{% mathjax %}m{% endmathjax %}的列向量，其第{% mathjax %}i{% endmathjax %}个元素的点积{% mathjax %}a_i^{\mathsf{T}}x{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{Ax}=\begin{bmatrix}a_1^{\mathsf{T}} \\a_2^{\mathsf{T}} \\ \vdots \\ a_m^{\mathsf{T}}\end{bmatrix} \mathbf{x}=\begin{bmatrix}a_1^{\mathsf{T}}\mathbf{x} \\a_2^{\mathsf{T}}\mathbf{x} \\ \vdots \\ a_m^{\mathsf{T}}\mathbf{x}\end{bmatrix}
+{% endmathjax %}
+我们可以把一个矩阵{% mathjax %}\mathbf{A}\in \mathbb{R}^{m\times\n}{% endmathjax %}乘法看做一个从{% mathjax %}\mathbb{R}^n{% endmathjax %}到{% mathjax %}\mathbb{R}^m{% endmathjax %}向量的转换。这些转换是非常有用的，例如可以用方阵的乘法来表示旋转。我们也可以使用矩阵-向量积来描述在给定前一层的值时，求解神经网络每一层所需的复杂计算。在代码中使用张量表示矩阵-向量积，我们使用`mv`函数。当我们为矩阵A和向量`x`调用`torch.mv(A, x)`时，会执行矩阵-向量积。注意，`A`的列维数（沿轴`1`的长度）必须与`x`的维数（其长度）相同。
+```python
+A.shape, x.shape, torch.mv(A, x)
+
+# (torch.Size([5, 4]), torch.Size([4]), tensor([ 14.,  38.,  62.,  86., 110.]))
+```
+##### 矩阵-矩阵乘法
+
 
 #### 微积分
 
