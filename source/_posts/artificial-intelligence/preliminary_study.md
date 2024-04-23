@@ -346,6 +346,53 @@ x.shape
 {% endnote %}
 ##### 矩阵
 
+  正如向量将标量从零阶推广到一阶，矩阵将向量从一阶推广到了二阶。矩阵，我们通常用粗体、大写字母来表示（例如，{% mathjax %}X,Y{% endmathjax %}和{% mathjax %}Z{% endmathjax %}），在代码中表示为具有两个轴的张量。数学表示法使用{% mathjax %}\mathbf{A}\in\mathbb{R}^{m\times n}{% endmathjax %}来表示矩阵{% mathjax %}\mathbf{A}{% endmathjax %}，其由{% mathjax %}m{% endmathjax %}行{% mathjax %}n{% endmathjax %}列的实值标量组成。我们可以将任意矩阵{% mathjax %}\mathbf{A}\in\mathbb{R}^{m\times n}{% endmathjax %}视为一个表格，其中每个元素{% mathjax %}a_{ij}{% endmathjax %}属于第{% mathjax %}i{% endmathjax %}行第{% mathjax %}j{% endmathjax %}列：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{A}=\begin{bmatrix} a_{11} & a_{12} & \ldots & a_{1n} \\ a_{21} & a_{22} & \ldots & a_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ a_{m1} & a_{m2} & \ldots & a_{mn}\end{bmatrix}
+{% endmathjax %}
+对于任意{% mathjax %}\mathbf{A}\in\mathbb{R}^{m\times n}{% endmathjax %}，{% mathjax %}\mathbf{A}{% endmathjax %}的形状是{% mathjax %}(m,n){% endmathjax %}或{% mathjax %}m\times n{% endmathjax %}。当矩阵具有相同数量的行和列时其形状将变为正方形。因此，它被称为”方正“(`square matrix`)。当调用函数来实例化张量时，我们可以通过指定两个分量{% mathjax %}m{% endmathjax %}和{% mathjax %}n{% endmathjax %}来创建一个形状为{% mathjax %}m\times n{% endmathjax %}的矩阵。
+```python
+A = torch.arange(20).reshape(5, 4)
+A
+
+# tensor([[ 0,  1,  2,  3],
+#         [ 4,  5,  6,  7],
+#         [ 8,  9, 10, 11],
+#         [12, 13, 14, 15],
+#         [16, 17, 18, 19]])
+```
+我们可以通过行索引({% mathjax %}i{% endmathjax %})和列索引({% mathjax %}j{% endmathjax %})来访问矩阵中的标量元素{% mathjax %}a_{ij}{% endmathjax %}，例如，{% mathjax %}[\mathbf{A}]_{ij}{% endmathjax %}。如果没有给出矩阵{% mathjax %}\mathbf{A}{% endmathjax %}的标量元素，我们可以简单的使用矩阵{% mathjax %}\mathbf{A}{% endmathjax %}的小写字母索引下标{% mathjax %}a_{ij}{% endmathjax %}来引用{% mathjax %}[\mathbf{A}]_{ij}{% endmathjax %}。为了表示起来简单，只有在必要时才会将逗号插入到单独的索引中，例如{% mathjax %}a_{2,3j}{% endmathjax %}。当我们交换矩阵的行和列时，结果称为矩阵的转置(`transpose`)。通常用{% mathjax %}a_{\mathsf{T}}{% endmathjax %}来表示矩阵的转置，如果{% mathjax %}\mathbf{B}= \mathbf{A}_{\mathsf{T}}{% endmathjax %}，则对于任何的{% mathjax %}i{% endmathjax %}和{% mathjax %}j{% endmathjax %}，都有{% mathjax %}b_{ij}= a_{ji}{% endmathjax %}，因此{% mathjax %}\mathbf{A}{% endmathjax %}的转置是一个形状为{% mathjax %}n\times m{% endmathjax %}的矩阵：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{A}^{\mathsf{T}}=\begin{bmatrix} a_{11} & a_{21} & \ldots & a_{m1} \\ a_{12} & a_{22} & \ldots & a_{m2} \\ \vdots & \vdots & \ddots & \vdots \\ a_{1n} & a_{2n} & \ldots & a_{mn}\end{bmatrix}
+{% endmathjax %}
+在代码中访问矩阵的转置。
+```python
+A.T
+
+# tensor([[ 0,  4,  8, 12, 16],
+#         [ 1,  5,  9, 13, 17],
+#         [ 2,  6, 10, 14, 18],
+#         [ 3,  7, 11, 15, 19]])
+```
+作为方阵的一种特殊类型，对称矩阵(`symmetric matrix`) {% mathjax %}\mathbf{A}{% endmathjax %}等于其转置：{% mathjax %}\mathbf{A}=\mathbf{A}^{\mathsf{T}}{% endmathjax %}。这里定义一个对称矩阵{% mathjax %}\mathbf{B}{% endmathjax %}：
+```python
+B = torch.tensor([[1, 2, 3], [2, 0, 4], [3, 4, 5]])
+B
+
+# tensor([[1, 2, 3],
+#         [2, 0, 4],
+#         [3, 4, 5]])
+
+# 现在我们将B与它的转置进行比较。
+B == B.T
+
+# tensor([[True, True, True],
+#         [True, True, True],
+#         [True, True, True]])
+```
+矩阵是有用的数据结构：它们允许我们组织具有不同模式的数据。例如，矩阵中的行可能对应于不同的房屋（数据样本），而列可能对应于不同的属性。因此，尽管单个向量的默认方向是列向量，但在表示表格数据集的矩阵中，将每个数据样本作为矩阵中的行向量更为常见。
+##### 张量
+
 
 #### 微积分
 
