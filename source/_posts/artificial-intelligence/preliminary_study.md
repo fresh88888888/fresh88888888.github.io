@@ -322,7 +322,7 @@ x + y, x * y, x / y, x**y
 {% mathjax '{"conversion":{"em":14}}' %}
 \mathbf{x}=\begin{bmatrix}x_1 \\x_2 \\ \vdots \\ x_n\end{bmatrix}
 {% endmathjax %}
-其中{% mathjax %}x_1,\vdots,x_n{% endmathjax %}是向量的元素。在代码中，我们通过张量的索引来访问任一元素。
+其中{% mathjax %}x_1,\ldots,x_n{% endmathjax %}是向量的元素。在代码中，我们通过张量的索引来访问任一元素。
 ```python
 x[3]
 
