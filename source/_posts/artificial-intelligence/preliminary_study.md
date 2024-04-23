@@ -563,7 +563,7 @@ A.shape, x.shape, torch.mv(A, x)
 {% mathjax '{"conversion":{"em":14}}' %}
 \mathbf{A}\odot\mathbf{A}=\begin{bmatrix} a_{11} & a_{12} & \ldots & a_{1k} \\ a_{21} & a_{22} & \ldots & a_{2k} \\ \vdots & \vdots & \ddots & \vdots \\ b_{n1} & a_{n2} & \ldots & a_{nk}\end{bmatrix}, \mathbf{B}\odot\mathbf{B}=\begin{bmatrix} b_{11} & b_{12} & \ldots & b_{1m} \\ b_{21} & b_{22} & \ldots & a_{2m} \\ \vdots & \vdots & \ddots & \vdots \\ b_{k1} & b_{k2} & \ldots & b_{km}\end{bmatrix}
 {% endmathjax %}
-用行向量{% mathjax %}\mathbf{a}_i^{\mathsf{T}}\in \mathbb{R}^k{% endma让thjax %}表示矩阵{% mathjax %}\mathbf{A}{% endmathjax %}的第{% mathjax %}i{% endmathjax %}行，并让列向量{% mathjax %}\mathbf{b}_j\in \mathbb{R}^k{% endmathjax %}作为矩阵{% mathjax %}\mathbf{B}{% endmathjax %}的第{% mathjax %}j{% endmathjax %}列。要生成矩阵积{% mathjax %}\mathbf{C}= \mathbf{AB}{% endmathjax %}，最简单的方法是考虑{% mathjax %}\mathbf{A}{% endmathjax %}的行向量和{% mathjax %}\mathbf{B}{% endmathjax %}的列向量：
+用行向量{% mathjax %}\mathbf{a}_i^{\mathsf{T}}\in \mathbb{R}^k{% endmathjax %}表示矩阵{% mathjax %}\mathbf{A}{% endmathjax %}的第{% mathjax %}i{% endmathjax %}行，并让列向量{% mathjax %}\mathbf{b}_j\in \mathbb{R}^k{% endmathjax %}作为矩阵{% mathjax %}\mathbf{B}{% endmathjax %}的第{% mathjax %}j{% endmathjax %}列。要生成矩阵积{% mathjax %}\mathbf{C}= \mathbf{AB}{% endmathjax %}，最简单的方法是考虑{% mathjax %}\mathbf{A}{% endmathjax %}的行向量和{% mathjax %}\mathbf{B}{% endmathjax %}的列向量：
 {% mathjax '{"conversion":{"em":14}}' %}
 \mathbf{A}=\begin{bmatrix}a_1^{\mathsf{T}} \\a_2^{\mathsf{T}} \\ \vdots \\ a_n^{\mathsf{T}}\end{bmatrix}, \mathbf{B}= [\mathbf{b}_1 & \mathbf{b}_2 \ldots & \mathbf{b}_m]
 {% endmathjax %}
