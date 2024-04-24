@@ -688,28 +688,28 @@ f'(x)=y'=\frac{dy}{dx}=\frac{df}{dx}=\frac{d}{dx}f(x)=Df(x)=D_xf(x)
 
 为了微分一个由一些常见函数组成的函数，下面的一些法则方便使用。假设函数{% mathjax %}f{% endmathjax %}和{% mathjax %}g{% endmathjax %}都是可微的，{% mathjax %}C{% endmathjax %}是一个常数，则：
 {% mathjax '{"conversion":{"em":14}}' %}
-常数相乘法：
+常数相乘法则：
 \begin{equation*}
 \frac{d}{dx}[Cf(x)]=C\frac{d}{dx}f(x)
 \end{equation*}
 {% endmathjax %}
 
 {% mathjax '{"conversion":{"em":14}}' %}
-
+加法法则：
 \begin{equation*}
 \frac{d}{dx}[f(x)+g(x)]=\frac{d}{dx}f(x) + \frac{d}{dx}g(x)
 \end{equation*}
 {% endmathjax %}
 
 {% mathjax '{"conversion":{"em":14}}' %}
-
+乘法法则：
 \begin{equation*}
 \frac{d}{dx}[f(x)g(x)]=f(x)\frac{d}{dx}[g(x)] + g(x)\frac{d}{dx}[f(x)]
 \end{equation*}
 {% endmathjax %}
 
 {% mathjax '{"conversion":{"em":14}}' %}
-
+除法法则：
 \begin{equation*}
 \frac{d}{dx}[\frac{f(x)}{g(x)}]=\frac{g(x)\frac{d}{dx}[f(x)]-f(x)\frac{d}{dx}[g(x)]}{[g(x)]^2}
 \end{equation*}
