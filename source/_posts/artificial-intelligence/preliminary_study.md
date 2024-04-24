@@ -908,6 +908,67 @@ a.grad == d / a
 
 ##### 基本概率论
 
+假设我们掷骰子，想知道看到1的概率有多大，而不是看到另一个数字。如果骰子是公平的，那么所有六个结果{% mathjax %}\{1,\dots,6\}{% endmathjax %}都有相同的可能发生，因此我们可以说`1`发生的概率为{% mathjax %}\frac{1}{6}{% endmathjax %}。然而现实生活中，对于我们从工厂收到骰子，我们需要检查它是否有瑕疵，检查骰子的唯一方法是多次投掷并记录结果。对于每个骰子，我们将观察到{% mathjax %}\{1,\dots,6\}{% endmathjax %}中的一个值。对于每个值一种自然的方法是将它出现的次数除以投掷的总次数，即此事件(`event`)估计得概率值。大数定律告诉我们：随着投掷次数的增加，这个估计值越来越接近真实的潜在概率。
+```python
+import torch
+from torch.distributions import multinomial
+
+# 在统计学中，我们把从概率分布中抽取样本的过程称为抽样（sampling）。 
+# 笼统来说，可以把分布（distribution）看作对事件的概率分配，稍后我们将给出的更正式定义。 
+# 将概率分配给一些离散选择的分布称为多项分布（multinomial distribution）。
+
+# 为了抽取一个样本，即掷骰子，我们只需传入一个概率向量。输出是另一个相同长度的向量：它在索引i处的值是采样结果中i出现的次数
+fair_probs = torch.ones([6]) / 6
+multinomial.Multinomial(1, fair_probs).sample()
+
+# tensor([0., 0., 1., 0., 0., 0.])
+# 在估计一个骰子的公平性时，我们希望从同一分布中生成多个样本。如果用Python的for循环来完成这个任务，速度会慢得惊人。 
+# 因此我们使用深度学习框架的函数同时抽取多个样本，得到我们想要的任意形状的独立样本数组。
+multinomial.Multinomial(10, fair_probs).sample()
+
+# tensor([5., 3., 2., 0., 0., 0.])
+
+# 现在我们知道如何对骰子进行采样，我们可以模拟1000次投掷。然后，我们可以统计1000次投掷后，每个数字被投中了多少次。 
+# 具体来说，我们计算相对频率，以作为真实概率的估计。
+# 将结果存储为32位浮点数以进行除法
+counts = multinomial.Multinomial(1000, fair_probs).sample()
+counts / 1000  # 相对频率作为估计值
+
+# tensor([0.1550, 0.1820, 0.1770, 0.1710, 0.1600, 0.1550])
+
+# 因为我们是从一个公平的骰子中生成的数据，我们知道每个结果都有真实的概率1/6。
+# 大约是0.167，所以上面输出的估计值看起来不错。
+
+# 我们也可以看到这些概率如何随着时间的推移收敛到真实概率。让我们进行500组实验，每组抽取10个样本。
+counts = multinomial.Multinomial(10, fair_probs).sample((500,))
+cum_counts = counts.cumsum(dim=0)
+estimates = cum_counts / cum_counts.sum(dim=1, keepdims=True)
+
+d2l.set_figsize((6, 4.5))
+for i in range(6):
+    plot.plot(estimates[:, i].numpy(),label=("P(die=" + str(i + 1) + ")"))
+
+```
+{% asset_img p_3.png %}
+
+每条实线对应于骰子的`6`个值中的一个，并给出骰子在每组实验后出现值的估计概率。当我们通过更多的实验获得更多的数据时，这`6`条实体曲线向真实概率收敛。
+
+###### 概率论公理
+
+在处理骰子掷出时，我们将集合{% mathjax %}S=\{1,2,3,4,5,6\}{% endmathjax %}称为样本空间(`sample space`)或结果空间(`outcome space`)，其中每个元素都是结果(`outcome`)。事件(`event`)是给定样本空间的随机结果。例如，看到5和看到奇数{% mathjax %}S=\{1,3,5\}{% endmathjax %}都是支出骰子的有效事件。注意，如果一个随机实验的结果在{% mathjax %}\mathbf{A}{% endmathjax %}中，则事件{% mathjax %}\mathbf{A}{% endmathjax %}已经发生。也就是说，如果投掷出`3`点，因为{% mathjax %}3\in \{ 1,3,5\}{% endmathjax %}，我们可以说，看到奇数的事件发生了。
+
+概率(`probability`)可以被认为是将集合映射到真实值的函数。在给定的样本空间{% mathjax %}S{% endmathjax %}中，事件{% mathjax %}A{% endmathjax %}的概率，表示为{% mathjax %}P(A){% endmathjax %}，满足一下属性：
+- 对于任意事件{% mathjax %}A{% endmathjax %}，其概率从不会是负数，即{% mathjax %}P(A)\geq 0{% endmathjax %}。
+- 整个样本空间的概率为1，即P(S)=1。
+- 对于互斥(mutually exclusive)事件（对于所有{% mathjax %}i\neq j{% endmathjax %}）都有{% mathjax %}A_i\cap A_j=\emptyset{% endmathjax %}的任意一个可数序列，{% mathjax %}A_1,A_2,\dots,{% endmathjax %}序列中任意一个事件发生的概率等于它们各自发生概率的和，即{% mathjax %}P(\bigcup_{i=1}^{\infty}A_i)=\sum_{i=1}^{\infty}P(A_i){% endmathjax %}。
+
+以上也是概率论的公理，由科尔莫戈罗夫于`1933`年提出。有了这个公理系统，我们可以避免任何关于随机性的哲学争论；相反，我们可以用数学语言严格地推理。例如，假设事件{% mathjax %}A_1{% endmathjax %}为整个样本空间，且当所有{% mathjax %}i>1{% endmathjax %}时的{% mathjax %}A_i=\emptyset{% endmathjax %}，那么我们可以证明{% mathjax %}P(\emptyset)=0{% endmathjax %}，即不可能发生事件的概率是`0`。
+###### 随机变量
+
+在我们掷骰子的随机实验中，我们引入了随机变量的概念(`random variable`)。随机变量几乎可以是任意数量，并且它可以在随机实验的一组可能性中取一个值。考虑一个随机变量{% mathjax %}X{% endmathjax %}，其值在掷骰子的样本空间合{% mathjax %}S=\{1,2,3,4,5,6\}{% endmathjax %}中。我们可以将事件“看到一个5”表示为
 ##### 处理多个随机变量
 
+很多时候，我们会考虑多个随机变量。比如，我们可能需要对疾病和症状之间的关系进行建模。给定一个疾病和一个症状，比如“流感”和“咳嗽”，以某个概率存在或不存在于某个患者身上。我们需要估计这些概率以及概率之间的关系，以便我们可以运用我们的推断来实现更好的医疗服务。
+
+再举一个更复杂的例子：图像包含数百万像素，因此有数百万个随机变量。在许多情况下，图像会附带一个标签(`label`)，标识图像中的对象。我们也可以将标签视为一个随机变量。我们甚至可以将所有元数据视为随机变量，例如位置、时间、光圈、焦距、`ISO`、对焦距离和相机类型。所有这些都是联合发生的随机变量。当我们处理多个随机变量时，会有若干个变量是我们感兴趣的。
 ##### 期望和方差
