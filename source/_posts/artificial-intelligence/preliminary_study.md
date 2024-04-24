@@ -692,14 +692,23 @@ f'(x)=y'=\frac{dy}{dx}=\frac{df}{dx}=\frac{d}{dx}f(x)=Df(x)=D_xf(x)
 \begin{equation*}
 \frac{d}{dx}[Cf(x)]=C\frac{d}{dx}f(x)
 \end{equation*}
+{% endmathjax %}
+
+{% mathjax '{"conversion":{"em":14}}' %}
 
 \begin{equation*}
 \frac{d}{dx}[f(x)+g(x)]=\frac{d}{dx}f(x) + \frac{d}{dx}g(x)
 \end{equation*}
+{% endmathjax %}
+
+{% mathjax '{"conversion":{"em":14}}' %}
 
 \begin{equation*}
 \frac{d}{dx}[f(x)g(x)]=f(x)\frac{d}{dx}[g(x)] + g(x)\frac{d}{dx}[f(x)]
 \end{equation*}
+{% endmathjax %}
+
+{% mathjax '{"conversion":{"em":14}}' %}
 
 \begin{equation*}
 \frac{d}{dx}[\frac{f(x)}{g(x)}]=\frac{g(x)\frac{d}{dx}[f(x)]-f(x)\frac{d}{dx}[g(x)]}{[g(x)]^2}
@@ -805,7 +814,6 @@ plot(x, [f(x), 2 * x - 3], 'x', 'f(x)', legend=['f(x)', 'Tangent line (x=1)'])
 **微分和积分是微积分的两个分支，前者可以应用于深度学习中的优化问题。导数可以被解释为函数相对于其变量的瞬时变化率，它也是函数曲线的切线的斜率。梯度是一个向量，其分量是多变量函数相对于其所有变量的偏导数。链式法则可以用来微分复合函数。**
 
 #### 自动微分
-
 
 
 #### 概率统计
