@@ -944,9 +944,9 @@ counts = multinomial.Multinomial(10, fair_probs).sample((500,))
 cum_counts = counts.cumsum(dim=0)
 estimates = cum_counts / cum_counts.sum(dim=1, keepdims=True)
 
-d2l.set_figsize((6, 4.5))
+plt.set_figure((6, 4.5))
 for i in range(6):
-    plot.plot(estimates[:, i].numpy(),label=("P(die=" + str(i + 1) + ")"))
+    plt.plot(estimates[:, i].numpy(),label=("P(die=" + str(i + 1) + ")"))
 
 ```
 {% asset_img p_3.png %}
