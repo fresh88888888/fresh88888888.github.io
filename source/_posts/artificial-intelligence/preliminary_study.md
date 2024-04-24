@@ -688,19 +688,19 @@ f'(x)=y'=\frac{dy}{dx}=\frac{df}{dx}=\frac{d}{dx}f(x)=Df(x)=D_xf(x)
 
 为了微分一个由一些常见函数组成的函数，下面的一些法则方便使用。假设函数{% mathjax %}f{% endmathjax %}和{% mathjax %}g{% endmathjax %}都是可微的，{% mathjax %}C{% endmathjax %}是一个常数，则：
 {% mathjax '{"conversion":{"em":14}}' %}
-常数相乘法则：
+
 \begin{equation*}
 \frac{d}{dx}[Cf(x)]=C\frac{d}{dx}f(x)
 \end{equation*}
-加法法则：
+
 \begin{equation*}
 \frac{d}{dx}[f(x)+g(x)]=\frac{d}{dx}f(x) + \frac{d}{dx}g(x)
 \end{equation*}
-乘法法则：
+
 \begin{equation*}
 \frac{d}{dx}[f(x)g(x)]=f(x)\frac{d}{dx}[g(x)] + g(x)\frac{d}{dx}[f(x)]
 \end{equation*}
-除法法则：
+
 \begin{equation*}
 \frac{d}{dx}[\frac{f(x)}{g(x)}]=\frac{g(x)\frac{d}{dx}[f(x)]-f(x)\frac{d}{dx}[g(x)]}{[g(x)]^2}
 \end{equation*}
@@ -780,19 +780,33 @@ plot(x, [f(x), 2 * x - 3], 'x', 'f(x)', legend=['f(x)', 'Tangent line (x=1)'])
 
 我们可以连结一个多元函数对其所有变量的偏导数，以得到该函数的梯度(`gradient`)向量。具体而言，设函数{% mathjax %}f:\mathbb{R}\rightarrow \mathbb{R}{% endmathjax %}的输入是一个`n`维向量{% mathjax %}\mathbf{x}=[x1,x2,\dots,x_n]^{\mathsf{T}}{% endmathjax %}，并且输出是一个标量。函数{% mathjax %}f(x){% endmathjax %}相对于{% mathjax %}x{% endmathjax %}的梯度是一个包含n个偏导数的向量：
 {% mathjax '{"conversion":{"em":14}}' %}
-\nabla_x f(x)=[\frac{\partial f(x)}{\partial x_1},\frac{\partial f(x)}{\partial x_2,\dots,\frac{\partial f(x)}{\partial x_n}}]^{\mathsf{T}}
+\nabla_x f(x)=[\frac{\partial f(x)}{\partial x_1},\frac{\partial f(x)}{\partial x_2},\dots,\frac{\partial f(x)}{\partial x_n}]^{\mathsf{T}}
 {% endmathjax %}
 其中{% mathjax %}\nabla_x f(x){% endmathjax %}通常在没有歧义时被{% mathjax %}\nabla f(x){% endmathjax %}取代。假设{% mathjax %}x{% endmathjax %}为{% mathjax %}n{% endmathjax %}维向量，在微分多元函数时经常使用以下规则：
-- 对于所有{% mathjax %}mathbf{A}\in \mathbb{R}^{m\times n}{% endmathjax %},都有{% mathjax %}\nabla_x \mathbf{Ax}=\mathbf{A}^{\mathsf{T}}{% endmathjax %}。
-- 对于所有{% mathjax %}mathbf{A}\in \mathbb{R}^{n\times m}{% endmathjax %},都有{% mathjax %}\nabla_x \mathbf{x}^{\mathsf{T}}\mathbf{A}=\mathbf{A}{% endmathjax %}。
-- 对于所有{% mathjax %}mathbf{A}\in \mathbb{R}^{n\times n}{% endmathjax %},都有{% mathjax %}\nabla_x \mathbf{x}^{\mathsf{T}}\mathbf{Ax}=(\mathbf{A}+\mathbf{a}^{\mathsf{T}})\mathbf{x}{% endmathjax %}。
+- 对于所有{% mathjax %}\mathbf{A}\in \mathbb{R}^{m\times n}{% endmathjax %},都有{% mathjax %}\nabla_x \mathbf{Ax}=\mathbf{A}^{\mathsf{T}}{% endmathjax %}。
+- 对于所有{% mathjax %}\mathbf{A}\in \mathbb{R}^{n\times m}{% endmathjax %},都有{% mathjax %}\nabla_x \mathbf{x}^{\mathsf{T}}\mathbf{A}=\mathbf{A}{% endmathjax %}。
+- 对于所有{% mathjax %}\mathbf{A}\in \mathbb{R}^{n\times n}{% endmathjax %},都有{% mathjax %}\nabla_x \mathbf{x}^{\mathsf{T}}\mathbf{Ax}=(\mathbf{A}+\mathbf{a}^{\mathsf{T}})\mathbf{x}{% endmathjax %}。
 - {% mathjax %}\nabla_x \lVert \mathbf{x}\rVert^2 = \nabla_x\mathbf{x}^{\mathsf{T}}\mathbf{x} = 2\mathbf{x}{% endmathjax %}。
 
 同样，对于任何矩阵{% mathjax %}\mathbf{X}{% endmathjax %}，都有{% mathjax %}\nabla_x \lVert \mathbf{X} \rVert_F^2 = 2\mathbf{X}{% endmathjax %}，正如我们之后将看到的，梯度对于设计深度学习中的优化算法有很大用处。
 ##### 链式法则
 
+然而，上面方法可能很难找到梯度。这是因为在深度学习中，**多元函数**通常是复合(`composite`)的，所以难以应用上述任何规则来微分这些函数。幸运的是，链式法则可以被用来微分复合函数。让我们先考虑单变量函数。假设函数{% mathjax %}y=f(u){% endmathjax %}和{% mathjax %}u=g(x){% endmathjax %}都是可微的，根据链式法则：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{dy}{dx}=\frac{dy}{du}\frac{du}{dx}
+{% endmathjax %}
+现在考虑一个更一般的场景，即函数具有任意数量的变量的情况。假设可微分函数{% mathjax %}y{% endmathjax %}有变量{% mathjax %}u_1,u_2,\dots,u_m{% endmathjax %}，其中每个可微分函数{% mathjax %}u_i{% endmathjax %}都有变量{% mathjax %}x_1,x_2,\dots,x_n{% endmathjax %}。注意{% mathjax %}y{% endmathjax %}是{% mathjax %}x_1,x_2,\dots,x_n{% endmathjax %}的函数。对于任意{% mathjax %}i=1,2,\dots,n{% endmathjax %}，链式法则给出：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial y}{\partial x_i}= \frac{\partial y}{\partial u_1}\frac{\partial u_1}{\partial x_i} + \frac{\partial y}{\partial u_2}\frac{\partial u_2}{\partial x_i} + \dots + \frac{\partial y}{\partial u_m}\frac{\partial u_m}{\partial x_i}
+{% endmathjax %}
+
+##### 总结
+
+**微分和积分是微积分的两个分支，前者可以应用于深度学习中的优化问题。导数可以被解释为函数相对于其变量的瞬时变化率，它也是函数曲线的切线的斜率。梯度是一个向量，其分量是多变量函数相对于其所有变量的偏导数。链式法则可以用来微分复合函数。**
 
 #### 自动微分
+
+
 
 #### 概率统计
 
