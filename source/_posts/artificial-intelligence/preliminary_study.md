@@ -688,7 +688,7 @@ f'(x)=y'=\frac{dy}{dx}=\frac{df}{dx}=\frac{d}{dx}f(x)=Df(x)=D_xf(x)
 
 为了微分一个由一些常见函数组成的函数，下面的一些法则方便使用。假设函数{% mathjax %}f{% endmathjax %}和{% mathjax %}g{% endmathjax %}都是可微的，{% mathjax %}C{% endmathjax %}是一个常数，则：
 {% mathjax '{"conversion":{"em":14}}' %}
-
+常数相乘法：
 \begin{equation*}
 \frac{d}{dx}[Cf(x)]=C\frac{d}{dx}f(x)
 \end{equation*}
