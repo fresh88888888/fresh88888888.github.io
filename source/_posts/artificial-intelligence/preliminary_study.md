@@ -651,7 +651,7 @@ torch.norm(torch.ones((4, 9)))
 
 我们首先讨论导数的计算，这是几乎所有深度学习优化算法的关键步骤。在深度学习中，我们通常选择对于模型参数可微的损失函数。简而言之，对于每个参数，如果我们把这个参数增加或减少一个无穷小的量，可以知道损失会以多快的速度增加或减少。假设我们有一个函数{% mathjax %}f: \mathbb{R}\rightarrow \mathbb{R}{% endmathjax %}，其输入和输出都是标量。如果{% mathjax %}f{% endmathjax %}的导数存在，这个极限被定义为：
 {% mathjax '{"conversion":{"em":14}}' %}
-f'(x)=\lim{h \to 0} \frac{f(x+h)-f(x)}{h}
+f'(x)=\lim_{h \to 0} \frac{f(x+h)-f(x)}{h}
 {% endmathjax %}
 如果{% mathjax %}f'(a){% endmathjax %}存在，则称{% mathjax %}f{% endmathjax %}在{% mathjax %}a{% endmathjax %}处可微(`differentiable`)的。如果
 #### 自动微分
