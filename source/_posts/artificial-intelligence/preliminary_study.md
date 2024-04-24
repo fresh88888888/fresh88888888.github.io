@@ -653,7 +653,145 @@ torch.norm(torch.ones((4, 9)))
 {% mathjax '{"conversion":{"em":14}}' %}
 f'(x)=\lim_{h \to 0} \frac{f(x+h)-f(x)}{h}
 {% endmathjax %}
-如果{% mathjax %}f'(a){% endmathjax %}存在，则称{% mathjax %}f{% endmathjax %}在{% mathjax %}a{% endmathjax %}处可微(`differentiable`)的。如果
+如果{% mathjax %}f'(a){% endmathjax %}存在，则称{% mathjax %}f{% endmathjax %}在{% mathjax %}a{% endmathjax %}处可微(`differentiable`)的。如果{% mathjax %}f{% endmathjax %}在一个区间内的每个数上都是可微的，则此函数在此区间中是可微的。我们可以将导数{% mathjax %}f'(x){% endmathjax %}解释为{% mathjax %}f(x){% endmathjax %}相对于{% mathjax %}x{% endmathjax %}的瞬时(`instantaneous`)变化率。所谓的瞬时变化率是基于{% mathjax %}x{% endmathjax %}中的变化{% mathjax %}h{% endmathjax %}，且{% mathjax %}h{% endmathjax %}接近`0`。为了更好的解释导数，让我们做一个实验。定义{% mathjax %}u=f(x)=3x^2-4x{% endmathjax %}如下：
+```python
+import numpy as np
+import torch as torch
+from matplotlib_inline import backend_inline
+
+def f(x):
+    return 3 * x ** 2 - 4 * x
+
+def numerical_lim(f, x, h):
+    return (f(x + h) - f(x)) / h
+
+h = 0.1
+for i in range(5):
+    print(f'h={h:.5f}, numerical limit={numerical_lim(f, 1, h):.5f}')
+    h *= 0.1
+
+# h=0.10000, numerical limit=2.30000
+# h=0.01000, numerical limit=2.03000
+# h=0.00100, numerical limit=2.00300
+# h=0.00010, numerical limit=2.00030
+# h=0.00001, numerical limit=2.00003
+```
+通过{% mathjax %}x=1{% endmathjax %}并让{% mathjax %}h{% endmathjax %}接近于`0`，{% mathjax %}\frac{f(x+h) - f(x)}{h}{% endmathjax %}结果接近于`2`.虽然这个实验不是数学证明。但当{% mathjax %}x=1{% endmathjax %}时，导数{% mathjax %}u'{% endmathjax %}是`2`。让我们熟悉一下导数的几个等价符号。给定{% mathjax %}y=f(x){% endmathjax %}，其中{% mathjax %}x{% endmathjax %}和{% mathjax %}y{% endmathjax %}分别是{% mathjax %}f{% endmathjax %}的自变量和因变量。以下表达式是等价的：
+{% mathjax '{"conversion":{"em":14}}' %}
+f'(x)=y'=\frac{dy}{dx}=\frac{df}{dx}=\frac{d}{dx}f(x)=Df(x)=D_xf(x)
+{% endmathjax %}
+其中符号{% mathjax %}\frac{d}{dx}{% endmathjax %}和{% mathjax %}D{% endmathjax %}是微分运算符，表示微分操作，我们可以使用以下规则来对常见函数求微分：
+- {% mathjax %}DC=0{% endmathjax %}({% mathjax %}C{% endmathjax %}是一个常熟)。
+- {% mathjax %}Dx^n=nx^{n-1}{% endmathjax %}(幂率(power rule)，{% mathjax %}n{% endmathjax %}是任意实数)。
+- {% mathjax %}De^x=e^x{% endmathjax %}。
+- {% mathjax %}D\ln(x)=1/x{% endmathjax %}。
+
+为了微分一个由一些常见函数组成的函数，下面的一些法则方便使用。假设函数{% mathjax %}f{% endmathjax %}和{% mathjax %}g{% endmathjax %}都是可微的，{% mathjax %}C{% endmathjax %}是一个常数，则：
+{% mathjax '{"conversion":{"em":14}}' %}
+常数相乘法则：
+\begin{equation*}
+\frac{d}{dx}[Cf(x)]=C\frac{d}{dx}f(x)
+\end{equation*}
+加法法则：
+\begin{equation*}
+\frac{d}{dx}[f(x)+g(x)]=\frac{d}{dx}f(x) + \frac{d}{dx}g(x)
+\end{equation*}
+乘法法则：
+\begin{equation*}
+\frac{d}{dx}[f(x)g(x)]=f(x)\frac{d}{dx}[g(x)] + g(x)\frac{d}{dx}[f(x)]
+\end{equation*}
+除法法则：
+\begin{equation*}
+\frac{d}{dx}[\frac{f(x)}{g(x)}]=\frac{g(x)\frac{d}{dx}[f(x)]-f(x)\frac{d}{dx}[g(x)]}{[g(x)]^2}
+\end{equation*}
+{% endmathjax %}
+现在我们可以应用上述几个法则来计算{% mathjax %}u'=f'(x)=3\frac{d}{dx}x^2 - 4\frac{d}{dx}x = 6x-4{% endmathjax %}。令{% mathjax %}x=1{% endmathjax %}，我们有{% mathjax %}u'=2{% endmathjax %}：在这个实验中，数值结果接近`2`，这一点得到了前面的实验的支持。当{% mathjax %}x=1{% endmathjax %}时，此导数也是曲线{% mathjax %}u=f(x){% endmathjax %}切线的斜率。为了对导数的这种解释进行可视化，我们将使用`matplotlib`，这是一个`Python中`流行的绘图库。要配置`matplotlib`生成图形的属性，我们需要定义几个函数。在下面，`use_svg_display`函数指定`matplotlib`软件包输出`svg`图表以获得更清晰的图像。
+```python
+def use_svg_display():  
+    """使用svg格式在Jupyter中显示绘图"""
+    backend_inline.set_matplotlib_formats('svg')
+
+# 我们定义set_figsize函数来设置图表大小。
+def set_figsize(figsize=(3.5, 2.5)): 
+    """设置matplotlib的图表大小"""
+    use_svg_display()
+
+# 下面的set_axes函数用于设置由matplotlib生成图表的轴的属性。
+def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
+    """设置matplotlib的轴"""
+    axes.set_xlabel(xlabel)
+    axes.set_ylabel(ylabel)
+    axes.set_xscale(xscale)
+    axes.set_yscale(yscale)
+    axes.set_xlim(xlim)
+    axes.set_ylim(ylim)
+    if legend:
+        axes.legend(legend)
+    axes.grid()
+
+# 通过这三个用于图形配置的函数，定义一个plot函数来简洁地绘制多条曲线，因为我们需要可视化许多曲线。
+def plot(X, Y=None, xlabel=None, ylabel=None, legend=None, xlim=None,ylim=None, xscale='linear', yscale='linear',
+         fmts=('-', 'm--', 'g-.', 'r:'), figsize=(3.5, 2.5), axes=None):
+    """绘制数据点"""
+    if legend is None:
+        legend = []
+
+    set_figsize(figsize)
+    axes = axes if axes else d2l.plt.gca()
+
+    # 如果X有一个轴，输出True
+    def has_one_axis(X):
+        return (hasattr(X, "ndim") and X.ndim == 1 or isinstance(X, list)
+                and not hasattr(X[0], "__len__"))
+
+    if has_one_axis(X):
+        X = [X]
+    if Y is None:
+        X, Y = [[]] * len(X), X
+    elif has_one_axis(Y):
+        Y = [Y]
+    if len(X) != len(Y):
+        X = X * len(Y)
+    axes.cla()
+    for x, y, fmt in zip(X, Y, fmts):
+        if len(x):
+            axes.plot(x, y, fmt)
+        else:
+            axes.plot(y, fmt)
+    set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
+
+# 现在我们可以绘制函数u=f(x)及其在x=1处的切线y=2x-3，其中系数2是切线的斜率。
+x = np.arange(0, 3, 0.1)
+plot(x, [f(x), 2 * x - 3], 'x', 'f(x)', legend=['f(x)', 'Tangent line (x=1)'])
+```
+{% asset_img p_2.png %}
+
+##### 偏导数
+
+到目前为止，我们只讨论了仅含一个变量的函数的微分。在深度学习中，函数通常依赖于许多变量。因此，我们需要将微分的思想推广到多元函数(`multivariate function`)上。设{% mathjax %} y=f(x_1,x_2,\dots,x_n){% endmathjax %}是一个具有{% mathjax %}n{% endmathjax %}个变量的函数，{% mathjax %}y{% endmathjax %}关于第{% mathjax %}i{% endmathjax %}个参数{% mathjax %}x_i{% endmathjax %}的偏导数(`partial derivative`)为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial y}{\partial x_i}=\lim_{h \to 0}\frac{f(x_1,\dots,x_{i-1},x_i+h,x_{i+1},\dots,x_n)-f(x_1,\dots,x_i,\dots,x_n)}{h}
+{% endmathjax %}
+为了计算{% mathjax %}\frac{\partial y}{\partial x_i}{% endmathjax %}，我们可以简单地将{% mathjax %}x_1,\dots,x_{i-1},x_{i+1},\dots,x_n{% endmathjax %}看做常熟，并计算{% mathjax %}y{% endmathjax %}关于{% mathjax %}x_i{% endmathjax %}的导数。对于偏导数的表示以下是等价的：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial y}{\partial x_i}=\frac{\partial f}{\partial x_i}=f_{x_i}=f_i=D_if=D_{x_i}f
+{% endmathjax %}
+##### 梯度
+
+我们可以连结一个多元函数对其所有变量的偏导数，以得到该函数的梯度(`gradient`)向量。具体而言，设函数{% mathjax %}f:\mathbb{R}\rightarrow \mathbb{R}{% endmathjax %}的输入是一个`n`维向量{% mathjax %}\mathbf{x}=[x1,x2,\dots,x_n]^{\mathsf{T}}{% endmathjax %}，并且输出是一个标量。函数{% mathjax %}f(x){% endmathjax %}相对于{% mathjax %}x{% endmathjax %}的梯度是一个包含n个偏导数的向量：
+{% mathjax '{"conversion":{"em":14}}' %}
+\nabla_x f(x)=[\frac{\partial f(x)}{\partial x_1},\frac{\partial f(x)}{\partial x_2,\dots,\frac{\partial f(x)}{\partial x_n}}]^{\mathsf{T}}
+{% endmathjax %}
+其中{% mathjax %}\nabla_x f(x){% endmathjax %}通常在没有歧义时被{% mathjax %}\nabla f(x){% endmathjax %}取代。假设{% mathjax %}x{% endmathjax %}为{% mathjax %}n{% endmathjax %}维向量，在微分多元函数时经常使用以下规则：
+- 对于所有{% mathjax %}mathbf{A}\in \mathbb{R}^{m\times n}{% endmathjax %},都有{% mathjax %}\nabla_x \mathbf{Ax}=\mathbf{A}^{\mathsf{T}}{% endmathjax %}。
+- 对于所有{% mathjax %}mathbf{A}\in \mathbb{R}^{n\times m}{% endmathjax %},都有{% mathjax %}\nabla_x \mathbf{x}^{\mathsf{T}}\mathbf{A}=\mathbf{A}{% endmathjax %}。
+- 对于所有{% mathjax %}mathbf{A}\in \mathbb{R}^{n\times n}{% endmathjax %},都有{% mathjax %}\nabla_x \mathbf{x}^{\mathsf{T}}\mathbf{Ax}=(\mathbf{A}+\mathbf{a}^{\mathsf{T}})\mathbf{x}{% endmathjax %}。
+- {% mathjax %}\nabla_x \lVert \mathbf{x}\rVert^2 = \nabla_x\mathbf{x}^{\mathsf{T}}\mathbf{x} = 2\mathbf{x}{% endmathjax %}。
+
+同样，对于任何矩阵{% mathjax %}\mathbf{X}{% endmathjax %}，都有{% mathjax %}\nabla_x \lVert \mathbf{X} \rVert_F^2 = 2\mathbf{X}{% endmathjax %}，正如我们之后将看到的，梯度对于设计深度学习中的优化算法有很大用处。
+##### 链式法则
+
+
 #### 自动微分
 
 #### 概率统计
