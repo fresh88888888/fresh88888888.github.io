@@ -29,4 +29,19 @@ mathjax:
 price=w_{area}\cdot area + w_{age}\cdot age + b
 {% endmathjax %}
 
-对于{% mathjax %}w_{area}{% endmathjax %}和{% mathjax %}w_{age}{% endmathjax %}称为**权重**`(weight)`，权重决定了每个特征对我们预测值的影响，{% mathjax %}b{% endmathjax %}称为偏置`(bias)`、偏移量`(offset)`或截距`(intercept)`。偏置是指当所有特征取值为`0`时，预测值应该为多少。既使现实生活中不会有房屋的面积为`0`或房龄正好为`0`年，我们仍然需要偏置项。如果没有偏置项，我们模型的表达能力将会受到限制。严格来说，它是输入特征的一个**仿射变换**`(affine transformation)`。仿射变换的特点是通过加权和对特征进行线性变换`(linear transformation)`，并通过偏置项来进行平移`(translation)`。
+对于{% mathjax %}w_{area}{% endmathjax %}和{% mathjax %}w_{age}{% endmathjax %}称为**权重**`(weight)`，权重决定了每个特征对我们预测值的影响，{% mathjax %}b{% endmathjax %}称为偏置`(bias)`、偏移量`(offset)`或截距`(intercept)`。偏置是指当所有特征取值为`0`时，预测值应该为多少。既使现实生活中不会有房屋的面积为`0`或房龄正好为`0`年，我们仍然需要偏置项。如果没有偏置项，我们模型的表达能力将会受到限制。严格来说，它是输入特征的一个**仿射变换**`(affine transformation)`。仿射变换的特点是通过加权和对特征进行线性变换`(linear transformation)`，并通过偏置项来进行平移`(translation)`。给定一个数据集。我们的目标是寻找模型的权重{% mathjax %}w{% endmathjax %}和偏置{% mathjax %}b{% endmathjax %}，使得根据模型做出的预测大体符合数据里的真实价格。输出的预测值由输入特征通过线性模型的仿射变换决定。仿射变换由所选权重和偏置确定。而在机器学习领域，我们通常使用的是高维数据集，建模时采用线性代数表示法会比较方便。当我们的输入包含{% mathjax %}d{% endmathjax %}个特征时，我们将预测结果{% mathjax %}\hat{y}{% endmathjax %}(通常用“尖角”符号表示{% mathjax %}y{% endmathjax %}的估计值)表示为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\hat{y}=w_1_1+\dots+w_dx_d+b
+{% endmathjax %}
+将所有特征放到向量{% mathjax %}x\in \mathbb{R}^d{% endmathjax %}中，我们可以用点积形式来简洁地表达模型：
+{% mathjax '{"conversion":{"em":14}}' %}
+\hat{y}=w^{\mathsf{T}}x + b
+{% endmathjax %}
+向量{% mathjax %}x{% endmathjax %}对应于单个数据样本的特征。用符号表示的矩阵{% mathjax %}X\in \mathbb{R}^{n\times d}{% endmathjax %}可以很方便的引用我们整个数据集的{% mathjax %}n{% endmathjax %}个样本。其中，{% mathjax %}X{% endmathjax %}的每一行是一个样本，每一列是一种特征。对于特征集合{% mathjax %}X{% endmathjax %}，预测值{% mathjax %}\hat{y}\in \mathbb{R}^n{% endmathjax %}可以通过矩阵向量乘法表示为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\hat{y}=Xw+b
+{% endmathjax %}
+这个过程中的求和将使用广播机制。给定训练数据特征{% mathjax %}X{% endmathjax %}和对应的已知标签{% mathjax %}y{% endmathjax %}，线性回归的目标是找到一组权重向量{% mathjax %}w{% endmathjax %}和偏置{% mathjax %}b{% endmathjax %}：当给定从{% mathjax %}X{% endmathjax %}的同分布中取样的新样本特征时，这组权重向量和偏置能够使得新样本预测标签的误差尽可能小。虽然我们相信给定{% mathjax %}x{% endmathjax %}预测{% mathjax %}y{% endmathjax %}的最佳模型会是线性的，但我们很难找到一个有{% mathjax %}n{% endmathjax %}个样本的真实数据集，其中对于所有的{% mathjax %}1\leq i \leq n,y^{(i)}{% endmathjax %}完全等于{% mathjax %}\mathbf{w}^{\mathsf{T}}\mathbf{x}^{(i)}+b{% endmathjax %}。无论我们是用什么手段来观察特征{% mathjax %}X{% endmathjax %}和标签{% mathjax %}y{% endmathjax %}，都可能会出现少量的观测误差。因此，即使确信特征与标签的潜在关系是线性的，我们也会加入一个噪声项来考虑观测误差带来的影响。再开始寻找最好的模型参数(`model parameters`){% mathjax %}w{% endmathjax %}和{% mathjax %}b{% endmathjax %}之前，我们还需要两个东西：(1)一种模型质量的度量方式；(2)一种能够更新模型以提高模型预测质量的方法。
+##### 损失函数
+
+在我们开始考虑如何用模型拟合(`fit`)数据之前，我们需要确定一个拟合程度的度量。损失函数(`loss function`)能够量化目标的实际值与预测值之间的差距。通常我们会选择非负数作为损失，且数值越小表示损失越小，完美预测时的损失为`0`。回归问题中最常用的损失函数是平方误差函数。
