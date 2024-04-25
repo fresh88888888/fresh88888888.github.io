@@ -687,29 +687,26 @@ f'(x)=y'=\frac{dy}{dx}=\frac{df}{dx}=\frac{d}{dx}f(x)=Df(x)=D_xf(x)
 - {% mathjax %}D\ln(x)=1/x{% endmathjax %}。
 
 为了微分一个由一些常见函数组成的函数，下面的一些法则方便使用。假设函数{% mathjax %}f{% endmathjax %}和{% mathjax %}g{% endmathjax %}都是可微的，{% mathjax %}C{% endmathjax %}是一个常数，则：
-{% mathjax '{"conversion":{"em":14}}' %}
 常数相乘法则：
+{% mathjax '{"conversion":{"em":14}}' %}
 \begin{equation*}
 \frac{d}{dx}[Cf(x)]=C\frac{d}{dx}f(x)
 \end{equation*}
 {% endmathjax %}
-
-{% mathjax '{"conversion":{"em":14}}' %}
 加法法则：
+{% mathjax '{"conversion":{"em":14}}' %}
 \begin{equation*}
 \frac{d}{dx}[f(x)+g(x)]=\frac{d}{dx}f(x) + \frac{d}{dx}g(x)
 \end{equation*}
 {% endmathjax %}
-
-{% mathjax '{"conversion":{"em":14}}' %}
 乘法法则：
+{% mathjax '{"conversion":{"em":14}}' %}
 \begin{equation*}
 \frac{d}{dx}[f(x)g(x)]=f(x)\frac{d}{dx}[g(x)] + g(x)\frac{d}{dx}[f(x)]
 \end{equation*}
 {% endmathjax %}
-
-{% mathjax '{"conversion":{"em":14}}' %}
 除法法则：
+{% mathjax '{"conversion":{"em":14}}' %}
 \begin{equation*}
 \frac{d}{dx}[\frac{f(x)}{g(x)}]=\frac{g(x)\frac{d}{dx}[f(x)]-f(x)\frac{d}{dx}[g(x)]}{[g(x)]^2}
 \end{equation*}
@@ -1007,6 +1004,58 @@ P(B) = \sum_{A}P(A,B)
 |{% mathjax %}P(D_1=0|H){% endmathjax %}|0|0.99|
 
 **请注意**，每列的加和都是`1`（但每行的加和不是），因为条件概率需要总和为`1`，就像概率一样。让我们计算如果测试出来呈阳性，患者感染`HIV`的概率，即{% mathjax %}P(H=1|D_1=1){% endmathjax %}。显然，这将取决于疾病有多常见，因为它会影响错误警报的数量。假设人口总体是相当健康的，例如，{% mathjax %}P(H=1)=0.0015{% endmathjax %}。为了应用贝叶斯定理，我们需要运用边际化和乘法法则来确定。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align*}\label{2}
+& P(D_1=1) \\
+& P(D_1=1,H=0)+P(D_1=1,H=1) \\
+& P(D_1=1,H=0)P(H=0)+P(D_1=1,H=1)P(H=1) \\
+& =0.011485
+\end{align*}
+{% endmathjax %}
+因此，得到：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align*}\label{2}
+& P(H=1|D_1=1) \\
+& \frac{P(D_1=1,H=1)P(H=1)}{P(D_1=1)} \\
+& =0.1306
+\end{align*}
+{% endmathjax %}
+换句话说，尽管使用了非常准确的测试，患者实际上患有艾滋病的几率只有`13.06%`。正如我们所看到的，概率可能是违反直觉的。患者在收到这样可怕的消息后应该怎么办？很可能，患者会要求医生进行另一次测试来确定病情。第二个测试具有不同的特性，它不如第一个测试那么精确，如下表所示{% mathjax %}P(D_2|H){% endmathjax %}：
+|条件概率|{% mathjax %}H=1{% endmathjax %}|{% mathjax %}H=0{% endmathjax %}|
+|:--|:--|:--|
+|{% mathjax %}P(D_2=1|H){% endmathjax %}|0.98|0.03|
+|{% mathjax %}P(D_2=0|H){% endmathjax %}|0.02|0.97|
+
+不幸的是，第二次测试也显示阳性。让我们通过假设条件独立性来计算出应用`Bayes`定理的必要概率：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align*}\label{2}
+& P(D_1=1,D_2=1|H=0) \\
+& P(D_1=1|H=0)P(D_2=1|H=0) \\
+& =0.0003
+& \\
+& P(D_1=1,D_2=1|H=1) \\
+& P(D_1=1|H=1)P(D_2=1|H=1) \\
+& =0.98
+\end{align*}
+{% endmathjax %}
+现在我们可以应用边际化和乘法规则：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align*}\label{2}
+& P(D_1=1,D_2=1) \\
+& P(D_1=1,D_2=1,H=0) + P(D_1=1,D_2=1,H=1) \\
+& P(D_1=1,D_2=1,H=0)P(H=0) + P(D_1=1,D_2=1,H=1)P(H=1) \\
+& =0.00176955
+\end{align*}
+{% endmathjax %}
+最后，鉴于存在两次阳性检测，患者患有艾滋病的概率为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align*}\label{2}
+& P(H=1|D_1=1,D_2=1) \\
+& \frac{P(D_1=1,D_2=1|H=1)P(H=1)}{P(D_1=1,D_2=1)} \\
+& =0.8307
+\end{align*}
+{% endmathjax %}
+也就是说，第二次测试使我们能够对患病的情况获得更高的信心。尽管第二次检验比第一次检验的准确性要低得多，但它仍然显著提高我们的预测概率。
 ##### 期望和方差
 
 为了概括概率分布的关键特征，我们需要一些测量方法。一个随机变量{% mathjax %}X{% endmathjax %}的**期望**（`expectation`，或**平均值**(`average`)）表示为：
