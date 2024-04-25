@@ -31,7 +31,7 @@ price=w_{area}\cdot area + w_{age}\cdot age + b
 
 对于{% mathjax %}w_{area}{% endmathjax %}和{% mathjax %}w_{age}{% endmathjax %}称为**权重**`(weight)`，权重决定了每个特征对我们预测值的影响，{% mathjax %}b{% endmathjax %}称为偏置`(bias)`、偏移量`(offset)`或截距`(intercept)`。偏置是指当所有特征取值为`0`时，预测值应该为多少。既使现实生活中不会有房屋的面积为`0`或房龄正好为`0`年，我们仍然需要偏置项。如果没有偏置项，我们模型的表达能力将会受到限制。严格来说，它是输入特征的一个**仿射变换**`(affine transformation)`。仿射变换的特点是通过加权和对特征进行线性变换`(linear transformation)`，并通过偏置项来进行平移`(translation)`。给定一个数据集。我们的目标是寻找模型的权重{% mathjax %}w{% endmathjax %}和偏置{% mathjax %}b{% endmathjax %}，使得根据模型做出的预测大体符合数据里的真实价格。输出的预测值由输入特征通过线性模型的仿射变换决定。仿射变换由所选权重和偏置确定。而在机器学习领域，我们通常使用的是高维数据集，建模时采用线性代数表示法会比较方便。当我们的输入包含{% mathjax %}d{% endmathjax %}个特征时，我们将预测结果{% mathjax %}\hat{y}{% endmathjax %}(通常用“尖角”符号表示{% mathjax %}y{% endmathjax %}的估计值)表示为：
 {% mathjax '{"conversion":{"em":14}}' %}
-\hat{y}=w_1_1+\dots +w_d x_d + b
+\hat{y}=w_1x_1+\dots +w_dx_d + b
 {% endmathjax %}
 将所有特征放到向量{% mathjax %}x\in \mathbb{R}^d{% endmathjax %}中，我们可以用点积形式来简洁地表达模型：
 {% mathjax '{"conversion":{"em":14}}' %}
