@@ -27,4 +27,5 @@ mathjax:
 {% mathjax '{"conversion":{"em":14}}' %}
 price=w_{area}\cdot area + w_{age}\cdot age + b
 {% endmathjax %}
-{% mathjax %}w_{area}{% endmathjax %}和{% mathjax %}w_{age}{% endmathjax %}称为**权重**(`weight`)，权重决定了每个特征对我们预测值的影响，{% mathjax %}b{% endmathjax %}称为偏置(`bias`)、偏移量(`offset`)或截距(`intercept`)。偏置是指当所有特征取值为0时，预测值应该为多少。既使现实生活中不会有房屋的面积为0或房龄正好为0年，我们仍然需要偏置项。如果没有偏置项，我们模型的表达能力将会受到限制。严格来说，它是输入特征的一个**仿射变换**(`affine transformation`)。仿射变换的特点是通过加权和对特征进行线性变换(`linear transformation`)，并通过偏置项来进行平移(`translation`)。
+
+{% mathjax %}w_{area}{% endmathjax %}和{% mathjax %}w_{age}{% endmathjax %}称为权重`(weight)`，权重决定了每个特征对我们预测值的影响，{% mathjax %}b{% endmathjax %}称为偏置`(bias)`、偏移量`(offset)`或截距`(intercept)`。偏置是指当所有特征取值为`0`时，预测值应该为多少。既使现实生活中不会有房屋的面积为`0`或房龄正好为`0`年，我们仍然需要偏置项。如果没有偏置项，我们模型的表达能力将会受到限制。严格来说，它是输入特征的一个**仿射变换**`(affine transformation)`。仿射变换的特点是通过加权和对特征进行线性变换`(linear transformation)`，并通过偏置项来进行平移`(translation)`。
