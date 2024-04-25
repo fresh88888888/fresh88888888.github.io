@@ -960,12 +960,14 @@ for i in range(6):
 概率(`probability`)可以被认为是将集合映射到真实值的函数。在给定的样本空间{% mathjax %}S{% endmathjax %}中，事件{% mathjax %}A{% endmathjax %}的概率，表示为{% mathjax %}P(A){% endmathjax %}，满足一下属性：
 - 对于任意事件{% mathjax %}A{% endmathjax %}，其概率从不会是负数，即{% mathjax %}P(A)\geq 0{% endmathjax %}。
 - 整个样本空间的概率为1，即P(S)=1。
-- 对于互斥(mutually exclusive)事件（对于所有{% mathjax %}i\neq j{% endmathjax %}）都有{% mathjax %}A_i\cap A_j=\emptyset{% endmathjax %}的任意一个可数序列，{% mathjax %}A_1,A_2,\dots,{% endmathjax %}序列中任意一个事件发生的概率等于它们各自发生概率的和，即{% mathjax %}P(\bigcup_{i=1}^{\infty}A_i)=\sum_{i=1}^{\infty}P(A_i){% endmathjax %}。
+- 对于互斥(`mutually exclusive`)事件（对于所有{% mathjax %}i\neq j{% endmathjax %}）都有{% mathjax %}A_i\cap A_j=\emptyset{% endmathjax %}的任意一个可数序列，{% mathjax %}A_1,A_2,\dots,{% endmathjax %}序列中任意一个事件发生的概率等于它们各自发生概率的和，即{% mathjax %}P(\bigcup_{i=1}^{\infty}A_i)=\sum_{i=1}^{\infty}P(A_i){% endmathjax %}。
 
 以上也是概率论的公理，由科尔莫戈罗夫于`1933`年提出。有了这个公理系统，我们可以避免任何关于随机性的哲学争论；相反，我们可以用数学语言严格地推理。例如，假设事件{% mathjax %}A_1{% endmathjax %}为整个样本空间，且当所有{% mathjax %}i>1{% endmathjax %}时的{% mathjax %}A_i=\emptyset{% endmathjax %}，那么我们可以证明{% mathjax %}P(\emptyset)=0{% endmathjax %}，即不可能发生事件的概率是`0`。
 ###### 随机变量
 
-在我们掷骰子的随机实验中，我们引入了随机变量的概念(`random variable`)。随机变量几乎可以是任意数量，并且它可以在随机实验的一组可能性中取一个值。考虑一个随机变量{% mathjax %}X{% endmathjax %}，其值在掷骰子的样本空间合{% mathjax %}S=\{1,2,3,4,5,6\}{% endmathjax %}中。我们可以将事件“看到一个5”表示为
+在我们掷骰子的随机实验中，我们引入了随机变量的概念(`random variable`)。随机变量几乎可以是任意数量，并且它可以在随机实验的一组可能性中取一个值。考虑一个随机变量{% mathjax %}X{% endmathjax %}，其值在掷骰子的样本空间合{% mathjax %}S=\{1,2,3,4,5,6\}{% endmathjax %}中。我们可以将事件“看到一个5”表示为{% mathjax %}\{X=5\}{% endmathjax %}，其概率表示为{% mathjax %}P(\{X=5\}){% endmathjax %}。通过{% mathjax %}P(\{X=a\}){% endmathjax %}，我们区分了随机变量{% mathjax %}X{% endmathjax %}和{% mathjax %}X{% endmathjax %}可以采取的值（例如{% mathjax %}a{% endmathjax %}）。然而这可能导致繁琐的表示，为了简化符号，一方面我们可以将{% mathjax %}P(X){% endmathjax %}表示随机变量{% mathjax %}X{% endmathjax %}上的分布(`distribution`)：分布告诉我们{% mathjax %}X{% endmathjax %}获得某一值的概率。另一方面我们可以简单用{% mathjax %}P(a){% endmathjax %}表示随机变量取值{% mathjax %}a{% endmathjax %}的概率。由于概率论中的事件来自于样本空间的一组结果，因此我们可以为随机变量指定值的可取范围。例如，{% mathjax %}P(1\leq X \leq 3){% endmathjax %}表示事件{% mathjax %}\{1\leq X\leq 3\}{% endmathjax %}，即{% mathjax %}\{X=1,2,or,3\}{% endmathjax %}的概率。等价地，{% mathjax %}P(1\leq X \leq 3){% endmathjax %}表示随机变量{% mathjax %}X{% endmathjax %}从{% mathjax %}\{1,2,3\}{% endmathjax %}中取值的概率。
+
+**请注意**，离散(`discrete`)随机变量（如骰子的每一面）和连续(`continuous`)随机变量（如人的体重和身高）之间存在微妙的区别。现实生活中，测量两个人是否具有完全相同的身高没有太大意义。如果我们进行足够精确的测量，最终会发现这个星球上没有两个人具有完全相同的身高。在这种情况下，询问某人的身高是否落入给定的区间，比如是否在1.79米和1.81米之间更有意义。在这些情况下，我们将这个看到某个数值的可能性量化为**密度**(`density`)。 高度恰好为1.80米的概率为0，但密度不是0。在任何两个不同高度之间的区间，我们都有非零的概率。
 ##### 处理多个随机变量
 
 很多时候，我们会考虑多个随机变量。比如，我们可能需要对疾病和症状之间的关系进行建模。给定一个疾病和一个症状，比如“流感”和“咳嗽”，以某个概率存在或不存在于某个患者身上。我们需要估计这些概率以及概率之间的关系，以便我们可以运用我们的推断来实现更好的医疗服务。
@@ -973,16 +975,56 @@ for i in range(6):
 再举一个更复杂的例子：图像包含数百万像素，因此有数百万个随机变量。在许多情况下，图像会附带一个标签(`label`)，标识图像中的对象。我们也可以将标签视为一个随机变量。我们甚至可以将所有元数据视为随机变量，例如位置、时间、光圈、焦距、`ISO`、对焦距离和相机类型。所有这些都是联合发生的随机变量。当我们处理多个随机变量时，会有若干个变量是我们感兴趣的。
 ###### 联合概率
 
+第一个被称为联合概率(`joint probability`){% mathjax %}P(A=a,B=b){% endmathjax %}。给定任意值{% mathjax %}a{% endmathjax %}和{% mathjax %}b{% endmathjax %}，联合概率可以回答：{% mathjax %}A=a{% endmathjax %}和{% mathjax %}B=b{% endmathjax %}同时满足的概率是多少？请注意，对于任何{% mathjax %}a{% endmathjax %}和{% mathjax %}b{% endmathjax %}的取值，{% mathjax %}P(A=a,B=b)\leq P(A=a){% endmathjax %}。这点是确定的，因为要同时发生{% mathjax %}A=a{% endmathjax %}和{% mathjax %}B=b{% endmathjax %}，{% mathjax %}A=a{% endmathjax %}就必须发生，{% mathjax %}B=b{% endmathjax %}也必须发生（反之亦然）。因此，{% mathjax %}A=a{% endmathjax %}和{% mathjax %}B=b{% endmathjax %}同时发生的可能性不大于{% mathjax %}A=a{% endmathjax %}或{% mathjax %}B=b{% endmathjax %}单独发生的可能性。
 ###### 条件概率
 
+联合概率的不等式带给我们一个有趣的比率：{% mathjax %}0\leq \frac{P(A=a,B=b)}{P(A=a)}\leq 1{% endmathjax %}。我们称这个比率为**条件概率**(`conditional probability`)，并用{% mathjax %}P(B=b|A=a){% endmathjax %}表示它：它是{% mathjax %}B=b{% endmathjax %}的概率，前提是{% mathjax %}A=a{% endmathjax %}已发生。
 ###### 贝叶斯定理
 
+使用条件概率的定义，我们可以得出统计学中最有用的方程之一：`Bayes`定理(`Bayes’ theorem`)。根据乘法法则(`multiplication rule`)可以得到{% mathjax %}P(A,B)=P(B|A)P(A){% endmathjax %}。根据对称性可以得到{% mathjax %}P(A,B) = P(A|B)P(B){% endmathjax %}。假设{% mathjax %}P(B)\geq 0{% endmathjax %}，求解其中一个条件变量，我们得到：
+{% mathjax '{"conversion":{"em":14}}' %}
+P(A|B) = \frac{P(B|A)P(A)}{P(B)}
+{% endmathjax %}
+请注意，我们这里使用了紧凑的表示法：其中{% mathjax %}P(A,B){% endmathjax %}是一个**联合分布**(`joint distribution`)，{% mathjax %}P(A|B){% endmathjax %}是一个**条件分布**(`conditional distribution`)，这种分布可以在给定值{% mathjax %}A=a,B=b{% endmathjax %}上进行求值。
 ###### 边际化
 
+为了能进行事件概率求和，我们需要求和法则(`sum rule`)，即{% mathjax %}B{% endmathjax %}的概率相当于计算{% mathjax %}A{% endmathjax %}的所有可能选择，并将所有选择的联合概率聚合在一起：
+{% mathjax '{"conversion":{"em":14}}' %}
+P(B) = \sum_{A}P(A,B)
+{% endmathjax %}
+这也称为**边际化**(`marginalization`)。边际化结果的概率或分布称为**边际概率**(`marginal probability`)或**边际分布**(`marginal distribution`)。
 ###### 独立性
 
+另一个有用属性是依赖(`dependence`)与独立(`independence`)。如果两个随机变量{% mathjax %}A{% endmathjax %}和{% mathjax %}B{% endmathjax %}是独立的，意味着事件{% mathjax %}A{% endmathjax %}的发生跟{% mathjax %}B{% endmathjax %}事件的发生无关。在这种情况下，统计学家通常将这一点表示为{% mathjax %}A\bot B{% endmathjax %}。根据贝叶斯定理，马上就能同样得到{% mathjax %}P(A|B)=P(A){% endmathjax %}。在所有其他情况下，我们称{% mathjax %}A{% endmathjax %}和{% mathjax %}B{% endmathjax %}依赖。比如，两次连续抛出一个骰子的事件是相互独立的。相比之下，灯开关的位置和房间的亮度并不是同一个属性（因为可能存在灯泡坏掉、电源故障，或者开关故障）。
+
+由于{% mathjax %}P(A|B)=\frac{P(A,B)}{P(B)}=P(A){% endmathjax %}等价于{% mathjax %}P(A,B)=P(A)P(B){% endmathjax %}，因此两个随机变量是独立的，当且仅当两个随机变量的联合分布是其各自分布的乘积。同样地，给定另一个随机变量{% mathjax %}C{% endmathjax %}时，两个随机变量{% mathjax %}A{% endmathjax %}和{% mathjax %}B{% endmathjax %}是条件独立的(`conditionally independent`)，当且仅当{% mathjax %}P(A,B|C)=P(A|C)P(B|C){% endmathjax %}，这个情况表示{% mathjax %}A\bot B|C{% endmathjax %}
 ###### 应用
 
+假设一个医生对患者进行艾滋病病毒(`HIV`)测试。这个测试是相当准确的，如果患者健康但测试显示他患病，这个概率只有`1%`；如果患者真正感染`HIV`，它永远不会检测不出。我们使用{% mathjax %}D_1{% endmathjax %}来表示诊断结果（如果阳性，则为`1`，如果阴性，则为`0`），{% mathjax %}H{% endmathjax %}来表示感染艾滋病病毒的状态（如果阳性，则为`1`，如果阴性，则为`0`）。下图中列出了这样的条件概率{% mathjax %}P(D_1|H){% endmathjax %}。
+|条件概率|{% mathjax %}H=1{% endmathjax %}|{% mathjax %}H=0{% endmathjax %}|
+|:--|:--|:--|
+|{% mathjax %}P(D_1=1|H){% endmathjax %}|1|0.01|
+|{% mathjax %}P(D_1=0|H){% endmathjax %}|0|0.99|
+
+**请注意**，每列的加和都是`1`（但每行的加和不是），因为条件概率需要总和为`1`，就像概率一样。让我们计算如果测试出来呈阳性，患者感染`HIV`的概率，即{% mathjax %}P(H=1|D_1=1){% endmathjax %}。显然，这将取决于疾病有多常见，因为它会影响错误警报的数量。假设人口总体是相当健康的，例如，{% mathjax %}P(H=1)=0.0015{% endmathjax %}。为了应用贝叶斯定理，我们需要运用边际化和乘法法则来确定。
 ##### 期望和方差
 
+为了概括概率分布的关键特征，我们需要一些测量方法。一个随机变量{% mathjax %}X{% endmathjax %}的**期望**（`expectation`，或**平均值**(`average`)）表示为：
+{% mathjax '{"conversion":{"em":14}}' %}
+E[X]=\sum_x xP(X=x)
+{% endmathjax %}
+当函数{% mathjax %}f(x){% endmathjax %}的输入是从分布{% mathjax %}P{% endmathjax %}中抽取的随机变量时，{% mathjax %}f(x){% endmathjax %}的期望值为：
+{% mathjax '{"conversion":{"em":14}}' %}
+E_{x\sim P}[f(x)]=\sum_x f(x)P(x)
+{% endmathjax %}
+在许多情况下，我们希望衡量随机变量{% mathjax %}X{% endmathjax %}与其期望值的偏置。这可以通过方差来量化。
+{% mathjax '{"conversion":{"em":14}}' %}
+Var[X]=E[(X-E[X])^2]=E[X^2]-E[X]_2
+{% endmathjax %}
+**方差的平方根被称为标准差**(`standard deviation`)。随机变量函数的方差衡量的是：当从该随机变量分布中采样不同值时，{% mathjax %}x{% endmathjax %}函数值偏离该函数的期望的程度：
+{% mathjax '{"conversion":{"em":14}}' %}
+Var[f(x)]=E[(f(x)-E[f(x)])^2]
+{% endmathjax %}
 ##### 总结
+
+我们可以从概率分布中采样。可以使用联合分布、条件分布、`Bayes`定理、边缘化和独立性假设来分析多个随机变量。期望和方差为概率分布的关键特征的概括提供了实用的度量形式。
