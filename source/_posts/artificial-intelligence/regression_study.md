@@ -177,7 +177,7 @@ y = \mathbf{w}^{\mathsf{T}}\mathbf{x} + b + \epsilon
 {% endmathjax %}
 其中，{% mathjax %}\epsilon \sim \mathcal{N}(0, \sigma^2){% endmathjax %}。因此，我们现在可以写出通过给定的{% mathjax %}\mathbf{x}{% endmathjax %}观测到特定{% mathjax %}y{% endmathjax %}的似然(`likelihood`)：
 {% mathjax '{"conversion":{"em":14}}' %}
-P(y|\mathbf{x}) = \frac{1}{\sqrt{2\pi \sigma^2}} exp(-\frac{1}{2\sigma^2}(y - \mathbf{w}^{\mathsf{T}}x- b)^2)
+P(y|\mathbf{x}) = \frac{1}{\sqrt{2\pi \sigma^2}} \text{exp}(-\frac{1}{2\sigma^2}(y - \mathbf{w}^{\mathsf{T}}x- b)^2)
 {% endmathjax %}
 现在，根据极大似然估计法，参数{% mathjax %}\mathbf{w}{% endmathjax %}和{% mathjax %}b{% endmathjax %}的最优值是真个数据集的似然最大值：
 {% mathjax '{"conversion":{"em":14}}' %}
