@@ -44,4 +44,19 @@ price=w_{area}\cdot area + w_{age}\cdot age + b
 这个过程中的求和将使用广播机制。给定训练数据特征{% mathjax %}X{% endmathjax %}和对应的已知标签{% mathjax %}y{% endmathjax %}，线性回归的目标是找到一组权重向量{% mathjax %}w{% endmathjax %}和偏置{% mathjax %}b{% endmathjax %}：当给定从{% mathjax %}X{% endmathjax %}的同分布中取样的新样本特征时，这组权重向量和偏置能够使得新样本预测标签的误差尽可能小。虽然我们相信给定{% mathjax %}x{% endmathjax %}预测{% mathjax %}y{% endmathjax %}的最佳模型会是线性的，但我们很难找到一个有{% mathjax %}n{% endmathjax %}个样本的真实数据集，其中对于所有的{% mathjax %}1\leq i \leq n,y^{(i)}{% endmathjax %}完全等于{% mathjax %}\mathbf{w}^{\mathsf{T}}\mathbf{x}^{(i)}+b{% endmathjax %}。无论我们是用什么手段来观察特征{% mathjax %}X{% endmathjax %}和标签{% mathjax %}y{% endmathjax %}，都可能会出现少量的观测误差。因此，即使确信特征与标签的潜在关系是线性的，我们也会加入一个噪声项来考虑观测误差带来的影响。再开始寻找最好的模型参数(`model parameters`){% mathjax %}w{% endmathjax %}和{% mathjax %}b{% endmathjax %}之前，我们还需要两个东西：(1)一种模型质量的度量方式；(2)一种能够更新模型以提高模型预测质量的方法。
 ##### 损失函数
 
-在我们开始考虑如何用模型拟合(`fit`)数据之前，我们需要确定一个拟合程度的度量。损失函数(`loss function`)能够量化目标的实际值与预测值之间的差距。通常我们会选择非负数作为损失，且数值越小表示损失越小，完美预测时的损失为`0`。回归问题中最常用的损失函数是平方误差函数。
+在我们开始考虑如何用模型拟合(`fit`)数据之前，我们需要确定一个拟合程度的度量。损失函数(`loss function`)能够量化目标的实际值与预测值之间的差距。通常我们会选择非负数作为损失，且数值越小表示损失越小，完美预测时的损失为`0`。回归问题中最常用的损失函数是平方误差函数。当样本{% mathjax %}i{% endmathjax %}的预测值为{% mathjax %}\hat{y}^{(i)}{% endmathjax %}，其相应的真实标签为{% mathjax %}y^{(i)}{% endmathjax %}时，平方误差可以定义为以下公式：
+{% mathjax '{"conversion":{"em":14}}' %}
+l^{(i)}(\mathbf{w},b)=\frac{1}{2}(\hat{y}^{(i)}-y^{(i)})^2
+{% endmathjax %}
+常数{% mathjax %}\frac{1}{2}{% endmathjax %}不会带来本质的差别，但这样在形式上稍微简单一些（因为当我们对损失函数求导后常数系数为1）。由于训练数据集并不受我们控制，所以经验误差只是关于模型参数的函数。为了进一步说明，来看下面的例子。我们为一维情况下的回归问题绘制图像，如下图所示：
+{% asset_img r_1.png %}
+
+由于平方误差函数中的二次方项，估计值{% mathjax %}\hat{y}^{(i)}{% endmathjax %}和观测值{% mathjax %}y^{(i)}{% endmathjax %}之间较大的差异将导致更大的损失。为了度量模型在整个数据集上的质量，我们需计算训练集{% mathjax %}n{% endmathjax %}个样本上的误差均值（也等价于求和）。
+{% mathjax '{"conversion":{"em":14}}' %}
+L(\mathbf{w},b) = \frac{1}{n}\sum_{i=1}^n l^{(i)}(\mathbf{w}, b) = \frac{1}{n}\sum_{i=1}^n \frac{1}{2}(\mathbf{w}^{\mathsf{T}}x^{(i)} + b - y^{(i)})^2
+{% endmathjax %}
+在训练模型时，我们希望寻找一组参数{% mathjax %}(\mathbf{w}^{\ast},b^{\ast}){% endmathjax %}，这组参数能最小化在所有训练样本上的总损失。如下：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{w}^{\ast},b^{\ast} = argmin_{w,b} L(\mathbf{w},b)
+{% endmathjax %}
+##### 解析解
