@@ -69,3 +69,16 @@ L(\mathbf{w},b) = \frac{1}{n}\sum_{i=1}^n l^{(i)}(\mathbf{w}, b) = \frac{1}{n}\s
 像线性回归这样的简单问题存在解析解，但并不是所有的问题都存在解析解。解析解可以很好的进行数学分析，但解析解对问题的限制很严格，导致它无法广泛的应用在深度学习当中。
 ##### 随机梯度下降
 
+即使在我们无法得到解析解的情况下，我们仍然可以有效地训练模型。在许多任务上，那些难以优化的模型效果要更好。因此，弄清楚如何训练难以优化的模型是非常重要的。我们用到一种**梯度下降**(`gradient descent`)的方法，这种方法几乎可以优化所有深度学习模型。它通过不断地在损失函数递减的方向上更新参数来降低误差。梯度下降最简单的用法是计算损失函数(数据集中所有样本的损失均值)关于模型参数的导数（在这里也可以称为梯度）。但实际中的执行可能会非常慢：因为在每一次更新参数之前，我们必须遍历整个数据集。因此，我们通常会在每次需要计算更新的时候随机抽取一小批样本，这种变体叫做“小批量随机梯度下降”(`minibatch stochastic gradient descent`)。在每次迭代中，我们首先随机抽样一个小批量{% mathjax %}\mathcal{B}{% endmathjax %}，它是由固定数量的训练样本组成的。然后我们计算小批量的平均损失关于模型参数的导数（也可以称为梯度）。最后我们将梯度乘以一个预先确定的正数{% mathjax %}\eta{% endmathjax %}，并从当前参数的值中减掉。我们下面的数学公式来表示这一更新过程（{% mathjax %}\partial{% endmathjax %}表示偏导数）：
+{% mathjax '{"conversion":{"em":14}}' %}
+(\mathbf{w},b)\leftarrow (\mathbf{w},b) - \frac{\eta}{|\mathcal{B}|}\sum_{i\in \mathcal{B}} \partial_{\mathbf{w},b} l^{(i)}(\mathbf{w},b)
+{% endmathjax %}
+总结一下，算法步骤如下：(1)初始化模型参数的值，如随机初始化；(2)从数据集随机抽取小批量样本且在负梯度的方向上更新参数，并不断迭代这一步骤。对于平方损失和仿射变换，我们可以明确地写成如下形式：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{multline} 
+& \mathbf{w}\leftarrow \mathbf{w} - \frac{\eta}{|\mathcal{B}|}\sum_{i\in \mathcal{B}} \partial_{\mathbf{w}} l^{(i)}(\mathbf{w},b) = \mathbf{w} - \frac{\eta}{|\mathcal{B}|}\sum_{i\in \mathcal{B}} x^{(i)}(\mathbf{w}^{\mathsf{T}}\mathbf{x}^{(i)} + b - y^{(i)}) \\
+& \\
+& \\
+& b\leftarrow b - \frac{\eta}{|\mathcal{B}|}\sum_{i\in \mathcal{B}} \partial_{\mathbf{w}} l^{(i)}(\mathbf{w},b) = b - \frac{\eta}{|\mathcal{B}|}\sum_{i\in \mathcal{B}} x^{(i)}(\mathbf{w}^{\mathsf{T}}\mathbf{x}^{(i)} + b - y^{(i)}) \\
+\end{multline}
+{% endmathjax %}
