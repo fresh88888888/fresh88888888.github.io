@@ -75,10 +75,10 @@ L(\mathbf{w},b) = \frac{1}{n}\sum_{i=1}^n l^{(i)}(\mathbf{w}, b) = \frac{1}{n}\s
 {% endmathjax %}
 总结一下，算法步骤如下：(1)初始化模型参数的值，如随机初始化；(2)从数据集随机抽取小批量样本且在负梯度的方向上更新参数，并不断迭代这一步骤。对于平方损失和仿射变换，我们可以明确地写成如下形式：
 {% mathjax '{"conversion":{"em":14}}' %}
-\begin{multline} 
-& \mathbf{w}\leftarrow \mathbf{w} - \frac{\eta}{|\mathcal{B}|}\sum_{i\in \mathcal{B}} \partial_{\mathbf{w}} l^{(i)}(\mathbf{w},b) = \mathbf{w} - \frac{\eta}{|\mathcal{B}|}\sum_{i\in \mathcal{B}} x^{(i)}(\mathbf{w}^{\mathsf{T}}\mathbf{x}^{(i)} + b - y^{(i)}) \\
-& \\
-& \\
-& b\leftarrow b - \frac{\eta}{|\mathcal{B}|}\sum_{i\in \mathcal{B}} \partial_{\mathbf{w}} l^{(i)}(\mathbf{w},b) = b - \frac{\eta}{|\mathcal{B}|}\sum_{i\in \mathcal{B}} x^{(i)}(\mathbf{w}^{\mathsf{T}}\mathbf{x}^{(i)} + b - y^{(i)}) \\
-\end{multline}
+\begin{align} 
+&\mathbf{w}\leftarrow \mathbf{w} - \frac{\eta}{|\mathcal{B}|}\sum_{i\in \mathcal{B}} \partial_{\mathbf{w}} l^{(i)}(\mathbf{w},b) = \mathbf{w} - \frac{\eta}{|\mathcal{B}|}\sum_{i\in \mathcal{B}} x^{(i)}(\mathbf{w}^{\mathsf{T}}\mathbf{x}^{(i)} + b - y^{(i)}) \\
+&\\
+&\\
+&b\leftarrow b - \frac{\eta}{|\mathcal{B}|}\sum_{i\in \mathcal{B}} \partial_{\mathbf{w}} l^{(i)}(\mathbf{w},b) = b - \frac{\eta}{|\mathcal{B}|}\sum_{i\in \mathcal{B}} x^{(i)}(\mathbf{w}^{\mathsf{T}}\mathbf{x}^{(i)} + b - y^{(i)}) \\
+\end{align}
 {% endmathjax %}
