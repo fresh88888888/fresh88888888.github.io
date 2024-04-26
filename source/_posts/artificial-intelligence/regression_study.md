@@ -57,6 +57,6 @@ L(\mathbf{w},b) = \frac{1}{n}\sum_{i=1}^n l^{(i)}(\mathbf{w}, b) = \frac{1}{n}\s
 {% endmathjax %}
 在训练模型时，我们希望寻找一组参数{% mathjax %}(\mathbf{w}^{\ast},b^{\ast}){% endmathjax %}，这组参数能最小化在所有训练样本上的总损失。如下：
 {% mathjax '{"conversion":{"em":14}}' %}
-\mathbf{w}^{\ast},b^{\ast} = argmin_{w,b} L(\mathbf{w},b)
+\mathbf{w}^{\ast},b^{\ast} = {\text{argmin} \\ \mathbf{w},b} L(\mathbf{w},b)
 {% endmathjax %}
 ##### 解析解
