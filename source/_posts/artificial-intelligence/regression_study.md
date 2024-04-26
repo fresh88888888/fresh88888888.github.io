@@ -57,6 +57,15 @@ L(\mathbf{w},b) = \frac{1}{n}\sum_{i=1}^n l^{(i)}(\mathbf{w}, b) = \frac{1}{n}\s
 {% endmathjax %}
 在训练模型时，我们希望寻找一组参数{% mathjax %}(\mathbf{w}^{\ast},b^{\ast}){% endmathjax %}，这组参数能最小化在所有训练样本上的总损失。如下：
 {% mathjax '{"conversion":{"em":14}}' %}
-\mathbf{w}^{\ast},b^{\ast} = {\text{argmin} \\ \mathbf{w},b} L(\mathbf{w},b)
+\DeclareMathOperator*{\argmin}{argmin}
+\mathbf{w}^{\ast},b^{\ast} = \argmin_{\mathbf{w},b} L(\mathbf{w},b)
 {% endmathjax %}
 ##### 解析解
+
+线性回归刚好是一个很简单的优化问题。线性回归的解可以用一个公式简单地表达出来，这类解叫做**解析解**(`analytical solution`)。首先我们将偏置`b`合并到参数{% mathjax %}\mathbf{w}{% endmathjax %}中，合并方法是在包含所有参数的矩阵中附加一列。我们的预测问题是最小化{% mathjax %}\lVert \mathbf{y}-\mathbf{Xw} \rVert^2{% endmathjax %}。这在损失平面上只有一个临界点，这个临界点对应整个平面的损失极小点。将损失关于{% mathjax %}w{% endmathjax %}的导数设为0，得到解析解：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{w}^{\ast} = (\mathbf{X}^{\mathsf{T}}\mathbf{X})^{-1} \mathbf{X}^{\mathsf{T}}\mathbf{y}
+{% endmathjax %}
+像线性回归这样的简单问题存在解析解，但并不是所有的问题都存在解析解。解析解可以很好的进行数学分析，但解析解对问题的限制很严格，导致它无法广泛的应用在深度学习当中。
+##### 随机梯度下降
+
