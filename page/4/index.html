@@ -1160,7 +1160,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/28/artificial-intelligence/jax_study/">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/28/artificial-intelligence/jax_pure_function_study/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.jpeg">
@@ -1178,7 +1178,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/03/28/artificial-intelligence/jax_study/" class="post-title-link" itemprop="url">JAX（DeviceArray）</a>
+          <a href="/2024/03/28/artificial-intelligence/jax_pure_function_study/" class="post-title-link" itemprop="url">JAX（Pure Functions）</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1208,14 +1208,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.5k</span>
+      <span>2.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>8 分钟</span>
+      <span>7 分钟</span>
     </span>
 </div>
 
@@ -1226,10 +1226,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p><code>JAX</code>是一个<strong>高性能机器学习库</strong>。<code>JAX</code>在加速器（例如<code>GPU</code>和<code>TPU</code>）上编译并运行<code>NumPy</code>代码。您可以使用<code>JAX</code>（以及为<code>JAX</code>构建的神经网络库<code>FLAX</code>）来构建和训练深度学习模型。</p>
+          <h4 id="纯函数（Pure-Functions）"><a href="#纯函数（Pure-Functions）" class="headerlink" title="纯函数（Pure Functions）"></a>纯函数（Pure Functions）</h4><p>函数就是纯函数：</p>
+<ul>
+<li>当使用相同的输入调用时，该函数返回相同的值。</li>
+<li>函数调用没有观察到副作用。</li>
+</ul>
+<p>虽然这个定义看起来很简单，但如果没有示例可能很难理解，而且听起来很模糊（尤其是对于初学者）。<strong>副作用</strong>是什么意思呢？是什么导致了副作用？做什么可以来避免副作用？让我们举几个例子，看一下产生副作用的错误。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2024/03/28/artificial-intelligence/jax_study/#more" rel="contents">
+              <a class="btn" href="/2024/03/28/artificial-intelligence/jax_pure_function_study/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
