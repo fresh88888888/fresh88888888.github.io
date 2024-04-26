@@ -153,7 +153,7 @@ f'{timer.stop():.5f} sec'
 
 我们通过对噪声分布的假设来解读平方损失目标函数。正态分布和线性回归之间的关系很密切。正态分布(`normal distribution`)，也称为高斯分布(`Gaussian distribution`)，最早由德国数学家高斯(`Gauss`)应用于天文学研究。简单来说，若随机变量{% mathjax %}x{% endmathjax %}具有均值{% mathjax %}\mu{% endmathjax %}和方差{% mathjax %}\sigma^2{% endmathjax %}（标准差{% mathjax %}\sigma{% endmathjax %}），起正态分布概率密度函数如下：
 {% mathjax '{"conversion":{"em":14}}' %}
-p(x) = \frac{1}{\sqrt{2\pi\sigma^2} exp(-\frac{1}{2\sigma^2}(x-\mu)^2)}
+p(x) = \frac{1}{\sqrt{2\pi\sigma^2}} exp(-\frac{1}{2\sigma^2}(x-\mu)^2)
 {% endmathjax %}
 下面我们定义一个Python函数来计算正态分布。
 ```python
