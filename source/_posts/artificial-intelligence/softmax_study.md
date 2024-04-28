@@ -43,5 +43,5 @@ y \in \{(1,0,0),(0,1,0),(0,0,1)\}
 
 社会科学家邓肯·卢斯于`1959`年在选择模型(`choice model`)的理论基础上发明的`softmax`函数正是这样做的：`softmax`函数能够将未规范化的预测变换为非负数并且总和为`1`，同时让模型保持 可导的性质。为了完成这一目标，我们首先对每个未规范化的预测求幂，这样可以确保输出非负。为了确保最终输出的概率值总和为`1`，我们再让每个求幂后的结果除以它们的总和。如下式：
 {% mathjax '{"conversion":{"em":14}}' %}
-\hat{y} = \text{softmax}(\mathbf{o}) \quad \text{其中} \quad \hat{y}_j= \frac{\text{exp}(o_j)}{\sum_k \text{exp}(o_k)}
+\hat{mathbf{y}} = \text{softmax}(\mathbf{o}) \quad \text{其中} \quad \hat{y}_j= \frac{\text{exp}(o_j)}{\sum_k \text{exp}(o_k)}
 {% endmathjax %}
