@@ -24,9 +24,11 @@ y \in \{(1,0,0),(0,1,0),(0,0,1)\}
 
 为了估计所有可能类别的条件概率，我们需要一个有多个输出的模型，每个类别对应一个输出。为了解决线性模型的分类问题，我们需要和输出一样多的仿射函数（`affine function`）。每个输出对应于它自己的仿射函数。在我们的例子中，由于我们有`4`个特征和`3`个可能的输出类别，我们将需要`12`个标量来表示权重（带下标的{% mathjax %}w{% endmathjax %}），`3`个标量来表示偏置（带下标的{% mathjax %}b{% endmathjax %}）。下面我们为每个输入计算三个未规范化的预测。下面我们为每个输入计算未规范化的预测(`logit`)：{% mathjax %}o_1,o_2,o_3{% endmathjax %}。
 {% mathjax '{"conversion":{"em":14}}' %}
-o_1=x_1w_11 + x_2w_12 + x_3w_13 + x_4w_14 + b_1,
-o_2=x_1w_21 + x_2w_22 + x_3w_23 + x_4w_24 + b_2,
-o_3=x_1w_31 + x_2w_32 + x_3w_33 + x_4w_34 + b_3,
+\begin{align}
+& o_1=x_1w_11 + x_2w_12 + x_3w_13 + x_4w_14 + b_1,\\
+& o_2=x_1w_21 + x_2w_22 + x_3w_23 + x_4w_24 + b_2,\\
+& o_3=x_1w_31 + x_2w_32 + x_3w_33 + x_4w_34 + b_3,\\
+\end{align}
 {% endmathjax %}
 我们可以用神经网络图来描述这个计算过程。与线性回归一样，`softmax`回归也是一个单层神经网络。由于计算每个输出{% mathjax %}o_1、o_2、o_3{% endmathjax %}取决于所有输入{% mathjax %}x_1、x_2、x_3、x_4{% endmathjax %}，所以`softmax`回归的输出层也是全连接层。
 {% asset_img s_1.png "softmax回归是一种单层神经网络" %}
@@ -41,5 +43,5 @@ o_3=x_1w_31 + x_2w_32 + x_3w_33 + x_4w_34 + b_3,
 
 社会科学家邓肯·卢斯于`1959`年在选择模型(`choice model`)的理论基础上发明的`softmax`函数正是这样做的：`softmax`函数能够将未规范化的预测变换为非负数并且总和为`1`，同时让模型保持 可导的性质。为了完成这一目标，我们首先对每个未规范化的预测求幂，这样可以确保输出非负。为了确保最终输出的概率值总和为`1`，我们再让每个求幂后的结果除以它们的总和。如下式：
 {% mathjax '{"conversion":{"em":14}}' %}
-\hat{y} = \text{softmax}(\mathbf{o}) 其中 \hat{y}_j= \frac{\text{exp}(o_j)}{\sum_k \text{exp}(o_k)}
+\hat{y} = \text{softmax}(\mathbf{o}) , \text{其中} \hat{y}_j= \frac{\text{exp}(o_j)}{\sum_k \text{exp}(o_k)}
 {% endmathjax %}
