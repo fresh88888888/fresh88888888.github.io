@@ -47,20 +47,32 @@ y \in \{(1,0,0),(0,1,0),(0,0,1)\}
 {% endmathjax %}
 这里，对于所有的{% mathjax %}j{% endmathjax %}总有{% mathjax %}0\leq \hat{y}_j \leq 1{% endmathjax %}。因此，{% mathjax %}\hat{\mathbf{y}}{% endmathjax %}可以视为一个正确的概率分布。`softmax`运算不会改变为规范化的预测{% mathjax %}\mathbf{o}{% endmathjax %}之间的大小次序，只会确定分配给每个类别的概率。因此，在预测过程中，我们仍然可以用下面的公式来选择最有可能的类别。
 {% mathjax '{"conversion":{"em":14}}' %}
-\text{argmax}_{j} \hat{y}_j = \text{argmax}_{j}o_j
+{\text{argmax}}_{j} \hat{y}_j = \text{argmax}_{j}o_j
 {% endmathjax %}
-尽管`softmax`是一个非线性函数，但softmax回归的输出仍然由输入特征的仿射变换决定。因此，softmax回归是一个线性模型(`linear model`)。
+尽管`softmax`是一个非线性函数，但softmax回归的输出仍然由输入特征的仿射变换决定。因此，`softmax`回归是一个线性模型(`linear model`)。
 ##### 小批量样本的矢量化
 
-为了提高计算效率并且充分利用GPU，我们通常会对小批量样本的数据执行矢量计算。假设我们读取了一个批量的样本{% mathjax %}mathbf{X}{% endmathjax %}，其中特征维度（输入数量）为{% mathjax %}d{% endmathjax %}，批量大小为{% mathjax %}n{% endmathjax %}。此外，假设我们在输出中有{% mathjax %}q{% endmathjax %}个类别。那么小批量样本的特征为{% mathjax %}mathbf{X}\in \mathbb{R}^{d\times q}{% endmathjax %}，偏置为{% mathjax %}b\in \mathbb{R}^{1\times q}{% endmathjax %}。softmax回归的矢量计算表达式为：
+为了提高计算效率并且充分利用GPU，我们通常会对小批量样本的数据执行矢量计算。假设我们读取了一个批量的样本{% mathjax %}\mathbf{X}{% endmathjax %}，其中特征维度（输入数量）为{% mathjax %}d{% endmathjax %}，批量大小为{% mathjax %}n{% endmathjax %}。此外，假设我们在输出中有{% mathjax %}q{% endmathjax %}个类别。那么小批量样本的特征为{% mathjax %}\mathbf{X}\in \mathbb{R}^{d\times q}{% endmathjax %}，偏置为{% mathjax %}b\in \mathbb{R}^{1\times q}{% endmathjax %}。`softmax`回归的矢量计算表达式为：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
 & \mathbf{O} = \mathbf{XW} + \mathbf{b} \\
-& \hat{mathbf{Y}} = \text{softmax}(\mathbf{O}) \\
+& \hat{\mathbf{Y}} = \text{softmax}(\mathbf{O}) \\
 \end{align}
 {% endmathjax %}
 相对于一次处理一个样本，小批量样本的矢量化加快了{% mathjax %}\mathbf{X}{% endmathjax %}和{% mathjax %}\mathbf{W}{% endmathjax %}的矩阵-向量乘法，由于{% mathjax %}\mathbf{X}{% endmathjax %}中的每一行，代表一个数据样本，那么softmax运算可以按行(`rowwise`)执行；对于{% mathjax %}\mathbf{O}{% endmathjax %}的每一行，我们先对所有项进行幂运算，然后通过求和对他们进行标准化。{% mathjax %}\mathbf{XW} + \mathbf{b}{% endmathjax %}的求和会使用广播机制，小批量的未规范化预测{% mathjax %}\mathbf{O}{% endmathjax %}和输出概率{% mathjax %}\hat{\mathbf{Y}}{% endmathjax %}都是形状为{% mathjax %}n\times q{% endmathjax %}的矩阵。
 
 ##### 损失函数
 
-接下来，我们需要一个损失函数来度量预测的效果。我们将使用最大似然估计，这与在线性回归中的方法相同。
+接下来，我们需要一个损失函数来度量预测的效果。我们将使用最大似然估计，这与在线性回归中的方法相同。`softmax`函数给出了一个向量{% mathjax %}\hat{\mathbf{y}}{% endmathjax %}，我们可以将其视为“对给定任意输入{% mathjax %}\mathbf{x}{% endmathjax %}的每个类的条件概率”。例如，{% mathjax %}\hat{y}_1 = P(y=猫|\mathbf{x}){% endmathjax %}，假设整个数据集{% mathjax %}{\mathbf{X,Y}}{% endmathjax %}具有{% mathjax %}n{% endmathjax %}个样本，其中索引{% mathjax %}i{% endmathjax %}的样本由特征向量{% mathjax %}\mathbf{x}^{(i)}{% endmathjax %}和标签向量{% mathjax %}\mathbf{y}^{(i)}{% endmathjax %}组成。我们可以将估计值和实际值进行比较：
+{% mathjax '{"conversion":{"em":14}}' %}
+P(\mathbf{Y|X}) = \prod_{i=1}^n P(\mathbf{y}^{(i)}|\mathbf{x}^{(i)})
+{% endmathjax %}
+根据最大似然估计，我们最大化{% mathjax %}P(\mathbf{Y}|\mathbf{X}){% endmathjax %}，相当于最小化负对数似然：
+{% mathjax '{"conversion":{"em":14}}' %}
+-\logP(\mathbf{Y}|\mathbf{X}) = \sum_{i=1}^n - \log P(\mathbf{y}^{(i)}|\mathbf{x}^{(i)}) = \sum_{i=1}^n l(\mathbf{y}^{(i)},\hat{\mathbf{y}}^{(i)})
+{% endmathjax %}
+其中，对于任何标签{% mathjax %}\mathbf{y}{% endmathjax %}和模型预测{% mathjax %}\hat{\mathbf{y}}{% endmathjax %}，损失函数为：
+{% mathjax '{"conversion":{"em":14}}' %}
+l(\mathbf{y},\hat{\mathbf{y}}) = -\sum_{j=1}^q y_i \log \hat{y}^_j
+{% endmathjax %}
+以上的损失函数，通常被称为交叉熵损失(`cross-entropy loss`)。由于{% mathjax %}\mathbf{y}{% endmathjax %}是一个长度为{% mathjax %}q{% endmathjax %}的编码向量，所以除了一个之外的所有项{% mathjax %}j{% endmathjax %}都消失了。由于所有{% mathjax %}\hat{y}_j{% endmathjax %}都是预测的概率，所以它们的对数永远不会大于`0`，因此，如果正确地预测实际标签{% mathjax %}P(\mathbf{y}|\mathbf{x})=1{% endmathjax %}，则损失函数不能进一步最小化。注意，这往往是不可能的。例如，数据集中可能存在标签噪声（比如某些样本可能被误标），或输入特征没有足够的信息来完美地对每一个样本分类。由于`softmax`和相关的损失函数很常见，因此我们需要更好地理解它的计算方式。
