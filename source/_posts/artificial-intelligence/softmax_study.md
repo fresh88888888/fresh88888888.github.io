@@ -59,7 +59,7 @@ y \in \{(1,0,0),(0,1,0),(0,0,1)\}
 & \hat{\mathbf{Y}} = \text{softmax}(\mathbf{O}) \\
 \end{align}
 {% endmathjax %}
-相对于一次处理一个样本，小批量样本的矢量化加快了{% mathjax %}\mathbf{X}{% endmathjax %}和{% mathjax %}\mathbf{W}{% endmathjax %}的矩阵-向量乘法，由于{% mathjax %}\mathbf{X}{% endmathjax %}中的每一行，代表一个数据样本，那么softmax运算可以按行(`rowwise`)执行；对于{% mathjax %}\mathbf{O}{% endmathjax %}的每一行，我们先对所有项进行幂运算，然后通过求和对他们进行标准化。{% mathjax %}\mathbf{XW} + \mathbf{b}{% endmathjax %}的求和会使用广播机制，小批量的未规范化预测{% mathjax %}\mathbf{O}{% endmathjax %}和输出概率{% mathjax %}\hat{\mathbf{Y}}{% endmathjax %}都是形状为{% mathjax %}n\times q{% endmathjax %}的矩阵。
+相对于一次处理一个样本，小批量样本的矢量化加快了{% mathjax %}\mathbf{X}{% endmathjax %}和{% mathjax %}\mathbf{W}{% endmathjax %}的矩阵-向量乘法，由于{% mathjax %}\mathbf{X}{% endmathjax %}中的每一行，代表一个数据样本，那么`softmax`运算可以按行(`rowwise`)执行；对于{% mathjax %}\mathbf{O}{% endmathjax %}的每一行，我们先对所有项进行幂运算，然后通过求和对他们进行标准化。{% mathjax %}\mathbf{XW} + \mathbf{b}{% endmathjax %}的求和会使用广播机制，小批量的未规范化预测{% mathjax %}\mathbf{O}{% endmathjax %}和输出概率{% mathjax %}\hat{\mathbf{Y}}{% endmathjax %}都是形状为{% mathjax %}n\times q{% endmathjax %}的矩阵。
 
 ##### 损失函数
 
@@ -73,6 +73,6 @@ P(\mathbf{Y|X}) = \prod_{i=1}^n P(\mathbf{y}^{(i)}|\mathbf{x}^{(i)})
 {% endmathjax %}
 其中，对于任何标签{% mathjax %}\mathbf{y}{% endmathjax %}和模型预测{% mathjax %}\hat{\mathbf{y}}{% endmathjax %}，损失函数为：
 {% mathjax '{"conversion":{"em":14}}' %}
-l(\mathbf{y} , \hat{\mathbf{y}}) = -\sum_{j=1}^q y_i \log \hat{y}^_j
+l(\mathbf{y} , \hat{\mathbf{y}}) = -\sum_{j=1}^q y_i\log{\hat{y}^_j}
 {% endmathjax %}
 以上的损失函数，通常被称为交叉熵损失(`cross-entropy loss`)。由于{% mathjax %}\mathbf{y}{% endmathjax %}是一个长度为{% mathjax %}q{% endmathjax %}的编码向量，所以除了一个之外的所有项{% mathjax %}j{% endmathjax %}都消失了。由于所有{% mathjax %}\hat{y}_j{% endmathjax %}都是预测的概率，所以它们的对数永远不会大于`0`，因此，如果正确地预测实际标签{% mathjax %}P(\mathbf{y}|\mathbf{x})=1{% endmathjax %}，则损失函数不能进一步最小化。注意，这往往是不可能的。例如，数据集中可能存在标签噪声（比如某些样本可能被误标），或输入特征没有足够的信息来完美地对每一个样本分类。由于`softmax`和相关的损失函数很常见，因此我们需要更好地理解它的计算方式。
