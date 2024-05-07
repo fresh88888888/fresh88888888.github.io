@@ -91,6 +91,6 @@ l(\mathbf{y}, \hat{\mathbf{y}}) & = -\sum_{j=1}^q y_j\log \frac{\text{exp}(o_j)}
 
 信息论(`information theory`)涉及编码、解码、发送以及尽可能简洁地处理信息或数据。信息论的核心思想是量化数据中的信息内容。在信息论中，该数值被称为分布{% mathjax %}P{% endmathjax %}的熵(`entropy`)。可以通过以下方程得到：
 {% mathjax '{"conversion":{"em":14}}' %}
-H[P] = \sum_j- P(j)\logP(j)
+H[P] = \sum_j- P(j)\log P(j)
 {% endmathjax %}
 信息论的基本定理之一指出
