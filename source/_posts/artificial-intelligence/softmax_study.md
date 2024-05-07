@@ -45,3 +45,4 @@ y \in \{(1,0,0),(0,1,0),(0,0,1)\}
 {% mathjax '{"conversion":{"em":14}}' %}
 \hat{\mathbf{y}} = \text{softmax}(\mathbf{o}) \quad \text{其中} \quad \hat{y}_j= \frac{\text{exp}(o_j)}{\sum_k \text{exp}(o_k)}
 {% endmathjax %}
+这里，对于所有的
