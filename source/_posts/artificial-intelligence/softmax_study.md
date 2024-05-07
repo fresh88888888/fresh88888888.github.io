@@ -47,7 +47,7 @@ y \in \{(1,0,0),(0,1,0),(0,0,1)\}
 {% endmathjax %}
 这里，对于所有的{% mathjax %}j{% endmathjax %}总有{% mathjax %}0\leq \hat{y}_j \leq 1{% endmathjax %}。因此，{% mathjax %}\hat{\mathbf{y}}{% endmathjax %}可以视为一个正确的概率分布。`softmax`运算不会改变为规范化的预测{% mathjax %}\mathbf{o}{% endmathjax %}之间的大小次序，只会确定分配给每个类别的概率。因此，在预测过程中，我们仍然可以用下面的公式来选择最有可能的类别。
 {% mathjax '{"conversion":{"em":14}}' %}
-{\text{argmax}}_{j} \hat{y}_j = \text{argmax}_{j}o_j
+\underset{j}{\text{argmax}}\hat{y}_j = \underset{j}{\text{argmax}}o_j
 {% endmathjax %}
 尽管`softmax`是一个非线性函数，但softmax回归的输出仍然由输入特征的仿射变换决定。因此，`softmax`回归是一个线性模型(`linear model`)。
 ##### 小批量样本的矢量化
@@ -73,6 +73,6 @@ P(\mathbf{Y|X}) = \prod_{i=1}^n P(\mathbf{y}^{(i)}|\mathbf{x}^{(i)})
 {% endmathjax %}
 其中，对于任何标签{% mathjax %}\mathbf{y}{% endmathjax %}和模型预测{% mathjax %}\hat{\mathbf{y}}{% endmathjax %}，损失函数为：
 {% mathjax '{"conversion":{"em":14}}' %}
-l(\mathbf{y} , \hat{\mathbf{y}}) = -\sum_{j=1}^q y_i\log{\hat{y}^_j}
+l(\mathbf{y}, \hat{\mathbf{y}}) = -\sum_{j=1}^q y_{j}\log\hat{y}_j
 {% endmathjax %}
 以上的损失函数，通常被称为交叉熵损失(`cross-entropy loss`)。由于{% mathjax %}\mathbf{y}{% endmathjax %}是一个长度为{% mathjax %}q{% endmathjax %}的编码向量，所以除了一个之外的所有项{% mathjax %}j{% endmathjax %}都消失了。由于所有{% mathjax %}\hat{y}_j{% endmathjax %}都是预测的概率，所以它们的对数永远不会大于`0`，因此，如果正确地预测实际标签{% mathjax %}P(\mathbf{y}|\mathbf{x})=1{% endmathjax %}，则损失函数不能进一步最小化。注意，这往往是不可能的。例如，数据集中可能存在标签噪声（比如某些样本可能被误标），或输入特征没有足够的信息来完美地对每一个样本分类。由于`softmax`和相关的损失函数很常见，因此我们需要更好地理解它的计算方式。
