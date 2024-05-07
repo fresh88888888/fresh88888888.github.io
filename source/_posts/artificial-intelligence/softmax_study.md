@@ -60,7 +60,6 @@ y \in \{(1,0,0),(0,1,0),(0,0,1)\}
 \end{align}
 {% endmathjax %}
 相对于一次处理一个样本，小批量样本的矢量化加快了{% mathjax %}\mathbf{X}{% endmathjax %}和{% mathjax %}\mathbf{W}{% endmathjax %}的矩阵-向量乘法，由于{% mathjax %}\mathbf{X}{% endmathjax %}中的每一行，代表一个数据样本，那么`softmax`运算可以按行(`rowwise`)执行；对于{% mathjax %}\mathbf{O}{% endmathjax %}的每一行，我们先对所有项进行幂运算，然后通过求和对他们进行标准化。{% mathjax %}\mathbf{XW} + \mathbf{b}{% endmathjax %}的求和会使用广播机制，小批量的未规范化预测{% mathjax %}\mathbf{O}{% endmathjax %}和输出概率{% mathjax %}\hat{\mathbf{Y}}{% endmathjax %}都是形状为{% mathjax %}n\times q{% endmathjax %}的矩阵。
-
 ##### 损失函数
 
 接下来，我们需要一个损失函数来度量预测的效果。我们将使用最大似然估计，这与在线性回归中的方法相同。`softmax`函数给出了一个向量{% mathjax %}\hat{\mathbf{y}}{% endmathjax %}，我们可以将其视为“对给定任意输入{% mathjax %}\mathbf{x}{% endmathjax %}的每个类的条件概率”。例如，{% mathjax %}\hat{y}_1 = P(y=猫|\mathbf{x}){% endmathjax %}，假设整个数据集{% mathjax %}{\mathbf{X,Y}}{% endmathjax %}具有{% mathjax %}n{% endmathjax %}个样本，其中索引{% mathjax %}i{% endmathjax %}的样本由特征向量{% mathjax %}\mathbf{x}^{(i)}{% endmathjax %}和标签向量{% mathjax %}\mathbf{y}^{(i)}{% endmathjax %}组成。我们可以将估计值和实际值进行比较：
@@ -75,4 +74,23 @@ P(\mathbf{Y|X}) = \prod_{i=1}^n P(\mathbf{y}^{(i)}|\mathbf{x}^{(i)})
 {% mathjax '{"conversion":{"em":14}}' %}
 l(\mathbf{y}, \hat{\mathbf{y}}) = -\sum_{j=1}^q y_{j}\log\hat{y}_j
 {% endmathjax %}
-以上的损失函数，通常被称为交叉熵损失(`cross-entropy loss`)。由于{% mathjax %}\mathbf{y}{% endmathjax %}是一个长度为{% mathjax %}q{% endmathjax %}的编码向量，所以除了一个之外的所有项{% mathjax %}j{% endmathjax %}都消失了。由于所有{% mathjax %}\hat{y}_j{% endmathjax %}都是预测的概率，所以它们的对数永远不会大于`0`，因此，如果正确地预测实际标签{% mathjax %}P(\mathbf{y}|\mathbf{x})=1{% endmathjax %}，则损失函数不能进一步最小化。注意，这往往是不可能的。例如，数据集中可能存在标签噪声（比如某些样本可能被误标），或输入特征没有足够的信息来完美地对每一个样本分类。由于`softmax`和相关的损失函数很常见，因此我们需要更好地理解它的计算方式。
+以上的损失函数，通常被称为交叉熵损失(`cross-entropy loss`)。由于{% mathjax %}\mathbf{y}{% endmathjax %}是一个长度为{% mathjax %}q{% endmathjax %}的编码向量，所以除了一个之外的所有项{% mathjax %}j{% endmathjax %}都消失了。由于所有{% mathjax %}\hat{y}_j{% endmathjax %}都是预测的概率，所以它们的对数永远不会大于`0`，因此，如果正确地预测实际标签{% mathjax %}P(\mathbf{y}|\mathbf{x})=1{% endmathjax %}，则损失函数不能进一步最小化。注意，这往往是不可能的。例如，数据集中可能存在标签噪声（比如某些样本可能被误标），或输入特征没有足够的信息来完美地对每一个样本分类。由于`softmax`和相关的损失函数很常见，因此我们需要更好地理解它的计算方式。利用`softmax`的定义，我们得到：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+l(\mathbf{y}, \hat{\mathbf{y}}) & = -\sum_{j=1}^q y_j\log \frac{\text{exp}(o_j)}{\sum_{k=1}^q \text{exp(o_k)}} \\
+& = \sum_{j=1}^{q}y_i\log\sum_{k=1}^q \text{exp(o_k)} - \sum_{j=1}^qy_jo_j \\
+& = \log\sum_{k=1}^q\text{exp(o_k)} - \sum_{j=1}^qy_jo_j \\
+\end{align}
+{% endmathjax %}
+考虑相对于任何未规范化的预测{% mathjax %}o_j{% endmathjax %}的导数，我们得到：
+{% mathjax '{"conversion":{"em":14}}' %}
+\partial_{o_j}l(\mathbf{y},\hat{\mathbf{y}}) = \frac{\text{exp(o_j)}}{\sum_{k=1}^q\text{exp(o_k)}} - y_i = softmax(o)_j - y_j
+{% endmathjax %}
+换句话说，导数是我们`softmax`模型分配的概率与实际发生的情况（由独热标签向量表示）之间的差异。从这个意义上讲，这与我们在回归中看到的非常相似，其中梯度是观测值{% mathjax %}y{% endmathjax %}和估计值{% mathjax %}\hat{y}{% endmathjax %}之间的差异。这不是巧合，在任何指数族分布模型中，对数似然的梯度正是由此得出的。这使梯度计算在实践中变得容易很多。现在让我们考虑整个结果分布的情况，即观察到的不仅仅是一个结果。对于标签{% mathjax %}\mathbf{y}{% endmathjax %}，我们可以使用与以前相同的表示形式。唯一的区别是，我们现在用一个概率向量表示如`(0.1,0.2,0.7)`，而不是仅包含二元项的向量`(0,0,1)`。我们定义损失{% mathjax %}l{% endmathjax %}，它是所有标签分布的预期损失值。此损失称为**交叉熵损失**(`cross-entropy loss`)，它是分类问题最常用的损失之一。
+##### 信息论
+
+信息论(`information theory`)涉及编码、解码、发送以及尽可能简洁地处理信息或数据。信息论的核心思想是量化数据中的信息内容。在信息论中，该数值被称为分布{% mathjax %}P{% endmathjax %}的熵(`entropy`)。可以通过以下方程得到：
+{% mathjax '{"conversion":{"em":14}}' %}
+H[P] = \sum_j- P(j)\logP(j)
+{% endmathjax %}
+信息论的基本定理之一指出
