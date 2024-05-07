@@ -45,4 +45,22 @@ y \in \{(1,0,0),(0,1,0),(0,0,1)\}
 {% mathjax '{"conversion":{"em":14}}' %}
 \hat{\mathbf{y}} = \text{softmax}(\mathbf{o}) \quad \text{其中} \quad \hat{y}_j= \frac{\text{exp}(o_j)}{\sum_k \text{exp}(o_k)}
 {% endmathjax %}
-这里，对于所有的
+这里，对于所有的{% mathjax %}j{% endmathjax %}总有{% mathjax %}0\leq \hat{y}_j \leq 1{% endmathjax %}。因此，{% mathjax %}\hat{\mathbf{y}}{% endmathjax %}可以视为一个正确的概率分布。`softmax`运算不会改变为规范化的预测{% mathjax %}\mathbf{o}{% endmathjax %}之间的大小次序，只会确定分配给每个类别的概率。因此，在预测过程中，我们仍然可以用下面的公式来选择最有可能的类别。
+{% mathjax '{"conversion":{"em":14}}' %}
+\text{argmax}_{j} \hat{y}_j = \text{argmax}_{j}o_j
+{% endmathjax %}
+尽管`softmax`是一个非线性函数，但softmax回归的输出仍然由输入特征的仿射变换决定。因此，softmax回归是一个线性模型(`linear model`)。
+##### 小批量样本的矢量化
+
+为了提高计算效率并且充分利用GPU，我们通常会对小批量样本的数据执行矢量计算。假设我们读取了一个批量的样本{% mathjax %}mathbf{X}{% endmathjax %}，其中特征维度（输入数量）为{% mathjax %}d{% endmathjax %}，批量大小为{% mathjax %}n{% endmathjax %}。此外，假设我们在输出中有{% mathjax %}q{% endmathjax %}个类别。那么小批量样本的特征为{% mathjax %}mathbf{X}\in \mathbb{R}^{d\times q}{% endmathjax %}，偏置为{% mathjax %}b\in \mathbb{R}^{1\times q}{% endmathjax %}。softmax回归的矢量计算表达式为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+& \mathbf{O} = \mathbf{XW} + \mathbf{b} \\
+& \hat{mathbf{Y}} = \text{softmax}(\mathbf{O}) \\
+\end{align}
+{% endmathjax %}
+相对于一次处理一个样本，小批量样本的矢量化加快了{% mathjax %}\mathbf{X}{% endmathjax %}和{% mathjax %}\mathbf{W}{% endmathjax %}的矩阵-向量乘法，由于{% mathjax %}\mathbf{X}{% endmathjax %}中的每一行，代表一个数据样本，那么softmax运算可以按行(`rowwise`)执行；对于{% mathjax %}\mathbf{O}{% endmathjax %}的每一行，我们先对所有项进行幂运算，然后通过求和对他们进行标准化。{% mathjax %}\mathbf{XW} + \mathbf{b}{% endmathjax %}的求和会使用广播机制，小批量的未规范化预测{% mathjax %}\mathbf{O}{% endmathjax %}和输出概率{% mathjax %}\hat{\mathbf{Y}}{% endmathjax %}都是形状为{% mathjax %}n\times q{% endmathjax %}的矩阵。
+
+##### 损失函数
+
+接下来，我们需要一个损失函数来度量预测的效果。我们将使用最大似然估计，这与在线性回归中的方法相同。
