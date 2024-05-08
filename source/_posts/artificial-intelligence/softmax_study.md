@@ -93,4 +93,12 @@ l(\mathbf{y}, \hat{\mathbf{y}}) & = -\sum_{j=1}^q y_j\log \frac{\text{exp}(o_j)}
 {% mathjax '{"conversion":{"em":14}}' %}
 H[P] = \sum_j- P(j)\log P(j)
 {% endmathjax %}
-信息论的基本定理之一指出
+信息论的基本定理之一指出，为了对从分布{% mathjax %}p{% endmathjax %}随机抽取的数据进行编码，我们至少需要{% mathjax %}\mathbf{H}[\mathbf{P}]{% endmathjax %}纳特(`nat`)对其进行编码。“纳特”相当于比特(`bit`)，但是对数底为{% mathjax %}e{% endmathjax %}而不是2。因此一个纳特是{% mathjax %}\frac{1}{\log(2)}\approx 1.44{% endmathjax %}比特。
+
+压缩与预测有什么关系呢？想象一下，我们有一个要压缩的数据流。如果我们很容易预测下一个数据，那么这个数据就很容易压缩。为什么呢？，举一个极端的例子，加入数据流中的每一个数据都相同，这会是一个无聊的数据流，由于它们总是相同的，我们总是知道下一个数据是什么。所以，为了传递数据流的内容，我们不必传输任何信息。也就是说，“下一个数据是`xx`”这个事件毫无信息量。但是，如果我们不能完全预测每一个事件，那么我们有时可能会感到“惊异”。克劳德·香农决定用信息量{% mathjax %}\log\frac{1}{P(j)} = -\logP(j){% endmathjax %}来量化这种惊异程度，在观察一个事件{% mathjax %}j{% endmathjax %}，并赋予它概率{% mathjax %}P(j){% endmathjax %}。当我们赋予一个事件较低的概率时，我们的惊异会更大，该事件的信息量也就更大。如果把熵{% mathjax %}H(P){% endmathjax %}想象为“知道真实概率的人所经历的惊异程度”，那么什么是交叉熵？交叉熵从{% mathjax %}P{% endmathjax %}到{% mathjax %}Q{% endmathjax %}记为{% mathjax %}H(P,Q){% endmathjax %}。我们可以把交叉熵想象为“主观概率为{% mathjax %}Q{% endmathjax %}观察者在看到根据概率{% mathjax %}P{% endmathjax %}生成的数据时的预期惊异”。当{% mathjax %}P=Q{% endmathjax %}时交叉熵达到最低。在这种情况下，从{% mathjax %}P{% endmathjax %}到{% mathjax %}Q{% endmathjax %}的交叉熵是{% mathjax %}H(P,P) = H(P){% endmathjax %}。简而言之，我们可以从两方面来考虑交叉熵的分类目标：(i)最大化观测数据的似然；(ii)最小化传达标签所需的惊异。
+
+在训练`softmax`回归模型后，给出任何样本特征，我们可以预测每个输出类别的概率。通常我们使用预测概率最高的类别作为输出类别。如果预测与实际类别（标签）一致，则预测是正确的。在接下来的实验中，我们将使用精度(`accuracy`)来评估模型的性能。精度等于正确预测数与预测总数之间的比率。
+
+##### 总结
+
+`softmax`运算获取一个向量并将其映射为概率。`softmax`回归适用于分类问题，它使用了`softmax`运算中输出类别的概率分布。交叉熵是一个衡量两个概率分布之间差异的很好的度量，它测量给定模型编码数据所需的比特数。
