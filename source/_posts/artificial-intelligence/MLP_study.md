@@ -42,4 +42,91 @@ mathjax:
 & \mathbf{O} = \mathbf{HW}^{(2)} + \mathbf{b}^{(2)} \\
 \end{align}
 {% endmathjax %}
-由于{% mathjax %}\mathbf{X}{% endmathjax %}中的每一行对应于小批量中的每一个样本，出于记号习惯的考量，我们定义非线性函数{% mathjax %}\sigma{% endmathjax %}也以按行的方式作用于其输入，记一次计算一个样本。以相同的方式使用softmax符号来表示按行操作。但是应用于隐藏层的激活函数通常不仅按行操作，也按元素操作。这意味着，在计算每一层的线性部分之后，我们可以计算每个活性值，而不需要查看其他隐藏单元所取的值。对于大多数激活函数都是这样。为了构建更通用的多层感知机，我们可以继续堆叠这样的隐藏层，例如：{% mathjax %}\mathbf{H}^{(1)} = \sigma_1(\mathbf{XW}^{(1)} + \mathbf{b}^{(1)}){% endmathjax %}和{% mathjax %}\mathbf{H}^{(2)} = \sigma_2(\mathbf{H}^{(1)}\mathbf{W}^{(2)} + \mathbf{b}^{(2)}){% endmathjax %}一层叠一层，从而产生更有表达能力的模型。
+由于{% mathjax %}\mathbf{X}{% endmathjax %}中的每一行对应于小批量中的每一个样本，出于记号习惯的考量，我们定义非线性函数{% mathjax %}\sigma{% endmathjax %}也以按行的方式作用于其输入，记一次计算一个样本。以相同的方式使用`softmax`符号来表示按行操作。但是应用于隐藏层的激活函数通常不仅按行操作，也按元素操作。这意味着，在计算每一层的线性部分之后，我们可以计算每个活性值，而不需要查看其他隐藏单元所取的值。对于大多数激活函数都是这样。为了构建更通用的多层感知机，我们可以继续堆叠这样的隐藏层，例如：{% mathjax %}\mathbf{H}^{(1)} = \sigma_1(\mathbf{XW}^{(1)} + \mathbf{b}^{(1)}){% endmathjax %}和{% mathjax %}\mathbf{H}^{(2)} = \sigma_2(\mathbf{H}^{(1)}\mathbf{W}^{(2)} + \mathbf{b}^{(2)}){% endmathjax %}一层叠一层，从而产生更有表达能力的模型。
+
+多层感知机可以通过隐藏神经元，捕捉到输入之间复杂的相互作用，这些神经元依赖于每个输入的值。我们可以很容易地设计隐藏节点来执行任意计算。例如，在一对输入上进行基本逻辑操作，多层感知机是通用近似器。即使是网络只有一个隐藏层，给定足够的神经元和正确的权重，我们可以对任意函数建模，尽管实际中学习该函数是很困难的。神经网络有点像`C`语言。`C`语言和任何其他现代编程语言一样，能够表达任何可计算的程序。但实际上，想出一个符合规范的程序才是最困难的部分。而且，虽然一个单隐层网络能学习任何函数，但并不意味着我们应该尝试使用单隐藏层网络来解决所有问题。事实上，通过使用更深（而不是更广）的网络，我们可以更容易地逼近许多函数。
+
+##### 激活函数
+
+激活函数(`activation function`)通过计算加权和并加上偏置来确定神经元是否应该被激活，它们将输入信号转换为输出的可微运算。大多数激活函数都是非线性的。由于激活函数是深度学习的基础，下面简要介绍一些常见的激活函数。
+
+###### ReLU函数
+
+最受欢迎的激活函数是修正线性单元（Rectified linear unit，ReLU），因为它实现简单，同时在各种预测任务中表现良好。ReLU提供了一种非常简单的非线性变换。给定元素{% mathjax %}x{% endmathjax %}，ReLU函数被定义为该元素与{% mathjax %}0{% endmathjax %}的最大值：
+{% mathjax '{"conversion":{"em":14}}' %}
+ReLU(x) = \text{max}(x,0)
+{% endmathjax %}
+通俗地说，`ReLU`函数通过将相应的活性值设为`0`，仅保留正元素并丢弃所有负元素。为了直观感受一下，我们可以画出函数的曲线图。正如从图中所看到，激活函数是分段线性的。
+```python
+x = torch.arange(-8.0, 8.0, 0.1, requires_grad=True)
+y = torch.relu(x)
+plt.plot(x.detach(), y.detach(), 'x', 'relu(x)', figsize=(5, 2.5))
+```
+{% asset_img mlp_2.png %}
+
+当输入为负时，`ReLU`函数的导数为`0`，而当输入为正时，`ReLU`函数的导数为`1`。 注意，当输入值精确等于`0`时，`ReLU`函数不可导。在此时，我们默认使用左侧的导数，即当输入为`0`时导数为`0`。我们可以忽略这种情况，因为输入可能永远都不会是`0`。这里引用一句古老的谚语，“如果微妙的边界条件很重要，我们很可能是在研究数学而非工程”，这个观点正好适用于这里。下面我们绘制`ReLU`函数的导数。
+```python
+y.backward(torch.ones_like(x), retain_graph=True)
+plt.plot(x.detach(), x.grad, 'x', 'grad of relu', figsize=(5, 2.5))
+```
+{% asset_img mlp_3.png %}
+
+使用`ReLU`的原因是，它求导表现得特别好：要么让参数消失，要么让参数通过。这使得优化表现得更好，并且`ReLU`减轻了困扰以往神经网络的梯度消失问题。注意，`ReLU`函数有许多变体，包括参数化`ReLU（Parameterized ReLU，pReLU）`函数，该变体为ReLU添加了一个线性项，因此即使参数是负的，某些信息仍然可以通过：
+{% mathjax '{"conversion":{"em":14}}' %}
+p\mathbf{ReLU}(x) = \text{max}(x,0) + \alpha\text{min}(0,x)
+{% endmathjax %}
+###### sigmoid函数
+
+对于一个定义域在{% mathjax %}\mathbb{R}{% endmathjax %}中的输入，`sigmoid`函数将输入变换为区间(0, 1)上的输出。因此，sigmoid通常称为挤压函数（`squashing function`）：它将范围(`-inf, inf`)中的任意输入压缩到区间(`0, 1`)中的某个值：
+{% mathjax '{"conversion":{"em":14}}' %}
+\text{sigmoid}(x) = \frac{1}{1+\text{exp}(-x)}
+{% endmathjax %}
+在最早的神经网络中，科学家们感兴趣的是对“激发”或“不激发”的生物神经元进行建模。因此，这一领域的先驱可以一直追溯到人工神经元的发明者麦卡洛克和皮茨，他们专注于阈值单元。阈值单元在其输入低于某个阈值时取值`0`，当输入超过阈值时取值`1`。当人们逐渐关注到到基于梯度的学习时，`sigmoid`函数是一个自然的选择，因为它是一个平滑的、可微的阈值单元近似。当我们想要将输出视作二元分类问题的概率时，`sigmoid`仍然被广泛用作输出单元上的激活函数（`sigmoid`可以视为`softmax`的特例）。然而，`sigmoid`在隐藏层中已经较少使用，它在大部分时候被更简单、更容易训练的`ReLU`所取代。下面，我们绘制`sigmoid`函数。注意，当输入接近0时，`sigmoid`函数接近线性变换。
+```python
+y = torch.sigmoid(x)
+plt.plot(x.detach(), y.detach(), 'x', 'sigmoid(x)', figsize=(5, 2.5))
+```
+{% asset_img mlp_4.png %}
+
+`sigmoid`函数的导数为下面的公式：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{d}{dx}\text{sigmoid}(x) = \frac{\text{exp}(-x)}{(1 + \text{exp}(-x))^2} = \text{sigmoid}(x)(1-\text{sigmoid}(x))
+{% endmathjax %}
+`sigmoid`函数的导数图像如下所示。注意，当输入为0时，`sigmoid`函数的导数达到最大值`0.25`；而输入在任一方向上越远离`0`点时，导数越接近`0`。
+```python
+# 清除以前的梯度
+x.grad.data.zero_()
+y.backward(torch.ones_like(x),retain_graph=True)
+plt.plot(x.detach(), x.grad, 'x', 'grad of sigmoid', figsize=(5, 2.5))
+```
+{% asset_img mlp_5.png %}
+
+###### tanh函数
+
+与`sigmoid`函数类似，`tanh`(双曲正切)函数也能将其输入压缩转换到区间(`-1, 1`)上。`tanh`函数的公式如下：
+{% mathjax '{"conversion":{"em":14}}' %}
+\text{tanh}(x) = \frac{1-\text{exp}(-2x)}{1+\text{exp}(-2x)}
+{% endmathjax %}
+下面我们绘制`tanh`函数。注意，当输入在`0`附近时，`tanh`函数接近线性变换。函数的形状类似于`sigmoid`函数，不同的是`tanh`函数关于坐标系原点中心对称。
+```python
+y = torch.tanh(x)
+plt.plot(x.detach(), y.detach(), 'x', 'tanh(x)', figsize=(5, 2.5))
+```
+{% asset_img mlp_6.png %}
+
+`tanh`函数的导数是：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{d}{dx}\text{tanh}(x) = 1-\text{tanh}^2(x)
+{% endmathjax %}
+`tanh`函数的导数图像如下所示。当输入接近`0`时，`tanh`函数的导数接近最大值`1`。与我们在`sigmoid`函数图像中看到的类似，输入在任一方向上越远离`0`点，导数越接近`0`。
+```python
+# 清除以前的梯度
+x.grad.data.zero_()
+y.backward(torch.ones_like(x),retain_graph=True)
+plt.plot(x.detach(), x.grad, 'x', 'grad of tanh', figsize=(5, 2.5))
+```
+{% asset_img mlp_7.png %}
+
+#### 总结
+
+多层感知机在输出层和输入层之间增加一个或多个全连接隐藏层，并通过激活函数转换隐藏层的输出。常用的激活函数包括`ReLU`函数、`sigmoid`函数和`tanh`函数。
