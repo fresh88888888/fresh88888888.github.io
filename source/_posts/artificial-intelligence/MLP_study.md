@@ -36,3 +36,10 @@ mathjax:
 \mathbf{O} = (\mathbf{XW}^{(1)}+b^{(1)})\mathbf{W}^{(2)} + \mathbf{b}^{(2)} = \mathbf{XW}^{(1)}\mathbf{W}^{(2)} + \mathbf{b}^{(1)}\mathbf{W}^{(2)} + \mathbf{b}^{(2)} = \mathbf{XW} + \mathbf{b}
 {% endmathjax %}
 为了f发挥多层架构的潜力，我们还需要一个额外的关键要素：在仿射变换之后对每个隐藏单元应用非线性激活函数(`activation function`){% mathjax %}\sigma{% endmathjax %}。激活函数的输出（例如，{% mathjax %}\sigma(\cdot){% endmathjax %}）被称为活性值(`activations`)。一般来说，有了激活函数，就不可能再将我们的多层感知机退化成线性模型：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+& \mathbf{H} = \sigma(\mathbf{XW}^{(1)} + \mathbf{b}^{(1)}) \\
+& \mathbf{O} = \mathbf{HW}^{(2)} + \mathbf{b}^{(2)} \\
+\end{align}
+{% endmathjax %}
+由于{% mathjax %}\mathbf{X}{% endmathjax %}中的每一行对应于小批量中的每一个样本，出于记号习惯的考量，我们定义非线性函数{% mathjax %}\sigma{% endmathjax %}也以按行的方式作用于其输入，记一次计算一个样本。以相同的方式使用softmax符号来表示按行操作。但是应用于隐藏层的激活函数通常不仅按行操作，也按元素操作。这意味着，在计算每一层的线性部分之后，我们可以计算每个活性值，而不需要查看其他隐藏单元所取的值。对于大多数激活函数都是这样。为了构建更通用的多层感知机，我们可以继续堆叠这样的隐藏层，例如：{% mathjax %}\mathbf{H}^{(1)} = \sigma_1(\mathbf{XW}^{(1)} + \mathbf{b}^{(1)}){% endmathjax %}和{% mathjax %}\mathbf{H}^{(2)} = \sigma_2(\mathbf{H}^{(1)}\mathbf{W}^{(2)} + \mathbf{b}^{(2)}){% endmathjax %}一层叠一层，从而产生更有表达能力的模型。
