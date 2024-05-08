@@ -24,7 +24,7 @@ mathjax:
 
 这个多层感知机有4个输入，3个输出，其隐藏层包含5个隐藏单元。输入层不涉及任何计算，因此使用此网络产生输出只需要实现隐藏层和输出层的计算。因此，这个多层感知机中的层数为2.注意，这两个层都是全连接的。每个输入都会影响隐藏层中的每个神经元，而隐藏层中的每个神经元又会影响输出层中的每个神经元。具有全连接层的多层感知机的参数开销可能会高的令人望而却步。即使不改变输入或输出大小的情况下，可能在参数节约和模型有效性之间进行平衡。
 
-同之前一样，我们通过矩阵{% mathjax %}\mathbf{X}\in \mathbb{R}^{n\times d}{% endmathjax %}来表示{% mathjax %}n{% endmathjax %}个样本的小批量，其中每个样本具有{% mathjax %}d{% endmathjax %}个输入特征。对于具有{% mathjax %}h{% endmathjax %}个隐藏单元的但隐藏层多层感知机，用{% mathjax %}\mathbf{H}\in \mathbb{R}^{n\times h}{% endmathjax %}表示隐藏层的输出，称为隐藏表示(`hidden representations`)。在数学或代码中，{% mathjax %}mathbf{H}{% endmathjax %}也被称为隐藏层变量(`hidden-layer variable`)因为隐藏层和输出层都是全连接的，所以我们有隐藏层权重{% mathjax %}\mathbf{W}^{(1)}\in \mathbb{R}^{d\times h}{% endmathjax %}和隐藏层偏置{% mathjax %}\mathbf{b}^{(1)}\in \mathbb{R}^{1\times h}{% endmathjax %}以及输出层权重{% mathjax %}\mathbf{W}^{(2)}\in \mathbb{R}^{1\times q}{% endmathjax %}和输出层偏置{% mathjax %}\mathbf{b}^{(2)}\in \mathbb{R}^{1\times q}{% endmathjax %}。在形式上，我们按如下方式计算但隐藏层多层感知机的输出{% mathjax %}\mathbf{O}\in \mathbb{R}^{n\times q}{% endmathjax %}：
+同之前一样，我们通过矩阵{% mathjax %}\mathbf{X}\in \mathbb{R}^{n\times d}{% endmathjax %}来表示{% mathjax %}n{% endmathjax %}个样本的小批量，其中每个样本具有{% mathjax %}d{% endmathjax %}个输入特征。对于具有{% mathjax %}h{% endmathjax %}个隐藏单元的但隐藏层多层感知机，用{% mathjax %}\mathbf{H}\in \mathbb{R}^{n\times h}{% endmathjax %}表示隐藏层的输出，称为隐藏表示(`hidden representations`)。在数学或代码中，{% mathjax %}\mathbf{H}{% endmathjax %}也被称为隐藏层变量(`hidden-layer variable`)因为隐藏层和输出层都是全连接的，所以我们有隐藏层权重{% mathjax %}\mathbf{W}^{(1)}\in \mathbb{R}^{d\times h}{% endmathjax %}和隐藏层偏置{% mathjax %}\mathbf{b}^{(1)}\in \mathbb{R}^{1\times h}{% endmathjax %}以及输出层权重{% mathjax %}\mathbf{W}^{(2)}\in \mathbb{R}^{1\times q}{% endmathjax %}和输出层偏置{% mathjax %}\mathbf{b}^{(2)}\in \mathbb{R}^{1\times q}{% endmathjax %}。在形式上，我们按如下方式计算但隐藏层多层感知机的输出{% mathjax %}\mathbf{O}\in \mathbb{R}^{n\times q}{% endmathjax %}：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
 & \mathbf{H} = \mathbf{XW}^{(1)} + \mathbf{b}^{(1)} \\
@@ -32,3 +32,7 @@ mathjax:
 \end{align}
 {% endmathjax %}
 注意在添加隐藏层之后，模型现在需要跟踪和更新额外的参数。可我们能从中得到什么好处呢？在上面定义的模型里，我们没有好处！原因很简单：上面的隐藏单元由输入的仿射函数给出，而输出（`softmax`操作前）只是隐藏单元的仿射函数。仿射函数的仿射函数本身就是仿射函数，但是我们之前的线性模型已经能够表示任何仿射函数。我们可以证明这一等价性，即对于任意权重值，我们只需合并隐藏层，便可产生具有参数{% mathjax %}\mathbf{W} = \mathbf{W}^{(1)}\mathbf{W}^{(2)}{% endmathjax %}和{% mathjax %}\mathbf{b}=\mathbf{b}^{(1)} \mathbf{W}^{(2)} + \mathbf{b}^{(2)}{% endmathjax %}的等价单层模型。
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{O} = (\mathbf{XW}^{(1)}+b^{(1)})\mathbf{W}^{(2)} + \mathbf{b}^{(2)} = \mathbf{XW}^{(1)}\mathbf{W}^{(2)} + \mathbf{b}^{(1)}\mathbf{W}^{(2)} + \mathbf{b}^{(2)} = \mathbf{XW} + \mathbf{b}
+{% endmathjax %}
+为了f发挥多层架构的潜力，我们还需要一个额外的关键要素：在仿射变换之后对每个隐藏单元应用非线性激活函数(`activation function`){% mathjax %}\sigma{% endmathjax %}。激活函数的输出（例如，{% mathjax %}\sigma(\cdot){% endmathjax %}）被称为活性值(`activations`)。一般来说，有了激活函数，就不可能再将我们的多层感知机退化成线性模型：
