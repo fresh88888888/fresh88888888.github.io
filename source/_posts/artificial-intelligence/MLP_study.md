@@ -188,6 +188,6 @@ plt.plot(x.detach(), x.grad, 'x', 'grad of tanh', figsize=(5, 2.5))
 
 给定{% mathjax %}x{% endmathjax %}，我们将使用以下三阶多项式来生成训练和测试数据的标签：
 {% mathjax '{"conversion":{"em":14}}' %}
-y = 5 + 1.2x- 3.4\frac{x^2}{2!} + 5.6\frac{x^3}{3!} + \epsilon \text{where} \epsilon \sim\mathcal{N}(0,0.1^2)
+y = 5 + 1.2x- 3.4\frac{x^2}{2!} + 5.6\frac{x^3}{3!} + \epsilon\;\text{where}\;\epsilon \sim\mathcal{N}(0,0.1^2)
 {% endmathjax %}
 噪声项{% mathjax %}\epsilon{% endmathjax %}服从均值为`0`且标准差为`0.1`正态分布。在优化的过程中，我们通常希望避免非常大的梯度值或损失值。这就是我们将特征从{% mathjax %}x^i{% endmathjax %}调整为{% mathjax %}\frac{x^i}{i!}{% endmathjax %}的原因，这样可以避免很大的{% mathjax %}i{% endmathjax %}带来的特别大的指数值。我们降为训练集和测试集各生成`100`个样本。
