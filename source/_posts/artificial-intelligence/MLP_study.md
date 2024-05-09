@@ -304,3 +304,14 @@ train(poly_features[:n_train, :], poly_features[n_train:, :], labels[:n_train], 
 
 #### 权重衰减
 
+回想一下，在多项式回归的例子中，我们可以通过调整拟合多项式的阶数来限制模型的容量。实际上，限制特征的数量是缓解过拟合的一种常用技术。然而，简单的丢弃特征对这项工作来说可能过于生硬。我们继续思考多项式回归的例子，考虑高维输入可能发生的情况。多项式对多变量数据的自然扩展称**单项式**(`monomials`)。也可以说变量幂的乘积，单项式的阶数是幂的和。例如，{% mathjax %}x_1^2x_2 {% endmathjax %}和{% mathjax %}x_3x_5^2{% endmathjax %}都是三次单项式。注意，随着阶数{% mathjax %}d{% endmathjax %}的增长，带有阶数{% mathjax %}d{% endmathjax %}的项数迅速增加。给定{% mathjax %}k{% endmathjax %}个变量，阶数为{% mathjax %}d{% endmathjax %}的项的个数为{% mathjax %}\binom{k-1+d}{k-1}{% endmathjax %}，即{% mathjax %}C_{k-1+d}^{k-1} = \frac{(k-1+d)!}{(d)!(k-1)!}{% endmathjax %}，因此即使是阶数上的微小变化，比如从2到3，也会显著增加我们模型的复杂性。仅仅通过简单的限制特征数量（在多项式回归中体现为限制阶数），可能仍然使模型在过简单和过复杂中徘徊，我们需要一个更细粒度的工具来调整函数的复杂性，使其达到一个合适的平衡位置。在训练参数化机器学习模型时，**权重衰减**(`weight decay`)是最广泛使用的正则化技术之一，它通常也被称为{% mathjax %}L_2{% endmathjax %}正则化。这项技术通过函数与零的距离来衡量函数的复杂度，因为在所有函数{% mathjax %}f{% endmathjax %}中，函数{% mathjax %}f=0{% endmathjax %}(所有输入都得到值为0)在某种意义上是最简单的。但是我们应该如何精确地测量一个函数和零之间的距离呢？没有一个正确的答案。事实上，函数分析和巴拿赫空间理论的研究，都在致力于回答这个问题。
+
+一种简单的方法是通过线性函数{% mathjax %}f(\mathbf{x})=\mathbf{w}^{\mathsf{T}}\mathbf{x}{% endmathjax %}中的权重向量的某个范数来度量其复杂性，例如{% mathjax %}\|\mathbf{w}\|^2{% endmathjax %}。要保证权重向量比较小，最常用的方法是将其范数作为惩罚项加到最小化损失的问题中。将原来的训练目标最小化训练标签上的预测损失， 调整为最小化预测损失和惩罚项之和。 现在，如果我们的权重向量增长的太大， 我们的学习算法可能会更集中于最小化权重范数{% mathjax %}\|\mathbf{w}\|^2{% endmathjax %}，这正是我们想要的。我们的损失由下式给出：
+{% mathjax '{"conversion":{"em":14}}' %}
+L(\mathbf{w},b) = \frac{1}{n}\sum_{i=1}^n \frac{1}{2}(\mathbf{w}^{\mathsf{T}}x^{(i)} + b - y^{(i)})^2
+{% endmathjax %}
+回想一下，{% mathjax %}\mathbf{x}^{(i)}{% endmathjax %}是样本{% mathjax %}i{% endmathjax %}的特征，{% mathjax %}(\mathbf{w},b){% endmathjax %}是权重和偏置参数。为了惩罚权重向量的大小，我们必须以某种方式在损失函数中添加{% mathjax %}\|\mathbf{w}\|^2{% endmathjax %}但是模型应该如何平衡这个新的额外惩罚的损失？ 实际上，我们通过正则化常数{% mathjax %}\lambda{% endmathjax %}来描述这种权衡，这是一个非负超参数，我们使用验证数据拟合：
+{% mathjax '{"conversion":{"em":14}}' %}
+L(\mathbf{w},b) + \frac{\lambda}{2} \|\mathbf{w}\|^2
+{% endmathjax %}
+对于{% mathjax %}\lambda = 0{% endmathjax %}，我们恢复了原来的损失函数。对于{% mathjax %}\lambda > 0{% endmathjax %}，我们限制{% mathjax %}\|\mathbf{w}\|{% endmathjax %}的大小。
