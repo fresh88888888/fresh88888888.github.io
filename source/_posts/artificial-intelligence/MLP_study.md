@@ -509,7 +509,7 @@ o_i = \sum_{j=1}^{n_{in}} w_{ij}x_j
 {% endmathjax %}
 这就是现在标准且实用的`Xavier`初始化的基础，它以其提出者(`Glorot and Bengio, 2010`)第一作者的名字命名。通常，`Xavier`初始化从均值为零，方差{% mathjax %}\sigma^2 = \frac{2}{n_{in} + n_{out}}{% endmathjax %}的高斯分布中采样权重。我们也可以将其改为选择从均匀分布中抽取权重时的方差。注意均匀分布{% mathjax %}U(-a,a){% endmathjax %}的方差为{% mathjax %}\frac{a^2}{3}{% endmathjax %}。将{% mathjax %}\frac{a^2}{3}{% endmathjax %}代入到{% mathjax %}\sigma^2{% endmathjax %}的条件中，将得到初始化值域：
 {% mathjax '{"conversion":{"em":14}}' %}
-\mathbf{U}\Big(-\sqrt{\frac{6}{n_{in}+n_{out}}}, \sqrt{\frac{6}{n_{in}+n_{out}}} \Big)
+\mathbf{U}\bigg(-\sqrt{\frac{6}{n_{in}+n_{out}}}, \sqrt{\frac{6}{n_{in}+n_{out}}} \bigg)
 {% endmathjax %}
 尽管在上述数学推理中，“不存在非线性”的假设在神经网络中很容易被违反，但`Xavier`初始化方法在实践中被证明是有效的。
 ##### 总结
