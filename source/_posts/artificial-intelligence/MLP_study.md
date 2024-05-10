@@ -490,3 +490,28 @@ print('乘以100个矩阵后\n', M)
 {% mathjax '{"conversion":{"em":14}}' %}
 o_i = \sum_{j=1}^{n_{in}} w_{ij}x_j
 {% endmathjax %}
+权重{% mathjax %}w_{ij}{% endmathjax %}都是从同一分布中独立抽取的。此外，让我们假设该分布具有零均值和方差{% mathjax %}\sigma^2{% endmathjax %}。请注意，这并不意味着分布必须是高斯的，只是均值和方差需要存在。现在，让我们假设层{% mathjax %}x_j{% endmathjax %}的输入也具有零均值和方差{% mathjax %}\gamma^2{% endmathjax %}，并且它们独立于{% mathjax %}w_{ij}{% endmathjax %}并且彼此独立。在这种情况下，我们可以按如下方式计算{% mathjax %}o_i{% endmathjax %}的平均值和方差：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+\mathbf{E}[o_i] & =\sum_{j=1}^{n_{in}}\mathbf{E}[w_{ij}x_j]\\
+& = \sum_{j=1}^{n_{in}}\mathbf{E}[w_{ij}]\mathbf{E}[x_j]\\
+& = 0\\
+& \\
+\text{Var}[o_i] & =\mathbf{E}[o_i^2] - (\mathbf{E}[o_i])^2
+& = \sum_{j=1}^{n_{in}}\mathbf{E}[w_{ij}^2 x_j^2] - 0\\
+& = \sum_{j=1}^{n_{in}}\mathbf{E}[w_{ij}^2]\mathbf{E}[x_j^2]\\
+& = n_{in}\sigma^2\gamma^2
+\end{align}
+{% endmathjax %}
+保持方差不变的一种方法是设置{% mathjax %}n_{in}\sigma^2= 1{% endmathjax %}。现在考虑反向传播过程，我们面临着类似的问题，尽管梯度是从更靠近输出的层传播的。使用与前向传播相同的推断，我们可以看到，除非{% mathjax %}n_{out}\sigma^2 = 1{% endmathjax %}，否则梯度的方差可能会增大，其中{% mathjax %}n_{out}{% endmathjax %}是该层的输出的数量。这使得我们进退两难，我们不可能同时满足这两个条件。相反，我们只需满足：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{1}{2}(n_{in} + n_{out})\sigma^2 = 1\;\text{或等价于}\;\sigma = \sqrt{\frac{2}{n_{in} + n_{out}}}
+{% endmathjax %}
+这就是现在标准且实用的`Xavier`初始化的基础，它以其提出者(`Glorot and Bengio, 2010`)第一作者的名字命名。通常，`Xavier`初始化从均值为零，方差{% mathjax %}\sigma^2 = \frac{2}{n_{in} + n_{out}}{% endmathjax %}的高斯分布中采样权重。我们也可以将其改为选择从均匀分布中抽取权重时的方差。注意均匀分布{% mathjax %}U(-a,a){% endmathjax %}的方差为{% mathjax %}\frac{a^2}{3}{% endmathjax %}。将{% mathjax %}\frac{a^2}{3}{% endmathjax %}代入到{% mathjax %}\sigma^2{% endmathjax %}的条件中，将得到初始化值域：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{U}(-\sqrt{\frac{6}{n_{in}+n_{out}}}, \sqrt{\frac{6}{n_{in}+n_{out}}})
+{% endmathjax %}
+尽管在上述数学推理中，“不存在非线性”的假设在神经网络中很容易被违反，但`Xavier`初始化方法在实践中被证明是有效的。
+##### 总结
+
+梯度消失和梯度爆炸是深度网络中常见的问题。在参数初始化时需要非常小心，以确保梯度和参数可以得到很好的控制。需要用启发式的初始化方法来确保初始梯度既不太大也不太小。`ReLU`激活函数缓解了梯度消失问题，这样可以加速收敛。随机初始化是保证在进行优化前打破对称性的关键。`Xavier`初始化表明，对于每一层，输出的方差不受输入数量的影响，任何梯度的方差不受输出数量的影响。
