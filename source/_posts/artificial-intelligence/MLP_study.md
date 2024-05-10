@@ -405,7 +405,7 @@ J = L + s
 {% mathjax '{"conversion":{"em":14}}' %}
 \frac{\partial J}{\partial\mathbf{W}^{(2)}} = \text{prod}(\frac{\partial J}{\partial\mathbf{o}},\frac{\partial\mathbf{o}}{\partial\mathbf{W}^{(2)}}) + \text{prod}(\frac{\partial J}{\partial s},\frac{\partial s}{\partial\mathbf{W}^{(2)}}) = \frac{\partial J}{\partial\mathbf{o}}\mathbf{h}^{\mathsf{T}} + \lambda\mathbf{W}^{(2)}
 {% endmathjax %}
-为了获得关于{% mathjax %}\mathbf{W}^{(1)}{% endmathjax %}的梯度，我们需要继续沿着输出层到隐藏层反向传播。关于隐藏层输出的梯度{% mathjax %}\partial J/\partial\mathbf{h}\in mathbb{R}^h{% endmathjax %}由下式给出：
+为了获得关于{% mathjax %}\mathbf{W}^{(1)}{% endmathjax %}的梯度，我们需要继续沿着输出层到隐藏层反向传播。关于隐藏层输出的梯度{% mathjax %}\partial J/\partial\mathbf{h}\in \mathbb{R}^h{% endmathjax %}由下式给出：
 {% mathjax '{"conversion":{"em":14}}' %}
 \frac{\partial J}{\partial\mathbf{h}}= \text{prod}(\frac{\partial J}{\partial\mathbf{o}},\frac{\partial\mathbf{o}}{\partial\mathbf{h}}) = \mathbf{W}^{(2)}^{\mathsf{T}} \frac{\partial J}{\partial\mathbf{o}}
 {% endmathjax %}
