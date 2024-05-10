@@ -403,7 +403,7 @@ J = L + s
 {% endmathjax %}
 现在我们可以计算最接近输出层的模型参数的梯度{% mathjax %}\partial J/\partial\mathbf{W}^{(2)}\in \mathsf{R}^{q\times h}{% endmathjax %}。使用链式法则得出：
 {% mathjax '{"conversion":{"em":14}}' %}
-\frac{\partial J}{\partial\mathbf{W}^{(2)}} = \text{prod}(\frac{\partial J}{\partial\mathbf{o}},\frac{\partial\mathbf{o}}{\partial\mathbf{W}}^{(2)}) + \text{prod}(\frac{\partial J}{\partial s},\frac{\partial s}{\partial\mathbf{W}}^{(2)}) = \frac{\partial J}{\partial\mathbf{o}}\mathbf{h}^{\mathsf{T}} + \lambda\mathbf{W}^{(2)}
+\frac{\partial J}{\partial\mathbf{W}^{(2)}} = \text{prod}(\frac{\partial J}{\partial\mathbf{o}},\frac{\partial\mathbf{o}}{\partial\mathbf{W}^{(2)}}) + \text{prod}(\frac{\partial J}{\partial s},\frac{\partial s}{\partial\mathbf{W}^{(2)}}) = \frac{\partial J}{\partial\mathbf{o}}\mathbf{h}^{\mathsf{T}} + \lambda\mathbf{W}^{(2)}
 {% endmathjax %}
 为了获得关于{% mathjax %}\mathbf{W}^{(1)}{% endmathjax %}的梯度，我们需要继续沿着输出层到隐藏层反向传播。关于隐藏层输出的梯度{% mathjax %}\partial J/\partial\mathbf{h}\in mathbb{R}^h{% endmathjax %}由下式给出：
 {% mathjax '{"conversion":{"em":14}}' %}
@@ -415,7 +415,7 @@ J = L + s
 {% endmathjax %}
 最后，我们可以得到最接近输入层的模型参数的梯度{% mathjax %}\partial J/\partial\mathbf{W}^{(1)}\in \mathbb{R}^{h\times d}{% endmathjax %}。根据链式法则，我们得到：
 {% mathjax '{"conversion":{"em":14}}' %}
-\frac{\partial J}{\partial\mathbf{W}^{(1)}} = \text{prod}(\frac{\partial J}{\partial\mathbf{z}},\frac{\partial\mathbf{z}}{\partial\mathbf{W}}^{(1)}) + \text{prod}(\frac{\partial J}{\partial s},\frac{\partial s}{\partial\mathbf{W}}^{(1)}) = \frac{\partial J}{\partial\mathbf{z}}\mathbf{x}^{\mathsf{T}} + \lambda\mathbf{W}^{(1)}
+\frac{\partial J}{\partial\mathbf{W}^{(1)}} = \text{prod}(\frac{\partial J}{\partial\mathbf{z}},\frac{\partial\mathbf{z}}{\partial\mathbf{W}^{(1)}}) + \text{prod}(\frac{\partial J}{\partial s},\frac{\partial s}{\partial\mathbf{W}^{(1)}}) = \frac{\partial J}{\partial\mathbf{z}}\mathbf{x}^{\mathsf{T}} + \lambda\mathbf{W}^{(1)}
 {% endmathjax %}
 ##### 训练神经网络
 
