@@ -411,7 +411,7 @@ J = L + s
 {% endmathjax %}
 由于激活函数{% mathjax %}\phi{% endmathjax %}是按元素计算的，计算中间变量{% mathjax %}\mathbf{z}{% endmathjax %}的梯度{% mathjax %}\partial J/\partial\mathbf{z}\in \mathbb{R}^h{% endmathjax %}需要使用按元素乘法运算符，我们用{% mathjax %}\odot{% endmathjax %}表示：
 {% mathjax '{"conversion":{"em":14}}' %}
-\frac{\partial J}{\partial\mathbf{z}}= \text{prod}(\frac{\partial J}{\partial\mathbf{h}},frac{\partial\mathbf{h}}{\partial\mathbf{z}}) = \frac{\partial J}{\partial\mathbf{h}}\odot\phi'(\mathbf{z})
+\frac{\partial J}{\partial\mathbf{z}}= \text{prod}(\frac{\partial J}{\partial\mathbf{h}},\frac{\partial\mathbf{h}}{\partial\mathbf{z}}) = \frac{\partial J}{\partial\mathbf{h}}\odot\phi'(\mathbf{z})
 {% endmathjax %}
 最后，我们可以得到最接近输入层的模型参数的梯度{% mathjax %}\partial J/\partial\mathbf{W}^{(1)}\in \mathbb{R}^{h\times d}{% endmathjax %}。根据链式法则，我们得到：
 {% mathjax '{"conversion":{"em":14}}' %}
