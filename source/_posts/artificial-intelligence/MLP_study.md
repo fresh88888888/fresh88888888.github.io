@@ -347,4 +347,46 @@ h' =
 
 通常，我们在测试时不用暂退法。给定一个训练好的模型和一个新的样本，我们不会丢弃任何节点，因此不需要标准化。然而也有一些例外：一些研究人员在测试时使用暂退法，用于估计神经网络预测的“不确定性”：如果通过许多不同的暂退法遮盖后得到的预测结果都是一致的，那么我们可以说网络发挥更稳定。
 
+#### 前向传播、反向传播和计算图
 
+我们已经学习了如何用小批量随机梯度下降训练模型。然而当实现该算法时，我们只考虑了通过前向传播(`forward propagation`)所涉及的计算。在计算梯度时，我们只调用了深度学习框架提供的反向传播函数，而不知其所以然。梯度的自动计算（自动微分）大大简化了深度学习算法的实现。在自动微分之前，即使是对复杂模型的微小调整也需要手工重新计算复杂的导数，学术论文也不得不分配大量页面来推导更新规则。
+
+##### 前向传播
+
+前向传播(`forward propagation`)指的是：按顺序（从输入层到输出层）计算和存储神经网络中每层的结果。我们将一步步研究单隐藏层神经网络的机制，为了简单起见，我们假设输入样本是{% mathjax %}\mathbf{x}\in \mathbb{R}^d{% endmathjax %}，并且我们的隐藏层不包括偏置项，这里的中间变量是：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{z} = \mathbf{W}^{(1)}\mathbf{x}
+{% endmathjax %}
+其中{% mathjax %}\mathbf{W}^{(1)}\in \mathbb{R}^{h\times d}{% endmathjax %}是隐藏层的权重参数。将中间变量{% mathjax %}\mathbf{z}\in \mathbb{R}^h{% endmathjax %}通过激活函数{% mathjax %}\phi{% endmathjax %}后，我们得到长度为{% mathjax %}h{% endmathjax %}的隐藏激活向量：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{h} = \phi (\mathbf{z})
+{% endmathjax %}
+隐藏变量{% mathjax %}h{% endmathjax %}也是一个中间变量。假设输出层的参数只有权重{% mathjax %}\mathbf{W}^{{2}}\in \mathbb{R}^{q\times h}{% endmathjax %}，我们可以得到输出层变量，它是一个长度为{% mathjax %}q{% endmathjax %}的向量：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{o} = \mathbf{W}^{(2)}\mathbf{h}
+{% endmathjax %}
+假设损失函数为{% mathjax %}l{% endmathjax %}，样本标签为{% mathjax %}y{% endmathjax %}，我们可以计算单个样本的损失项：
+{% mathjax '{"conversion":{"em":14}}' %}
+L = l(\mathbf{o},y)
+{% endmathjax %}
+根据{% mathjax %}L_2{% endmathjax %}正则化的定义，给定超参数，正则化项为
+{% mathjax '{"conversion":{"em":14}}' %}
+s = \frac{\lambda}{2}(\|\mathbf{W}^{(1)}\|_F^2 + \|\mathbf{W}^{(2)}\|_F^2)
+{% endmathjax %}
+其中矩阵的`Frobenius`范数是将矩阵展平为向量后应用的{% mathjax %}L_2{% endmathjax %}范数。最后，模型在给定样本上的正则化损失为：
+{% mathjax '{"conversion":{"em":14}}' %}
+J = L + s
+{% endmathjax %}
+下面，我们将{% mathjax %}J{% endmathjax %}称为**目标函数**(`objective function`)。
+##### 前向传播计算图
+
+绘制计算图有助于我们可视化计算中操作符和变量的依赖关系。下图是上述简单网络相对应的计算图，其中正方形表示变量，圆圈表示操作符。左下角表示输入，右上角表示输出。注意显示数据流的箭头方向主要是向右和向上的。
+{% asset_img mlp_13.png "前向传播的计算图" %}
+
+##### 反向传播
+
+反向传播(`backward propagation`)指的是计算神经网络参数梯度的方法。简言之，该方法根据微积分中的链式规则，按相反的顺序从输出层到输入层遍历网络。该算法存储了计算某些参数梯度时所需的任何中间变量（偏导数）。假设我们有函数{% mathjax %}\mathsf{Y} = f(\mathsf{X}){% endmathjax %}和{% mathjax %}\mathsf{Z} = g(\mathsf{Y}){% endmathjax %}，其中输入和输出{% mathjax %}\mathsf{X,Y,Z}{% endmathjax %}是任意形状的张量。利用链式法则，我们可以计算{% mathjax %}\mathsf{Z}{% endmathjax %}关于{% mathjax %}\mathsf{X}{% endmathjax %}的导数：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial\mathsf{Z}}{\partial\mathsf{X}} = \text{prod}(\frac{\partial\mathsf{Z}}{\partial\mathsf{Y}},\frac{\partial\mathsf{Y}}{\partial\mathsf{X}})
+{% endmathjax %}
+在这里，我们使用{% mathjax %}\text{prod}{% endmathjax %}运算符在执行必要的操作（如换位和交换输入位置）后将其参数相乘。对于向量，这很简单，它只是矩阵-矩阵乘法。对于高维张量，我们使用适当的对应项。运算符{% mathjax %}\text{prod}{% endmathjax %}指代了所有的这些符号。回想一下，前向传播计算图中的但隐藏层简单网络的参数是{% mathjax %}\mathbf{W}^{(1)}{% endmathjax %}和{% mathjax %}\mathbf{W}^{(2)}{% endmathjax %}。**反向传播的目的是计算梯度**，{% mathjax %}\partial J/\partial\mathbf{W}^{(1)}{% endmathjax %}和{% mathjax %}\partial J/\partial\mathbf{W}^{(2)}{% endmathjax %}。为此，我们应用链式法则，以此计算每个中间变量和参数的梯度。计算的顺序与前向传播中执行的顺序相反，因此我们需要从计算图的结果开始，并朝着参数的方向努力。第一步是计算目标函数{% mathjax %}J = L + s{% endmathjax %}相对于损失项{% mathjax %}L{% endmathjax %}和正则项{% mathjax %}s{% endmathjax %}的梯度。
