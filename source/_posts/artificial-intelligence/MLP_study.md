@@ -390,3 +390,39 @@ J = L + s
 \frac{\partial\mathsf{Z}}{\partial\mathsf{X}} = \text{prod}(\frac{\partial\mathsf{Z}}{\partial\mathsf{Y}},\frac{\partial\mathsf{Y}}{\partial\mathsf{X}})
 {% endmathjax %}
 在这里，我们使用{% mathjax %}\text{prod}{% endmathjax %}运算符在执行必要的操作（如换位和交换输入位置）后将其参数相乘。对于向量，这很简单，它只是矩阵-矩阵乘法。对于高维张量，我们使用适当的对应项。运算符{% mathjax %}\text{prod}{% endmathjax %}指代了所有的这些符号。回想一下，前向传播计算图中的但隐藏层简单网络的参数是{% mathjax %}\mathbf{W}^{(1)}{% endmathjax %}和{% mathjax %}\mathbf{W}^{(2)}{% endmathjax %}。**反向传播的目的是计算梯度**，{% mathjax %}\partial J/\partial\mathbf{W}^{(1)}{% endmathjax %}和{% mathjax %}\partial J/\partial\mathbf{W}^{(2)}{% endmathjax %}。为此，我们应用链式法则，以此计算每个中间变量和参数的梯度。计算的顺序与前向传播中执行的顺序相反，因此我们需要从计算图的结果开始，并朝着参数的方向努力。第一步是计算目标函数{% mathjax %}J = L + s{% endmathjax %}相对于损失项{% mathjax %}L{% endmathjax %}和正则项{% mathjax %}s{% endmathjax %}的梯度。
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial J}{\partial L} = 1\;\text{and}\;\frac{\partial J}{\partial s} = 1
+{% endmathjax %}
+接下来，我们根据链式法则计算目标函数关于输出层变量{% mathjax %}\mathbf{o}{% endmathjax %}的梯度：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial J}{\partial\mathbf{o}} = \text{prod}(\frac{\partial J}{\partial L},\frac{\partial L}{\partial\mathbf{o}}) = \frac{\partial L}{\partial\mathbf{o}}\in \mathsf{R}^q
+{% endmathjax %}
+接下来，我们计算正则化项相对于两个参数的梯度：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial s}{\partial\mathbf{W}^{(1)}} = \lambda\mathbf{W}^{(1)}\;\text{and}\;\frac{\partial s}{\partial\mathbf{W}^{(2)}} = \lambda\mathbf{W}^{(2)}
+{% endmathjax %}
+现在我们可以计算最接近输出层的模型参数的梯度{% mathjax %}\partial J/\partial\mathbf{W}^{(2)}\in \mathsf{R}^{q\times h}{% endmathjax %}。使用链式法则得出：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial J}{\partial\mathbf{W}^{(2)}} = \text{prod}(\frac{\partial J}{\partial\mathbf{o}},\frac{\partial\mathbf{o}}{\partial\mathbf{W}}^{(2)}) + \text{prod}(\frac{\partial J}{\partial s},\frac{\partial s}{\partial\mathbf{W}}^{(2)}) = \frac{\partial J}{\partial\mathbf{o}}\mathbf{h}^{\mathsf{T}} + \lambda\mathbf{W}^{(2)}
+{% endmathjax %}
+为了获得关于{% mathjax %}\mathbf{W}^{(1)}{% endmathjax %}的梯度，我们需要继续沿着输出层到隐藏层反向传播。关于隐藏层输出的梯度{% mathjax %}\patrial J/\partial\mathbf{h}\in mathbb{R}^h{% endmathjax %}由下式给出：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial J}{\partial\mathbf{h}}= \text{prod}(\frac{\partial J}{\partial\mathbf{o}},frac{\partial\mathbf{o}}{\partial\mathbf{h}}) = \mathbf{W}^{(2)}^{\mathsf{T}} \frac{\partial J}{\partial\mathbf{o}}
+{% endmathjax %}
+由于激活函数{% mathjax %}\phi{% endmathjax %}是按元素计算的，计算中间变量{% mathjax %}\mathbf{z}{% endmathjax %}的梯度{% mathjax %}\partial J/\partial\mathbf{z}\in \mathbb{R}^h{% endmathjax %}需要使用按元素乘法运算符，我们用{% mathjax %}\odot{% endmathjax %}表示：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial J}{\partial\mathbf{z}}= \text{prod}(\frac{\partial J}{\partial\mathbf{h}},frac{\partial\mathbf{h}}{\partial\mathbf{z}}) = \frac{\partial J}{\partial\mathbf{h}}\odot\phi'(\mathbf{z})
+{% endmathjax %}
+最后，我们可以得到最接近输入层的模型参数的梯度{% mathjax %}\partial J/\partial\mathbf{W}^{(1)}\in \mathbb{R}^{h\times d}{% endmathjax %}。根据链式法则，我们得到：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial J}{\partial\mathbf{W}^{(1)}} = \text{prod}(\frac{\partial J}{\partial\mathbf{z}},\frac{\partial\mathbf{z}}{\partial\mathbf{W}}^{(1)}) + \text{prod}(\frac{\partial J}{\partial s},\frac{\partial s}{\partial\mathbf{W}}^{(1)}) = \frac{\partial J}{\partial\mathbf{z}}\mathbf{x}^{\mathsf{T}} + \lambda\mathbf{W}^{(1)}
+{% endmathjax %}
+##### 训练神经网络
+
+在训练神经网络时，前向传播和反向传播相互依赖。对于前向传播，我们沿着依赖的方向遍历计算图并计算其路径上的所有变量。然后将这些用于反向传播，其中计算顺序与计算图的相反。在训练神经网络时，在初始化模型参数后，我们交替使用前向传播和反向传播，利用反向传播给出的梯度来更新模型参数。注意，反向传播重复利用前向传播中存储的中间值，以避免重复计算。带来的影响之一是我们需要保留中间值，直到反向传播完成。这也是训练比单纯的预测需要更多的内存（显存）的原因之一。此外，这些中间值的大小与网络层的数量和批量的大小大致成正比。因此，使用更大的批量来训练更深层次的网络更容易导致内存不足(`out of memory`)错误。
+
+##### 总结
+
+前向传播在神经网络定义的计算图中按顺序计算和存储中间变量，它的顺序是从输入层到输出层。反向传播按相反的顺序（从输出层到输入层）计算和存储神经网络的中间变量和参数的梯度。在训练深度学习模型时，前向传播和反向传播是相互依赖的。训练比预测需要更多的内存。
+
+#### 数值稳定性和模型初始化
