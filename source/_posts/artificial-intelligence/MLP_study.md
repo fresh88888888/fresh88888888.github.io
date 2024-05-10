@@ -497,7 +497,7 @@ o_i = \sum_{j=1}^{n_{in}} w_{ij}x_j
 & = \sum_{j=1}^{n_{in}}\mathbf{E}[w_{ij}]\mathbf{E}[x_j]\\
 & = 0\\
 & \\
-\text{Var}[o_i] & =\mathbf{E}[o_i^2] - (\mathbf{E}[o_i])^2
+\text{Var}[o_i] & =\mathbf{E}[o_i^2] - (\mathbf{E}[o_i])^2\\
 & = \sum_{j=1}^{n_{in}}\mathbf{E}[w_{ij}^2 x_j^2] - 0\\
 & = \sum_{j=1}^{n_{in}}\mathbf{E}[w_{ij}^2]\mathbf{E}[x_j^2]\\
 & = n_{in}\sigma^2\gamma^2
