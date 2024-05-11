@@ -524,7 +524,7 @@ o_i = \sum_{j=1}^{n_{in}} w_{ij}x_j
 
 ###### 协变量偏移
 
-在不同分布偏移中，协变量偏移可能是最为广泛研究的。这里我们假设：虽然输入的分布可能随时间而改变，但标签函数（即条件分布{% mathjax %}P(y|\amthbf{x}){% endmathjax %}）没有改变。统计学家称之为**协变量偏移**(`covariate shift`)，因为这个问题是由于协变量（特征）分布的变化而产生的。虽然有时我们可以在不引用因果关系的情况下对分布偏移进行推断，但在我们认为{% mathjax %}\mathbf{x}{% endmathjax %}导致{% mathjax %}y{% endmathjax %}的情况下，协变量偏移是一种自然假设。
+在不同分布偏移中，协变量偏移可能是最为广泛研究的。这里我们假设：虽然输入的分布可能随时间而改变，但标签函数（即条件分布{% mathjax %}P(y|\mathbf{x}){% endmathjax %}）没有改变。统计学家称之为**协变量偏移**(`covariate shift`)，因为这个问题是由于协变量（特征）分布的变化而产生的。虽然有时我们可以在不引用因果关系的情况下对分布偏移进行推断，但在我们认为{% mathjax %}\mathbf{x}{% endmathjax %}导致{% mathjax %}y{% endmathjax %}的情况下，协变量偏移是一种自然假设。
 ###### 标签偏移
 
 标签偏移(`label shift`)描述了与协变量偏移相反的问题。这里我们假设标签边缘概率{% mathjax %}P(y){% endmathjax %}可以改变，但是类别条件分布{% mathjax %}P(\mathbf{x}|y){% endmathjax %}在不同的领域之间保持不变。当我们认为{% mathjax %}y{% endmathjax %}导致{% mathjax %}\mathbf{x}{% endmathjax %}时，标签偏移是一个合理的假设。例如，预测患者的疾病，我们可能根据症状来判断，即使疾病的相对流行率随着时间的推移而变化。标签偏移在这里是恰当的假设，因为疾病会引起症状。在另一些情况下，标签偏移和协变量偏移假设可以同时成立。例如，当标签是确定的，即使{% mathjax %}y{% endmathjax %}导致{% mathjax %}\mathbf{x}{% endmathjax %}，协变量偏移假设也会得到满足。有趣的是，在这些情况下，使用基于标签偏移假设的方法通常是有利的。这是因为这些方法倾向于包含看起来像标签（通常是低维）的对象，而不是像输入（通常是高维的）对象。
@@ -536,7 +536,7 @@ o_i = \sum_{j=1}^{n_{in}} w_{ij}x_j
 在许多情况下训练和测试分布{% mathjax %}P(\amthbf{x},y){% endmathjax %}是不同的。在一些情况下，我们很幸运，不管协变量、标签或概念如何发生偏移，模型都能正常工作。在另一些情况下，我们可以通过运用策略来应对这种偏移，从而做得更好。
 ###### 经验风险与实际风险
 
-首先我们反思一下在模型训练期间到底发生了什么？ 训练数据{% mathjax %}{% mathjax %}\{ (\mathbf{x}_1,y_1),\ldots, (\mathbf{x}_n,y_n)\}{% endmathjax %}{% endmathjax %}的特征和相关的标签经过迭代，在每一个小批量之后更新模型{% mathjax %}f{% endmathjax %}的参数。为了简单起见，我们不考虑正则化，因此极大地降低了训练损失：
+首先我们反思一下在模型训练期间到底发生了什么？训练数据{% mathjax %}\{(\mathbf{x}_1,y_1),\ldots, (\mathbf{x}_n,y_n)\}{% endmathjax %}的特征和相关的标签经过迭代，在每一个小批量之后更新模型{% mathjax %}f{% endmathjax %}的参数。为了简单起见，我们不考虑正则化，因此极大地降低了训练损失：
 {% mathjax '{"conversion":{"em":14}}' %}
 \underset{f}{\text{minimize}}\frac{1}{n}\sum_{i=1}^n l(f(\mathbf{x}_i),y_i)
 {% endmathjax %}
