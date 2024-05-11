@@ -564,8 +564,7 @@ o_i = \sum_{j=1}^{n_{in}} w_{ij}x_j
 在**批量学习**(`batch learning`)中，我们可以访问一组训练特征和标签{% mathjax %}\{ (\mathbf{x}_1,y_1),\ldots, (\mathbf{x}_n,y_n)\}{% endmathjax %}，我们使用这些特性和标签训练{% mathjax %}f(x){% endmathjax %}。然后，我们部署此模型来对来自同一分布的新数据{% mathjax %}(\mathbf{x},y){% endmathjax %}进行评分。例如，我们可以根据猫和狗的大量图片训练猫检测器。一旦我们训练了它，我们就把它作为智能猫门计算视觉系统的一部分，来控制只允许猫进入。然后这个系统会被安装在客户家中，基本再也不会更新。
 ###### 在线学习
 
-除了“批量”地学习，我们还可以单个“在线”学习数据{% mathjax %}(\mathbf{x}_i,y_i){% endmathjax %}。更具体地说，我们首先观测到{% mathjax %}\mathbf{x}_i{% endmathjax %}
-，然后我们得出一个估计值{% mathjax %}f(\mathbf{x}_i){% endmathjax %}，只有当我们做到这一点后，我们才观测到{% mathjax %}y_i{% endmathjax %}。然后根据我们的决定，我们会得到奖励或损失。许多实际问题都属于这一类。例如，我们需要预测明天的股票价格，这样我们就可以根据这个预测进行交易。在一天结束时，我们会评估我们的预测是否盈利。换句话说，在**在线学习**(`online learning`)中，我们有以下的循环。在这个循环中，给定新的观测结果，我们会不断地改进我们的模型。
+除了“批量”地学习，我们还可以单个“在线”学习数据{% mathjax %}(\mathbf{x}_i,y_i){% endmathjax %}。更具体地说，我们首先观测到{% mathjax %}\mathbf{x}_i{% endmathjax %}，然后我们得出一个估计值{% mathjax %}f(\mathbf{x}_i){% endmathjax %}，只有当我们做到这一点后，我们才观测到{% mathjax %}y_i{% endmathjax %}。然后根据我们的决定，我们会得到奖励或损失。许多实际问题都属于这一类。例如，我们需要预测明天的股票价格，这样我们就可以根据这个预测进行交易。在一天结束时，我们会评估我们的预测是否盈利。换句话说，在**在线学习**(`online learning`)中，我们有以下的循环。在这个循环中，给定新的观测结果，我们会不断地改进我们的模型。
 {% mathjax '{"conversion":{"em":14}}' %}
 \text{model}\;f_t\;\longrightarrow \; \text{data}\;\mathbf{x}_t\;\longrightarrow \;\text{estimate}\;f_t(\mathbf{x}_t)\;\longrightarrow \;\text{observation}\; y_t\;\longrightarrow \;\text{loss}\; l(y_t,f_t(\mathbf{x}_t))\;\longrightarrow \;\text{model}\;f_{t+1}
 {% endmathjax %}
