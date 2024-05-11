@@ -547,8 +547,61 @@ o_i = \sum_{j=1}^{n_{in}} w_{ij}x_j
 然而在实践中，我们通常无法获得总体数据。因此，经验风险是一种实用的机器学习策略，希望能近似最小化真实风险。
 ###### 协变量偏移纠正
 
+假设对于带标签的数据{% mathjax %}(\mathbf{x}_i,y_i){% endmathjax %}，我们要评估{% mathjax %}P(y|\mathbf{x}){% endmathjax %}。然而观测值{% mathjax %}\mathbf{x}_i{% endmathjax %}是从某些源分布{% mathjax %}q(\mathbf{x}){% endmathjax %}中得出的，而不是从目标分布{% mathjax %}p(\mathbf{x}){% endmathjax %}中得出的。幸运的是，依赖性假设意味着条件分布保持不变，即：{% mathjax %}p(y|\mathbf{x}) = q(y|\mathbf{x}){% endmathjax %}。如果源分布{% mathjax %}q(\mathbf{x}){% endmathjax %}是错误的，我们可以通过在真实风险的的计算中，使用以下的恒等式来进行纠正：
+{% mathjax '{"conversion":{"em":14}}' %}
+\int\;\int l(f(\mathbf{x}),y)p(y|\mathbf{x})p(\mathbf{x})d_{\mathbf{x}}dy = \int\;\int l(f(\mathbf{x}),y)q(y|\mathbf{x})q(\mathbf{x})\frac{p(\mathbf{{x}})}{q(\mathbf{x})}d_{\mathbf{x}}dy
+{% endmathjax %}
+换句话说，我们需要根据数据来自正确分布与来自错误分布的概率之比，来重新衡量每个数据样本的权重：
+{% mathjax '{"conversion":{"em":14}}' %}
+\beta_i\stackrel{def}{=}\frac{p(\mathbf{x}_i)}{q(\mathbf{x}_i)}
+{% endmathjax %}
+将权重{% mathjax %}\beta_i{% endmathjax %}代入到每个数据样本{% mathjax %}(\mathbf{x}_i,y_i){% endmathjax %}中，我们可以使用”加权经验风险最小化“来训练模型：
+{% mathjax '{"conversion":{"em":14}}' %}
+\underset{f}{\text{minimize}}\frac{1}{n}\sum_{i=1}^n \beta_i l(f(\mathbf{x}_i),y_i)
+{% endmathjax %}
+由于不知道这个比率，我们需要估计它。有许多方法都可以用，包括一些花哨的算子理论方法，试图直接使用最小范数或最大熵原理重新校准期望算子。对于任意一种这样的方法，我们都需要从两个分布中抽取样本：“真实”的分布{% mathjax %}p{% endmathjax %}，通过访问测试数据获取；训练集{% mathjax %}q{% endmathjax %}，通过人工合成的很容易获得。请注意，我们只需要特征{% mathjax %}\mathbf{x}\sim p(\mathbf{x}){% endmathjax %}，不需要访问标签{% mathjax %}y \sim p(y){% endmathjax %}。
+
+在这种情况下，有一种非常有效的方法可以得到几乎与原始方法一样好的结果：对数几率回归(`logistic regression`)。这是用于二元分类的softmax回归的一个特例。综上所述，我们学习了一个分类器来区分从{% mathjax %}p(\mathbf{x}){% endmathjax %}抽取的数据 和从{% mathjax %}q(\mathbf{x}){% endmathjax %}抽取的数据。如果无法区分这两个分布，则意味着相关的样本可能来自这两个分布中的任何一个。另一方面，任何可以很好区分的样本都应该相应地显著增加或减少权重。为了简单起见，假设我们分别从{% mathjax %}p(\mathbf{x}){% endmathjax %}
+和{% mathjax %}q(\mathbf{x}){% endmathjax %}两个分布中抽取相同数量的样本。现在用{% mathjax %}z{% endmathjax %}标签表示：从{% mathjax %}p{% endmathjax %}
+抽取的数据为`1`，从{% mathjax %}q{% endmathjax %}抽取的数据为`-1`。然后，混合数据集中的概率由下式给出：
+{% mathjax '{"conversion":{"em":14}}' %}
+P(z=1|\mathbf{x}) = \frac{p(\mathbf{x})}{p(\mathbf{x}) + q(\mathbf{x})}\;\text{and}\;\text{hence}\;\frac{P(x=1|\mathbf{x})}{P(z=-1|\mathbf{x})} = \frac{p(\mathbf{x})}{q(\mathbf{x})}
+{% endmathjax %}
+因此，如果我们使用对数几率回归方法，其中{% mathjax %}P(z=1|\mathbf{x}) = \frac{1}{1+ \text{exp}(-h(x))}{% endmathjax %}（{% mathjax %}h{% endmathjax %}是一个参数化函数），则很自然有：
+{% mathjax '{"conversion":{"em":14}}' %}
+\beta_i = \frac{1/(1 + \text{exp}(-h(\mathbf{x}_i)))}{\text{exp}(-h(\mathbf{x}_i))/(1+\text{exp}(-h(\mathbf{x}_i)))} = \text{exp}(h(\mathbf{x}_i))
+{% endmathjax %}
+因此，我们需要解决两个问题：第一个问题是关于区分来自两个分布的数据；第二个问题是加权经验风险的最小化问题。在这个问题中，我们将对其中的项加权{% mathjax %}\beta_i{% endmathjax %}。
+
+现在，我们来看一下完整的协变量偏移纠正算法。假设我们有一个训练集{% mathjax %}\{ (\mathbf{x}_1,y_1),\ldots, (\mathbf{x}_n,y_n)\}{% endmathjax %}和一个未标记的测试集{% mathjax %}\{ \mathbf{u}_1,\dots,\mathbf{u}_m\}{% endmathjax %}。对于协变量偏移，我们假设{% mathjax %}1\leq i \leq n{% endmathjax %}的{% mathjax %}\mathbf{x}_i{% endmathjax %}来自某个源分布，{% mathjax %}\mathbf{u}_i{% endmathjax %}来自目标分布。以下是纠正协变量偏移的典型算法：
+- 生成一个二元分类训练集：{% mathjax %}\{ (\mathbf{x}_1,y_1),\ldots, (\mathbf{x}_n,y_n),(\mathbf{u}_1,1),\ldots,(\mathbf{u}_m,1)\}{% endmathjax %}。
+- 用对数几率回归训练二元分类器得到函数{% mathjax %}h{% endmathjax %}。
+- 使用{% mathjax %}\beta_i= \text{exp}(h(\mathbf{x}_i)){% endmathjax %}或更好的{% mathjax %}\beta_i= \text{min}(\text{exp}(h(\mathbf{x}_i)),c){% endmathjax %}（{% mathjax %}c{% endmathjax %}为常量）对训练数据进行加权。
+- 使用权重{% mathjax %}\beta_i{% endmathjax %}进行{% mathjax %}\{ (\mathbf{x}_1,y_1),\ldots, (\mathbf{x}_n,y_n)\}{% endmathjax %}的训练。
+
+请注意，上述算法依赖于一个重要的假设：需要目标分布(例如，测试分布)中的每个数据样本在训练时出现的概率非零。如果我们找到{% mathjax %}p(\mathbf{x}) > 0{% endmathjax %}但{% mathjax %}q(\mathbf{x}) = 0{% endmathjax %}的点，那么相应的重要性权重会是无穷大。
 ###### 标签偏移纠正
 
+假设我们处理的是{% mathjax %}k{% endmathjax %}个类别的分类任务。{% mathjax %}q{% endmathjax %} 和{% mathjax %}p{% endmathjax %}中分别是源分布（例如训练时的分布）和目标分布（例如测试时的分布）。假设标签的分布随时间变化：{% mathjax %}q(y)\beq p(y){% endmathjax %}，但类别条件分布保持不变：{% mathjax %}q(\mathbf{x}|y) = p(\mathbf{x}|y){% endmathjax %}。如果源分布{% mathjax %}q(y){% endmathjax %}是“错误的”，我们可以对恒等式进行更正：
+{% mathjax '{"conversion":{"em":14}}' %}
+\int\;\int l(f(\mathbf{x}),y)p(\mathbf{x}|y)p(y)d_{\mathbf{x}}dy = \int\;\int l(f(\mathbf{x}),y)q(\mathbf{x}|y)q(y)\frac{p(y)}{q(y)}d_{\mathbf{x}}dy
+{% endmathjax %}
+这里，重要性权重将对应于标签似然比率：
+{% mathjax '{"conversion":{"em":14}}' %}
+\beta_i\stackrel{def}{=}\frac{p(\mathbf{y}_i)}{q(\mathbf{y}_i)}
+{% endmathjax %}
+标签偏移的一个好处是，如果我们在源分布上有一个相当好的模型，那么我们可以得到对这些权重的一致估计，而不需要处理周边的其他维度。 在深度学习中，输入往往是高维对象（如图像），而标签通常是低维（如类别）。
+
+为了估计目标标签分布，我们首先采用性能相当好的现成的分类器（通常基于训练数据进行训练），并使用验证集（也来自训练分布）计算其混淆矩阵。混淆矩阵{% mathjax %}\mathbf{C}{% endmathjax %}是一个{% mathjax %}k\times k{% endmathjax %}矩阵，其中每列对应于标签类别，每行对应于模型的预测类别。每个单元格的值{% mathjax %}c_{ij}{% endmathjax %}
+是验证集中，真实标签为{% mathjax %}j{% endmathjax %}，而我们的模型预测为{% mathjax %}i{% endmathjax %}的样本数量所占的比例。
+
+现在，我们不能直接计算目标数据上的混淆矩阵，因为我们无法看到真实环境下的样本的标签，除非我们再搭建一个复杂的实时标注流程。然而，我们所能做的是将所有模型在测试时的预测取平均数，得到平均模型输出{% mathjax %}\mu(\hat{\mathbf{y}})\in \mathbb{R}^k{% endmathjax %}，其中第{% mathjax %}i{% endmathjax %}个元素{% mathjax %}\mu(\hat{y}_i){% endmathjax %}是我们模型预测测试集中{% mathjax %}i{% endmathjax %}的总预测分数。结果表明，如果我们的分类器一开始就相当准确，并且目标数据只包含我们以前见过的类别，以及如果标签偏移假设成立（这里最强的假设），我们就可以通过求解一个简单的线性系统来估计测试集的标签分布。
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{C}p(\mathbf{y}) = \mu(\hat{\mathbf{y}})
+{% endmathjax %}
+因为作为一个估计，{% mathjax %}\sum_{j=1}^{k}c_{ij}p(y_i) = \mu(\hat{y}_i){% endmathjax %}对所有{% mathjax %}1\leq i \leq k{% endmathjax %}成立，其中{% mathjax %}p(y_i){% endmathjax %}是{% mathjax %}k{% endmathjax %}维标签分布向量{% mathjax %}p(\mathbf{y}){% endmathjax %}的第{% mathjax %}j^{\text{th}}{% endmathjax %}元素。如果我们的分类器一开始就足够精确，那么混淆矩阵{% mathjax %}\mathbf{C}{% endmathjax %}将是可逆的，进而我们可以得到一个解{% mathjax %}p(\mathbf{y}) = \mathbf{C}^{-1}\mu(\hat{\mathbf{y}}){% endmathjax %}。
+
+因为我们观测源数据上的标签，所以很容易估计分布{% mathjax %}q(y){% endmathjax %}。那么对于标签为{% mathjax %}y_i{% endmathjax %}的任何训练样本{% mathjax %}i{% endmathjax %}，我们可以使用我们估计的{% mathjax %}p(y_i)/q(y_i){% endmathjax %}比率来计算权重{% mathjax %}\beta_i{% endmathjax %}，并将其代入加权经验风险最小化中。
 ###### 概念偏移纠正
 
 概念偏移很难用原则性的方式解决。例如，在一个问题突然从“区分猫和狗”偏移为“区分白色和黑色动物”的情况下，除了从零开始收集新标签和训练，别无妙方。幸运的是，在实践中这种极端的偏移是罕见的。相反，通常情况下，概念的变化总是缓慢的。比如下面是一些例子：
