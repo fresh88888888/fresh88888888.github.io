@@ -582,7 +582,7 @@ P(z=1|\mathbf{x}) = \frac{p(\mathbf{x})}{p(\mathbf{x}) + q(\mathbf{x})}\;\text{a
 请注意，上述算法依赖于一个重要的假设：需要目标分布(例如，测试分布)中的每个数据样本在训练时出现的概率非零。如果我们找到{% mathjax %}p(\mathbf{x}) > 0{% endmathjax %}但{% mathjax %}q(\mathbf{x}) = 0{% endmathjax %}的点，那么相应的重要性权重会是无穷大。
 ###### 标签偏移纠正
 
-假设我们处理的是{% mathjax %}k{% endmathjax %}个类别的分类任务。{% mathjax %}q{% endmathjax %} 和{% mathjax %}p{% endmathjax %}中分别是源分布（例如训练时的分布）和目标分布（例如测试时的分布）。假设标签的分布随时间变化：{% mathjax %}q(y)\beq p(y){% endmathjax %}，但类别条件分布保持不变：{% mathjax %}q(\mathbf{x}|y) = p(\mathbf{x}|y){% endmathjax %}。如果源分布{% mathjax %}q(y){% endmathjax %}是“错误的”，我们可以对恒等式进行更正：
+假设我们处理的是{% mathjax %}k{% endmathjax %}个类别的分类任务。{% mathjax %}q{% endmathjax %} 和{% mathjax %}p{% endmathjax %}中分别是源分布（例如训练时的分布）和目标分布（例如测试时的分布）。假设标签的分布随时间变化：{% mathjax %}q(y)\neq p(y){% endmathjax %}，但类别条件分布保持不变：{% mathjax %}q(\mathbf{x}|y) = p(\mathbf{x}|y){% endmathjax %}。如果源分布{% mathjax %}q(y){% endmathjax %}是“错误的”，我们可以对恒等式进行更正：
 {% mathjax '{"conversion":{"em":14}}' %}
 \int\;\int l(f(\mathbf{x}),y)p(\mathbf{x}|y)p(y)d_{\mathbf{x}}dy = \int\;\int l(f(\mathbf{x}),y)q(\mathbf{x}|y)q(y)\frac{p(y)}{q(y)}d_{\mathbf{x}}dy
 {% endmathjax %}
