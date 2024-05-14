@@ -38,7 +38,7 @@ mathjax:
 {% mathjax '{"conversion":{"em":14}}' %}
 [H]_{i,j} = u + \sum_a \sum_b [\mathbf{V}]_{a,b}[\mathbf{X}]_{i+a,j+b}
 {% endmathjax %}
-这就是**卷积**(`convolution`)，我们使用系数{% mathjax %}[\mathbf{V}]_{a,b}{% endmathjax %}对位置{% mathjax %}(i,j){% endmathjax %}附近的像素{% mathjax %}(i+a,j+b){% endmathjax %}进行加权得到{% mathjax %}[\mathbf{H}]_{i,j}{% endmathjax %}。注意{% mathjax %}[\mathbf{V}]_{a,b}{% endmathjax %}的系数比{% mathjax %}[\mathnf{V}]_{i,j,a,b}{% endmathjax %}少很多，因为前者不再依赖于图像中的位置。这就是显著的进步。
+这就是**卷积**(`convolution`)，我们使用系数{% mathjax %}[\mathbf{V}]_{a,b}{% endmathjax %}对位置{% mathjax %}(i,j){% endmathjax %}附近的像素{% mathjax %}(i+a,j+b){% endmathjax %}进行加权得到{% mathjax %}[\mathbf{H}]_{i,j}{% endmathjax %}。注意{% mathjax %}[\mathbf{V}]_{a,b}{% endmathjax %}的系数比{% mathjax %}[\mathbf{V}]_{i,j,a,b}{% endmathjax %}少很多，因为前者不再依赖于图像中的位置。这就是显著的进步。
 ###### 局部性
 
 现在引用上述的第二个原则：局部性。如上所述，为了收集用来训练参数{% mathjax %}[\mathbf{H}]_{i,j}{% endmathjax %}的相关信息。我们不应偏离到距{% mathjax %}(i,j){% endmathjax %}很远的地方。这意味着{% mathjax %}|a| > \Delta{% endmathjax %}或{% mathjax %}|b| > \Delta{% endmathjax %}的范围之外，我们可以设置{% mathjax %}[\mathbf{V}]_{a,b} = 0{% endmathjax %}。因此我们可以将{% mathjax %}[\mathbf{H}]_{i,j}{% endmathjax %}重写为：
