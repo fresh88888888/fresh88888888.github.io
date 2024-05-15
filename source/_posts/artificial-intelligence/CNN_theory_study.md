@@ -350,3 +350,100 @@ assert float(tf.reduce_sum(tf.abs(Y1 - Y2))) < 1e-6
 多输入多输出通道可以用来扩展卷积层的模型。当以每像素为基础应用时，{% mathjax %}1\times 1{% endmathjax %}卷积层相当于全连接层。{% mathjax %}1\times 1{% endmathjax %}卷积层通常用于调整网络层的通道数量和控制模型复杂性。
 
 #### 汇聚层
+
+汇聚层(`pooling`)，它具有双重目的：降低卷积层对位置的敏感性，同时降低对空间降采样表示的敏感性。
+##### 最大汇聚层和平均汇聚层
+
+与卷积层类似，汇聚层运算符由一个固定形状的窗口组成，该窗口根据其步幅大小在输入的所有区域上滑动，为固定形状窗口（有时称为汇聚窗口）遍历的每个位置计算一个输出。然而，不同于卷积层中的输入与卷积核之间的互相关计算，汇聚层不包含参数。相反，池运算是确定性的，我们通常计算汇聚窗口中所有元素的最大值或平均值。这些操作分别称为最大汇聚层(`maximum pooling`)和平均汇聚层(`average pooling`)。在这两种情况下，与互相关运算符一样，汇聚窗口从输入张量的左上角开始，从左往右、从上往下的在输入张量内滑动。在汇聚窗口到达的每个位置，它计算该窗口中输入子张量的最大值或平均值。计算最大值或平均值是取决于使用了最大汇聚层还是平均汇聚层。
+{% asset_img cnn_7.png "汇聚窗口形状为2 x 2的最大汇聚层。着色部分是第一个输出元素，以及用于计算这个输出的输入元素:max(0,1,3,4) = 4" %}
+
+上图中中的输出张量的高度为{% mathjax %}p\times q{% endmathjax %}，宽度为{% mathjax %}p\times q{% endmathjax %}。这四个元素为每个汇聚窗口中的最大值：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+& \text{max}(0,1,3,4) = 4\\
+& \text{max}(1,2,4,5) = 5\\
+& \text{max}(3,4,6,7) = 7\\
+& \text{max}(4,5,7,8) = 8
+\end{align}
+{% endmathjax %}
+汇聚窗口形状为{% mathjax %}p\times q{% endmathjax %}的汇聚层称为{% mathjax %}p\times q{% endmathjax %}汇聚层，汇聚层操作称为{% mathjax %}p\times q{% endmathjax %}操作。回到本节开头提到的对象边缘检测示例，现在我们将使用卷积层的输出作为{% mathjax %}2\times 2{% endmathjax %}最大汇聚的输入。设置卷积层输入为`X`，汇聚层输出为`Y`。无论`X[i, j]`和`X[i, j + 1]`的值相同与否，或`X[i, j + 1]`和`X[i, j + 2]`的值相同与否，汇聚层始终输出`Y[i, j] = 1`。也就是说，使用{% mathjax %}2\times 2{% endmathjax %}最大汇聚层，即使在高度或宽度上移动一个元素，卷积层仍然可以识别到模式。
+```python
+import tensorflow as tf
+
+def pool2d(X, pool_size, mode='max'):
+    p_h, p_w = pool_size
+    Y = tf.Variable(tf.zeros((X.shape[0] - p_h + 1, X.shape[1] - p_w +1)))
+    for i in range(Y.shape[0]):
+        for j in range(Y.shape[1]):
+            if mode == 'max':
+                Y[i, j].assign(tf.reduce_max(X[i: i + p_h, j: j + p_w]))
+            elif mode =='avg':
+                Y[i, j].assign(tf.reduce_mean(X[i: i + p_h, j: j + p_w]))
+    return Y
+
+# 我们可以构建上图中的输入张量X，验证二维最大汇聚层的输出。
+X = tf.constant([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0]])
+pool2d(X, (2, 2))
+
+# <tf.Variable 'Variable:0' shape=(2, 2) dtype=float32, numpy=array([[4., 5.], [7., 8.]], dtype=float32)>
+
+# 此外，我们还可以验证平均汇聚层
+pool2d(X, (2, 2), 'avg')
+
+# <tf.Variable 'Variable:0' shape=(2, 2) dtype=float32, numpy=array([[2., 3.],[5., 6.]], dtype=float32)>
+```
+##### 填充和步幅
+
+与卷积层一样，汇聚层也可以改变输出形状。和以前一样，我们可以通过填充和步幅以获得所需的输出形状。下面，我们用深度学习框架中内置的二维最大汇聚层，来演示汇聚层中填充和步幅的使用。我们首先构造了一个输入张量`X`，它有四个维度，其中样本数和通道数都是`1`。请注意，`Tensorflow`采用“通道最后”（`channels-last`）语法，对其进行优化，（即`Tensorflow`中输入的最后维度是通道）。
+```python
+X = tf.reshape(tf.range(16, dtype=tf.float32), (1, 4, 4, 1))
+X
+
+# <tf.Tensor: shape=(1, 4, 4, 1), dtype=float32, numpy=
+# array([[[[ 0.],[ 1.],[ 2.],[ 3.]],
+#         [[ 4.],[ 5.],[ 6.],[ 7.]],
+#         [[ 8.],[ 9.],[10.],[11.]],
+#         [[12.],[13.],[14.],[15.]]]], dtype=float32)>
+```
+默认情况下，深度学习框架中的步幅与汇聚窗口的大小相同。因此，如果我们使用形状为`(3, 3)`的汇聚窗口，那么默认情况下，我们得到的步幅形状为`(3, 3)`。
+```python
+pool2d = tf.keras.layers.MaxPool2D(pool_size=[3, 3])
+pool2d(X)
+
+# <tf.Tensor: shape=(1, 1, 1, 1), dtype=float32, numpy=array([[[[10.]]]], dtype=float32)>
+
+# 填充和步幅可以手动设定。
+paddings = tf.constant([[0, 0], [1,0], [1,0], [0,0]])
+X_padded = tf.pad(X, paddings, "CONSTANT")
+pool2d = tf.keras.layers.MaxPool2D(pool_size=[3, 3], padding='valid', strides=2)
+pool2d(X_padded)
+
+# <tf.Tensor: shape=(1, 2, 2, 1), dtype=float32, numpy=array([[[[ 5.],[ 7.]],[[13.],[15.]]]], dtype=float32)>
+
+# 当然，我们可以设定一个任意大小的矩形汇聚窗口，并分别设定填充和步幅的高度和宽度。
+paddings = tf.constant([[0, 0], [0, 0], [1, 1], [0, 0]])
+X_padded = tf.pad(X, paddings, "CONSTANT")
+pool2d = tf.keras.layers.MaxPool2D(pool_size=[2, 3], padding='valid',strides=(2, 3))
+pool2d(X_padded)
+
+# <tf.Tensor: shape=(1, 2, 2, 1), dtype=float32, numpy=array([[[[ 5.],[ 7.]],[[13.],[15.]]]], dtype=float32)>
+```
+##### 多个通道
+
+在处理多通道输入数据时，汇聚层在每个输入通道上单独运算，而不是像卷积层一样在通道上对输入进行汇总。这意味着汇聚层的输出通道数与输入通道数相同。下面，我们将在通道维度上连结张量`1`和`X+1`，以构建具有`2`个通道的输入。
+```python
+X = tf.concat([X, X + 1], 3)
+
+# 汇聚后输出通道的数量仍然是2。
+paddings = tf.constant([[0, 0], [1,0], [1,0], [0,0]])
+X_padded = tf.pad(X, paddings, "CONSTANT")
+pool2d = tf.keras.layers.MaxPool2D(pool_size=[3, 3], padding='valid',strides=2)
+pool2d(X_padded)
+
+# <tf.Tensor: shape=(1, 2, 2, 2), dtype=float32, numpy=
+# array([[[[ 5.,  6.],[ 7.,  8.]],
+#         [[13., 14.],[15., 16.]]]], dtype=float32)>
+```
+##### 总结
+
+对于给定输入元素，最大汇聚层会输出该窗口内的最大值，平均汇聚层会输出该窗口内的平均值。汇聚层的主要优点之一是减轻卷积层对位置的过度敏感。我们可以指定汇聚层的填充和步幅。使用最大汇聚层以及大于`1`的步幅，可减少空间维度（如高度和宽度）。汇聚层的输出通道数与输入通道数相同。
