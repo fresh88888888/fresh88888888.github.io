@@ -324,7 +324,7 @@ corr2d_multi_in_out(X, K)
 {% mathjax %}1\times 1{% endmathjax %}卷积，即{% mathjax %}k_h = k_w = 1{% endmathjax %}，看起来似乎没有多大意义。毕竟，卷积的本质是有效提取相邻像素间的相关特征而，{% mathjax %}1\times 1{% endmathjax %}卷积显然没有此作用，尽管如此，{% mathjax %}1\times 1{% endmathjax %}仍然流行，经常包含在复杂深层网络的设计中。因为使用了最小窗口，{% mathjax %}1\times 1{% endmathjax %}卷积失去了卷积层的特有能力—在高度和宽度维度上，识别相邻元素间相互作用的能力。其实{% mathjax %}1\times 1{% endmathjax %}卷积的唯一计算发生在通道上。
 
 下图展示了使用{% mathjax %}1\times 1{% endmathjax %}卷积核与`3`个输入通道和`2`个输出通道的互相关计算。这里输入和输出具有相同的高度和宽度，输出中的每个元素都是从输入图像中同一位置的元素的线性组合。我们可以将{% mathjax %}1\times 1{% endmathjax %}卷积层看作在每个像素位置应用的全连接层，以{% mathjax %}c_i{% endmathjax %}个输入值转换为{% mathjax %}c_o{% endmathjax %}个输出值。 因为这仍然是一个卷积层，所以跨像素的权重是一致的。同时，{% mathjax %}1\times 1{% endmathjax %}卷积层需要的权重维度为{% mathjax %}c_o\times c_i{% endmathjax %}，再额外加上一个偏置。
-{% asset_img cnn_6.png "互相关计算使用了具有3个输入通道和2个输出通道的{% mathjax %}1\times 1{% endmathjax %}卷积核。其中，输入和输出具有相同的高度和宽度" %}
+{% asset_img cnn_6.png "互相关计算使用了具有3个输入通道和2个输出通道的1 x 1卷积核。其中，输入和输出具有相同的高度和宽度" %}
 
 下面，我们使用全连接层实现{% mathjax %}1\times 1{% endmathjax %}卷积。请注意，我们需要对输入和输出的数据形状进行调整。
 ```python
