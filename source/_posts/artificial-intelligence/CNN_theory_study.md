@@ -447,3 +447,65 @@ pool2d(X_padded)
 ##### 总结
 
 对于给定输入元素，最大汇聚层会输出该窗口内的最大值，平均汇聚层会输出该窗口内的平均值。汇聚层的主要优点之一是减轻卷积层对位置的过度敏感。我们可以指定汇聚层的填充和步幅。使用最大汇聚层以及大于`1`的步幅，可减少空间维度（如高度和宽度）。汇聚层的输出通道数与输入通道数相同。
+
+#### 卷积神经网络（LeNet）
+
+卷积神经网络(`LeNet`)，它是最早发布的卷积神经网络之一，因其在计算机视觉任务中的高效性能而受到广泛关注。这个模型是由`AT&T`贝尔实验室的研究员`Yann LeCun`在`1989`年提出的（并以其命名），目的是识别图像中的手写数字。当时，`Yann LeCun`发表了第一篇通过反向传播成功训练卷积神经网络的研究，这项工作代表了十多年来神经网络研究开发的成果。当时，`LeNet`取得了与支持向量机(`support vector machines`)性能相媲美的成果，成为监督学习的主流方法。`LeNet`被广泛用于自动取款机(`ATM`)机中，帮助识别处理支票的数字。时至今日，一些自动取款机仍在运行`Yann LeCun`和他的同事`Leon Bottou`在上世纪`90`年代写的代码呢。
+
+##### LeNet
+
+总体来看，`LeNet（LeNet-5）`由两个部分组成：
+- 卷积编码器：由两个卷积层组成;
+- 全连接层密集块：由三个全连接层组成。
+
+该架构如下图所示：
+{% asset_img cnn_8.png " LeNet中的数据流。输入是手写数字，输出为10种可能结果的概率" %}
+
+每个卷积块中的基本单元是一个卷积层、一个`sigmoid`激活函数和平均汇聚层。请注意，虽然`ReLU`和最大汇聚层更有效，但它们在`20`世纪`90`年代还没有出现。每个卷积层使用{% mathjax %}5\times 5{% endmathjax %}卷积核和一个sigmoid激活函数。这些层将输入映射到多个二维特征输出，通常同时增加通道的数量。第一卷积层有`6`个输出通道，而第二个卷积层有`16`个输出通道。每个{% mathjax %}2\times 2{% endmathjax %}池操作（步幅`2`）通过空间下采样将维数减少`4`倍。卷积的输出形状由批量大小、通道数、高度、宽度决定。为了将卷积块的输出传递给稠密块，我们必须在小批量中展平每个样本。换言之，我们将这个四维输入转换成全连接层所期望的二维输入。这里的二维表示的第一个维度索引小批量中的样本，第二个维度给出每个样本的平面向量表示。LeNet的稠密块有三个全连接层，分别有`120、84`和`10`个输出。因为我们在执行分类任务，所以输出层的10维对应于最后输出结果的数量。通过下面的`LeNet`代码，可以看出用深度学习框架实现此类模型非常简单。我们只需要实例化一个`Sequential`块并将需要的层连接在一起。
+```python
+import tensorflow as tf
+
+def net():
+    return tf.keras.models.Sequential([
+        tf.keras.layers.Conv2D(filters=6, kernel_size=5, activation='sigmoid',
+                               padding='same'),
+        tf.keras.layers.AvgPool2D(pool_size=2, strides=2),
+        tf.keras.layers.Conv2D(filters=16, kernel_size=5,
+                               activation='sigmoid'),
+        tf.keras.layers.AvgPool2D(pool_size=2, strides=2),
+        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(120, activation='sigmoid'),
+        tf.keras.layers.Dense(84, activation='sigmoid'),
+        tf.keras.layers.Dense(10)])
+```
+我们对原始模型做了一点小改动，去掉了最后一层的高斯激活。除此之外，这个网络与最初的`LeNet-5`一致。下面，我们将一个大小为{% mathjax %}28\times 28{% endmathjax %}的单通道（黑白）图像通过`LeNet`。通过在每一层打印输出的形状，我们可以检查模型，以确保其操作与我们期望的下图一致。
+{% asset_img cnn_9.png " LeNet 的简化版" %}
+```python
+X = tf.random.uniform((1, 28, 28, 1))
+for layer in net().layers:
+    X = layer(X)
+    print(layer.__class__.__name__, 'output shape: \t', X.shape)
+
+# Conv2D output shape:         (1, 28, 28, 6)
+# AveragePooling2D output shape:       (1, 14, 14, 6)
+# Conv2D output shape:         (1, 10, 10, 16)
+# AveragePooling2D output shape:       (1, 5, 5, 16)
+# Flatten output shape:        (1, 400)
+# Dense output shape:          (1, 120)
+# Dense output shape:          (1, 84)
+# Dense output shape:          (1, 10)
+```
+请注意，在整个卷积块中，与上一层相比，每一层特征的高度和宽度都减小了。 第一个卷积层使用2个像素的填充，来补偿{% mathjax %}5\times 5{% endmathjax %}卷积核导致的特征减少。相反，第二个卷积层没有填充，因此高度和宽度都减少了`4`个像素。随着层叠的上升，通道的数量从输入时的`1`个，增加到第一个卷积层之后的`6`个，再到第二个卷积层之后的`16`个。同时，每个汇聚层的高度和宽度都减半。最后，每个全连接层减少维数，最终输出一个维数与结果分类数相匹配的输出。
+##### 模型训练
+
+现在我们已经实现了`LeNet`，我们训练和评估`LeNet-5`模型。
+```python
+lr, num_epochs = 0.9, 10
+train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
+```
+{% asset_img cnn_10.png %}
+
+##### 总结
+
+卷积神经网络(`CNN`)是一类使用卷积层的网络。在卷积神经网络中，我们组合使用卷积层、非线性激活函数和汇聚层。为了构造高性能的卷积神经网络，我们通常对卷积层进行排列，逐渐降低其表示的空间分辨率，同时增加通道数。在传统的卷积神经网络中，卷积块编码得到的表征在输出之前需由一个或多个全连接层进行处理。`LeNet`是最早发布的卷积神经网络之一。
+
