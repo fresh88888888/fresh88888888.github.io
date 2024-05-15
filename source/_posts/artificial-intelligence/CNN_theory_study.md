@@ -273,3 +273,80 @@ comp_conv2d(conv2d, X).shape
 ##### 总结
 
 填充可以增加输出的高度和宽度。这常用来使输出与输入具有相同的高和宽。步幅可以减小输出的高和宽，例如输出的高和宽仅为输入的高和宽的{% mathjax %}1/n{% endmathjax %}（{% mathjax %}n{% endmathjax %}是一个大于的整数）。填充和步幅可用于有效地调整数据的维度。
+
+#### 多输入多输出通道
+
+##### 多输入通道
+
+当输入包含多个通道时，需要构造一个与输入数据具有相同输入通道数的卷积核，以便与输入数据进行互相关运算。假设输入的通道数为{% mathjax %}c_i{% endmathjax %}，那么卷积核的输入通道数也需要为{% mathjax %}c_i{% endmathjax %}。如果卷积核的窗口形状是{% mathjax %}k_h\times k_w{% endmathjax %}，那么当{% mathjax %}c_i = 1{% endmathjax %}时，我们可以把卷积核看作形状为{% mathjax %}k_h\times k_w{% endmathjax %}的二维张量。然而，当{% mathjax %}c_i > 1{% endmathjax %}时，我们卷积核的每个输入通道将包含形状为{% mathjax %}k_h\times k_w{% endmathjax %}的张量。将这些张量{% mathjax %}c_i{% endmathjax %}连结在一起可以得到形状为{% mathjax %}c_i\times k_h\times k_w{% endmathjax %}的卷积核。由于输入和卷积核都有{% mathjax %}c_i{% endmathjax %}个通道，我们可以对每个通道输入的二维张量和卷积核的二维张量进行互相关运算，再对通道求和（将{% mathjax %}c_i{% endmathjax %}的结果相加）得到二维张量。这是多通道输入和多输入通道卷积核之间进行二维互相关运算的结果。在下图中，我们演示了一个具有两个输入通道的二维互相关运算的示例。阴影部分是第一个输出元素以及用于计算这个输出的输入和核张量元素：{% mathjax %}(1\times 1+ 2\times 2 + 4\times 3 + 5\times 4) + (0\times 0 + 1\times 1 + 3\times 2 + 4\times 3) = 56{% endmathjax %}。
+{% asset_img cnn_5.png "两个输入通道的互相关计算" %}
+
+为了加深理解，我们实现一下多输入通道互相关运算。简而言之，我们所做的就是对每个通道执行互相关操作，然后将结果相加。
+```python
+import tensorflow as tf
+
+def corr2d_multi_in(X, K):
+    # 先遍历“X”和“K”的第0个维度（通道维度），再把它们加在一起
+    return tf.reduce_sum([d2l.corr2d(x, k) for x, k in zip(X, K)], axis=0)
+
+# 我们可以构造与相对应的输入张量X和核张量K，以验证互相关运算的输出。
+X = tf.constant([[[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0]],[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]])
+K = tf.constant([[[0.0, 1.0], [2.0, 3.0]], [[1.0, 2.0], [3.0, 4.0]]])
+corr2d_multi_in(X, K)
+
+# <tf.Tensor: shape=(2, 2), dtype=float32, numpy=array([[ 56.,  72.],[104., 120.]], dtype=float32)>
+```
+##### 多输出通道
+
+到目前为止，不论有多少输入通道，我们还只有一个输出通道。在最流行的神经网络架构中，随着神经网络层数的加深，我们常会增加输出通道的维数，通过减少空间分辨率以获得更大的通道深度。直观地说，我们可以将每个通道看作对不同特征的响应。而现实可能更为复杂一些，因为每个通道不是独立学习的，而是为了共同使用而优化的。因此，多输出通道并不仅是学习多个单通道的检测器。用{% mathjax %}c_i{% endmathjax %}和{% mathjax %}c_o{% endmathjax %}分别表示输入和输出通道的数目，并让{% mathjax %}k_h{% endmathjax %}和{% mathjax %}k_w{% endmathjax %}为卷积核的高度和宽度。为了获得多个通道的输出，我们可以为每个输出通道创建一个形状为{% mathjax %}c_i\times k_h\times k_w{% endmathjax %}的卷积核张量，这样卷积核的形状是{% mathjax %}c_o\times c_i\times k_h\times k_w{% endmathjax %}。在互相关运算中，每个输出通道先获取所有输入通道，再以对应该输出通道的卷积核计算出结果。如下所示，我们实现一个计算多个通道的输出的互相关函数。
+```python
+def corr2d_multi_in_out(X, K):
+    # 迭代“K”的第0个维度，每次都对输入“X”执行互相关运算。
+    # 最后将所有结果都叠加在一起
+    return tf.stack([corr2d_multi_in(X, k) for k in K], 0)
+
+# 通过将核张量K与K+1（K中每个元素加1）和K+2连接起来，构造了一个具有2个输出通道的卷积核。
+K = tf.stack((K, K + 1, K + 2), 0)
+K.shape
+
+# TensorShape([3, 2, 2, 2])
+
+# 下面，我们对输入张量X与卷积核张量K执行互相关运算。现在的输出包含3个通道，第一个通道的结果与先前输入张量X和多输入单输出通道的结果一致。
+corr2d_multi_in_out(X, K)
+
+# <tf.Tensor: shape=(3, 2, 2), dtype=float32, numpy=
+# array([[[ 56.,  72.],[104., 120.]],
+#        [[ 76., 100.],[148., 172.]],
+#        [[ 96., 128.],[192., 224.]]], dtype=float32)>
+```
+#####  {% mathjax %}1\times 1{% endmathjax %}卷积层
+
+{% mathjax %}1\times 1{% endmathjax %}卷积，即{% mathjax %}k_h = k_w = 1{% endmathjax %}，看起来似乎没有多大意义。毕竟，卷积的本质是有效提取相邻像素间的相关特征而，{% mathjax %}1\times 1{% endmathjax %}卷积显然没有此作用，尽管如此，{% mathjax %}1\times 1{% endmathjax %}仍然流行，经常包含在复杂深层网络的设计中。因为使用了最小窗口，{% mathjax %}1\times 1{% endmathjax %}卷积失去了卷积层的特有能力—在高度和宽度维度上，识别相邻元素间相互作用的能力。其实{% mathjax %}1\times 1{% endmathjax %}卷积的唯一计算发生在通道上。
+
+下图展示了使用{% mathjax %}1\times 1{% endmathjax %}卷积核与`3`个输入通道和`2`个输出通道的互相关计算。这里输入和输出具有相同的高度和宽度，输出中的每个元素都是从输入图像中同一位置的元素的线性组合。我们可以将{% mathjax %}1\times 1{% endmathjax %}卷积层看作在每个像素位置应用的全连接层，以{% mathjax %}c_i{% endmathjax %}个输入值转换为{% mathjax %}c_o{% endmathjax %}个输出值。 因为这仍然是一个卷积层，所以跨像素的权重是一致的。同时，{% mathjax %}1\times 1{% endmathjax %}卷积层需要的权重维度为{% mathjax %}c_o\times c_i{% endmathjax %}，再额外加上一个偏置。
+{% asset_img cnn_6.png "互相关计算使用了具有3个输入通道和2个输出通道的{% mathjax %}1\times 1{% endmathjax %}卷积核。其中，输入和输出具有相同的高度和宽度" %}
+
+下面，我们使用全连接层实现{% mathjax %}1\times 1{% endmathjax %}卷积。请注意，我们需要对输入和输出的数据形状进行调整。
+```python
+def corr2d_multi_in_out_1x1(X, K):
+    c_i, h, w = X.shape
+    c_o = K.shape[0]
+    X = tf.reshape(X, (c_i, h * w))
+    K = tf.reshape(K, (c_o, c_i))
+    # 全连接层中的矩阵乘法
+    Y = tf.matmul(K, X)
+    return tf.reshape(Y, (c_o, h, w))
+
+# 当执行卷积运算时，上述函数相当于先前实现的互相关函数corr2d_multi_in_out。让我们用一些样本数据来验证这一点。
+X = tf.random.normal((3, 3, 3), 0, 1)
+K = tf.random.normal((2, 3, 1, 1), 0, 1)
+
+Y1 = corr2d_multi_in_out_1x1(X, K)
+Y2 = corr2d_multi_in_out(X, K)
+assert float(tf.reduce_sum(tf.abs(Y1 - Y2))) < 1e-6
+```
+##### 总结
+
+多输入多输出通道可以用来扩展卷积层的模型。当以每像素为基础应用时，{% mathjax %}1\times 1{% endmathjax %}卷积层相当于全连接层。{% mathjax %}1\times 1{% endmathjax %}卷积层通常用于调整网络层的通道数量和控制模型复杂性。
+
+#### 汇聚层
