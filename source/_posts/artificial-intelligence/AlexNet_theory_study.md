@@ -1,5 +1,5 @@
 ---
-title: 深度卷积神经网络(AlexNet) (TensorFlow)
+title: 深度卷积神经网络 (AlexNet)(TensorFlow)
 date: 2024-05-15 17:24:11
 tags:
   - AI

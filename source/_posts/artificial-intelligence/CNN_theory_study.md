@@ -1,5 +1,5 @@
 ---
-title: 卷积神经网络 (CNN)(一)(TensorFlow)
+title: 卷积神经网络 (CNN)(TensorFlow)
 date: 2024-05-14 11:00:11
 tags:
   - AI
