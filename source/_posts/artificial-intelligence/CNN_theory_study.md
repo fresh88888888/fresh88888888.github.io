@@ -27,7 +27,7 @@ mathjax:
 首先，多层感知机的输入是二维图像{% mathjax %}\mathbf{X}{% endmathjax %}，其隐藏表示{% mathjax %}\mathbf{H}{% endmathjax %}在数学上是一个矩阵，在代码中表示二维张量。其中{% mathjax %}X{% endmathjax %}和{% mathjax %}H{% endmathjax %}具有相同的形状，为了方便理解，我们可以认为，无论是输入还是隐藏表示都拥有空间结构。使用{% mathjax %}[\mathbf{X}_{i,j}]{% endmathjax %}和{% mathjax %}[\mathbf{X}_{i,j}]{% endmathjax %}分别表示输入图像和隐藏表示中位置{% mathjax %}(i,j){% endmathjax %}处的像素。为了使每个隐藏神经元都能接受到每个数像素的信息，我们将参数从权重矩阵（如同我们先前在多层感知机中所做的那样）替换为四阶权重张量{% mathjax %}\mathsf{W}{% endmathjax %}。假设{% mathjax %}\mathbf{U}{% endmathjax %}包含偏置参数，我们可以将全连接层形式化的表示为：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
-[\mathbf{H}]_{i,j} & = [\mathbf{U}]_{i,j} + \sum_k \sum_l [\mathsf{W}]_{i,j,k,l}[\mathbf{X}]_{k,l}
+[\mathbf{H}]_{i,j} & = [\mathbf{U}]_{i,j} + \sum_k \sum_l [\mathsf{W}]_{i,j,k,l}[\mathbf{X}]_{k,l}\\
 & = [\mathbf{U}]_{i,j} + \sum_a \sum_b [\mathsf{V}]_{i,j,a,b}[\mathbf{X}]_{i + a,j + b}
 \end{align}
 {% endmathjax %}
