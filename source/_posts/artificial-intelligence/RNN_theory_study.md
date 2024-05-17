@@ -35,7 +35,7 @@ h(t) = f(x_t,h_{t-1})
 其中，{% mathjax %}\mathbf{O}\in \mathbb{R}^{n\times q}{% endmathjax %}是输出变量，{% mathjax %}\mathbf{W}_{hq}\in \mathbb{R}^{h\times q}{% endmathjax %}是权重参数，{% mathjax %}\mathbf{b}_q\in \mathbb{R}^{1\times q}{% endmathjax %}输出层的偏置参数。如果是分类问题，我们可以用{% mathjax %}\text{softmax}(\mathbf{O}){% endmathjax %}来计算输出类别的概率分布。只要可以随机选择“特征-标签”对，并且通过自动微分和随机梯度下降能够学习网络参数就可以了。
 #### 有隐状态的循环神经网络
 
-有了隐状态后，情况就完全不同了。假设我们在时间步{% mathjax %}t{% endmathjax %}有小批量输入{% mathjax %}\mathbf{X}_t{\in \mathbb{R}^{n\times d}% endmathjax %}。换言之，对于{% mathjax %}n{% endmathjax %}个序列样本的小批量，{% mathjax %}\mathbf{X}_t{% endmathjax %}的每一行对应于来自该序列的时间步{% mathjax %}t{% endmathjax %}处的一个样本。接下来，用{% mathjax %}\mathbf{H}_t\in \mathbb{R}^{n\times h}{% endmathjax %}表示时间步{% mathjax %}t{% endmathjax %}的隐藏变量。与多层感知机不同的是，我们在这里保存了前一个时间步的隐藏变量{% mathjax %}\mathbf{H}_{t-1}{% endmathjax %}，并引入了一个新的权重参数{% mathjax %}\mthbf{W}_{hh}\in \mathbb{R}^{h\times h}{% endmathjax %}，来描述如何在当前时间步中使用前一个时间步的隐藏变量。具体地说，当前时间步隐藏变量由当前时间步的输入与前一个时间步的隐藏变量一起计算得出：
+有了隐状态后，情况就完全不同了。假设我们在时间步{% mathjax %}t{% endmathjax %}有小批量输入{% mathjax %}\mathbf{X}_t\in \mathbb{R}^{n\times d}{% endmathjax %}。换言之，对于{% mathjax %}n{% endmathjax %}个序列样本的小批量，{% mathjax %}\mathbf{X}_t{% endmathjax %}的每一行对应于来自该序列的时间步{% mathjax %}t{% endmathjax %}处的一个样本。接下来，用{% mathjax %}\mathbf{H}_t\in \mathbb{R}^{n\times h}{% endmathjax %}表示时间步{% mathjax %}t{% endmathjax %}的隐藏变量。与多层感知机不同的是，我们在这里保存了前一个时间步的隐藏变量{% mathjax %}\mathbf{H}_{t-1}{% endmathjax %}，并引入了一个新的权重参数{% mathjax %}\mathbf{W}_{hh}\in \mathbb{R}^{h\times h}{% endmathjax %}，来描述如何在当前时间步中使用前一个时间步的隐藏变量。具体地说，当前时间步隐藏变量由当前时间步的输入与前一个时间步的隐藏变量一起计算得出：
 {% mathjax '{"conversion":{"em":14}}' %}
 \mathbf{H}_t= \phi (\mathbf{X}_t\mathbf{W}_{xh} + \mathbf{H}_{t-1}\mathbf{W}_{hh} + \mathbf{b}_h)
 {% endmathjax %}
@@ -50,7 +50,6 @@ h(t) = f(x_t,h_{t-1})
 - 将拼接的结果送入带有激活函数{% mathjax %}\phi{% endmathjax %}的全连接层。全连接层的输出是当前时间步{% mathjax %}t{% endmathjax %}的隐状态{% mathjax %}\mathbf{H}_t{% endmathjax %}。
 在本例中，模型参数是{% mathjax %}\mathbf{W}_{xh}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hh}{% endmathjax %}的拼接，以及{% mathjax %}b_h{% endmathjax %}的偏置。当前时间步隐状态{% mathjax %}\mathbf{H}_t{% endmathjax %}将参与计算下一时间步{% mathjax %}t+1{% endmathjax %}的隐状态{% mathjax %}\mathbf{H}_{t+1}{% endmathjax %}。而且{% mathjax %}\mathbf{H}_t{% endmathjax %}还将送入全连接输出层，用于计算当前时间步{% mathjax %}t{% endmathjax %}的输出{% mathjax %}\mathbf{O}_t{% endmathjax %}。
 {% asset_img rnn_1.png "具有隐状态的循环神经网络" %}
-
 #### 基于循环神经网络的字符级语言模型
 
 回想一下语言模型，我们的目标是根据过去的和当前的词元预测下一个词元，因此我们将原始序列移位一个词元作为标签。`Bengio`等人首先提出使用神经网络进行语言建模。接下来，我们看一下如何使用循环神经网络来构建语言模型。设小批量大小为`1`，批量中的文本序列为`“machine”`。为了简化后续部分的训练，我们考虑使用字符级语言模型(`character-level language model`)，将文本词元化为字符而不是单词。下图演示了如何通过基于字符级语言建模的循环神经网络，使用当前的和先前的字符预测下一个字符。
