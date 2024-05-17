@@ -191,9 +191,9 @@ P(x_1,x_2,\ldots,x_T) = \prod_{t=1}^T P(x_t|x_1,\ldots,x_{t-1})
 {% endmathjax %}
 例如，包含了四个单词的一个文本序列的概率是：
 {% mathjax '{"conversion":{"em":14}}' %}
-P(\text{deep,learning,is,fun}) = P(\text{deep})P(\text{learning}|\text{deep})P(\text{is}|\text{eep,learning})P(\text{fun}|\text{deep,learning,is})
+P(\text{deep,learning,is,fun}) = P(\text{deep})P(\text{learning}|\text{deep})P(\text{is}|\text{deep,learning})P(\text{fun}|\text{deep,learning,is})
 {% endmathjax %}
-为了训练语言模型，我们需要计算单词的概率，以及给定前面几个单词后出现某个单词的条件概率。这些概率本质上就是语言模型的参数。这里，我们假设训练数据集是一个大型的文本语料库。比如，维基百科的所有条目、古登堡计划，或者所有发布在网络上的文本。训练数据集中词的概率可以根据给定词的相对词频来计算。例如，可以将估计值{% mathjax %}\hat{P}(\text{deep}){% endmathjax %}计算为任何以单词`“deep”`开头的句子的概率。一种（稍稍不太精确的）方法是统计单词“deep”在数据集中的出现次数，然后将其除以整个语料库中的单词总数。这种方法效果不错，特别是对于频繁出现的单词。接下来，我们可以尝试估计：
+为了训练语言模型，我们需要计算单词的概率，以及给定前面几个单词后出现某个单词的条件概率。这些概率本质上就是语言模型的参数。这里，我们假设训练数据集是一个大型的文本语料库。比如，维基百科的所有条目、古登堡计划，或者所有发布在网络上的文本。训练数据集中词的概率可以根据给定词的相对词频来计算。例如，可以将估计值{% mathjax %}\hat{P}(\text{deep}){% endmathjax %}计算为任何以单词`“deep”`开头的句子的概率。一种（稍稍不太精确的）方法是统计单词“`deep`”在数据集中的出现次数，然后将其除以整个语料库中的单词总数。这种方法效果不错，特别是对于频繁出现的单词。接下来，我们可以尝试估计：
 {% mathjax '{"conversion":{"em":14}}' %}
 \hat{P}(\text{learning}|\text{deep}) = \frac{n(\text{deep,learning})}{n(\text{deep})}
 {% endmathjax %}
@@ -205,7 +205,7 @@ P(\text{deep,learning,is,fun}) = P(\text{deep})P(\text{learning}|\text{deep})P(\
 \hat{P}(x''|x,x') & = \frac{n(x,x',x'') + \epsilon_3\hat{P}(x'')}{n(x,x') + \epsilon_3} \\
 \end{align}
 {% endmathjax %}
-其中，{% mathjax %}\epsilon_1,\epsilon_2{% endmathjax %}和{% mathjax %}\epsilon_1{% endmathjax %}是超参数。以{% mathjax %}\epsilon_1{% endmathjax %}为例：当{% mathjax %}\epsilon_1 = 0{% endmathjax %}时，不应用平滑；当{% mathjax %}\epsilon_1{% endmathjax %}接近正无穷大时，{% mathjax %}\hat{P}(x){% endmathjax %}接近均匀概率分布{% mathjax %}1/m{% endmathjax %}。上面的公式是一个相当原始的变形。然而，这样的模型很容易变得无效，原因如下：首先，我们需要存储所有的计数；其次，这完全忽略了单词的意思。例如，“猫”(cat)和“猫科动物”(feline)可能出现在相关的上下文中，但是想根据上下文调整这类模型其实是相当困难的。最后，长单词序列大部分是没出现过的，因此一个模型如果只是简单地统计先前“看到”的单词序列频率，那么模型面对这种问题肯定是表现不佳的。
+其中，{% mathjax %}\epsilon_1,\epsilon_2{% endmathjax %}和{% mathjax %}\epsilon_1{% endmathjax %}是超参数。以{% mathjax %}\epsilon_1{% endmathjax %}为例：当{% mathjax %}\epsilon_1 = 0{% endmathjax %}时，不应用平滑；当{% mathjax %}\epsilon_1{% endmathjax %}接近正无穷大时，{% mathjax %}\hat{P}(x){% endmathjax %}接近均匀概率分布{% mathjax %}1/m{% endmathjax %}。上面的公式是一个相当原始的变形。然而，这样的模型很容易变得无效，原因如下：首先，我们需要存储所有的计数；其次，这完全忽略了单词的意思。例如，“猫”(`cat`)和“猫科动物”(`feline`)可能出现在相关的上下文中，但是想根据上下文调整这类模型其实是相当困难的。最后，长单词序列大部分是没出现过的，因此一个模型如果只是简单地统计先前“看到”的单词序列频率，那么模型面对这种问题肯定是表现不佳的。
 #### 马尔可夫模型与n元语法
 
 在讨论包含深度学习的解决方案之前，我们需要了解更多的概念和术语。回想一下我们在马尔可夫模型中，并且将其应用于语言建模。如果{% mathjax %}P(x_{t+1}|x_t,\ldots,x_1) = P(x_{t+1}|x_t){% endmathjax %}，则序列上的分布满足一阶马尔可夫性质。阶数越高，对应的依赖关系就越长。这种性质推导出了许多可以应用于序列建模的近似公式：
