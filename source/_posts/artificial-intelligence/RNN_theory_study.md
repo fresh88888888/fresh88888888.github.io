@@ -113,3 +113,22 @@ c_t & = \frac{\partial f(x_t,h_{t-1},w_h)}{\partial h_{t-1}} \\
 \frac{\partial h_t}{\partial w_h} = \frac{\partial x_t,h_{t-1},w_h}{\partial w_h} + \sum_{i=1}^{t-1}(\prod_{j=i+1}^t \frac{\partial f(x_j,h_{j-1},w_h)}{\partial h_{j-1}})\frac{\partial f(x_i,h_{i-1},w_h)}{\partial w_h}
 {% endmathjax %}
 虽然我们可以使用链式法则递归地计算{% mathjax %}\partial h_t/\partial w_h{% endmathjax %}但当{% mathjax %}t{% endmathjax %}很大时这个链就会变得很长。我们需要想想办法来处理这一问题。
+###### 完全计算
+
+显然，我们可以仅仅计算上面公式中的全部总和，然而，这样的计算非常缓慢，并且可能会发生梯度爆炸，因为初始条件的微小变化就可能会对结果产生巨大的影响。也就是说，我们可以观察到类似于蝴蝶效应的现象，即初始条件的很小变化就会导致结果发生不成比例的变化。这对于我们想要估计的模型而言是非常不可取的。毕竟，我们正在寻找的是能够很好地泛化高稳定性模型的估计器。因此，在实践中，这种方法几乎从未使用过。
+###### 截断时间步
+
+或者，我们可以在{% mathjax %}\tau{% endmathjax %}步后截断求和计算。这是我们到目前为止一直在讨论的内容，这会带来真实梯度的近似，只需将求和终止为{% mathjax %}\partial h_{t-\tau}/\partial w_h{% endmathjax %}。在实践中，这种方式工作得很好。它通常被称为截断的通过时间反向传播。这样做导致该模型主要侧重于短期影响，而不是长期影响。这在现实中是可取的，因为它会将估计值偏向更简单和更稳定的模型。
+###### 随机截断
+
+最后，我们可以用一个随机变量替换{% mathjax %}\partial h_t/\partial w_h{% endmathjax %}，该随机变量在预期中是正确的，但是会截断序列。这个随机变量是通过使用序列{% mathjax %}\xi_t{% endmathjax %}来实现的，序列预定义了{% mathjax %}0 \leq \pi_t \leq 1{% endmathjax %}，其中{% mathjax %}P(\xi_t = 0) = 1 - \pi_t{% endmathjax %}且{% mathjax %}P(\xi_t = \pi_t^{-1}) = \pi_t{% endmathjax %}因此{% mathjax %}E[\xi_t] = 1{% endmathjax %}。我们用它来替换梯度{% mathjax %}\partial h_t/\partial w_h{% endmathjax %}得到：
+{% mathjax '{"conversion":{"em":14}}' %}
+z_t = \frac{\partial f(x_t,h_{t-1},w_h)}{\partial w_h} + \xi_t\frac{\partial f(x_t,h_{t-2},w_h)}{\partial h_{t-1}}\frac{\partial h_{t-1}}{\partial w_h}
+{% endmathjax %}
+从{% mathjax %}\xi_t{% endmathjax %}的定义推导出来{% mathjax %}E(z_t) = \partial h_t/\partial w_h{% endmathjax %}。每当{% mathjax %}\xi_t = 0{% endmathjax %}时递归计算终止在这个{% mathjax %}t{% endmathjax %}时间步。这导致了不同长度序列的加权和，其中长序列出现的很少，所以将适当地加大权重。这个想法是由塔莱克和奥利维尔提出的。
+
+遗憾的是，虽然随机截断在理论上具有吸引力，但很可能是由于多种因素在实践中并不比常规截断更好。首先，在对过去若干个时间步经过反向传播后，观测结果足以捕获实际的依赖关系。其次，增加的方差抵消了时间步数越多梯度越精确的事实。第三，我们真正想要的是只有短范围交互的模型。因此，模型需要的正是截断的通过时间反向传播方法所具备的轻度正则化效果。
+##### 通过时间反向传播的细节
+
+
+
