@@ -133,6 +133,7 @@ z_t = \frac{\partial f(x_t,h_{t-1},w_h)}{\partial w_h} + \xi_t\frac{\partial f(x
 ##### 通过时间反向传播的细节
 
 我们看一下通过时间反向传播问题的细节。下面我们将展示如何计算目标函数相对于所有分解模型参数的梯度。为了保持简单，我们考虑一个没有偏置参数的循环神经网络，其在隐藏层中的激活函数使用恒等映射（{% mathjax %}\phi(x) = x{% endmathjax %}）对于时间步{% mathjax %}t{% endmathjax %}，设单个样本的输入及其对应的标签分别为{% mathjax %}\mathbf{x}_t\in \mathbb{R}^d{% endmathjax %}和{% mathjax %}y_t{% endmathjax %}。计算隐状态{% mathjax %}\mathbf{h}_t\in \mathbb{R}^h{% endmathjax %}和输出{% mathjax %}\mathbf{o}_t\in\mathbb{R}^q{% endmathjax %}的方式为：
+{% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
 h_t & = \mathbf{W}_{hx}\mathbf{x}_t + \mathbf{W}_{hh}\mathbf{h}_{t-1} \\ 
 o_t & = \mathbf{W}_{qh}\mathbf{h}_t \\
