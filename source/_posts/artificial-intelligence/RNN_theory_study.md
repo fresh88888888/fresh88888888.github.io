@@ -103,11 +103,13 @@ L(x_1,\ldots,x_{T},y_1,\ldots,y_{T},w_h,w_o) = \frac{1}{T}\sum_{t=1}^{T} l(y_t,o
 a_t = b_t + \sum_{i=1}^{t-1}(\prod_{j=i+1}^t c_j)b_i
 {% endmathjax %}
 基于下列公式替换{% mathjax %}a_t,b_t{% endmathjax %}和{% mathjax %}c_t{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
 a_t & = \frac{\partial h_t}{\partial w_h} \\ 
 b_t & = \frac{\partial f(x_t,h_{t-1},w_h)}{\partial w_h} \\
 c_t & = \frac{\partial f(x_t,h_{t-1},w_h)}{\partial h_{t-1}} \\
 \end{align}
+{% endmathjax %}
 以上公式中梯度计算，满足{% mathjax %}a_t = b_t + c_ta_{t-1}{% endmathjax %}。因此，我们可以使用下面的公式移除循环计算：
 {% mathjax '{"conversion":{"em":14}}' %}
 \frac{\partial h_t}{\partial w_h} = \frac{\partial x_t,h_{t-1},w_h}{\partial w_h} + \sum_{i=1}^{t-1}(\prod_{j=i+1}^t \frac{\partial f(x_j,h_{j-1},w_h)}{\partial h_{j-1}})\frac{\partial f(x_i,h_{i-1},w_h)}{\partial w_h}
