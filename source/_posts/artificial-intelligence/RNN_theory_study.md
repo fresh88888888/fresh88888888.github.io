@@ -145,6 +145,7 @@ L = \frac{1}{T}\sum_{t=1}^T l(\mathbf{o}_t,y_t)
 {% endmathjax %}
 为了在循环神经网络的计算过程中可视化模型变量和参数之间的依赖关系，我们可以为模型绘制一个计算图，如下图所示。例如，时间步`3`的隐状态{% mathjax %}\mathbf{h}_3{% endmathjax %}的计算取决于模型参数{% mathjax %}\mathbf{W}_{hx}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hh}{% endmathjax %}，以及最终时间步的隐状态{% mathjax %}\mathbf{h}_2{% endmathjax %}，以及当前时间步的输入{% mathjax %}\mathbf{x}_3{% endmathjax %}。
 {% asset_img rnn_3.png "上图表示具有三个时间步的循环神经网络模型依赖关系的计算图。未着色的方框表示变量，着色的方框表示参数，圆表示运算符" %}
+
 正如刚才所说，上图中的模型参数是{% mathjax %}\mathbf{W}_{hx}、\mathbf{W}_{hh}{% endmathjax %}和{% mathjax %}\mathbf{W}_{qh}{% endmathjax %}。通常，训练该模型需要对这些参数进行梯度计算：{% mathjax %}\partial L/\partial \mathbf{W}_{hx}、\partial L/\partial \mathbf{W}_{hh}{% endmathjax %}和{% mathjax %}\partial L/\partial \mathbf{W}_{qh}{% endmathjax %}。根据上图中的依赖关系，我们可以沿箭头的相反方向遍历计算图，以此计算和存储梯度。首先，在任意时间步{% mathjax %}t{% endmathjax %}，目标函数关于模型输出的微分计算是相当简单的：
 {% mathjax '{"conversion":{"em":14}}' %}
 \frac{\partial L}{\partial \mathbf{o}_t} = \frac{\partial l(\mathbf{o}_t,y_t)}{T\cdot \partial \mathbf{o}_t} \in \mathbb{R}^q
