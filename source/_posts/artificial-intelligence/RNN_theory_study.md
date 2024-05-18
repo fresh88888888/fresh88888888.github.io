@@ -76,4 +76,40 @@ h(t) = f(x_t,h_{t-1})
 到目前为止，我们已经反复提到像梯度爆炸或梯度消失，以及需要对循环神经网络分离梯度。循环神经网络中的前向传播相对简单。通过时间反向传播(`backpropagation through time，BPTT`)实际上是循环神经网络中反向传播技术的一个特定应用。它要求我们将循环神经网络的计算图一次展开一个时间步，以获得模型变量和参数之间的依赖关系。然后，基于链式法则，应用反向传播来计算和存储梯度。由于序列可能相当长，因此依赖关系也可能相当长。例如，某个`1000`个字符的序列，其第一个词元可能会对最后位置的词元产生重大影响。这在计算上是不可行的（它需要的时间和内存都太多了），并且还需要超过`1000`个矩阵的乘积才能得到非常难以捉摸的梯度。这个过程充满了计算与统计的不确定性。
 ##### 循环神经网络的梯度分析
 
-我们从一个描述循环神经网络工作原理的简化模型开始，此模型忽略了隐状态的特性及其更新方式的细节。这里的数学表示没有像过去那样明确地区分标量、向量和矩阵，因为这些细节对于分析并不重要， 反而只会使本小节中的符号变得混乱。
+我们从一个描述循环神经网络工作原理的简化模型开始，此模型忽略了隐状态的特性及其更新方式的细节。这里的数学表示没有像过去那样明确地区分标量、向量和矩阵，因为这些细节对于分析并不重要， 反而只会使本小节中的符号变得混乱。在简化模型中我们将时间步{% mathjax %}t{% endmathjax %}的隐状态表示为{% mathjax %}h_t{% endmathjax %}，输入表示为{% mathjax %}x_t{% endmathjax %}，输出表示为{% mathjax %}o_t{% endmathjax %}。输入与隐状态可以拼接后与隐藏层中的一个权重变量相乘。因此，我们分别使用{% mathjax %}w_h{% endmathjax %}和{% mathjax %}w_o{% endmathjax %}来表示隐藏层与输出层的权重，每个时间步的隐状态和输出可以写为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+h_t & = f(x_t,h_{t-1},w_h) \\ 
+o_t & = g(h_t, w_o) \\
+\end{align}
+{% endmathjax %}
+其中{% mathjax %}f{% endmathjax %}和{% mathjax %}g{% endmathjax %}分别是隐藏层和输出层的变换，因此，我们有一个链{% mathjax %}{\ldots,(x_{t-1},h_{t-1},o_{t-1}),(x_t,h_t,o_t),\ldots}{% endmathjax %}，它们通过循环计算彼此依赖。前向传播相当简单，一次一个时间步的遍历三元组{% mathjax %}(x_t,h_t,o_t){% endmathjax %}，然后通过一个目标函数在所有{% mathjax %}T{% endmathjax %}个时间步内评估输出{% mathjax %}o_t{% endmathjax %}和对应的标签{% mathjax %}y_t{% endmathjax %}之间的差异：
+{% mathjax '{"conversion":{"em":14}}' %}
+L(x_1,\ldots,x_{T},y_1,\ldots,y_{T},w_h,w_o) = \frac{1}{T}\sum_{t=1}^{T} l(y_t,o_t)
+{% endmathjax %}
+对于反向传播，问题则有点棘手，特别是当我们计算目标函数{% mathjax %}L{% endmathjax %}关于参数{% mathjax %}w_h{% endmathjax %}的梯度时，具体来说，按照链式法则：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+\frac{\partial L}{\partial w_h} & = \frac{1}{T}\sum_{t=1}^T\frac{\partial l(y_t,o_t)}{\partial w_h} \\ 
+& = \frac{1}{T}\sum_{t=1}^T\frac{\partial l(y_t,o_t)}{\partial o_t}\frac{\partial g(h_t,w_o)}{\partial h_t}\frac{\partial h_t}{\partial w_h} \\
+\end{align}
+{% endmathjax %}
+在上图中乘积的第一项和第二项很容易计算，而第三项{% mathjax %}\frac{\partial h_t}{\partial w_h}{% endmathjax %}变得比较棘手，因为我们需要循环地计算参数{% mathjax %}w_h{% endmathjax %}对{% mathjax %}h_t{% endmathjax %}的影响。根据递归计算，{% mathjax %}h_t{% endmathjax %}既依赖于{% mathjax %}h_{t-1}{% endmathjax %}又依赖于{% mathjax %}w_h{% endmathjax %}，其中{% mathjax %}h_{t-1}{% endmathjax %}的计算也依赖于{% mathjax %}w_h{% endmathjax %}。因此，使用链式法则则产生：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial h_t}{\partial w_h} = \frac{\partial f(x_t,h_{t-1},w_h)}{\partial w_h} + \frac{\partial f(x_t,h_{t-1},w_h)}{\partial h_{t-1}}\frac{partial h_{t-1}}{\partial w_h}
+{% endmathjax %}
+为了导出上述梯度，假设我们有三个序列{% mathjax %}\{a_t\},\{b_t\},\{c_t\}{% endmathjax %}，当{% mathjax %}t=1,2,\ldots{% endmathjax %}时，序列满足{% mathjax %}a_0=0{% endmathjax %}且{% mathjax %}a_t = b_t + c_ta_{t-1}{% endmathjax %}。对于{% mathjax %}t\geq 1{% endmathjax %}，就很容易得出：
+{% mathjax '{"conversion":{"em":14}}' %}
+a_t = b_t + \sum_{i=1}^{t-1}(\prod_{j=i+1}^t c_j)b_i
+{% endmathjax %}
+基于下列公式替换{% mathjax %}a_t,b_t{% endmathjax %}和{% mathjax %}c_t{% endmathjax %}：
+\begin{align}
+a_t & = \frac{\partial h_t}{\partial w_h} \\ 
+b_t & = \frac{\partial f(x_t,h_{t-1},w_h)}{\partial w_h} \\
+c_t & = \frac{\partial f(x_t,h_{t-1},w_h)}{\partial h_{t-1}} \\
+\end{align}
+以上公式中梯度计算，满足{% mathjax %}a_t = b_t + c_ta_{t-1}{% endmathjax %}。因此，我们可以使用下面的公式移除循环计算：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial h_t}{\partial w_h} = \frac{\partial x_t,h_{t-1},w_h}{\partial w_h} + \sum_{i=1}^{t-1}(\prod_{j=i+1}^t \frac{\partial f(x_j,h_{j-1},w_h)}{\partial h_{j-1}})\frac{\partial f(x_i,h_{i-1},w_h)}{\partial w_h}
+{% endmathjax %}
+虽然我们可以使用链式法则递归地计算{% mathjax %}\partial h_t/\partial w_h{% endmathjax %}但当{% mathjax %}t{% endmathjax %}很大时这个链就会变得很长。我们需要想想办法来处理这一问题。
