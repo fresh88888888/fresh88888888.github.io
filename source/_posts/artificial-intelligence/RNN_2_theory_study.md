@@ -36,6 +36,6 @@ mathjax:
 \mathbf{Z}_t & = \sigma(\mathbf{X}_t\mathbf{W}_{xz} + \mathbf{H}_{t-1}\mathbf{W}_{hz} + \mathbf{b}_z) \\
 \end{align}
 {% endmathjax %}
-其中{% mathjax %}\mathbf{W}_{xr}，{% mathjax %}\mathbf{W}_{xz}\in \mathbb{R}^{d\times h}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hr}{% endmathjax %}、{% mathjax %}\mathbf{W}_{hz}\in \mathbb{R}^{h\times h}{% endmathjax %}是权重参数，{% mathjax %}\mathbf{b}_r{% endmathjax %}、{% mathjax %}\mathbf{b}_z\in \mathbb{R}^{1\times h}{% endmathjax %}是偏置参数。请注意，在求和过程中会触发广播机制。我们使用`sigmoid`函数将输入值转换到区间{% mathjax %}(0,1){% endmathjax %}。
+其中{% mathjax %}\mathbf{W}_{xr}{% endmathjax %}、{% mathjax %}\mathbf{W}_{xz}\in \mathbb{R}^{d\times h}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hr}{% endmathjax %}、{% mathjax %}\mathbf{W}_{hz}\in \mathbb{R}^{h\times h}{% endmathjax %}是权重参数，{% mathjax %}\mathbf{b}_r{% endmathjax %}、{% mathjax %}\mathbf{b}_z\in \mathbb{R}^{1\times h}{% endmathjax %}是偏置参数。请注意，在求和过程中会触发广播机制。我们使用`sigmoid`函数将输入值转换到区间{% mathjax %}(0,1){% endmathjax %}。
 ###### 候选隐状态
 
