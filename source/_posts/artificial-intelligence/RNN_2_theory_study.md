@@ -30,6 +30,7 @@ mathjax:
 {% asset_img rnn_1.png "在门控循环单元模型中计算重置门和更新门" %}
 
 我们来看一下门控循环单元的数学表达。对于给定的时间步{% mathjax %}t{% endmathjax %}，假设输入是一个小批量{% mathjax %}\mathbf{X}_t\in \mathbb{R}^{n\times d}{% endmathjax %}(样本个数{% mathjax %}n{% endmathjax %}，输入个数{% mathjax %}d{% endmathjax %})，上一个时间步的隐状态是{% mathjax %}\mathbf{H}_{t-1}\in \mathbb{R}^{n\times h}{% endmathjax %}（隐藏单元个数{% mathjax %}h{% endmathjax %}）。那么，重置门{% mathjax %}\mathbf{R}_t\in \mathbb{R}^{n\times h}{% endmathjax %}的计算如下所示：
+{% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
 \mathbf{R}_t & = \sigma(\mathbf{X}_t\mathbf{W}_{xr} + \mathbf{H}_{t-1}\mathbf{W}_{hr} + \mathbf{b}_r) \\ 
 \mathbf{Z}_t & = \sigma(\mathbf{X}_t\mathbf{W}_{xz} + \mathbf{H}_{t-1}\mathbf{W}_{hz} + \mathbf{b}_z) \\
