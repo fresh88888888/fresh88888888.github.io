@@ -45,3 +45,23 @@ mathjax:
 {% endmathjax %}
 其中{% mathjax %}\mathbf{W}_{xh}\in\mathbb{R}^{d\times h}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hh}\in\mathbb{R}^{h\times h}{% endmathjax %}是权重参数，{% mathjax %}\mathbf{b}_h\in\mathbb{R}^{1\times h}{% endmathjax %}是偏置项，符号{% mathjax %}\odot{% endmathjax %}是`Hadamard`积（按元素乘积）运算符。在这里，我们使用`tanh`非线性激活函数来确保候选隐状态中的值保持在区间{% mathjax %}(-1,1){% endmathjax %}中。上面公式中的{% mathjax %}\mathbf{R}_t{% endmathjax %}和{% mathjax %}\mathbf{H}_{t-1}{% endmathjax %}的元素相乘可以减少以往状态的影响。每当重置门{% mathjax %}\mathbf{R}_t{% endmathjax %}中的项接近1时，我们回复一个普通的循环神经网络。对于重置门{% mathjax %}\mathbf{R}_t{% endmathjax %}中所有接近0的项。候选隐状态是以{% mathjax %}\mathbf{X}_t{% endmathjax %}作为输入的多层感知机的结果。因此，任何预先存在的隐状态都会被重置为默认值。下图说明了应用重置门之后的计算流程：
 {% asset_img rnn_2.png "在门控循环单元模型中计算候选隐状态" %}
+
+###### 隐状态
+
+上述的计算结果只是候选隐状态，我们仍然需要结合更新门{% mathjax %}\mathbf{Z}_t{% endmathjax %}的效果。这一步确定新的隐状态{% mathjax %}\mathbf{H}_t\in \mathbb{R}^{n\times h}{% endmathjax %}在多大程度上来自旧的状态{% mathjax %}\mathbf{H}_{t-1}{% endmathjax %}和新的候选状态{% mathjax %}\tilde{\mathbf{H}}_t{% endmathjax %}。更新门{% mathjax %}\mathbf{Z}_t{% endmathjax %}仅需要在{% mathjax %}\mathbf{H}_{t-1}{% endmathjax %}和{% mathjax %}\tilde{\mathbf{H}}_t{% endmathjax %}之间进行按元素的凸组合就可以实现这个目标。这就得出了门控神经单元的最终更新公式：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{H}_t = \mathbf{Z}_t\odot\mathbf{H}_{t-1} + (1 - \mathbf{Z}_t)\odot\tilde{\mathbf{H}}_t
+{% endmathjax %}
+每当更新门{% mathjax %}\mathbf{Z}_t{% endmathjax %}接近{% mathjax %}1{% endmathjax %}时，模型就倾向只保留旧状态。此时，来自{% mathjax %}\mathbf{X}_t{% endmathjax %}的信息基本上被忽略，从而有效地跳过了依赖链条中的时间步{% mathjax %}t{% endmathjax %}。相反，当{% mathjax %}\mathbf{Z}_t{% endmathjax %}接近{% mathjax %}0{% endmathjax %}时，新的隐状态{% mathjax %}\mathbf{H}_t{% endmathjax %}就会接近候选隐状态{% mathjax %}\tilde{\mathbf{H}}_t{% endmathjax %}。这些设计可以帮助我们处理循环神经网络中的梯度消失问题，并更好地捕获时间步距离很长的序列的依赖关系。例如，如果整个子序列的所有时间步的更新门都接近于`1`，则无论序列的长度如何，在序列起始时间步的旧隐状态都将很容易保留并传递到序列结束。下图说明了更新门起作用后的计算流。
+{% asset_img rnn_3.png "计算门控循环单元模型中的隐状态" %}
+
+总之，门控循环单元具有以下两个显著特征：
+- 重置门有助于捕获序列中的短期依赖关系。
+- 更新门有助于捕获序列中的长期依赖关系。
+
+#### 长短期记忆网络（LSTM
+
+长期以来，隐变量模型存在着长期信息保存和短期输入缺失的问题。解决这一问题的最早方法之一是**长短期存储器**(`long short-term memory，LSTM`)。它有许多与门控循环单元一样的属性。有趣的是，长短期记忆网络的设计比门控循环单元稍微复杂一些，却比门控循环单元早诞生了近`20`年。
+##### 门控记忆元
+
+可以说，长短期记忆网络的设计灵感来自于计算机的逻辑门。长短期记忆网络引入了记忆元(`memory cell`)，或简称为单元(`cell`)。有些文献认为记忆元是隐状态的一种特殊类型，它们与隐状态具有相同的形状，其设计目的是用于记录附加的信息。为了控制记忆元，我们需要许多门。其中一个门用来从单元中输出条目，我们将其称为输出门(`output gate`)。另外一个门用来决定何时将数据读入单元，我们将其称为输入门(`input gate`)。我们还需要一种机制来重置单元的内容，由遗忘门(`forget gate`)来管理，这种设计的动机与门控循环单元相同，能够通过专用机制决定什么时候记忆或忽略隐状态中的输入。让我们看看这在实践中是如何运作的。
