@@ -85,9 +85,9 @@ mathjax:
 其中{% mathjax %}\mathbf{X}_{xi}{% endmathjax %}，{% mathjax %}\mathbf{W}_{xf}{% endmathjax %}，{% mathjax %}\mathbf{W}_{xo}\in\mathbb{R}^{d\times h}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hi}{% endmathjax %}，{% mathjax %}\mathbf{W}_{hf}{% endmathjax %}，{% mathjax %}\mathbf{W}_{ho}\in\mathbb{R}^{h\times h}{% endmathjax %}是权重参数{% mathjax %}\mathbf{b}_i{% endmathjax %}，{% mathjax %}\mathbf{b}_f{% endmathjax %}，{% mathjax %}\mathbf{b}_o\in\mathbb{R}^{1\times h}{% endmathjax %}是偏置参数。
 ###### 候选记忆元
 
-由于还没有指定各种门的操作，所以先介绍**候选记忆元**(`candidate memory cell`){% mathjax %}\tilde{\mathbf{C}}_t\in\mathbb{R}_^{n\times h}{% endmathjax %}。它的计算与上面描述的三个门的计算类似，但是使用{% mathjax %}\tanh{% endmathjax %}函数作为激活函数，函数的值范围为{% mathjax %}(-1,1){% endmathjax %}。下面导出在时间步{% mathjax %}t{% endmathjax %}处的方程：
+由于还没有指定各种门的操作，所以先介绍**候选记忆元**(`candidate memory cell`){% mathjax %}\tilde{\mathbf{C}}_t \in \mathbb{R}_^{n\times h}{% endmathjax %}。它的计算与上面描述的三个门的计算类似，但是使用{% mathjax %}\tanh{% endmathjax %}函数作为激活函数，函数的值范围为{% mathjax %}(-1,1){% endmathjax %}。下面导出在时间步{% mathjax %}t{% endmathjax %}处的方程：
 {% mathjax '{"conversion":{"em":14}}' %}
-\tiled{\mathbf{C}}_t = \tanh(\mathbf{X}_t\mathbf{W}_{xc} + \mathbf{H}_{t-1}\mathbf{W}_{hc} + \mathbf{b}_c)
+\tilde{\mathbf{C}}_t = \tanh(\mathbf{X}_t\mathbf{W}_{xc} + \mathbf{H}_{t-1}\mathbf{W}_{hc} + \mathbf{b}_c)
 {% endmathjax %}
 其中{% mathjax %}\mathbf{W}_{xc}\in\mathbb{R}^{d\times h}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hc}\in\mathbb{R}^{h\times h}{% endmathjax %}是权重参数，{% mathjax %}\mathbf{b}_c\in\mathbb{R}^{1\times h}{% endmathjax %}是偏置参数。候选记忆元如下图所示：
 {% asset_img rnn_5.png "长短期记忆模型中的候选记忆元" %}
@@ -121,3 +121,4 @@ mathjax:
 
 ##### 函数依赖关系
 
+我们可以将深度架构中的函数依赖关系形式化，这个架构是由 上图中描述了{% mathjax %}L{% endmathjax %}个隐藏层构成。后续的讨论主要集中在经典的循环神经网络模型上，但是这些讨论也适应于其他序列模型。
