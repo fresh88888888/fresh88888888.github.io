@@ -27,3 +27,14 @@ mathjax:
 ###### 重置门和更新门
 
 **重置门**(`reset gate`)和**更新门**(`update gate`)。我们把它们设计成{% mathjax %}(0,1){% endmathjax %}区间中的向量，这样我们就可以进行凸组合。重置门允许我们控制“可能还想记住”的过去状态的数量；更新门将允许我们控制新状态中有多少个是旧状态的副本。我们从构造这些门控开始。下图描述了门控循环单元中的重置门和更新门的输入，输入是由当前时间步的输入和前一时间步的隐状态给出。两个门的输出是由使用`sigmoid`激活函数的两个全连接层给出。
+{% asset_img rnn_1.png "在门控循环单元模型中计算重置门和更新门" %}
+
+我们来看一下门控循环单元的数学表达。对于给定的时间步{% mathjax %}t{% endmathjax %}，假设输入是一个小批量{% mathjax %}\mathbf{X}_t\in \mathbb{R}^{n\times d}{% endmathjax %}(样本个数{% mathjax %}n{% endmathjax %}，输入个数{% mathjax %}d{% endmathjax %})，上一个时间步的隐状态是{% mathjax %}\mathbf{H}_{t-1}\in \mathbb{R}^{n\times h}{% endmathjax %}（隐藏单元个数{% mathjax %}h{% endmathjax %}）。那么，重置门{% mathjax %}\mathbf{R}_t\in \mathbb{R}^{n\times h}{% endmathjax %}的计算如下所示：
+\begin{align}
+\mathbf{R}_t & = \sigma(\mathbf{X}_t\mathbf{W}_{xr} + \mathbf{H}_{t-1}\mathbf{W}_{hr} + \mathbf{b}_r) \\ 
+\mathbf{Z}_t & = \sigma(\mathbf{X}_t\mathbf{W}_{xz} + \mathbf{H}_{t-1}\mathbf{W}_{hz} + \mathbf{b}_z) \\
+\end{align}
+{% endmathjax %}
+其中{% mathjax %}\mathbf{W}_{xr}，{% mathjax %}\mathbf{W}_{xz}\in \mathbb{R}^{d\times h}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hr}{% endmathjax %}、{% mathjax %}\mathbf{W}_{hz}\in \mathbb{R}^{h\times h}{% endmathjax %}是权重参数，{% mathjax %}\mathbf{b}_r{% endmathjax %}、{% mathjax %}\mathbf{b}_z\in \mathbb{R}^{1\times h}{% endmathjax %}是偏置参数。请注意，在求和过程中会触发广播机制。我们使用`sigmoid`函数将输入值转换到区间{% mathjax %}(0,1){% endmathjax %}。
+###### 候选隐状态
+
