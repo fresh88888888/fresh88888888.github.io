@@ -150,3 +150,31 @@ L = \frac{1}{T}\sum_{t=1}^T l(\mathbf{o}_t,y_t)
 {% mathjax '{"conversion":{"em":14}}' %}
 \frac{\partial L}{\partial \mathbf{o}_t} = \frac{\partial l(\mathbf{o}_t,y_t)}{T\cdot \partial \mathbf{o}_t} \in \mathbb{R}^q
 {% endmathjax %}
+现在，我们可以计算目标函数关于输出层中参数{% mathjax %}\mathbf{W}_{qh}{% endmathjax %}的梯度：{% mathjax %}\partial L/\partial \mathbf{W}_{qh}\in \mathbb{R}^{q\times h}{% endmathjax %}。目标函数{% mathjax %}L{% endmathjax %}通过{% mathjax %}\mathbf{o}_1,\ldots,\mathbf{o}_T{% endmathjax %}依赖于{% mathjax %}\mathbf{W}_{qh}{% endmathjax %}。依据链式法则得到：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial L}{\partial \mathbf{W}_{qh}} = \sum_{t=1}^T\text{prod}(\frac{\partial L}{\partial \mathbf{o}_t},\frac{\partial \mathbf{o}_t}{\partial \mathbf{W}_{qh}}) = \sum_{t=1}^T\frac{\partial L}{\partial \mathbf{o}_t}\mathbf{h}_t^T
+{% endmathjax %}
+其中{% mathjax %}\frac{\partial L}{\partial \mathbf{o}_t}{% endmathjax %}是由上边的公式给出的。接下来，在最后的时间步{% mathjax %}T{% endmathjax %}，目标函数{% mathjax %}L{% endmathjax %}仅通过{% mathjax %}\mathbf{o}_T{% endmathjax %}依赖于隐状态{% mathjax %}\mathbf{h}_T{% endmathjax %}。因此，我们通过使用链式法则可以很容易的得到梯度{% mathjax %}\partial L/\partial \mathbf{h}_T\in \mathbb{R}^h{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial L}{\partial \mathbf{h}_T} \text{prod}(\frac{\partial L}{\partial \mathbf{o}_T},\frac{\partial \mathbf{o}_T}{\partial \mathbf{h}_T}) = \mathbf{W}_{qh}^T\frac{\partial L}{\partial \mathbf{o}_T}
+{% endmathjax %}
+当目标函数{% mathjax %}L{% endmathjax %}通过{% mathjax %}\mathbf{h}_{t+1}{% endmathjax %}和{% mathjax %}\mathbf{o}_t{% endmathjax %}依赖于{% mathjax %}\mathbf{h}_t时，对任意时间步{% mathjax %} {% endmathjax %}t < T{% endmathjax %}来说都变的更加棘手。根据链式法则，隐状态的梯度{% mathjax %}\partial L/\partial \mathbf{h}_t\in \mathbb{R}^h{% endmathjax %}在任何时间步骤{% mathjax %}t < T{% endmathjax %}时都可以递归的计算为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial L}{\partial \mathbf{h}_t} = \text{prod}(\frac{\partial L}{\partial \mathbf{h}_{t+1}},\frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{h}_t}) + \text{prod}(\frac{\partial L}{\partial \mathbf{o}_t},\frac{\partial \mathbf{o}_t}{\partial \mathbf{h}_t}) = mathbf{W}_{hh}^T\frac{\partial L}{\partial \mathbf{h}_{t+1}} + \mathbf{W}_{qh}^T\frac{\partial L}{\partial \mathbf{o}_t}
+{% endmathjax %}
+为了进行分析，对于任何时间步{% mathjax %}1\leq t \leq T{% endmathjax %}展开递归计算得：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial L}{\partial \mathbf{h}_t} = \sum_{i=t}^T(\mathbf{W}_{hh}^T)^{T-i}\mathbf{W}_{qh}^T\frac{\partial L}{\partial \mathbf{o}_{T+t-i}}
+{% endmathjax %}
+我们可以从以上公式中看到，这个简单的线性例子已经展现了长序列模型的一些关键问题：它陷入到{% mathjax %}\mathbf{W}_{hh}^T{% endmathjax %}的潜在的非常大的幂。在这个幂中，小于`1`的特征值将会消失，大于`1`的特征值将会发散。这在数值上是不稳定的，表现形式为梯度消失或梯度爆炸。解决此问题的一种方法是按照计算方便的需要截断时间步长的尺寸。实际上，这种截断是通过在给定数量的时间步之后分离梯度来实现的。从上边的公式表明：目标函数{% mathjax %}L{% endmathjax %}通过隐状态{% mathjax %}\mathbf{h}_1,\ldota,\mathbf{h}_T{% endmathjax %}依赖于隐藏层中的模型参数{% mathjax %}\mathbf{W}_{hx}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hh}{% endmathjax %}，为了计算有关这些参数的梯度{% mathjax %}\partial L/\partial\mathbf{W}_{hx}\in \mathbb{R}^{h\times d}{% endmathjax %}和{% mathjax %}\partial L/\partial\mathbf{W}_{hh}\in \mathbb{R}^{h\times h}{% endmathjax %}，我们应用链式法则得：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+\frac{\partial L}{\partial \mathbf{W}_{hx}} & = \sum_{t=1}^T\text{prod}(\frac{\partial L}{\partial \mathbf{h}_t},\frac{\partial \mathbf{h}_t}{\partial \mathbf{W}_{hx}}) = \sum_{t=1}^T\frac{\partial L}{\partial \mathbf{h}_t}\mathbf{x}_t^T  \\ 
+\frac{\partial L}{\partial \mathbf{W}_{hh}} & = \sum_{t=1}^T\text{prod}(\frac{\partial L}{\partial \mathbf{h}_t},\frac{\partial \mathbf{h}_t}{\partial \mathbf{W}_{hh}}) = \sum_{t=1}^T\frac{\partial L}{\partial \mathbf{h}_t}\mathbf{h}_{t-1}^T  \\ 
+\end{align}
+{% endmathjax %}
+其中，{% mathjax %}\partial L/\partial \mathbf{h}_t{% endmathjax %}是由递归计算得到的，是影响数值稳定性的关键量。通过时间反向传播是反向传播在循环神经网络中的应用方式，所以训练循环神经网络交替使用前向传播和通过时间反向传播。通过时间反向传播依次计算并存储上述梯度。具体而言，存储的中间值会被重复使用，以避免重复计算，例如存储{% mathjax %}\partial L/\partial \mathbf{h}_t{% endmathjax %}，以便在计算{% mathjax %}\partial L/\partial\mathbf{W}_{hx}\in \mathbb{R}^{h\times d}{% endmathjax %}和{% mathjax %}\partial L/\partial\mathbf{W}_{hh}\in \mathbb{R}^{h\times h}{% endmathjax %}时使用。
+
+#### 总结
+
+对隐状态使用循环计算的神经网络称为循环神经网络(`RNN`)。循环神经网络的隐状态可以捕获直到当前时间步序列的历史信息。循环神经网络模型的参数数量不会随着时间步的增加而增加。我们可以使用循环神经网络创建字符级语言模型。我们可以使用困惑度来评价语言模型的质量。“通过时间反向传播”仅仅适用于反向传播在具有隐状态的序列模型。截断是计算方便性和数值稳定性的需要。截断包括：规则截断和随机截断。矩阵的高次幂可能导致神经网络特征值的发散或消失，将以梯度爆炸或梯度消失的形式表现。为了计算的效率，“通过时间反向传播”在计算期间会缓存中间值。
