@@ -160,7 +160,7 @@ L = \frac{1}{T}\sum_{t=1}^T l(\mathbf{o}_t,y_t)
 {% endmathjax %}
 当目标函数{% mathjax %}L{% endmathjax %}通过{% mathjax %}\mathbf{h}_{t+1}{% endmathjax %}和{% mathjax %}\mathbf{o}_t{% endmathjax %}依赖于{% mathjax %}\mathbf{h}_t{% endmathjax %}时，对任意时间步{% mathjax %}t < T{% endmathjax %}来说都变的更加棘手。根据链式法则，隐状态的梯度{% mathjax %}\partial L/\partial \mathbf{h}_t\in \mathbb{R}^h{% endmathjax %}在任何时间步骤{% mathjax %}t < T{% endmathjax %}时都可以递归的计算为：
 {% mathjax '{"conversion":{"em":14}}' %}
-\frac{\partial L}{\partial \mathbf{h}_t} = \text{prod}(\frac{\partial L}{\partial \mathbf{h}_{t+1}},\frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{h}_t}) + \text{prod}(\frac{\partial L}{\partial \mathbf{o}_t},\frac{\partial \mathbf{o}_t}{\partial \mathbf{h}_t}) = mathbf{W}_{hh}^T\frac{\partial L}{\partial \mathbf{h}_{t+1}} + \mathbf{W}_{qh}^T\frac{\partial L}{\partial \mathbf{o}_t}
+\frac{\partial L}{\partial \mathbf{h}_t} = \text{prod}(\frac{\partial L}{\partial \mathbf{h}_{t+1}},\frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{h}_t}) + \text{prod}(\frac{\partial L}{\partial \mathbf{o}_t},\frac{\partial \mathbf{o}_t}{\partial \mathbf{h}_t}) = \mathbf{W}_{hh}^T\frac{\partial L}{\partial \mathbf{h}_{t+1}} + \mathbf{W}_{qh}^T\frac{\partial L}{\partial \mathbf{o}_t}
 {% endmathjax %}
 为了进行分析，对于任何时间步{% mathjax %}1\leq t \leq T{% endmathjax %}展开递归计算得：
 {% mathjax '{"conversion":{"em":14}}' %}
