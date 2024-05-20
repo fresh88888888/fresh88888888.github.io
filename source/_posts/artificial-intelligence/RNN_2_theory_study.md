@@ -121,7 +121,7 @@ mathjax:
 
 ##### 函数依赖关系
 
-我们可以将深度架构中的函数依赖关系形式化，这个架构是由 上图中描述了{% mathjax %}L{% endmathjax %}个隐藏层构成。后续的讨论主要集中在经典的循环神经网络模型上，但是这些讨论也适应于其他序列模型。假设在时间步{% mathjax %}t{% endmathjax %}有一个小批量的输入数据{% mathjax %}\mathbf{X}_t\in \mathbb{R}^{n\times d}{% endmathjax %}（样本数：{% mathjax %}n{% endmathjax %}，每个样本中的输入数：{% mathjax %}d{% endmathjax %}）。同时，将{% mathjax %}l^{th}{% endmathjax %}隐藏层{% mathjax %}(L=1,\ldots,L)的隐状态设为{% mathjax %}\mathbf{H}_t^{(l)}\in \mathbb{R}^{n\times h}{% endmathjax %}（隐藏单元数为{% mathjax %}h{% endmathjax %}），输出层变量{% mathjax %}\mathbf{O}_t\in \mathbb{R}^{n\times q}{% endmathjax %}（输出数：{% mathjax %}q{% endmathjax %}）。设置{% mathjax %}\mathbf{H}_t^{(0)} = \mathbf{X}_t{% endmathjax %}，第{% mathjax %}l{% endmathjax %}个隐藏层的隐状态使用激活函数{% mathjax %}\phi_l{% endmathjax %}，则：
+我们可以将深度架构中的函数依赖关系形式化，这个架构是由 上图中描述了{% mathjax %}L{% endmathjax %}个隐藏层构成。后续的讨论主要集中在经典的循环神经网络模型上，但是这些讨论也适应于其他序列模型。假设在时间步{% mathjax %}t{% endmathjax %}有一个小批量的输入数据{% mathjax %}\mathbf{X}_t\in \mathbb{R}^{n\times d}{% endmathjax %}（样本数：{% mathjax %}n{% endmathjax %}，每个样本中的输入数：{% mathjax %}d{% endmathjax %}）。同时，将{% mathjax %}l^{th}{% endmathjax %}隐藏层{% mathjax %}(L=1,\ldots,L){% endmathjax %}的隐状态设为{% mathjax %}\mathbf{H}_t^{(l)}\in \mathbb{R}^{n\times h}{% endmathjax %}（隐藏单元数为{% mathjax %}h{% endmathjax %}），输出层变量{% mathjax %}\mathbf{O}_t\in \mathbb{R}^{n\times q}{% endmathjax %}（输出数：{% mathjax %}q{% endmathjax %}）。设置{% mathjax %}\mathbf{H}_t^{(0)} = \mathbf{X}_t{% endmathjax %}，第{% mathjax %}l{% endmathjax %}个隐藏层的隐状态使用激活函数{% mathjax %}\phi_l{% endmathjax %}，则：
 {% mathjax '{"conversion":{"em":14}}' %}
 \mathbf{H}_t^{(l)} = \phi_l(\mathbf{H}_t^{(l-1)}\mathbf{W}_{xh}^{(l)} + \mathbf{H}_{t-1}^{(l)}\mathbf{W}_{hh}^{(l)} + \mathbf{b}_h^{(l)})
 {% endmathjax %}
