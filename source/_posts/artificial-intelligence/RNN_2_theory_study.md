@@ -59,7 +59,11 @@ mathjax:
 - 重置门有助于捕获序列中的短期依赖关系。
 - 更新门有助于捕获序列中的长期依赖关系。
 
-#### 长短期记忆网络（LSTM
+##### 总结
+
+门控循环神经网络可以更好地捕获时间步距离很长的序列上的依赖关系。重置门有助于捕获序列中的短期依赖关系。更新门有助于捕获序列中的长期依赖关系。重置门打开时，门控循环单元包含基本循环神经网络；更新门打开时，门控循环单元可以跳过子序列。
+
+#### 长短期记忆网络（LSTM）
 
 长期以来，隐变量模型存在着长期信息保存和短期输入缺失的问题。解决这一问题的最早方法之一是**长短期存储器**(`long short-term memory，LSTM`)。它有许多与门控循环单元一样的属性。有趣的是，长短期记忆网络的设计比门控循环单元稍微复杂一些，却比门控循环单元早诞生了近`20`年。
 ##### 门控记忆元
@@ -69,4 +73,51 @@ mathjax:
 
 就如在门控循环单元中一样，当前时间步的输入和前一个时间步的隐状态作为数据送入长短期记忆网络的门中，如下图所示。它们由三个具有`sigmoid`激活函数的全连接层处理，以计算输入门、遗忘门和输出门的值。因此，这三个门的值都在{% mathjax %}(0,1){% endmathjax %}的范围内。
 {% asset_img rnn_4.png "长短期记忆模型中的输入门、遗忘门和输出门" %}
+
+我们来细化一下长短记忆网络的数学表达。假设{% mathjax %}h{% endmathjax %}个隐藏单元，批量大小为{% mathjax %}n{% endmathjax %}，输入数为{% mathjax %}d{% endmathjax %}。因此，输入为{% mathjax %}\mathbf{X}_t\in \mathbb{R}^{n\times d}{% endmathjax %}，前一时间步的隐状态为{% mathjax %}\mathbf{H}_{t-1}\in\mathbb{R}^{n\times h}{% endmathjax %}。相应地时间步{% mathjax %}t{% endmathjax %}的门被定义如下：输入门是{% mathjax %}\mathbf{I}_t\in\mathbb{R}^{n\times h}{% endmathjax %}，遗忘门是{% mathjax %}\mathbf{F}_t\in\mathbb{R}^{n\times h}{% endmathjax %}，输出门是{% mathjax %}\mathbf{O}_t\in\mathbb{R}^{n\times h}{% endmathjax %}。它们的计算方法如下：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+\mathbf{I}_t & = \sigma(\mathbf{X}_t\mathbf{W}_{xi} + \mathbf{H}_{t-1}\mathbf{W}_{hi} + \mathbf{b}_i) \\ 
+\mathbf{F}_t & = \sigma(\mathbf{X}_t\mathbf{W}_{xf} + \mathbf{H}_{t-1}\mathbf{W}_{hf} + \mathbf{b}_f) \\
+\mathbf{O}_t & = \sigma(\mathbf{X}_t\mathbf{W}_{xo} + \mathbf{H}_{t-1}\mathbf{W}_{ho} + \mathbf{b}_o) \\
+\end{align}
+{% endmathjax %}
+其中{% mathjax %}\mathbf{X}_{xi}{% endmathjax %}，{% mathjax %}\mathbf{W}_{xf}{% endmathjax %}，{% mathjax %}\mathbf{W}_{xo}\in\mathbb{R}^{d\times h}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hi}{% endmathjax %}，{% mathjax %}\mathbf{W}_{hf}{% endmathjax %}，{% mathjax %}\mathbf{W}_{ho}\in\mathbb{R}^{h\times h}{% endmathjax %}是权重参数{% mathjax %}\mathbf{b}_i{% endmathjax %}，{% mathjax %}\mathbf{b}_f{% endmathjax %}，{% mathjax %}\mathbf{b}_o\in\mathbb{R}^{1\times h}{% endmathjax %}是偏置参数。
+###### 候选记忆元
+
+由于还没有指定各种门的操作，所以先介绍**候选记忆元**(`candidate memory cell`){% mathjax %}\tilde{\mathbf{C}}_t\in\mathbb{R}_^{n\times h}{% endmathjax %}。它的计算与上面描述的三个门的计算类似，但是使用{% mathjax %}\tanh{% endmathjax %}函数作为激活函数，函数的值范围为{% mathjax %}(-1,1){% endmathjax %}。下面导出在时间步{% mathjax %}t{% endmathjax %}处的方程：
+{% mathjax '{"conversion":{"em":14}}' %}
+\tiled{\mathbf{C}}_t = \tanh(\mathbf{X}_t\mathbf{W}_{xc} + \mathbf{H}_{t-1}\mathbf{W}_{hc} + \mathbf{b}_c)
+{% endmathjax %}
+其中{% mathjax %}\mathbf{W}_{xc}\in\mathbb{R}^{d\times h}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hc}\in\mathbb{R}^{h\times h}{% endmathjax %}是权重参数，{% mathjax %}\mathbf{b}_c\in\mathbb{R}^{1\times h}{% endmathjax %}是偏置参数。候选记忆元如下图所示：
+{% asset_img rnn_5.png "长短期记忆模型中的候选记忆元" %}
+
+###### 记忆元
+
+在门控循环单元中，有一种机制来控制输入和遗忘（或跳过）。类似地，在长短期记忆网络中，也有两个门用于这样的目的：输入门{% mathjax %}\mathbf{I}_t{% endmathjax %}控制采用多少来自{% mathjax %}\tilde{\mathbf{C}}_t{% endmathjax %}的新数据，而遗忘门{% mathjax %}\mathbf{F}_t{% endmathjax %}控制保留多少过去的 记忆元{% mathjax %}\\mathbf{C}_{t-1}\in\mathbb{R}^{n\times h}{% endmathjax %}的内容。使用按元素乘法，得出：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{C}_t = \mathbf{F}_t\odot\mathbf{C}_{t-1} + \mathbf{I}_t\odot\tilde{\mathbf{C}}_t
+{% endmathjax %}
+如果遗忘门始终为`1`且输入门始终为`0`，则过去的记忆元{% mathjax %}\mathbf{C}_{t-1}{% endmathjax %}将随时间被保存并传递到当前时间步。引入这种设计是为了缓解梯度消失问题，并更好地捕获序列中的长距离依赖关系。这样我们就得到了计算记忆元的流程图：
+{% asset_img rnn_6.png "在长短期记忆网络模型中计算记忆元" %}
+
+###### 隐状态
+
+最后，我们需要定义如何计算隐状态{% mathjax %}\mathbf{H}_t\in\mathbb{R}^{n\times h}{% endmathjax %}，这就是输出门发挥作用的地方。在长短期记忆网络中，它仅仅是记忆元的{% mathjax %}\tanh{% endmathjax %}的门控版本。这就确保了{% mathjax %}\mathbf{H}_t{% endmathjax %}的值始终在区间{% mathjax %}(-1,1){% endmathjax %}内：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{H}_t = \mathbf{O}_t\odot\tanh(\mathbf{C}_t)
+{% endmathjax %}
+只要输出门接近`1`，我们就能够有效地将所有记忆信息传递给预测部分，而对于输出门接近`0`，我们只保留记忆元内的所有信息，而不需要更新隐状态。
+{% asset_img rnn_7.png "在长短期记忆模型中计算隐状态" %}
+
+##### 总结
+
+长短期记忆网络有三种类型的门：输入门、遗忘门和输出门。长短期记忆网络的隐藏层输出包括“隐状态”和“记忆元”。只有隐状态会传递到输出层，而记忆元完全属于内部信息。长短期记忆网络可以缓解梯度消失和梯度爆炸。
+
+#### 深度循环神经网络
+
+到目前为止，我们只讨论了具有一个单向隐藏层的循环神经网络。其中，隐变量和观测值与具体的函数形式的交互方式是相当随意的。只要交互类型建模具有足够的灵活性，这就不是一个大问题。然而，对一个单层来说，这可能具有相当的挑战性。之前在线性模型中，我们通过添加更多的层来解决这个问题。而在循环神经网络中，我们首先需要确定如何添加更多的层，以及在哪里添加额外的非线性，因此这个问题有点棘手。事实上，我们可以将多层循环神经网络堆叠在一起，通过对几个简单层的组合，产生了一个灵活的机制。特别是，数据可能与不同层的堆叠有关。例如，我们可能希望保持有关金融市场状况 （熊市或牛市）的宏观数据可用，而微观数据只记录较短期的时间动态。下图描述了一个具有{% mathjax %}L{% endmathjax %}个隐藏层的深度循环神经网络，每个隐状态都连续地传递到当前层的下一个时间步和下一层的当前时间步。
+{% asset_img rnn_8.png "深度循环神经网络结构" %}
+
+##### 函数依赖关系
 
