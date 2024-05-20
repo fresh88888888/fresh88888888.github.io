@@ -158,7 +158,7 @@ L = \frac{1}{T}\sum_{t=1}^T l(\mathbf{o}_t,y_t)
 {% mathjax '{"conversion":{"em":14}}' %}
 \frac{\partial L}{\partial \mathbf{h}_T} \text{prod}(\frac{\partial L}{\partial \mathbf{o}_T},\frac{\partial \mathbf{o}_T}{\partial \mathbf{h}_T}) = \mathbf{W}_{qh}^T\frac{\partial L}{\partial \mathbf{o}_T}
 {% endmathjax %}
-当目标函数{% mathjax %}L{% endmathjax %}通过{% mathjax %}\mathbf{h}_{t+1}{% endmathjax %}和{% mathjax %}\mathbf{o}_t{% endmathjax %}依赖于{% mathjax %}\mathbf{h}_t时，对任意时间步{% mathjax %} {% endmathjax %}t < T{% endmathjax %}来说都变的更加棘手。根据链式法则，隐状态的梯度{% mathjax %}\partial L/\partial \mathbf{h}_t\in \mathbb{R}^h{% endmathjax %}在任何时间步骤{% mathjax %}t < T{% endmathjax %}时都可以递归的计算为：
+当目标函数{% mathjax %}L{% endmathjax %}通过{% mathjax %}\mathbf{h}_{t+1}{% endmathjax %}和{% mathjax %}\mathbf{o}_t{% endmathjax %}依赖于{% mathjax %}\mathbf{h}_t{% endmathjax %}时，对任意时间步{% mathjax %}t < T{% endmathjax %}来说都变的更加棘手。根据链式法则，隐状态的梯度{% mathjax %}\partial L/\partial \mathbf{h}_t\in \mathbb{R}^h{% endmathjax %}在任何时间步骤{% mathjax %}t < T{% endmathjax %}时都可以递归的计算为：
 {% mathjax '{"conversion":{"em":14}}' %}
 \frac{\partial L}{\partial \mathbf{h}_t} = \text{prod}(\frac{\partial L}{\partial \mathbf{h}_{t+1}},\frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{h}_t}) + \text{prod}(\frac{\partial L}{\partial \mathbf{o}_t},\frac{\partial \mathbf{o}_t}{\partial \mathbf{h}_t}) = mathbf{W}_{hh}^T\frac{\partial L}{\partial \mathbf{h}_{t+1}} + \mathbf{W}_{qh}^T\frac{\partial L}{\partial \mathbf{o}_t}
 {% endmathjax %}
@@ -166,7 +166,7 @@ L = \frac{1}{T}\sum_{t=1}^T l(\mathbf{o}_t,y_t)
 {% mathjax '{"conversion":{"em":14}}' %}
 \frac{\partial L}{\partial \mathbf{h}_t} = \sum_{i=t}^T(\mathbf{W}_{hh}^T)^{T-i}\mathbf{W}_{qh}^T\frac{\partial L}{\partial \mathbf{o}_{T+t-i}}
 {% endmathjax %}
-我们可以从以上公式中看到，这个简单的线性例子已经展现了长序列模型的一些关键问题：它陷入到{% mathjax %}\mathbf{W}_{hh}^T{% endmathjax %}的潜在的非常大的幂。在这个幂中，小于`1`的特征值将会消失，大于`1`的特征值将会发散。这在数值上是不稳定的，表现形式为梯度消失或梯度爆炸。解决此问题的一种方法是按照计算方便的需要截断时间步长的尺寸。实际上，这种截断是通过在给定数量的时间步之后分离梯度来实现的。从上边的公式表明：目标函数{% mathjax %}L{% endmathjax %}通过隐状态{% mathjax %}\mathbf{h}_1,\ldota,\mathbf{h}_T{% endmathjax %}依赖于隐藏层中的模型参数{% mathjax %}\mathbf{W}_{hx}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hh}{% endmathjax %}，为了计算有关这些参数的梯度{% mathjax %}\partial L/\partial\mathbf{W}_{hx}\in \mathbb{R}^{h\times d}{% endmathjax %}和{% mathjax %}\partial L/\partial\mathbf{W}_{hh}\in \mathbb{R}^{h\times h}{% endmathjax %}，我们应用链式法则得：
+我们可以从以上公式中看到，这个简单的线性例子已经展现了长序列模型的一些关键问题：它陷入到{% mathjax %}\mathbf{W}_{hh}^T{% endmathjax %}的潜在的非常大的幂。在这个幂中，小于`1`的特征值将会消失，大于`1`的特征值将会发散。这在数值上是不稳定的，表现形式为梯度消失或梯度爆炸。解决此问题的一种方法是按照计算方便的需要截断时间步长的尺寸。实际上，这种截断是通过在给定数量的时间步之后分离梯度来实现的。从上边的公式表明：目标函数{% mathjax %}L{% endmathjax %}通过隐状态{% mathjax %}\mathbf{h}_1,\ldots,\mathbf{h}_T{% endmathjax %}依赖于隐藏层中的模型参数{% mathjax %}\mathbf{W}_{hx}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hh}{% endmathjax %}，为了计算有关这些参数的梯度{% mathjax %}\partial L/\partial\mathbf{W}_{hx}\in \mathbb{R}^{h\times d}{% endmathjax %}和{% mathjax %}\partial L/\partial\mathbf{W}_{hh}\in \mathbb{R}^{h\times h}{% endmathjax %}，我们应用链式法则得：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
 \frac{\partial L}{\partial \mathbf{W}_{hx}} & = \sum_{t=1}^T\text{prod}(\frac{\partial L}{\partial \mathbf{h}_t},\frac{\partial \mathbf{h}_t}{\partial \mathbf{W}_{hx}}) = \sum_{t=1}^T\frac{\partial L}{\partial \mathbf{h}_t}\mathbf{x}_t^T  \\ 
