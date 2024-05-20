@@ -39,3 +39,9 @@ mathjax:
 其中{% mathjax %}\mathbf{W}_{xr}{% endmathjax %}、{% mathjax %}\mathbf{W}_{xz}\in \mathbb{R}^{d\times h}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hr}{% endmathjax %}、{% mathjax %}\mathbf{W}_{hz}\in \mathbb{R}^{h\times h}{% endmathjax %}是权重参数，{% mathjax %}\mathbf{b}_r{% endmathjax %}、{% mathjax %}\mathbf{b}_z\in \mathbb{R}^{1\times h}{% endmathjax %}是偏置参数。请注意，在求和过程中会触发广播机制。我们使用`sigmoid`函数将输入值转换到区间{% mathjax %}(0,1){% endmathjax %}。
 ###### 候选隐状态
 
+接下来，让我们将重置门{% mathjax %}\mathbf{R}_t{% endmathjax %}与{% mathjax %}\mathbf{H}_t{% endmathjax %}中的常规隐状态更新机制集成，得到时间步{% mathjax %}t{% endmathjax %}的**候选隐状态**(`candidate hidden state`){% mathjax %}\tilde{\mathbf{H}}_t\in \mathbb{R}^{n\times h}{% endmathjax %}:
+{% mathjax '{"conversion":{"em":14}}' %}
+\tilde{\mathbf{H}}_t = \tanh(\mathbf{X}_t\mathbf{W}_{xh} + (\mathbf{R}_t\odot\mathbf{H}_{t-1})\mathbf{W}_{hh} + \mathbf{b}_h)
+{% endmathjax %}
+其中{% mathjax %}\mathbf{W}_{xh}\in\mathbb{R}^{d\times h}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hh}\in\mathbb{R}^{h\times h}{% endmathjax %}是权重参数，{% mathjax %}\mathbf{b}_h\in\mathbb{R}^{1\times h}{% endmathjax %}是偏置项，符号{% mathjax %}\odot{% endmathjax %}是`Hadamard`积（按元素乘积）运算符。在这里，我们使用`tanh`非线性激活函数来确保候选隐状态中的值保持在区间{% mathjax %}(-1,1){% endmathjax %}中。上面公式中的{% mathjax %}\mathbf{R}_t{% endmathjax %}和{% mathjax %}\mathbf{H}_{t-1}{% endmathjax %}的元素相乘可以减少以往状态的影响。每当重置门{% mathjax %}\mathbf{R}_t{% endmathjax %}中的项接近1时，我们回复一个普通的循环神经网络。对于重置门{% mathjax %}\mathbf{R}_t{% endmathjax %}中所有接近0的项。候选隐状态是以{% mathjax %}\mathbf{X}_t{% endmathjax %}作为输入的多层感知机的结果。因此，任何预先存在的隐状态都会被重置为默认值。下图说明了应用重置门之后的计算流程：
+{% asset_img rnn_2.png "在门控循环单元模型中计算候选隐状态" %}
