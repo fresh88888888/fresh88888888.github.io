@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">181</span>
+          <span class="site-state-item-count">182</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -231,6 +231,122 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/06/30/%E3%80%90Rust%E3%80%91Rustup%20%E4%BB%8B%E7%BB%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/06/30/%E3%80%90Rust%E3%80%91Rustup%20%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">【Rust】Rustup 介绍</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-06-30 14:46:32" itemprop="dateCreated datePublished" datetime="2022-06-30T14:46:32+08:00">2022-06-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>学习 <code>rust</code> 的第一步当然是安装，在 <code>rust</code> 中，工具链的安装，升级版本切换都是由 <code>rustup</code> 来完成的。<code>rust</code> 的工具链分布在三个不同的 <code>channel</code> ：<code>stable</code>，<code>beta</code> 和 <code>nightly</code>。</p>
+<p>可以将 <code>rustup</code> 看做 <code>rust</code> 的版本管理器，方便我们在不同的 <code>channel</code> 之间进行切换。 在国内 <code>rust</code> 的相关网站是没有被 <code>GFW</code> 屏蔽的，但是访问速度还是很慢。好在国内有很多镜像源，例如，我这里使用的是中国科学技术大学的镜像，配置的话只需要添加两个环境变量：</p>
+<ul>
+<li><code>export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static</code></li>
+<li><code>export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup</code></li>
+</ul>
+<p><code>rustup</code> 的安装我们依然使用官方的方式：</p>
+<blockquote>
+<p>curl –proto ‘&#x3D;https’ –tlsv1.2 -sSf <a target="_blank" rel="noopener" href="https://sh.rustup.rs/">https://sh.rustup.rs</a> | sh</p>
+</blockquote>
+<p>执行结束之后，应该能看到下面这样的信息，而且会默认安装 <code>nightly</code>（每日构建）版本：</p>
+<img data-src="/2022/06/30/%E3%80%90Rust%E3%80%91Rustup%20%E4%BB%8B%E7%BB%8D/install-success.png" class="">
+
+<p>我们可以顺手配置以下 <code>cargo</code> 的镜像地址，参考自 <a target="_blank" rel="noopener" href="https://lug.ustc.edu.cn/wiki/mirrors/help/rust-crates/">中科大 <code>Rust Crates</code> 镜像使用帮助</a></p>
+<figure class="highlight yaml"><figcaption><span>~/.cargo/config</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">source.crates-io</span>]</span><br><span class="line"><span class="string">registry</span> <span class="string">=</span> <span class="string">&quot;https://github.com/rust-lang/crates.io-index&quot;</span></span><br><span class="line"><span class="string">replace-with</span> <span class="string">=</span> <span class="string">&#x27;ustc&#x27;</span></span><br><span class="line"></span><br><span class="line">[<span class="string">source.ustc</span>]</span><br><span class="line"><span class="string">registry</span> <span class="string">=</span> <span class="string">&quot;git://mirrors.ustc.edu.cn/crates.io-index&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>也推荐的字节跳动的 <code>Rustup</code> 镜像和 <code>crates.io</code> 镜像，具体请看 <a target="_blank" rel="noopener" href="https://rsproxy.cn/"><code>https://rsproxy.cn/</code></a>。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/30/%E3%80%90Rust%E3%80%91Rustup%20%E4%BB%8B%E7%BB%8D/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1367,119 +1483,6 @@ Process finished with exit code 101
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/" class="post-title-link" itemprop="url">【Rust】Trait和泛型</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-06-20 22:08:30" itemprop="dateCreated datePublished" datetime="2022-06-20T22:08:30+08:00">2022-06-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>6k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>20 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>编程中可能经常遇到要用相同的逻辑处理不同的类型，即使这个类型是还没出世的自定义类型。这种能力对于 <code>Rust</code> 来说并不新鲜，它被称为多态性，诞生于 <code>1970</code> 年代的编程语言技术，到现在为止仍然普遍。<code>Rust</code> 支持具有两个相关特性的多态性：<code>Trait</code> 和 泛型。</p>
-<p><code>Trait</code> 是 <code>Rust</code> 对接口或抽象基类的对照实现，它们看起来就像 <code>Java</code> 或 <code>C#</code> 中的接口：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">trait</span> <span class="title class_">Write</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">write</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, buf: &amp;[<span class="type">u8</span>]) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="type">usize</span>&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">flush</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">write_all</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, buf: &amp;[<span class="type">u8</span>]) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123; ... &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>File</code>，<code>TcpStream</code> 以及 <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/vec/struct.Vec.html#impl-Write"><code>Vec&lt;u8&gt;</code></a> 都实现了 <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/io/trait.Write.html"><code>std::io::Write</code></a>，这<code>3</code>个类型都提供了 <code>.write()</code>，<code>.flush()</code> 等等方法，我们可以使用 <code>write</code> 方法而不用关心它的实际类型：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::io::Write;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">say_hello</span>(out: &amp;<span class="keyword">mut</span> <span class="keyword">dyn</span> Write) <span class="punctuation">-&gt;</span> std::io::<span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    out.<span class="title function_ invoke__">write_all</span>(<span class="string">b&quot;hello world\n&quot;</span>)?;</span><br><span class="line">    out.<span class="title function_ invoke__">flush</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>&amp;mut dyn Write</code> 的意思是任何实现了 <code>Write</code> 的可变引用，我们可以调用 <code>say_hello</code> 并且给他传递这样一个引用：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::fs::File;</span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">local_file</span> = File::<span class="title function_ invoke__">create</span>(<span class="string">&quot;hello.txt&quot;</span>)?;</span><br><span class="line"><span class="title function_ invoke__">say_hello</span>(&amp;<span class="keyword">mut</span> local_file)?; <span class="comment">// works</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">bytes</span> = <span class="built_in">vec!</span>[];</span><br><span class="line"><span class="title function_ invoke__">say_hello</span>(&amp;<span class="keyword">mut</span> bytes)?; <span class="comment">// also works</span></span><br><span class="line"><span class="built_in">assert_eq!</span>(bytes, <span class="string">b&quot;hello world\n&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>泛型函数就像 <code>C++</code> 中模板函数，一个泛型函数或者类型可以用于许多不同类型的值：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Given two values, pick whichever one is less.</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">min</span>&lt;T: <span class="built_in">Ord</span>&gt;(value1: T, value2: T) <span class="punctuation">-&gt;</span> T &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> value1 &lt;= value2 &#123;</span><br><span class="line">        value1</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        value2</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>&lt;T: Ord&gt;</code> 意思是 <code>T</code> 类型必须实现 <code>Ord</code>，这称为边界，因为它设置了 <code>T</code> 可能是哪些类型，编译器为实际使用的每种类型 <code>T</code> 生成自定义机器代码。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/06/20/%E3%80%90Rust%E3%80%91Trait%E5%92%8C%E6%B3%9B%E5%9E%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/15/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><span class="page-number current">16</span><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/17/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1506,14 +1509,14 @@ Process finished with exit code 101
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">760k</span>
+    <span title="站点总字数">761k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">42:13</span>
+    <span title="站点阅读时长">42:15</span>
   </span>
 </div>
 <div class="busuanzi-count">
