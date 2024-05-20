@@ -85,7 +85,7 @@ mathjax:
 其中{% mathjax %}\mathbf{X}_{xi}{% endmathjax %}，{% mathjax %}\mathbf{W}_{xf}{% endmathjax %}，{% mathjax %}\mathbf{W}_{xo}\in\mathbb{R}^{d\times h}{% endmathjax %}和{% mathjax %}\mathbf{W}_{hi}{% endmathjax %}，{% mathjax %}\mathbf{W}_{hf}{% endmathjax %}，{% mathjax %}\mathbf{W}_{ho}\in\mathbb{R}^{h\times h}{% endmathjax %}是权重参数{% mathjax %}\mathbf{b}_i{% endmathjax %}，{% mathjax %}\mathbf{b}_f{% endmathjax %}，{% mathjax %}\mathbf{b}_o\in\mathbb{R}^{1\times h}{% endmathjax %}是偏置参数。
 ###### 候选记忆元
 
-由于还没有指定各种门的操作，所以先介绍**候选记忆元**(`candidate memory cell`){% mathjax %}\tilde{\mathbf{C}}_t \in \mathbb{R}_^{n\times h}{% endmathjax %}。它的计算与上面描述的三个门的计算类似，但是使用{% mathjax %}\tanh{% endmathjax %}函数作为激活函数，函数的值范围为{% mathjax %}(-1,1){% endmathjax %}。下面导出在时间步{% mathjax %}t{% endmathjax %}处的方程：
+由于还没有指定各种门的操作，所以先介绍**候选记忆元**(`candidate memory cell`){% mathjax %}\tilde{\mathbf{C}}_t \in \mathbb{R}^{n\times h}{% endmathjax %}。它的计算与上面描述的三个门的计算类似，但是使用{% mathjax %}\tanh{% endmathjax %}函数作为激活函数，函数的值范围为{% mathjax %}(-1,1){% endmathjax %}。下面导出在时间步{% mathjax %}t{% endmathjax %}处的方程：
 {% mathjax '{"conversion":{"em":14}}' %}
 \tilde{\mathbf{C}}_t = \tanh(\mathbf{X}_t\mathbf{W}_{xc} + \mathbf{H}_{t-1}\mathbf{W}_{hc} + \mathbf{b}_c)
 {% endmathjax %}
@@ -121,4 +121,21 @@ mathjax:
 
 ##### 函数依赖关系
 
-我们可以将深度架构中的函数依赖关系形式化，这个架构是由 上图中描述了{% mathjax %}L{% endmathjax %}个隐藏层构成。后续的讨论主要集中在经典的循环神经网络模型上，但是这些讨论也适应于其他序列模型。
+我们可以将深度架构中的函数依赖关系形式化，这个架构是由 上图中描述了{% mathjax %}L{% endmathjax %}个隐藏层构成。后续的讨论主要集中在经典的循环神经网络模型上，但是这些讨论也适应于其他序列模型。假设在时间步{% mathjax %}t{% endmathjax %}有一个小批量的输入数据{% mathjax %}\mathbf{X}_t\in \mathbb{R}^{n\times d}{% endmathjax %}（样本数：{% mathjax %}n{% endmathjax %}，每个样本中的输入数：{% mathjax %}d{% endmathjax %}）。同时，将{% mathjax %}l^{th}{% endmathjax %}隐藏层{% mathjax %}(L=1,\ldots,L)的隐状态设为{% mathjax %}\mathbf{H}_t^{(l)}\in \mathbb{R}^{n\times h}{% endmathjax %}（隐藏单元数为{% mathjax %}h{% endmathjax %}），输出层变量{% mathjax %}\mathbf{O}_t\in \mathbb{R}^{n\times q}{% endmathjax %}（输出数：{% mathjax %}q{% endmathjax %}）。设置{% mathjax %}\mathbf{H}_t^{(0)} = \mathbf{X}_t{% endmathjax %}，第{% mathjax %}l{% endmathjax %}个隐藏层的隐状态使用激活函数{% mathjax %}\phi_l{% endmathjax %}，则：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{H}_t^{(l)} = \phi_l(\mathbf{H}_t^{(l-1)}\mathbf{W}_{xh}^{(l)} + \mathbf{H}_{t-1}^{(l)}\mathbf{W}_{hh}^{(l)} + \mathbf{b}_h^{(l)})
+{% endmathjax %}
+其中，权重{% mathjax %}\mathbf{W}_{xh}\in \mathbb{R}^{h\times h}{% endmathjax %}，{% mathjax %}\mathbf{W}_{hh}^{(l)}\in \mathbb{R}^{h\times h}{% endmathjax %}和偏置{% mathjax %}\mathbf{b}_h^{(l)}\in \mathbb{R}^{1\times h}{% endmathjax %}都是第{% mathjax %}l{% endmathjax %}个隐藏层的模型参数。最后，输出层的计算仅基于第{% mathjax %}l{% endmathjax %}个隐藏层最终的隐状态：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{O}_t = \mathbf{H}_t^{(l)}\mathbf{W}_{hq} + \mathbf{b}_q
+{% endmathjax %}
+其中，权重{% mathjax %}\mathbf{W}_{hq}\in \mathbb{R}^{h\times q}{% endmathjax %}和{% mathjax %}\mathbf{b}_q\in \mathbb{R}^{1\times q}{% endmathjax %}都是输出层的模型参数。与多层感知机一样，隐藏层数目{% mathjax %}L{% endmathjax %}和隐藏单元数目{% mathjax %}h{% endmathjax %}都是超参数。也就是说，它们可以由我们调整的。另外，用门控循环单元或长短期记忆网络的隐状态 来代替以上公式中的隐状态进行计算，可以很容易地得到**深度门控循环神经网络或深度长短期记忆神经网络**。
+##### 总结
+
+在深度循环神经网络中，隐状态的信息被传递到当前层的下一时间步和下一层的当前时间步。有许多不同风格的深度循环神经网络，如长短期记忆网络、门控循环单元、或经典循环神经网络。这些模型在深度学习框架的高级`API`中都有涵盖。总体而言，深度循环神经网络需要大量的调参（如学习率和修剪）来确保合适的收敛，模型的初始化也需要谨慎。
+
+#### 双向循环神经网络
+
+##### 隐马尔可夫模型中的动态规划
+
+如果我们想用概率图模型来解决这个问题，可以设计一个隐变量模型：
