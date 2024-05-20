@@ -36,6 +36,7 @@
 <meta property="og:image" content="https://fresh88888888.github.io/2024/05/20/artificial-intelligence/RNN_2_theory_study/rnn_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/05/20/artificial-intelligence/RNN_2_theory_study/rnn_2.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/05/20/artificial-intelligence/RNN_2_theory_study/rnn_3.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/05/20/artificial-intelligence/RNN_2_theory_study/rnn_4.png">
 <meta property="article:published_time" content="2024-05-20T03:12:11.000Z">
 <meta property="article:modified_time" content="2024-05-20T03:12:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -155,7 +156,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%A8%E6%8E%A7%E5%BE%AA%E7%8E%AF%E5%8D%95%E5%85%83"><span class="nav-number">1.</span> <span class="nav-text">门控循环单元</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%A8%E6%8E%A7%E9%9A%90%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.</span> <span class="nav-text">门控隐状态</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%87%8D%E7%BD%AE%E9%97%A8%E5%92%8C%E6%9B%B4%E6%96%B0%E9%97%A8"><span class="nav-number">1.1.1.</span> <span class="nav-text">重置门和更新门</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%80%99%E9%80%89%E9%9A%90%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.2.</span> <span class="nav-text">候选隐状态</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%9A%90%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.3.</span> <span class="nav-text">隐状态</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%95%BF%E7%9F%AD%E6%9C%9F%E8%AE%B0%E5%BF%86%E7%BD%91%E7%BB%9C%EF%BC%88LSTM"><span class="nav-number">2.</span> <span class="nav-text">长短期记忆网络（LSTM</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%A8%E6%8E%A7%E8%AE%B0%E5%BF%86%E5%85%83"><span class="nav-number">2.1.</span> <span class="nav-text">门控记忆元</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%A8%E6%8E%A7%E5%BE%AA%E7%8E%AF%E5%8D%95%E5%85%83"><span class="nav-number">1.</span> <span class="nav-text">门控循环单元</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%A8%E6%8E%A7%E9%9A%90%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.</span> <span class="nav-text">门控隐状态</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%87%8D%E7%BD%AE%E9%97%A8%E5%92%8C%E6%9B%B4%E6%96%B0%E9%97%A8"><span class="nav-number">1.1.1.</span> <span class="nav-text">重置门和更新门</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%80%99%E9%80%89%E9%9A%90%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.2.</span> <span class="nav-text">候选隐状态</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%9A%90%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.3.</span> <span class="nav-text">隐状态</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%95%BF%E7%9F%AD%E6%9C%9F%E8%AE%B0%E5%BF%86%E7%BD%91%E7%BB%9C%EF%BC%88LSTM"><span class="nav-number">2.</span> <span class="nav-text">长短期记忆网络（LSTM</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%A8%E6%8E%A7%E8%AE%B0%E5%BF%86%E5%85%83"><span class="nav-number">2.1.</span> <span class="nav-text">门控记忆元</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E9%97%A8%E3%80%81%E9%81%97%E5%BF%98%E9%97%A8%E5%92%8C%E8%BE%93%E5%87%BA%E9%97%A8"><span class="nav-number">2.1.1.</span> <span class="nav-text">输入门、遗忘门和输出门</span></a></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -303,14 +304,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.2k</span>
+      <span>2.3k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
+      <span>8 分钟</span>
     </span>
 </div>
 
@@ -352,6 +353,9 @@
 </ul>
 <h4 id="长短期记忆网络（LSTM"><a href="#长短期记忆网络（LSTM" class="headerlink" title="长短期记忆网络（LSTM"></a>长短期记忆网络（LSTM</h4><p>长期以来，隐变量模型存在着长期信息保存和短期输入缺失的问题。解决这一问题的最早方法之一是<strong>长短期存储器</strong>(<code>long short-term memory，LSTM</code>)。它有许多与门控循环单元一样的属性。有趣的是，长短期记忆网络的设计比门控循环单元稍微复杂一些，却比门控循环单元早诞生了近<code>20</code>年。</p>
 <h5 id="门控记忆元"><a href="#门控记忆元" class="headerlink" title="门控记忆元"></a>门控记忆元</h5><p>可以说，长短期记忆网络的设计灵感来自于计算机的逻辑门。长短期记忆网络引入了记忆元(<code>memory cell</code>)，或简称为单元(<code>cell</code>)。有些文献认为记忆元是隐状态的一种特殊类型，它们与隐状态具有相同的形状，其设计目的是用于记录附加的信息。为了控制记忆元，我们需要许多门。其中一个门用来从单元中输出条目，我们将其称为输出门(<code>output gate</code>)。另外一个门用来决定何时将数据读入单元，我们将其称为输入门(<code>input gate</code>)。我们还需要一种机制来重置单元的内容，由遗忘门(<code>forget gate</code>)来管理，这种设计的动机与门控循环单元相同，能够通过专用机制决定什么时候记忆或忽略隐状态中的输入。让我们看看这在实践中是如何运作的。</p>
+<h6 id="输入门、遗忘门和输出门"><a href="#输入门、遗忘门和输出门" class="headerlink" title="输入门、遗忘门和输出门"></a>输入门、遗忘门和输出门</h6><p>就如在门控循环单元中一样，当前时间步的输入和前一个时间步的隐状态作为数据送入长短期记忆网络的门中，如下图所示。它们由三个具有<code>sigmoid</code>激活函数的全连接层处理，以计算输入门、遗忘门和输出门的值。因此，这三个门的值都在<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="5.029ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2222.7 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-4-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-4-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path id="MJX-4-TEX-N-2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"></path><path id="MJX-4-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-4-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mo"><use data-c="28" xlink:href="#MJX-4-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(389,0)"><use data-c="30" xlink:href="#MJX-4-TEX-N-30"></use></g><g data-mml-node="mo" transform="translate(889,0)"><use data-c="2C" xlink:href="#MJX-4-TEX-N-2C"></use></g><g data-mml-node="mn" transform="translate(1333.7,0)"><use data-c="31" xlink:href="#MJX-4-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(1833.7,0)"><use data-c="29" xlink:href="#MJX-4-TEX-N-29"></use></g></g></g></svg></mjx-container>的范围内。</p>
+<img data-src="/2024/05/20/artificial-intelligence/RNN_2_theory_study/rnn_4.png" class="" title="长短期记忆模型中的输入门、遗忘门和输出门">
+
 
     </div>
 
@@ -431,7 +435,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">42:20</span>
+    <span title="站点阅读时长">42:21</span>
   </span>
 </div>
 <div class="busuanzi-count">
