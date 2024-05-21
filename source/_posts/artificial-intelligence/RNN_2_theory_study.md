@@ -151,10 +151,12 @@ mathjax:
 
 双向循环神经网络是由(`Schuster and Paliwal, 1997`)提出的。对于任意时间步{% mathjax %}t{% endmathjax %}，给定一个小批量的输入数据{% mathjax %}\mathbf{X}_t\in \mathbb{R}^{n\times d}{% endmathjax %}（样本数{% mathjax %}n{% endmathjax %}，每个示例中的输入数为{% mathjax %}d{% endmathjax %}），隐藏层激活函数为{% mathjax %}\phi{% endmathjax %}。在双向架构中，我们设该时间步的前向和反向隐状态分别为{% mathjax %}\overrightarrow{\mathbf{H}}_t\in \mathbb{R}^{n\times h}{% endmathjax %}和{% mathjax %}\overleftarrow{\mathbf{H}}_t\in \mathbb{R}^{n\times h}{% endmathjax %}，其中{% mathjax %}h{% endmathjax %}是隐藏单元的数目。前向和反向隐状态的更新如下：
 {% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
 \overrightarrow{\mathbf{H}}_t & = \phi(\mathbf{X}_t\mathbf{W}_{xh}^{(f)} + \mathbf{H}_{t-1}\mathbf{W}_{hh}^{(f)} + \mathbf{b}_h^{(f)}) \\
 \overleftarrow{\mathbf{H}}_t & = \phi(\mathbf{X}_t\mathbf{W}_{xh}^{(b)} + \mathbf{H}_{t+1}\mathbf{W}_{hh}^{(b)} + \mathbf{b}_h^{(b)}) \\
+\end{align}
 {% endmathjax %}
-接下来，将前向隐状态{% mathjax %}\overrightarrow{\mathbf{H}}_t{% endmathjax %}和反向隐状态{% mathjax %}\overleftarrow{\mathbf{H}}_t{% endmathjax %}连接起来，获得需要送入输出层的隐状态{% mathjax %}\mathbf{H}_t\in mathbb{R}^{n\times 2h}{% endmathjax %}。在具有多个隐藏层的深度双向循环神经网络中，该信息作为输入传递到下一个双向层。最后，输出层计算得到的输出为{% mathjax %}\mathbf{O}_t\in \mathbb{R}^{n\times q}{% endmathjax %}（{% mathjax %}q{% endmathjax %}是输出单元的数目）：
+接下来，将前向隐状态{% mathjax %}\overrightarrow{\mathbf{H}}_t{% endmathjax %}和反向隐状态{% mathjax %}\overleftarrow{\mathbf{H}}_t{% endmathjax %}连接起来，获得需要送入输出层的隐状态{% mathjax %}\mathbf{H}_t\in \mathbb{R}^{n\times 2h}{% endmathjax %}。在具有多个隐藏层的深度双向循环神经网络中，该信息作为输入传递到下一个双向层。最后，输出层计算得到的输出为{% mathjax %}\mathbf{O}_t\in \mathbb{R}^{n\times q}{% endmathjax %}（{% mathjax %}q{% endmathjax %}是输出单元的数目）：
 {% mathjax '{"conversion":{"em":14}}' %}
 \mathbf{O}_t = \mathbf{H}_t\mathbf{W}_{hq} + \mathbf{b}_q
 {% endmathjax %}
