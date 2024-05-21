@@ -156,6 +156,8 @@ mathjax:
 \overleftarrow{\mathbf{H}}_t & = \phi(\mathbf{X}_t\mathbf{W}_{xh}^{(b)} + \mathbf{H}_{t+1}\mathbf{W}_{hh}^{(b)} + \mathbf{b}_h^{(b)}) \\
 \end{align}
 {% endmathjax %}
+其中，权重{% mathjax %}\mathbf{W}_{xh}^{(f)}\in \mathbb{R}^{d\times h}, \mathbf{W}_{hh}^{(f)}\in \mathbb{R}^{h\times h}, \mathbf{W}_{xh}^{(b)}\in \mathbb{R}^{d\times h}, \mathbf{W}_{hh}^{(b)}\in \mathbb{R}^{h\times h}{% endmathjax %}和{% mathjax %}\mathbf{b}_h^{(f)}\in \mathbb{R}^{1\times h}, \mathbf{b}_h^{(b)}\in \mathbb{R}^{1\times h} {% endmathjax %}偏置都是模型参数。
+
 接下来，将前向隐状态{% mathjax %}\overrightarrow{\mathbf{H}}_t{% endmathjax %}和反向隐状态{% mathjax %}\overleftarrow{\mathbf{H}}_t{% endmathjax %}连接起来，获得需要送入输出层的隐状态{% mathjax %}\mathbf{H}_t\in \mathbb{R}^{n\times 2h}{% endmathjax %}。在具有多个隐藏层的深度双向循环神经网络中，该信息作为输入传递到下一个双向层。最后，输出层计算得到的输出为{% mathjax %}\mathbf{O}_t\in \mathbb{R}^{n\times q}{% endmathjax %}（{% mathjax %}q{% endmathjax %}是输出单元的数目）：
 {% mathjax '{"conversion":{"em":14}}' %}
 \mathbf{O}_t = \mathbf{H}_t\mathbf{W}_{hq} + \mathbf{b}_q
