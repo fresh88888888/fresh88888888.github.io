@@ -139,3 +139,134 @@ mathjax:
 ##### 隐马尔可夫模型中的动态规划
 
 如果我们想用概率图模型来解决这个问题，可以设计一个隐变量模型：
+
+
+#### 机器翻译
+
+语言模型是自然语言处理的关键，而机器翻译是语言模型最成功的基准测试。因为机器翻译正是将输入序列转换成输出序列的**序列转换模型**(`sequence transduction`)的核心问题。**序列转换模型**在各类现代人工智能应用中发挥着至关重要的作用。
+
+**机器翻译**(`machine translation`)指的是将序列从一种语言自动翻译成另一种语言。事实上，这个研究领域可以追溯到数字计算机发明后不久的`20`世纪`40`年代，特别是在第二次世界大战中使用计算机破解语言编码。几十年来，在使用神经网络进行端到端学习的兴起之前，统计学方法在这一领域一直占据主导地位。因为**统计机器翻译**(`statistical machine translation`)涉及了翻译模型和语言模型等组成部分的统计分析，因此基于神经网络的方法通常被称为**神经机器翻译**(`neural machine translation`)，用于将两种翻译模型区分开来。
+
+##### 总结
+
+**机器翻译指的是将文本序列从一种语言自动翻译成另一种语言**。使用单词级词元化时的词表大小，将明显大于使用字符级词元化时的词表大小。为了缓解这一问题，我们可以将低频词元视为相同的未知词元。通过截断和填充文本序列，可以保证所有的文本序列都具有相同的长度，以便以小批量的方式加载。
+
+#### 编码器-解码器架构
+
+机器翻译是序列转换模型的一个核心问题，其输入和输出都是长度可变的序列。为了处理这种类型的输入和输出，我们可以设计一个包含两个主要组件的架构：第一个组件是一个**编码器**(`encoder`)：它接受一个长度可变的序列作为输入，并将其转换为具有固定形状的**编码状态**。第二个组件是**解码器**(`decoder`)：它将固定形状的编码状态映射到长度可变的序列。这被称为**编码器-解码器**(`encoder-decoder`)架构，如下图所示。
+{% asset_img rnn_12.png "编码器-解码器架构" %}
+
+我们以英语到法语的机器翻译为例：给定一个英文的输入序列：`“They”“are”“watching”“.”`。首先，这种“编码器－解码器”架构将长度可变的输入序列编码成一个“状态”，然后对该状态进行解码， 一个词元接着一个词元地生成翻译后的序列作为输出：`“Ils”“regordent”“.”`。
+##### 编码器
+
+在编码器接口中，我们只指定长度可变的序列作为编码器的输入`X`。任何继承这个`Encoder`基类的模型将完成代码实现。
+```python
+import tensorflow as tf
+
+class Encoder(tf.keras.layers.Layer):
+    """编码器-解码器架构的基本编码器接口"""
+    def __init__(self, **kwargs):
+        super(Encoder, self).__init__(**kwargs)
+
+    def call(self, X, *args, **kwargs):
+        raise NotImplementedError
+```
+##### 解码器
+
+在下面的解码器接口中，我们新增一个`init_state`函数，用于将编码器的输出(`enc_outputs`)转换为编码后的状态。为了逐个地生成长度可变的词元序列，解码器在每个时间步都会将输入（例如：在前一时间步生成的词元）和编码后的状态映射成当前时间步的输出词元。
+```python
+class Decoder(tf.keras.layers.Layer):
+    """编码器-解码器架构的基本解码器接口"""
+    def __init__(self, **kwargs):
+        super(Decoder, self).__init__(**kwargs)
+
+    def init_state(self, enc_outputs, *args):
+        raise NotImplementedError
+
+    def call(self, X, state, **kwargs):
+        raise NotImplementedError
+```
+##### 合并编码器和解码器
+
+总而言之，“编码器-解码器”架构包含了一个编码器和一个解码器，并且还拥有可选的额外的参数。在前向传播中，编码器的输出用于生成编码状态，这个状态又被解码器作为其输入的一部分。
+```python
+class EncoderDecoder(tf.keras.Model):
+    """编码器-解码器架构的基类"""
+    def __init__(self, encoder, decoder, **kwargs):
+        super(EncoderDecoder, self).__init__(**kwargs)
+        self.encoder = encoder
+        self.decoder = decoder
+
+    def call(self, enc_X, dec_X, *args, **kwargs):
+        enc_outputs = self.encoder(enc_X, *args, **kwargs)
+        dec_state = self.decoder.init_state(enc_outputs, *args)
+        return self.decoder(dec_X, dec_state, **kwargs)
+```
+“编码器－解码器”体系架构中的术语状态会启发人们使用具有状态的神经网络来实现该架构。
+##### 总结
+
+“编码器－解码器”架构可以将长度可变的序列作为输入和输出，因此适用于机器翻译等序列转换问题。编码器将长度可变的序列作为输入，并将其转换为具有固定形状的编码状态。解码器将具有固定形状的编码状态映射为长度可变的序列。
+
+#### 序列到序列学习（seq2seq）
+
+我们将使用两个循环神经网络的编码器和解码器，并将其应用于**序列到序列**(`sequence to sequence，seq2seq`)类的学习任务。遵循**编码器－解码器架构**的设计原则，循环神经网络编码器使用长度可变的序列作为输入，将其转换为固定形状的隐状态。换言之，输入序列的信息被编码到循环神经网络编码器的隐状态中。为了连续生成输出序列的词元，独立的循环神经网络解码器是基于输入序列的编码信息和输出序列已经看见的或者生成的词元来预测下一个词元。下图演示了如何在机器翻译中使用两个循环神经网络进行序列到序列学习。
+{% asset_img rnn_13.png "使用循环神经网络编码器和循环神经网络解码器的序列到序列学习" %}
+
+在上图中，特定的`“<eos>”`表示序列结束词元。一旦输出序列生成此词元，模型就会停止预测。在循环神经网络解码器的初始化时间步，有两个特定的设计决定：首先，特定的`“<bos>”`表示序列开始词元，它是解码器的输入序列的第一个词元。其次，使用循环神经网络编码器最终的隐状态来初始化解码器的隐状态。下面，我们动手构建设计用“英－法”数据集来训练这个机器翻译模型。
+##### 编码器
+
+从技术上讲，编码器将长度可变的输入序列转换成 形状固定的上下文变量{% mathjax %}\mathbf{c}{% endmathjax %}，并且将输入序列的信息在该上下文变量中进行编码。如上图所示，可以使用循环神经网络来设计编码器。考虑由一个序列组成的样本（批量大小是{% mathjax %}1{% endmathjax %}）。假设输入序列是{% mathjax %}x_1,\ldots,x_T{% endmathjax %}，其中{% mathjax %}x_t{% endmathjax %}是输入文本序列中的第{% mathjax %}t{% endmathjax %}个词元。在时间步{% mathjax %}t{% endmathjax %}，循环神经网络将词元{% mathjax %}x_t{% endmathjax %}的输入特征向量{% mathjax %}\mathbf{x}_t{% endmathjax %}和{% mathjax %}\mathbf{h}_{t-1}{% endmathjax %}（即上一时间步的隐状态）转换为{% mathjax %}\mathbf{h}_t{% endmathjax %}（即当前步的隐状态）。使用一个函数{% mathjax %}f{% endmathjax %}来描述循环神经网络的循环层所做的变换：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{h}_t = f(\mathbf{x}_t, \mathbf{h}_{t-1})
+{% endmathjax %}
+总之，编码器通过选定的函数{% mathjax %}q{% endmathjax %}，将所有时间步的隐状态转换为上下文变量：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{c} = q(\mathbf{h}_1,\ldots,\mathbf{h}_T)
+{% endmathjax %}
+比如，当选择{% mathjax %}q(\mathbf{h}_1,\ldots,\mathbf{h}_T) = \mathbf{h}_T{% endmathjax %}时，上下文变量仅仅是输入序列在最后时间步的隐状态{% mathjax %}\mathbf{h}_T{% endmathjax %}。
+到目前为止，我们使用的是一个单向循环神经网络来设计编码器，其中隐状态只依赖于输入子序列，这个子序列是由输入序列的开始位置到隐状态所在的时间步的位置（包括隐状态所在的时间步）组成。我们也可以使用双向循环神经网络构造编码器，其中隐状态依赖于两个输入子序列，两个子序列是由隐状态所在的时间步的位置之前的序列和之后的序列（包括隐状态所在的时间步），因此隐状态对整个序列的信息都进行了编码。
+
+现在，让我们实现循环神经网络编码器。注意，我们使用了嵌入层（embedding layer）来获得输入序列中每个词元的特征向量。嵌入层的权重是一个矩阵，其行数等于输入词表的大小(vocab_size)， 其列数等于特征向量的维度（embed_size）。对于任意输入词元的索引{% mathjax %}i{% endmathjax %}，嵌入层获取权重矩阵的第{% mathjax %}i{% endmathjax %}行（从0开始）以返回其特征向量。另外，本文选择了一个多层门控循环单元来实现编码器。
+#####  解码器
+
+正如上文提到的，编码器输出的上下文变量{% mathjax %}\mathbf{c}{% endmathjax %}对整个输入序列{% mathjax %}x1,\ldots,x_T{% endmathjax %}进行编码。来自训练数据集的输出序列{% mathjax %}y_1,y_2,\ldots,y_T'{% endmathjax %}，对于每个时间步{% mathjax %}t'{% endmathjax %}（与输入序列或编码器的时间步{% mathjax %}t{% endmathjax %}不同），解码器输出{% mathjax %}y_t'{% endmathjax %}的概率取决于先前的输出子序列{% mathjax %}y_1,\ldots,y_{t'-1}{% endmathjax %}和上下文变量{% mathjax %}\mathbf{c}{% endmathjax %}，即{% mathjax %}P(y_{t'}|y_1,\ldots,y_{t'-1},\mathbf{c}){% endmathjax %}。为了在序列上模型化这种条件概率，我们可以使用另一个循环神经网络作为解码器。在输出序列上的任意时间步{% mathjax %}t'{% endmathjax %}，循环神经网络将来自上一时间步的输出{% mathjax %}y_{t'-1}{% endmathjax %}和上下文变量{% mathjax %}\mathbf{c}{% endmathjax %}作为其输入，然后在当前时间步将它们和上一隐状态{% mathjax %}\mathbf{s}_{t'-1}{% endmathjax %}转换为隐状态{% mathjax %}\mathbf{s}_{t'}{% endmathjax %}。因此，可以使用函数{% mathjax %}g{% endmathjax %}来表示解码器的隐藏层的变换：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{s}_{t'} = g(y_{t'-1},\mathbf{c}, \mathbf{s}_{t'-1})
+{% endmathjax %}
+在获得解码器的隐状态之后，我们可以使用输出层和`softmax`操作来计算在时间步{% mathjax %}t'{% endmathjax %}时输出{% mathjax %}y_{t'}{% endmathjax %}的条件概率分布{% mathjax %}P(y_{t'}|y_1,\ldots,y_{t'-1},\mathbf{c}){% endmathjax %}。根据上图，当实现解码器时，我们直接使用编码器最后一个时间步的隐状态来初始化解码器的隐状态。这就要求使用循环神经网络实现的编码器和解码器具有相同数量的层和隐藏单元。为了进一步包含经过编码的输入序列的信息，上下文变量在所有的时间步与解码器的输入进行拼接(`concatenate`)。为了预测输出词元的概率分布，在循环神经网络解码器的最后一层使用全连接层来变换隐状态。总之，上述循环神经网络“编码器－解码器”模型中的各层如下图所示。
+{% asset_img rnn_14.png "循环神经网络编码器-解码器模型中的层" %}
+
+##### 损失函数
+
+在每个时间步，解码器预测了输出词元的概率分布。类似于语言模型，可以使用`softmax`来获得分布，并通过计算交叉熵损失函数来进行优化。特定的填充词元被添加到序列的末尾，因此不同长度的序列可以以相同形状的小批量加载。但是，我们应该将填充词元的预测排除在损失函数的计算之外。
+##### 训练
+
+在下面的循环训练过程中，特定的序列开始词元（`“<bos>”`）和原始的输出序列（不包括序列结束词元`“<eos>”`）拼接在一起作为解码器的输入。这被称为**强制教学**(`teacher forcing`)，因为原始的输出序列（词元的标签）被送入解码器。或者，将来自上一个时间步的预测得到的词元作为解码器的当前输入。
+##### 预测
+
+为了采用一个接着一个词元的方式预测输出序列，每个解码器当前时间步的输入都将来自于前一时间步的预测词元。与训练类似，序列开始词元（`“<bos>”`）在初始时间步被输入到解码器中。该预测过程如下图所示，当输出序列的预测遇到序列结束词元（`“<eos>”`）时，预测就结束了。
+{% asset_img rnn_15.png "使用循环神经网络编码器-解码器逐词元地预测输出序列" %}
+
+##### 预测序列的评估
+
+我们可以通过与真实的标签序列进行比较来评估预测序列。虽然提出的`BLEU`(`bilingual evaluation understudy`)最先是用于评估机器翻译的结果，但现在它已经被广泛用于测量许多应用的输出序列的质量。原则上说，对于预测序列中的任意{% mathjax %}n{% endmathjax %}元语法(`n-grams`)，`BLEU`的评估都是这个{% mathjax %}n{% endmathjax %}元语法是否出现在标签序列中。我们将`BLEU`定义为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\exp(\min(0,1,\frac{\text{len}_{\text{label}}}{\text{len}_{\text{pred}}}))\prod_{n=1}^k p_n^{1/2^n}
+{% endmathjax %}
+其中{% mathjax %}\text{len}_{\text{label}}{% endmathjax %}表示标签序列中的词元数和{% mathjax %}\text{len}_{\text{pred}}{% endmathjax %}表示预测序列中的词元数，{% mathjax %}k{% endmathjax %}是用于匹配的最长的{% mathjax %}n{% endmathjax %}元语法。另外，用{% mathjax %}p_n{% endmathjax %}表示{% mathjax %}n{% endmathjax %}元语法的精确度，它是两个数量的比值：第一个是预测序列与标签序列中匹配的{% mathjax %}n{% endmathjax %}元语法的数量，第二个是预测序列中{% mathjax %}n{% endmathjax %}元语法的数量的比率。具体地说，给定标签序列{% mathjax %}A,B,C,D,E,F{% endmathjax %}和预测序列{% mathjax %}A,B,B,C,D{% endmathjax %}，我们有{% mathjax %}p_1=4/5,p_2=3/4,p_3 = 1/3{% endmathjax %}和{% mathjax %}p_4 = 0{% endmathjax %}。根据`BLEU`的定义，当预测序列与标签序列完全相同时，`BLEU`为{% mathjax %}1{% endmathjax %}。此外，由于{% mathjax %}n{% endmathjax %}元语法越长则匹配难度越大，所以`BLEU`为更长的{% mathjax %}n{% endmathjax %}元语法的精确度分配更大的权重。具体来说，当{% mathjax %}p_n{% endmathjax %}固定时，{% mathjax %}p_n^{1/2^n}{% endmathjax %}会随着`n`的增长而增加（原始论文使用{% mathjax %}p_n^{1/n}{% endmathjax %}）。而且，由于预测的序列越短获得的{% mathjax %}p_n{% endmathjax %}值越高，所以乘法项之前的系数用于惩罚较短的预测序列。例如，当{% mathjax %}k=2{% endmathjax %}时，给定标签序列{% mathjax %}A,B,C,D,E,F{% endmathjax %}和预测序列{% mathjax %}A,B{% endmathjax %}，尽管{% mathjax %}p_1=p_2=1{% endmathjax %}，惩罚因子{% mathjax %}\exp(1 - 6/2)\approx 0.14{% endmathjax %}会降低`BLEU`。
+##### 总结
+
+根据“编码器-解码器”架构的设计，我们可以使用两个循环神经网络来设计一个序列到序列学习的模型。在实现编码器和解码器时，我们可以使用多层循环神经网络。我们可以使用遮蔽来过滤不相关的计算，例如在计算损失时。在“编码器－解码器”训练中，强制教学方法将原始输出序列（而非预测结果）输入解码器。`BLEU`是一种常用的评估方法，它通过测量预测序列和标签序列之间的{% mathjax %}n{% endmathjax %}元语法的匹配度来评估预测。
+
+#### 搜索算法
+
+##### 贪心搜索
+
+首先，让我们看看一个简单的策略：**贪心搜索**，该策略已用于序列预测。对于输出序列的每一时间步{% mathjax %}t'{% endmathjax %}，我们都将基于贪心搜索从{% mathjax %}\mathcal{Y}{% endmathjax %}中找到具有最高条件概率的词元，即：
+##### 穷举搜索
+
+如果目标是获得最优序列，我们可以考虑使用**穷举搜索**(`exhaustive search`)：穷举地列举所有可能的输出序列及其条件概率，然后计算输出条件概率最高的一个。
+
+##### 束搜索
+
+那么该选取哪种序列搜索策略呢？如果精度最重要，则显然是穷举搜索。如果计算成本最重要，则显然是贪心搜索。而束搜索的实际应用则介于这两个极端之间。
