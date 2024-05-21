@@ -226,7 +226,7 @@ class EncoderDecoder(tf.keras.Model):
 比如，当选择{% mathjax %}q(\mathbf{h}_1,\ldots,\mathbf{h}_T) = \mathbf{h}_T{% endmathjax %}时，上下文变量仅仅是输入序列在最后时间步的隐状态{% mathjax %}\mathbf{h}_T{% endmathjax %}。
 到目前为止，我们使用的是一个单向循环神经网络来设计编码器，其中隐状态只依赖于输入子序列，这个子序列是由输入序列的开始位置到隐状态所在的时间步的位置（包括隐状态所在的时间步）组成。我们也可以使用双向循环神经网络构造编码器，其中隐状态依赖于两个输入子序列，两个子序列是由隐状态所在的时间步的位置之前的序列和之后的序列（包括隐状态所在的时间步），因此隐状态对整个序列的信息都进行了编码。
 
-现在，让我们实现循环神经网络编码器。注意，我们使用了嵌入层（embedding layer）来获得输入序列中每个词元的特征向量。嵌入层的权重是一个矩阵，其行数等于输入词表的大小(vocab_size)， 其列数等于特征向量的维度（embed_size）。对于任意输入词元的索引{% mathjax %}i{% endmathjax %}，嵌入层获取权重矩阵的第{% mathjax %}i{% endmathjax %}行（从0开始）以返回其特征向量。另外，本文选择了一个多层门控循环单元来实现编码器。
+现在，让我们实现循环神经网络编码器。注意，我们使用了嵌入层（`embedding layer`）来获得输入序列中每个词元的特征向量。嵌入层的权重是一个矩阵，其行数等于输入词表的大小(`vocab_size`)，其列数等于特征向量的维度（`embed_size`）。对于任意输入词元的索引{% mathjax %}i{% endmathjax %}，嵌入层获取权重矩阵的第{% mathjax %}i{% endmathjax %}行（从`0`开始）以返回其特征向量。另外，本文选择了一个多层门控循环单元来实现编码器。
 #####  解码器
 
 正如上文提到的，编码器输出的上下文变量{% mathjax %}\mathbf{c}{% endmathjax %}对整个输入序列{% mathjax %}x1,\ldots,x_T{% endmathjax %}进行编码。来自训练数据集的输出序列{% mathjax %}y_1,y_2,\ldots,y_T'{% endmathjax %}，对于每个时间步{% mathjax %}t'{% endmathjax %}（与输入序列或编码器的时间步{% mathjax %}t{% endmathjax %}不同），解码器输出{% mathjax %}y_t'{% endmathjax %}的概率取决于先前的输出子序列{% mathjax %}y_1,\ldots,y_{t'-1}{% endmathjax %}和上下文变量{% mathjax %}\mathbf{c}{% endmathjax %}，即{% mathjax %}P(y_{t'}|y_1,\ldots,y_{t'-1},\mathbf{c}){% endmathjax %}。为了在序列上模型化这种条件概率，我们可以使用另一个循环神经网络作为解码器。在输出序列上的任意时间步{% mathjax %}t'{% endmathjax %}，循环神经网络将来自上一时间步的输出{% mathjax %}y_{t'-1}{% endmathjax %}和上下文变量{% mathjax %}\mathbf{c}{% endmathjax %}作为其输入，然后在当前时间步将它们和上一隐状态{% mathjax %}\mathbf{s}_{t'-1}{% endmathjax %}转换为隐状态{% mathjax %}\mathbf{s}_{t'}{% endmathjax %}。因此，可以使用函数{% mathjax %}g{% endmathjax %}来表示解码器的隐藏层的变换：
@@ -266,7 +266,6 @@ class EncoderDecoder(tf.keras.Model):
 ##### 穷举搜索
 
 如果目标是获得最优序列，我们可以考虑使用**穷举搜索**(`exhaustive search`)：穷举地列举所有可能的输出序列及其条件概率，然后计算输出条件概率最高的一个。
-
 ##### 束搜索
 
 那么该选取哪种序列搜索策略呢？如果精度最重要，则显然是穷举搜索。如果计算成本最重要，则显然是贪心搜索。而束搜索的实际应用则介于这两个极端之间。
