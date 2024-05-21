@@ -263,9 +263,42 @@ class EncoderDecoder(tf.keras.Model):
 ##### 贪心搜索
 
 首先，让我们看看一个简单的策略：**贪心搜索**，该策略已用于序列预测。对于输出序列的每一时间步{% mathjax %}t'{% endmathjax %}，我们都将基于贪心搜索从{% mathjax %}\mathcal{Y}{% endmathjax %}中找到具有最高条件概率的词元，即：
+{% mathjax '{"conversion":{"em":14}}' %}
+y_{t'} = \underset{y\in \mathcal{Y}}{\text{argmax}} P(y|y_1,\ldots,y_{t'-1},\mathbf{c})
+{% endmathjax %}
+一旦输出序列包含了`“<eos>”`或者达到其最大长度{% mathjax %}T'{% endmathjax %}，则输出完成。
+{% asset_img rnn_16.png "在每个时间步，贪心搜索选择具有最高条件概率的词元" %}
+
+如上图中，假设输出中有四个词元`“A”“B”“C”`和`“<eos>”`。每个时间步下的四个数字分别表示在该时间步生成`“A”“B”“C”`和`“<eos>”`的条件概率。在每个时间步，贪心搜索选择具有最高条件概率的词元。因此，将在上图中预测输出序列`“A”“B”“C”`和`“<eos>”`。这个输出序列的条件概率是{% mathjax %}0.5\times 0.4\times 0.4\times 0.6 = 0.048{% endmathjax %}。那么贪心搜索存在的问题是什么呢？现实中，最优序列(`optimal sequence`)应该是最大化{% mathjax %}\prod_{t'=1}^{T'} P(y_{t'}|y_1,\ldots,y_{t'-1},\mathbf{c}){% endmathjax %}值的输出序列，这是基于输入序列生成输出序列的条件概率。然而，贪心搜索无法保证得到最优序列。
+{% asset_img rnn_17.png "在时间步2，选择具有第二高条件概率的词元“C”（而非最高条件概率的词元）" %}
+
 ##### 穷举搜索
 
-如果目标是获得最优序列，我们可以考虑使用**穷举搜索**(`exhaustive search`)：穷举地列举所有可能的输出序列及其条件概率，然后计算输出条件概率最高的一个。
+如果目标是获得最优序列，我们可以考虑使用**穷举搜索**(`exhaustive search`)：穷举地列举所有可能的输出序列及其条件概率，然后计算输出条件概率最高的一个。虽然我们可以使用穷举搜索来获得最优序列，但其计算量{% mathjax %}\mathcal{O}(|mathcal{Y}|^{T'}){% endmathjax %}可能搞得惊人。例如，当{% mathjax %}|\mathcal{Y}| = 10000{% endmathjax %}和{% mathjax %}T' = 10{% endmathjax %}时，我们需要评估{% mathjax %}10000^{10} = 10^{40}{% endmathjax %}序列，这是一个极大的数，现有的计算机几乎不可能计算它。然而贪心搜索的计算量{% mathjax %}\mathcal{O}(|\mathcal{Y}|T'){% endmathjax %}要显著的小于穷举搜索。例如，当{% mathjax %}|\mathcal{Y}| = 10000{% endmathjax %}和{% mathjax %}T' = 10{% endmathjax %}时，我们只需要评估{% mathjax %} 10000\times 10 = 10^5{% endmathjax %}个序列。
 ##### 束搜索
 
-那么该选取哪种序列搜索策略呢？如果精度最重要，则显然是穷举搜索。如果计算成本最重要，则显然是贪心搜索。而束搜索的实际应用则介于这两个极端之间。
+那么该选取哪种序列搜索策略呢？如果精度最重要，则显然是穷举搜索。如果计算成本最重要，则显然是贪心搜索。而束搜索的实际应用则介于这两个极端之间。**束搜索**(`beam search`)是贪心搜索的一个改进版本。它有一个超参数，名为**束宽**(`beam size`){% mathjax %}k{% endmathjax %}。在时间步{% mathjax %}1{% endmathjax %}，我们选择具有最高条件概率的{% mathjax %}k{% endmathjax %}个词元。这{% mathjax %}k{% endmathjax %}个词元将分别是{% mathjax %}k{% endmathjax %}个候选输出序列的第一个词元。在随后的每个时间步，基于上一时间步的{% mathjax %}k{% endmathjax %}个候选输出序列，我们将继续从{% mathjax %}k|\mathcal{Y}|{% endmathjax %}个可能的选择中挑出具有最高条件概率的{% mathjax %}k{% endmathjax %}个候选输出序列。
+{% asset_img rnn_18.png "束搜索过程（束宽：2，输出序列的最大长度：3）。候选输出序列是A、C、AB、CE、ABD和CED" %}
+
+上图演示了束搜索的过程。假设输出的词表只包含五个元素：{% mathjax %}\mathcal{Y} = \{A,B,C,D,E\}{% endmathjax %}，其中有一个是`“<eos>”`。设置束宽为{% mathjax %}2{% endmathjax %}，输出序列的最大长度为{% mathjax %}3{% endmathjax %}。在时间步{% mathjax %}1{% endmathjax %}，假设具有最高条件概率{% mathjax %}P(y_1|\mathbf{c}){% endmathjax %}的词元是{% mathjax %}A{% endmathjax %}和{% mathjax %}C{% endmathjax %}。在时间步{% mathjax %}1{% endmathjax %}，我们计算所有{% mathjax %}y_2\in \mathcal{Y}{% endmathjax %}为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+P(A,y_2| \mathbf{c}) & = P(A|\mathbf{c})P(y_2|A,\mathbf{c}) \\ 
+P(C,y_2| \mathbf{c}) & = P(C|\mathbf{c})P(y_2|C,\mathbf{c}) \\ 
+\end{align}
+{% endmathjax %}
+从这十个值中选择最大的两个，比如{% mathjax %}P(A,B|\mathbf{c}){% endmathjax %}和{% mathjax %}P(C,E|\mathbf{c}){% endmathjax %}。然后在时间步{% mathjax %}3{% endmathjax %}，我们计算所有{% mathjax %}y_3\in \mathcal{Y}{% endmathjax %}为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+P(A,B,y_3| \mathbf{c}) & = P(A,B|\mathbf{c})P(y_3|A,B,\mathbf{c}) \\  
+P(C,E,y_3| \mathbf{c}) & = P(C,E|\mathbf{c})P(y_3|C,E,\mathbf{c}) \\  
+\end{align}
+{% endmathjax %}
+从这十个值中选择最大的两个，即{% mathjax %}P(A,B,D|\mathbf{c}){% endmathjax %}和{% mathjax %}P(C,E,D|\mathbf{c}){% endmathjax %}，我们会得到六个候选输出序列：{% mathjax %}A;C;A,B;C,E;A,B,D;C,E,D{% endmathjax %}。最后，基于这六个序列（例如，丢弃包括“<eos>”和之后的部分），我们获得最终候选输出序列集合。然后我们选择其中条件概率乘积最高的序列作为输出序列：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{1}{L^{\alpha}}\log P(y_1,\ldots,y_L|\mathbf{c}) = \frac{1}{L^{\alpha}}\sum_{t'=1}^L \log P(y_{t'}|y_1,\ldots,y_{t'-1},\mathbf{c})
+{% endmathjax %}
+其中{% mathjax %}L{% endmathjax %}是最终候选序列的长度，{% mathjax %}\alpha{% endmathjax %}通常设置为{% mathjax %}0.75{% endmathjax %}。因为一个较长的序列在上图中的求和中会有更多的对数项，因此分母中的{% mathjax %}L^{\alpha}{% endmathjax %}用于惩罚长序列。束搜索的计算量为{% mathjax %}\mathcal{O}(k|\mathcal{Y}|T'){% endmathjax %}，这个结果介于贪心搜索和穷举搜索之间。实际上，贪心搜索可以看作一种束宽为{% mathjax %}1{% endmathjax %}的特殊类型的束搜索。通过灵活地选择束宽，束搜索可以在正确率和计算代价之间进行权衡。
+##### 总结
+
+序列搜索策略包括贪心搜索、穷举搜索和束搜索。贪心搜索所选取序列的计算量最小，但精度相对较低。穷举搜索所选取序列的精度最高，但计算量最大。束搜索通过灵活选择束宽，在正确率和计算代价之间进行权衡。
