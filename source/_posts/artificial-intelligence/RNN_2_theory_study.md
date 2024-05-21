@@ -149,7 +149,16 @@ mathjax:
 
 事实上，这与隐马尔可夫模型中的动态规划的前向和后向递归没有太大区别。其主要区别是，在隐马尔可夫模型中的方程具有特定的统计意义。双向循环神经网络没有这样容易理解的解释，我们只能把它们当作通用的、可学习的函数。这种转变集中体现了现代深度网络的设计原则：首先使用经典统计模型的函数依赖类型，然后将其参数化为通用形式。
 
-双向循环神经网络是由(`Schuster and Paliwal, 1997`)提出的。对于任意时间步{% mathjax %}t{% endmathjax %}，给定一个小批量的输入数据{% mathjax %}\mathbf{X}_t\in \mathbb{R}^{n\times d}{% endmathjax %}
+双向循环神经网络是由(`Schuster and Paliwal, 1997`)提出的。对于任意时间步{% mathjax %}t{% endmathjax %}，给定一个小批量的输入数据{% mathjax %}\mathbf{X}_t\in \mathbb{R}^{n\times d}{% endmathjax %}（样本数{% mathjax %}n{% endmathjax %}，每个示例中的输入数为{% mathjax %}d{% endmathjax %}），隐藏层激活函数为{% mathjax %}\phi{% endmathjax %}。在双向架构中，我们设该时间步的前向和反向隐状态分别为{% mathjax %}\overrightarrow{\mathbf{H}}_t\in \mathbb{R}^{n\times h}{% endmathjax %}和{% mathjax %}\overleftarrow{\mathbf{H}}_t\in \mathbb{R}^{n\times h}{% endmathjax %}，其中{% mathjax %}h{% endmathjax %}是隐藏单元的数目。前向和反向隐状态的更新如下：
+{% mathjax '{"conversion":{"em":14}}' %}
+\overrightarrow{\mathbf{H}}_t & = \phi(\mathbf{X}_t\mathbf{W}_{xh}^{(f)} + \mathbf{H}_{t-1}\mathbf{W}_{hh}^{(f)} + \mathbf{b}_h^{(f)}) \\
+\overleftarrow{\mathbf{H}}_t & = \phi(\mathbf{X}_t\mathbf{W}_{xh}^{(b)} + \mathbf{H}_{t+1}\mathbf{W}_{hh}^{(b)} + \mathbf{b}_h^{(b)}) \\
+{% endmathjax %}
+接下来，将前向隐状态{% mathjax %}\overrightarrow{\mathbf{H}}_t{% endmathjax %}和反向隐状态{% mathjax %}\overleftarrow{\mathbf{H}}_t{% endmathjax %}连接起来，获得需要送入输出层的隐状态{% mathjax %}\mathbf{H}_t\in mathbb{R}^{n\times 2h}{% endmathjax %}。在具有多个隐藏层的深度双向循环神经网络中，该信息作为输入传递到下一个双向层。最后，输出层计算得到的输出为{% mathjax %}\mathbf{O}_t\in \mathbb{R}^{n\times q}{% endmathjax %}（{% mathjax %}q{% endmathjax %}是输出单元的数目）：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{O}_t = \mathbf{H}_t\mathbf{W}_{hq} + \mathbf{b}_q
+{% endmathjax %}
+这里，权重矩阵{% mathjax %}\mathbf{W}_{hq}\in \mathbb{R}^{2h\times q}{% endmathjax %}和偏置{% mathjax %}\mathbf{b}_q\in \mathbb{R}^{1\times q}{% endmathjax %}是输出层的模型参数。事实上，这两个方向可以拥有不同数量的隐藏单元。
 ##### 模型的计算代价及其应用
 
 双向循环神经网络的一个关键特性是：使用来自序列两端的信息来估计输出。也就是说，我们使用来自过去和未来的观测信息来预测当前的观测。但是在对下一个词元进行预测的情况中，这样的模型并不是我们所需的。因为在预测下一个词元时，我们终究无法知道下一个词元的下文是什么，所以将不会得到很好的精度。具体地说，在训练期间，我们能够利用过去和未来的数据来估计现在空缺的词；而在测试期间，我们只有过去的数据，因此精度将会很差。下面的实验将说明这一点。另一个严重问题是，双向循环神经网络的计算速度非常慢。其主要原因是网络的前向传播需要在双向层中进行前向和后向递归，并且网络的反向传播还依赖于前向传播的结果。因此，梯度求解将有一个非常长的链。双向层的使用在实践中非常少，并且仅仅应用于部分场合。例如，填充缺失的单词、词元注释（例如，用于命名实体识别）以及作为序列处理流水线中的一个步骤对序列进行编码（例如，用于机器翻译）。
