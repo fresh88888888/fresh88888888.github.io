@@ -306,7 +306,7 @@ h_n \\
 上图中概述了`Transformer`的架构。从宏观角度来看，`Transformer`的编码器是由多个相同的层叠加而成的，每个层都有两个子层（子层表示为{% mathjax %}\text{sublayer}{% endmathjax %}）。第一个子层是**多头自注意力**(`multi-head self-attention`)汇聚；第二个子层是**基于位置的前馈网络**(`positionwise feed-forward network`)。具体来说，在计算编码器的自注意力时，查询、键和值都来自前一个编码器层的输出。受残差网络的启发，每个子层都采用了**残差连接**(`residual connection`)。在`Transformer`中，对于序列中任何位置的任何输入{% mathjax %}\mathbf{x}\in \mathbb{R}^d{% endmathjax %}，都要求满足{% mathjax %}\text{sublayer}(\mathbf{x}\in \mathbb{R}^d){% endmathjax %}，以便残差连接满足{% mathjax %}\mathbf{x} + \text{sublayer}(\mathbf{x})\in \mathbb{R}^d{% endmathjax %}。在残差连接的加法计算之后，紧接着应用**层规范化**(`layer normalization`)。因此，输入序列对应的每个位置，`Transformer`编码器都将输出一个{% mathjax %} {% endmathjax %}维表示向量。`Transformer`解码器也是由多个相同的层叠加而成的，并且层中使用了残差连接和层规范化。除了编码器中描述的两个子层之外，解码器还在这两个子层之间插入了第三个子层，称为**编码器－解码器注意力**(`encoder-decoder attention`)层。在编码器－解码器注意力中，查询来自前一个解码器层的输出，而键和值来自整个编码器的输出。在解码器自注意力中，查询、键和值都来自上一个解码器层的输出。但是，解码器中的每个位置只能考虑该位置之前的所有位置。这种**掩蔽**(`masked`)注意力保留了**自回归**(`auto-regressive`)属性，确保预测仅依赖于已生成的输出词元。
 #####  基于位置的前馈网络
 
-基于位置的前馈网络对序列中的所有位置的表示进行变换时使用的是同一个多层感知机(`MLP`)，这就是**称前馈网络是基于位置的(positionwise)的原因**。
+基于位置的前馈网络对序列中的所有位置的表示进行变换时使用的是同一个多层感知机(`MLP`)，这就是**称前馈网络是基于位置的(`positionwise`)的原因**。
 ##### 残差连接和层规范化
 
 在一个小批量的样本内基于批量规范化对数据进行重新中心化和重新缩放的调整。层规范化和批量规范化的目标相同，但层规范化是基于特征维度进行规范化。尽管批量规范化在计算机视觉中被广泛应用，但在自然语言处理任务中（输入通常是变长序列）批量规范化通常不如层规范化的效果好。
