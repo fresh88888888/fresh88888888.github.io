@@ -344,17 +344,17 @@ for i in range(8):
 p_{i,2j} \\
 p_{i, 2j + 1}
 \end{bmatrix} \\
-&=
+=&
 \begin{bmatrix}
 \cos(\delta w_j)\sin(iw_j) + sin(\delta w_j)cos(iw_j) \\
 -\sin(\delta w_j)sin(iw_j) + cos(\delta w_j)cos(iw_j)
 \end{bmatrix} \\
-&= 
+=&
 \begin{bmatrix}
 \sin((i + \delta)w_j) \\
 \cos((i + \delta)w_j)
 \end{bmatrix} \\
-&= 
+=&
 \begin{bmatrix}
 p_{i+\delta,2j} \\
 p_{i+\delta,2j+1}
