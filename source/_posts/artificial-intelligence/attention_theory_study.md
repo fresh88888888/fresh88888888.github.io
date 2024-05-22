@@ -217,7 +217,7 @@ plot_kernel_reg(y_hat)
 高斯核指数部分可以视为**注意力评分函数**(`attention scoring function`)，简称评分函数(`scoring function`)，然后把这个函数的输出结果输入到`softmax`函数中进行运算。通过上述步骤，将得到与键对应的值的概率分布（即注意力权重）。最后，注意力汇聚的输出就是基于这些注意力权重的值的加权和。说明了如何将注意力汇聚的输出计算成为值的加权和，其中{% mathjax %}a{% endmathjax %}表示注意力评分函数。由于注意力权重是概率分布，因此加权和其本质上是加权平均值。
 {% asset_img at_4.png "计算注意力汇聚的输出为值的加权和" %}
 
-用数学语言描述，假设有一个查询{% mathjax %}\mathbf{q}\in \mathbb{R}^{q}{% endmathjax %}和{% mathjax %}m{% endmathjax %}个键-值对{% mathjax %}(\mathbf{k}_1,\mathbf{v}_1),\ldots,(\mtahbf{k}_m,\mathbf{v}_m){% endmathjax %}，其中{% mathjax %}\mathbf{k}_i\in \mathbb{R}^k{% endmathjax %}，{% mathjax %}\mathbf{v}_i\in \mathbb{R}^v{% endmathjax %}。注意力汇聚函数{% mathjax %}f{% endmathjax %}就被表示成值的加权和：
+用数学语言描述，假设有一个查询{% mathjax %}\mathbf{q}\in \mathbb{R}^{q}{% endmathjax %}和{% mathjax %}m{% endmathjax %}个键-值对{% mathjax %}(\mathbf{k}_1,\mathbf{v}_1),\ldots,(\mathbf{k}_m,\mathbf{v}_m){% endmathjax %}，其中{% mathjax %}\mathbf{k}_i\in \mathbb{R}^k{% endmathjax %}，{% mathjax %}\mathbf{v}_i\in \mathbb{R}^v{% endmathjax %}。注意力汇聚函数{% mathjax %}f{% endmathjax %}就被表示成值的加权和：
 {% mathjax '{"conversion":{"em":14}}' %}
 f(\mathbf{q},(\mathbf{k}_1, \mathbf{v}_1),\ldots,(\mathbf{k}_m, \mathbf{v}_m)) = \sum_{i=1}^m \alpha(\mathbf{q},\mathbf{k}_i)\mathbf{v}_i\in \mathbb{R}^v
 {% endmathjax %}
@@ -291,6 +291,9 @@ h_n \\
 #### 自注意力和位置编码
 
 在深度学习中，经常使用卷积神经网络(`CNN`)或循环神经网络(`RNN`)对序列进行编码。想象一下，有了注意力机制之后，我们将词元序列输入注意力池化中，以便同一组词元同时充当查询、键和值。具体来说，每个查询都会关注所有的键－值对并生成一个注意力输出。由于查询、键和值来自同一组输入，因此被称为**自注意力**(`self-attention`)，也被称为**内部注意力**(`intra-attention`)。
+##### 自注意力
+
+
 
 #### Transformer
 
