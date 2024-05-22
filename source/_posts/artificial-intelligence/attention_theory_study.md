@@ -217,3 +217,77 @@ plot_kernel_reg(y_hat)
 高斯核指数部分可以视为**注意力评分函数**(`attention scoring function`)，简称评分函数(`scoring function`)，然后把这个函数的输出结果输入到`softmax`函数中进行运算。通过上述步骤，将得到与键对应的值的概率分布（即注意力权重）。最后，注意力汇聚的输出就是基于这些注意力权重的值的加权和。说明了如何将注意力汇聚的输出计算成为值的加权和，其中{% mathjax %}a{% endmathjax %}表示注意力评分函数。由于注意力权重是概率分布，因此加权和其本质上是加权平均值。
 {% asset_img at_4.png "计算注意力汇聚的输出为值的加权和" %}
 
+用数学语言描述，假设有一个查询{% mathjax %}\mathbf{q}\in \mathbb{R}^{q}{% endmathjax %}和{% mathjax %}m{% endmathjax %}个键-值对{% mathjax %}(\mathbf{k}_1,\mathbf{v}_1),\ldots,(\mtahbf{k}_m,\mathbf{v}_m){% endmathjax %}，其中{% mathjax %}\mathbf{k}_i\in \mathbb{R}^k{% endmathjax %}，{% mathjax %}\mathbf{v}_i\in \mathbb{R}^v{% endmathjax %}。注意力汇聚函数{% mathjax %}f{% endmathjax %}就被表示成值的加权和：
+{% mathjax '{"conversion":{"em":14}}' %}
+f(\mathbf{q},(\mathbf{k}_1, \mathbf{v}_1),\ldots,(\mathbf{k}_m, \mathbf{v}_m)) = \sum_{i=1}^m \alpha(\mathbf{q},\mathbf{k}_i)\mathbf{v}_i\in \mathbb{R}^v
+{% endmathjax %}
+其中查询{% mathjax %}\mathbf{q}{% endmathjax %}和键{% mathjax %}\mathbf{k}_i{% endmathjax %}的注意力权重（标量）是通过注意力评分函数{% mathjax %}a{% endmathjax %}将两个向量映射成标量，再经过`softmax`运算得到的：
+{% mathjax '{"conversion":{"em":14}}' %}
+\alpha(\mathbf{q},\mathbf{k}_i)= \text{softmax}(a,(\mathbf{q},\mathbf{k}_i)) = \frac{\exp(a(\mathbf{q},\mathbf{k}_i))}{\sum_{j=1}^m\exp(a(\mathbf{q},\mathbf{k}_j))}\in \mathbb{R}
+{% endmathjax %}
+正如上图所示，选择不同的注意力评分函数{% mathjax %}a{% endmathjax %}会导致不同的注意力汇聚操作。
+##### 掩蔽softmax操作
+
+正如上面提到的，`softmax`操作用于输出一个概率分布作为注意力权重。在某些情况下，并非所有的值都应该被纳入到注意力汇聚中。为了仅将有意义的词元作为值来获取注意力汇聚，可以指定一个有效序列长度（即词元的个数），以便在计算`softmax`时过滤掉超出指定范围的位置。
+
+##### 加性注意力
+
+一般来说，当查询和键是不同长度的矢量时，可以使用加性注意力作为评分函数。给定查询{% mathjax %}\mathbf{q}\in \mathbb{R}^q{% endmathjax %}和键{% mathjax %}\mathbf{k}\in \mathbb{R}^k{% endmathjax %}，**加性注意力**(`additive attention`)的评分函数为：
+{% mathjax '{"conversion":{"em":14}}' %}
+a(\mathbf{q},\mathbf{k}) = \mathbf{w}_v^T\tanh(\mathbf{W}_q q + \mathbf{W}_k k)\in \mathbb{R}
+{% endmathjax %}
+其中可学习的参数是{% mathjax %}\mathbf{W}_q\in \mathbb{R}{h\times q}、\mathbf{W}_k\in \mathbb{R}{h\times k}{% endmathjax %}和{% mathjax %}\mathbf{w}_v\in \mathbb{R}{h}{% endmathjax %}，将查询和键连结起来后输入到一个多层感知机(`MLP`)中，感知机包含一个隐藏层，其隐藏单元数是一个超参数{% mathjax %}h{% endmathjax %}。通过使用{% mathjax %}\tanh{% endmathjax %}作为激活函数，并且禁用偏置项。
+##### 缩放点积注意力
+
+使用点积可以得到计算效率更高的评分函数，但是点积操作要求查询和键具有相同的长度{% mathjax %}d{% endmathjax %}。假设查询和键的所有元素都是独立的随机变量，并且都满足零均值和单位方差，那么两个向量的点积的均值为{% mathjax %}0{% endmathjax %}，方差为{% mathjax %}d{% endmathjax %}。为确保无论向量长度如何，点积的方差在不考虑向量长度的情况下仍然是{% mathjax %}1{% endmathjax %}，我们再将点积除以{% mathjax %}\sqrt{d}{% endmathjax %}，则**缩放点积注意力**(`scaled dot-product attention`)评分函数为：
+{% mathjax '{"conversion":{"em":14}}' %}
+a(\mathbf{q},\mathbf{k}) = \mathbf{q}^Tmathbf{k}/\sqrt{d}
+{% endmathjax %}
+在实践中，我们通常从小批量的角度来考虑提高效率，例如基于{% mathjax %}n{% endmathjax %}个查询和{% mathjax %}m{% endmathjax %}键-值对计算注意力，其中查询和键的长度为{% mathjax %}d{% endmathjax %}，值的长度为{% mathjax %}v{% endmathjax %}。查询{% mathjax %}\mathbf{Q}\in \mathbb{R}^{n\times d}{% endmathjax %}、键{% mathjax %}\mathbf{K}\in \mathbb{R}^{m\times d}{% endmathjax %}和值{% mathjax %}\mathbf{V}\in \mathbb{R}^{m\times v}{% endmathjax %}的缩放点积注意力是：
+{% mathjax '{"conversion":{"em":14}}' %}
+\text{softmax}(\frac{\mathbf{QK}^T}{\sqrt{d}})\mathbf{V}\in \mathbb{R}^{n\times v}
+{% endmathjax %}
+##### 总结
+
+将注意力汇聚的输出计算可以作为值的加权平均，选择不同的注意力评分函数会带来不同的注意力汇聚操作。当查询和键是不同长度的矢量时，可以使用可加性注意力评分函数。当它们的长度相同时，使用缩放的“点－积”注意力评分函数的计算效率更高。
+
+#### Bahdanau 注意力
+
+之前探讨了机器翻译问题：通过设计一个基于两个循环神经网络的编码器-解码器架构，用于序列到序列学习。具体来说，循环神经网络编码器将长度可变的序列转换为固定形状的上下文变量，然后循环神经网络解码器根据生成的词元和上下文变量按词元生成输出（目标）序列词元。然而，即使并非所有输入（源）词元都对解码某个词元都有用，在每个解码步骤中仍使用编码相同的上下文变量。有什么方法能改变上下文变量呢？`Graves`设计了一种可微注意力模型，将文本字符与更长的笔迹对齐，其中对齐方式仅向一个方向移动。受学习对齐想法的启发，`Bahdanau`等人提出了一个没有严格单向对齐限制的 可微注意力模型。在预测词元时，如果不是所有输入词元都相关，模型将仅对齐（或参与）输入序列中与当前预测相关的部分。这是通过将上下文变量视为注意力集中的输出来实现的。下面描述的Bahdanau注意力模型，上下文变量{% mathjax %}c{% endmathjax %}在任何解码时间步{% mathjax %}t'{% endmathjax %}都会被{% mathjax %}\mathbf{c}_{t'}{% endmathjax %}替换。假设输入序列有{% mathjax %}T{% endmathjax %}个次元，解码时间步{% mathjax %}t'{% endmathjax %}的上下文变量是注意力集中的输出：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{c}_{t'} = \sum_{t=1}^T\alpha(\mathbf{s}_{t'-1},\mathbf{h}_t)\mathbf{h}_t
+{% endmathjax %}
+其中，时间步{% mathjax %}t' - 1{% endmathjax %}的解码隐状态{% mathjax %}\mathbf{s}_{t'-1}{% endmathjax %}是查询编码器隐状态{% mathjax %}\mathbf{h}_t{% endmathjax %}即是键，也是值，注意力权重{% mathjax %}\alpha{% endmathjax %}是加性注意力计算打分函数用的。与循环神经网络编码器-解码器架构略有不同，下图描述了`Bahdanau`注意力的架构。
+{% asset_img at_9.png "一个带有Bahdanau注意力的循环神经网络编码器-解码器模型" %}
+
+##### 总结
+
+在预测词元时，如果不是所有输入词元都是相关的，那么具有`Bahdanau`注意力的循环神经网络编码器-解码器会有选择地统计输入序列的不同部分。这是通过将上下文变量视为加性注意力池化的输出来实现的。在循环神经网络编码器-解码器中，`Bahdanau`注意力将上一时间步的解码器隐状态视为查询，在所有时间步的编码器隐状态同时视为键和值。
+
+#### 多头注意力
+
+在实践中，当给定相同的查询、键和值的集合时，我们希望模型可以基于相同的注意力机制学习到不同的行为，然后将不同的行为作为知识组合起来，捕获序列内各种范围的依赖关系（例如，短距离依赖和长距离依赖关系）。因此，允许注意力机制组合使用查询、键和值的不同子空间表示(`representation subspaces`)可能是有益的。为此，与其只使用单独一个注意力汇聚，我们可以用独立学习得到的{% mathjax %}h{% endmathjax %}组不同的**线性投影**(`linear projections`)来变换查询、键和值。然后，这{% mathjax %}h{% endmathjax %}组变换后的查询、键和值将并行地送到注意力汇聚中。最后，将这{% mathjax %}h{% endmathjax %}个注意力汇聚的输出拼接在一起，并且通过另一个可以学习的线性投影进行变换，以产生最终输出。这种设计被称为**多头注意力**(`multihead attention`)。对于{% mathjax %}h{% endmathjax %}个注意力汇聚输出，每一个注意力汇聚都被称作一个头(`head`)。下图展示了使用全连接层来实现可学习的线性变换的多头注意力。
+{% asset_img at_10.png "多头注意力：多个头连结然后线性变换" %}
+
+在实现多头注意力之前，让我们用数学语言将这个模型形式化地描述出来。给定查询{% mathjax %}\mathbf{q}\in \mathbb{R}^{d_q}{% endmathjax %}、键{% mathjax %}\mathbf{k}\in \mathbb{R}^{d_k}{% endmathjax %}和值{% mathjax %}\mathbf{v}\in \mathbb{R}^{d}{% endmathjax %}，每个注意力头{% mathjax %}\mathbf{h}_i\;(i=1,\ldots,h){% endmathjax %}的计算方法为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{h}_i = f(\mathbf{W}_i^{(q)}\mathbf{q},\mathbf{W}_i^{(k)}\mathbf{k},\mathbf{W}_i^{(v)}\mathbf{v})\in \mathbb{R}^{p_v}
+{% endmathjax %}
+其中，可学习的参数包括{% mathjax %}\mathbf{W}_i^{(q)}\in \mathbb{p_q\times d_q}、\mathbf{W}_i^{(k)}\in \mathbb{p_k\times d_k}{% endmathjax %}和{% mathjax %}\mathbf{W}_i^{(v)}\in \mathbb{p_v\times d_v}{% endmathjax %}以及代表注意力汇聚的函数{% mathjax %}f{% endmathjax %}。可以是加性注意力和缩放点积注意力。多头注意力的输出需要经过另一个线性转换，它对应着{% mathjax %}h{% endmathjax %}个头连结后的结果，因此其可学习参数是{% mathjax %}\mathbf{W}_o\in \mathbb{R}^{p_o\times hp_v}{% endmathjax %}。
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{W}_o\;
+\begin{bmatrix}
+h_1 \\
+\vdots \\
+h_n \\
+\end{bmatrix} 
+\;\in \mathbb{R}^{p_o}
+{% endmathjax %}
+基于这种设计，每个头都可能会关注输入的不同部分，可以表示比简单加权平均值更复杂的函数。
+##### 总结
+
+多头注意力融合了来自于多个注意力汇聚的不同知识，这些知识的不同来源于相同的查询、键和值的不同的子空间表示。基于适当的张量操作，可以实现多头注意力的并行计算。
+
+#### 自注意力和位置编码
+
+在深度学习中，经常使用卷积神经网络(`CNN`)或循环神经网络(`RNN`)对序列进行编码。想象一下，有了注意力机制之后，我们将词元序列输入注意力池化中，以便同一组词元同时充当查询、键和值。具体来说，每个查询都会关注所有的键－值对并生成一个注意力输出。由于查询、键和值来自同一组输入，因此被称为**自注意力**(`self-attention`)，也被称为**内部注意力**(`intra-attention`)。
