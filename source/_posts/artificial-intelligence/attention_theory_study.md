@@ -37,6 +37,181 @@ mathjax:
 
 人类的注意力是有限的、有价值和稀缺的资源。受试者使用非自主性和自主性提示有选择性地引导注意力。前者基于突出性，后者则依赖于意识。注意力机制与全连接层或者汇聚层的区别源于增加的自主提示。由于包含了自主性提示，注意力机制与全连接的层或汇聚层不同。注意力机制通过注意力汇聚使选择偏向于值（感官输入），其中包含查询（自主性提示）和键（非自主性提示）。键和值是成对的。可视化查询和键之间的注意力权重是可行的。
 
+#### 注意力汇聚
+
+查询（自主提示）和键（非自主提示）之间的交互形成了注意力汇聚；注意力汇聚有选择地聚合了值（感官输入）以生成最终的输出。接下来介绍注意力汇聚的更多细节，以便从宏观上了解注意力机制在实践中的运作方式。具体来说，`1964`年提出的`Nadaraya-Watson`核回归模型是一个简单但完整的例子，可以用于演示具有注意力机制的机器学习。
+##### 生生数据集
+
+简单起见，考虑下面这个回归问题：给定成对的输入-输出数据集{% mathjax %}\{(x_1,y_1),\dots,(x_n,y_n)\}{% endmathjax %}，如何学习{% mathjax %}f{% endmathjax %}来预测任意新输入{% mathjax %}x{% endmathjax %}的输出{% mathjax %}\hat{y} = f(x){% endmathjax %}？根据下面的非线性函数生成一个人工数据集，其中加入的噪声项为{% mathjax %}\epsilon{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+y_i = 2\sin(x_i) + x_i^{0.8} + \epsilon
+{% endmathjax %}
+其中{% mathjax %}\epsilon{% endmathjax %}服从均值为`0`和标准差为`0.5`的正态分布。在这里生成了`50`个训练样本和50个测试样本。为了更好地可视化之后的注意力模式，需要将训练样本进行排序。
+```python
+import tensorflow as tf
+import matplotlib.pyplot as plt
+
+tf.random.set_seed(seed=1322)
+
+def plot_kernel_reg(y_hat):
+    plt.plot(x_test, [y_truth, y_hat], 'x', 'y', legend=['Truth', 'Pred'],xlim=[0, 5], ylim=[-1, 5])
+    plt.plot(x_train, y_train, 'o', alpha=0.5)
+    plt.show()
+
+def f(x):
+    return 2 * tf.sin(x) + x**0.8
+
+n_train = 50
+x_train = tf.sort(tf.random.uniform(shape=(n_train,), maxval=5))
+y_train = f(x_train) + tf.random.normal((n_train,), 0.0, 0.5)  # 训练样本的输出
+x_test = tf.range(0, 5, 0.1)  # 测试样本
+y_truth = f(x_test)  # 测试样本的真实输出
+n_test = len(x_test)  # 测试样本数
+n_test
+
+# 50
+```
+上面的函数`plot_kernel_reg`将绘制所有的训练样本（样本由圆圈表示），不带噪声项的真实数据生成函数{% mathjax %}f{% endmathjax %}标记为`“Truth”`），以及学习得到的预测函数（标记为`“Pred”`）。
+##### 平均汇聚
+
+先使用最简单的估计器来解决回归问题。基于**平均汇聚**来计算所有训练样本输出值的平均值：
+{% mathjax '{"conversion":{"em":14}}' %}
+f(x) = \frac{1}{n}\sum_{i=1}^n y_i
+{% endmathjax %}
+如下图所示，这个估计器确实不够聪明。真实函数{% mathjax %}f{% endmathjax %}(`“Truth”`)和预测函数(`“Pred”`)相差很大。
+```python
+y_hat = tf.repeat(tf.reduce_mean(y_train), repeats=n_test)
+plot_kernel_reg(y_hat)
+```
+{% asset_img at_5.png %}
+
+##### 非参数注意力汇聚
+
+显然，**平均汇聚**忽略了输入{% mathjax %}x_i{% endmathjax %}。于是Nadaraya和Watson提出了一个更好的想法，根据输入的位置对输出{% mathjax %}y_i{% endmathjax %}进行加权：
+{% mathjax '{"conversion":{"em":14}}' %}
+f(x) = \sum_{i=1}^n\frac{K(x - x_i)}{\sum_{j=1}^n K(x - x_j)}y_i
+{% endmathjax %}
+其中{% mathjax %}K{% endmathjax %}是核(`kernel`)。以上公式所描述的估计器被称为`Nadaraya-Watson`核回归(`Nadaraya-Watson kernel regression`)。
+{% mathjax '{"conversion":{"em":14}}' %}
+f(x) = \sum_{i=1}^n \alpha(x,x_i)y_i
+{% endmathjax %}
+其中{% mathjax %}x{% endmathjax %}是查询，{% mathjax %}(x_i,y_i){% endmathjax %}是键值对，注意力汇聚是{% mathjax %}y_i{% endmathjax %}的加权平均。将查询{% mathjax %}x{% endmathjax %}和{% mathjax %}x_i{% endmathjax %}之间的关系建模为**注意力权重**(`attention weight`){% mathjax %}\alpha(x,x_i){% endmathjax %}，这个权重将被分配给每一个对应值{% mathjax %}y_i{% endmathjax %}。对于任何查询，模型在所有键值对注意力权重都是一个有效的概率分布：它们是非负的，并且总和为`1`。为了更好地理解注意力汇聚，下面考虑一个**高斯核**(`Gaussian kernel`)，其定义为：
+{% mathjax '{"conversion":{"em":14}}' %}
+K(u) = \frac{1}{\sqrt{2\pi}}\exp(-\frac{u^2}{2})
+{% endmathjax %}
+将高斯核代入可以得到：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+f(x) & = \sum_{i=1}^n \alpha(x,x_i)y_i \\ 
+& = \sum_{i=1}^n\frac{\exp(\frac{1}{2}(x-x_i)^2)}{\sum_{j=1}^n\exp(-\frac{1}{2}(x-x_i)^2)} y_i \\
+& = \sum_{i=1}^n \text{softmax}(-\frac{1}{2}(x-x_i)^2) y_i \\
+\end{align}
+{% endmathjax %}
+在以上公式中，如果一个键{% mathjax %}x_i{% endmathjax %}越是接近给定的查询{% mathjax %}x{% endmathjax %}，那么分配给这个键对应值{% mathjax %}y_i{% endmathjax %}的注意力权重就会越大，也就获得了更多的注意力。值得注意的是，`Nadaraya-Watson`核回归是一个非参数模型。也就意味着，它是**非参数的注意力汇聚**(`nonparametric attention pooling`)模型。接下来，我们将基于这个非参数的注意力汇聚模型来绘制预测结果。从绘制的结果会发现新的模型预测线是平滑的，并且比平均汇聚的预测更接近真实。
+```python
+# X_repeat的形状:(n_test,n_train),
+# 每一行都包含着相同的测试输入（例如：同样的查询）
+X_repeat = tf.repeat(tf.expand_dims(x_train, axis=0), repeats=n_train, axis=0)
+# x_train包含着键。attention_weights的形状：(n_test,n_train),
+# 每一行都包含着要在给定的每个查询的值（y_train）之间分配的注意力权重
+attention_weights = tf.nn.softmax(-(X_repeat - tf.expand_dims(x_train, axis=1))**2/2, axis=1)
+# y_hat的每个元素都是值的加权平均值，其中的权重是注意力权重
+y_hat = tf.matmul(attention_weights, tf.expand_dims(y_train, axis=1))
+
+plot_kernel_reg(y_hat)
+```
+{% asset_img at_6.png %}
+
+现在来观察注意力的权重。这里测试数据的输入相当于查询，而训练数据的输入相当于键。因为两个输入都是经过排序的，因此由观察可知“查询-键”对越接近，注意力汇聚的注意力权重就越高。
+##### 带参数注意力汇聚
+
+非参数的`Nadaraya-Watson`核回归具有一致性(`consistency`)的优点：如果有足够的数据，此模型会收敛到最优结果。尽管如此，我们还是可以轻松地将可学习的参数集成到注意力汇聚中。例如，与非参数的注意力汇聚不同，在下面的查询{% mathjax %}x{% endmathjax %}和键{% mathjax %}x_i{% endmathjax %}之间的距离乘以可学习参数{% mathjax %}w{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+f(x) & = \sum_{i=1}^n \alpha(x,x_i)y_i \\ 
+& = \sum_{i=1}^n\frac{\exp(\frac{1}{2}((x-x_i)w)^2)}{\sum_{j=1}^n\exp(-\frac{1}{2}((x-x_i)w)^2)} y_i \\
+& = \sum_{i=1}^n \text{softmax}(-\frac{1}{2}((x-x_i)w)^2) y_i \\
+\end{align}
+{% endmathjax %}
+###### 批量矩阵乘法
+为了更有效地计算小批量数据的注意力，我们可以利用深度学习开发框架中提供的批量矩阵乘法。假设第一个小批量数据包含{% mathjax %}n{% endmathjax %}个矩阵{% mathjax %}\mathbf{X}_1,\ldots,\mathbf{X}_n{% endmathjax %}，形状为{% mathjax %}a\times b{% endmathjax %}，第二个小批量包含{% mathjax %}n{% endmathjax %}个矩阵{% mathjax %}\mathbf{Y}_1,\ldots,\mathbf{Y}_n{% endmathjax %}，形状为{% mathjax %}b\times c{% endmathjax %}，它们的批量矩阵乘法得到{% mathjax %}n{% endmathjax %}个矩阵{% mathjax %}\mathbf{X}_1\mathbf{Y}_1,\ldots,\mathbf{X}_n\mathbf{Y}_n{% endmathjax %}，形状为{% mathjax %}a\times c{% endmathjax %}。因此，假定两个张量的形状分别是{% mathjax %}(n,a,b){% endmathjax %}和{% mathjax %}(n,b,c){% endmathjax %}，它们的批量矩阵乘法输出的形状为{% mathjax %}(n,a,c){% endmathjax %}。
+```python
+X = tf.ones((2, 1, 4))
+Y = tf.ones((2, 4, 6))
+tf.matmul(X, Y).shape
+
+# TensorShape([2, 1, 6])
+
+# 在注意力机制的背景中，我们可以使用小批量矩阵乘法来计算小批量数据中的加权平均值。
+weights = tf.ones((2, 10)) * 0.1
+values = tf.reshape(tf.range(20.0), shape = (2, 10))
+tf.matmul(tf.expand_dims(weights, axis=1), tf.expand_dims(values, axis=-1)).numpy()
+
+# array([[[ 4.5]],[[14.5]]], dtype=float32)
+```
+###### 定义模型
+
+基于带参数的注意力汇聚，使用小批量矩阵乘法，定义`Nadaraya-Watson`核回归的带参数版本为：
+```python
+class NWKernelRegression(tf.keras.layers.Layer):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.w = tf.Variable(initial_value=tf.random.uniform(shape=(1,)))
+
+    def call(self, queries, keys, values, **kwargs):
+        # 对于训练，“查询”是x_train。“键”是每个点的训练数据的距离。“值”为'y_train'。
+        # queries和attention_weights的形状为(查询个数，“键－值”对个数)
+        queries = tf.repeat(tf.expand_dims(queries, axis=1), repeats=keys.shape[1], axis=1)
+        self.attention_weights = tf.nn.softmax(-((queries - keys) * self.w)**2 /2, axis =1)
+        # values的形状为(查询个数，“键－值”对个数)
+        return tf.squeeze(tf.matmul(tf.expand_dims(self.attention_weights, axis=1), tf.expand_dims(values, axis=-1)))
+```
+###### 训练
+
+接下来，将训练数据集变换为键和值用于训练注意力模型。在带参数的注意力汇聚模型中，任何一个训练样本的输入都会和除自己以外的所有训练样本的“键－值”对进行计算，从而得到其对应的预测输出。
+```python
+# X_tile的形状:(n_train，n_train)，每一行都包含着相同的训练输入
+X_tile = tf.repeat(tf.expand_dims(x_train, axis=0), repeats=n_train, axis=0)
+# Y_tile的形状:(n_train，n_train)，每一行都包含着相同的训练输出
+Y_tile = tf.repeat(tf.expand_dims(y_train, axis=0), repeats=n_train, axis=0)
+# keys的形状:('n_train'，'n_train'-1)
+keys = tf.reshape(X_tile[tf.cast(1 - tf.eye(n_train), dtype=tf.bool)], shape=(n_train, -1))
+# values的形状:('n_train'，'n_train'-1)
+values = tf.reshape(Y_tile[tf.cast(1 - tf.eye(n_train), dtype=tf.bool)], shape=(n_train, -1))
+
+# 训练带参数的注意力汇聚模型时，使用平方损失函数和随机梯度下降。
+net = NWKernelRegression()
+loss_object = tf.keras.losses.MeanSquaredError()
+optimizer = tf.keras.optimizers.SGD(learning_rate=0.5)
+animator = plt.Animator(xlabel='epoch', ylabel='loss', xlim=[1, 5])
+
+
+for epoch in range(5):
+    with tf.GradientTape() as t:
+        loss = loss_object(y_train, net(x_train, keys, values)) * len(y_train)
+    grads = t.gradient(loss, net.trainable_variables)
+    optimizer.apply_gradients(zip(grads, net.trainable_variables))
+    print(f'epoch {epoch + 1}, loss {float(loss):.6f}')
+    animator.add(epoch + 1, float(loss))
+```
+{% asset_img at_7.png %}
+
+如下所示，训练完带参数的注意力汇聚模型后可以发现：在尝试拟合带噪声的训练数据时，预测结果绘制的线不如之前非参数模型的平滑。
+```python
+# keys的形状:(n_test，n_train)，每一行包含着相同的训练输入（例如，相同的键）
+keys = tf.repeat(tf.expand_dims(x_train, axis=0), repeats=n_test, axis=0)
+# value的形状:(n_test，n_train)
+values = tf.repeat(tf.expand_dims(y_train, axis=0), repeats=n_test, axis=0)
+y_hat = net(x_test, keys, values)
+plot_kernel_reg(y_hat)
+```
+{% asset_img at_8.png %}
+
+与非参数的注意力汇聚模型相比，带参数的模型加入可学习的参数后，曲线在注意力权重较大的区域变得更不平滑。
+##### 总结
+
+`Nadaraya-Watson`核回归是具有注意力机制的机器学习范例。`Nadaraya-Watson`核回归的注意力汇聚是对训练数据中输出的加权平均。从注意力的角度来看，分配给每个值的注意力权重取决于将值所对应的键和查询作为输入的函数。**注意力汇聚可以分为非参数型和带参数型**。
+
 #### 注意力评分函数
 
 高斯核指数部分可以视为**注意力评分函数**(`attention scoring function`)，简称评分函数(`scoring function`)，然后把这个函数的输出结果输入到`softmax`函数中进行运算。通过上述步骤，将得到与键对应的值的概率分布（即注意力权重）。最后，注意力汇聚的输出就是基于这些注意力权重的值的加权和。说明了如何将注意力汇聚的输出计算成为值的加权和，其中{% mathjax %}a{% endmathjax %}表示注意力评分函数。由于注意力权重是概率分布，因此加权和其本质上是加权平均值。
