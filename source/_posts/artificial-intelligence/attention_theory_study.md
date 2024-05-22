@@ -293,7 +293,28 @@ h_n \\
 在深度学习中，经常使用卷积神经网络(`CNN`)或循环神经网络(`RNN`)对序列进行编码。想象一下，有了注意力机制之后，我们将词元序列输入注意力池化中，以便同一组词元同时充当查询、键和值。具体来说，每个查询都会关注所有的键－值对并生成一个注意力输出。由于查询、键和值来自同一组输入，因此被称为**自注意力**(`self-attention`)，也被称为**内部注意力**(`intra-attention`)。
 ##### 自注意力
 
+给定一个由次元组成的输入序列{% mathjax %}\mathbf{x}_1,\ldots,\mathbf{x}_n{% endmathjax %}，其中任意{% mathjax %}\mathbf{x}_i\in \mathbb{R}^d\;(1\leq i \leq n){% endmathjax %}。该序列的自注意力输出为一个长度相同的序列{% mathjax %}\\mathbf{y}_1,\ldots,\mathbf{y}_n{% endmathjax %}，其中：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{y}_i = f(\mathbf{x}_i,(\mathbf{x}_1,\mathbf{x}_1),\ldots,(\mathbf{x}_n,\mathbf{x}_n))\in \mathbb{R}^d
+{% endmathjax %}
+根据上边公式中定义的注意力汇聚函数{% mathjax %}f{% endmathjax %}。基于多头注意力对一个张量完成自注意力的计算，张量的形状为（批量大小，时间步的数目或词元序列的长度，{% mathjax %}d{% endmathjax %}）。输出与输入的张量形状相同。
+##### 比较卷积神经网络、循环神经网络和自注意力
 
+接下来比较下面几个架构，目标都是将由{% mathjax %}n{% endmathjax %}个词元组成的序列映射到另一个长度相等的序列，其中的每个输入词元或输出词元都由{% mathjax %}d{% endmathjax %}维向量表示。具体来说，将比较的是卷积神经网络、循环神经网络和自注意力这几个架构的计算复杂性、顺序操作和最大路径长度。请注意，顺序操作会妨碍并行计算，而任意的序列位置组合之间的路径越短，则能更轻松地学习序列中的远距离依赖关系。
+{% asset_img at_11.png "比较卷积神经网络（填充词元被忽略）、循环神经网络和自注意力三种架构" %}
+
+考虑一个卷积核大小为{% mathjax %}k{% endmathjax %}的卷积层。在后面的章节将提供关于使用卷积神经网络处理序列的更多详细信息。目前只需要知道的是，由于序列长度是{% mathjax %}n{% endmathjax %}，输入和输出的通道数量都是{% mathjax %}d{% endmathjax %}，所以卷积层的计算复杂度为{% mathjax %}\mathcal{O}(knd^2){% endmathjax %}。如上图所示，卷积神经网络是分层的，因此为有{% mathjax %}\mathcal{O}(1){% endmathjax %}个顺序操作，最大路径长度为{% mathjax %}\mathcal{O}(n/k){% endmathjax %}。例如，{% mathjax %}\mathbf{x}_1{% endmathjax %}和{% mathjax %}\mathbf{x}_5{% endmathjax %}处于上图中卷积核大小为3的双层卷积神经网络的感受野内。当更新循环神经网络的隐状态时，{% mathjax %}d\times d{% endmathjax %}权重矩阵和{% mathjax %}d{% endmathjax %}维隐状态的乘法计算复杂度为{% mathjax %}\mathcal{O}(d^2){% endmathjax %}。由于序列长度为{% mathjax %}n{% endmathjax %}，因此循环神经网络层的计算复杂度为{% mathjax %}\mathcal{O}(nd^2){% endmathjax %}。根据上图，有{% mathjax %}\mathcal{O}(n){% endmathjax %}个顺序操作无法并行化，最大路径长度也是{% mathjax %}\mathcal{O}(n){% endmathjax %}。在自注意力中，查询、键和值都是{% mathjax %}n\times d{% endmathjax %}矩阵。考虑缩放的”点－积“注意力，其中{% mathjax %}n\times d{% endmathjax %}矩阵乘以{% mathjax %}d\times n{% endmathjax %}矩阵。之后输出的{% mathjax %}n\times n{% endmathjax %}矩阵乘以{% mathjax %}n\times d{% endmathjax %}矩阵。因此，自注意力具有{% mathjax %}\mathcal{O}(n^2 d){% endmathjax %}计算复杂性。正如上图，每个词元都通过自注意力直接连接到任何其他词元。因此，有{% mathjax %}\mathcal{O}(1){% endmathjax %}个顺序操作可以并行计算，最大路径长度也是{% mathjax %}\mathcal{O}(1){% endmathjax %}。总而言之，卷积神经网络和自注意力都拥有并行计算的优势，而且自注意力的最大路径长度最短。但是因为其计算复杂度是关于序列长度的二次方，以在很长的序列中计算会非常慢。
+##### 位置编码
+
+在处理词元序列时，循环神经网络是逐个的重复地处理词元的，而自注意力则因为并行计算而放弃了顺序操作。为了使用序列的顺序信息，通过在输入表示中添加**位置编码**(`positional encoding`)来注入绝对的或相对的位置信息。位置编码可以通过学习得到也可以直接固定得到。接下来描述的是基于正弦函数和余弦函数的固定位置编码。假设输入表示{% mathjax %}\mathbf{X}\in \mathbb{R}^{n\times d}{% endmathjax %}包含一个序列中{% mathjax %}n{% endmathjax %}个词元的{% mathjax %}d{% endmathjax %}维嵌入表示。位置编码使用相同形状的位置嵌入矩阵{% mathjax %}\mathbf{P}\in \mathbb{R}^{n\times d}{% endmathjax %}输出{% mathjax %}\mathbf{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+p_{i,2j} & = \sin(\frac{i}{10000^{2j/d}}) \\ 
+p_{i,2j+1} & = \cos(\frac{i}{10000^{2j/d}}) \\ 
+\end{align}
+{% endmathjax %}
+##### 总结
+
+在自注意力中，查询、键和值都来自同一组输入。卷积神经网络和自注意力都拥有并行计算的优势，而且自注意力的最大路径长度最短。但是因为其计算复杂度是关于序列长度的二次方，所以在很长的序列中计算会非常慢。为了使用序列的顺序信息，可以通过在输入表示中添加位置编码，来注入绝对的或相对的位置信息。
 
 #### Transformer
 
