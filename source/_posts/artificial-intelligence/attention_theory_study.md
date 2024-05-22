@@ -335,7 +335,7 @@ for i in range(8):
 除了捕获绝对位置信息之外，上述的位置编码还允许模型学习得到输入序列中相对位置信息。这是因为对于任何确定的位置偏移{% mathjax %}\delta{% endmathjax %}，位置{% mathjax %}i + \delta{% endmathjax %}处的位置编码可以线性投影位置{% mathjax %}i{% endmathjax %}处的位置编码来表示。这种投影的数学解释是，令{% mathjax %}w_j = 1/10000^{2j/d}{% endmathjax %}对于任何确定的位置偏移{% mathjax %}\delta{% endmathjax %}任何一对{% mathjax %}(p_{i,2j},p_{i,2j+1}){% endmathjax %}都可以线性投影到{% mathjax %}(p_{i+\delta,2j},p_{i+\delta,2j+1}){% endmathjax %}：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
-& 
+\;& 
 \begin{bmatrix} 
 \cos(\delta w_j) & \sin(\delta w_j) \\
 -\sin(\delta w_j) & \cos(\delta w_j)
