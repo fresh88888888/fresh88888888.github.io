@@ -291,7 +291,7 @@ drwxr-xr-x 2 ci ci  66 Aug 18 07:38 variables
 
 ##### 环同步（Ring Synchronization）
 
-当谈及现代深度学习硬件的同步问题时，我们经常会遇到大量的定制的网络连接。每个`GPU`通过`PCIe`链路连接到主机`CPU`，该链路最多只能以`16GB/s`的速度运行。此外，每个GPU还具有`6`个`NVLink`连接，每个`NVLink`连接都能够以300Gbit/s进行双向传输。这相当于每个链路每个方向约{% mathjax %}300\div 8\div 2\approx 18\mathbf{GB}/s{% endmathjax %}。简言之，聚合的`NVLink`带宽明显高于`PCIe`带宽，问题是如何有效地使用它。
+当谈及现代深度学习硬件的同步问题时，我们经常会遇到大量的定制的网络连接。每个`GPU`通过`PCIe`链路连接到主机`CPU`，该链路最多只能以`16GB/s`的速度运行。此外，每个`GPU`还具有`6`个`NVLink`连接，每个`NVLink`连接都能够以`300Gbit/s`进行双向传输。这相当于每个链路每个方向约{% mathjax %}300\div 8\div 2\approx 18\mathbf{GB}/s{% endmathjax %}。简言之，聚合的`NVLink`带宽明显高于`PCIe`带宽，问题是如何有效地使用它。
 
 ##### 键值存储
 
