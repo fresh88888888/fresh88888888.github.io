@@ -60,3 +60,47 @@ f(x) = x\cdot\cos(\pi x)\;\text{for}\; -1.0\leq x\leq 2.0
 
 ###### 凸集
 
+**凸集**(`convex set`)是凸性的基础。简单地说，如果对于任何{% mathjax %}a,b\in \mathcal{X}{% endmathjax %}，连接{% mathjax %}a{% endmathjax %}和{% mathjax %}b{% endmathjax %}的线段也位于{% mathjax %}\mathcal{X}{% endmathjax %}中，则向量空间中的一个集合{% mathjax %}\mathcal{X}{% endmathjax %}是**凸**(`convex`)的。在数学术语上，这意味着对于所有{% mathjax %}\lambda\in [0,1]{% endmathjax %}，我们得到：
+{% mathjax '{"conversion":{"em":14}}' %}
+\lambda a + (1-\lambda)b\in \mathcal{X}\;a,b\in \mathcal{X}
+{% endmathjax %}
+这听起来有点抽象，那我们来看下图里的例子。第一组存在不包含在集合内部的线段，所以该集合是非凸的，而另外两组则没有这样的问题。
+{% asset_img oa_3.png "第一组是非凸的，另外两组是凸的" %}
+
+接下来看一下交集，如下图所示。假设{% mathjax %}\mathcal{X}{% endmathjax %}和{% mathjax %}\mathcal{Y}{% endmathjax %}是凸集，那么{% mathjax %}\mathcal{X}\cap \mathcal{Y}{% endmathjax %}也是凸集的。现在考虑任意的{% mathjax %}a,b\in \mathcal{X}\cap \mathcal{Y}{% endmathjax %}，因为{% mathjax %}\mathcal{X}{% endmathjax %}和{% mathjax %}\mathcal{Y}{% endmathjax %}是凸集，所以连接{% mathjax %}a{% endmathjax %}和{% mathjax %}b{% endmathjax %}的线段包含在{% mathjax %}\mathcal{X}{% endmathjax %}和{% mathjax %}\mathcal{Y}{% endmathjax %}当中。鉴于此，它们也需要包含在{% mathjax %}\mathcal{X}\cap \mathcal{Y}{% endmathjax %}中，从而证明我们的定理。
+{% asset_img oa_4.png "两个凸集的交集是凸的" %}
+
+我们可以毫不费力进一步得到这样的结果：给定凸集{% mathjax %}\mathcal{X}_i{% endmathjax %}，它们的交集{% mathjax %}\cap_i\mathcal{X}_i{% endmathjax %}是凸的，但是反向是不正确的，考虑两个不想交的集合{% mathjax %}\mathcal{X}\cap \mathcal{Y} = \emptyset{% endmathjax %}，取{% mathjax %}a\in \mathcal{X}{% endmathjax %}和{% mathjax %}b\in \mathcal{Y}{% endmathjax %}。因为我们假设{% mathjax %}\mathcal{X}\cap \mathcal{Y} = \emptyset{% endmathjax %}，在下图中连接{% mathjax %}a{% endmathjax %}和{% mathjax %}b{% endmathjax %}的线段需要包含一部分既不在{% mathjax %}\mathcal{X}{% endmathjax %}，也不在{% mathjax %}\mathcal{Y}{% endmathjax %}中。因此线段也不在{% mathjax %}\mathcal{X}\cup \mathcal{Y}{% endmathjax %}中，因此证明了凸集的并集不一定是凸的，即**非凸**(`nonconvex`)的。
+{% asset_img oa_5.png "两个凸集的并集不一定是凸的" %}
+
+通常，深度学习的问题通常是在凸集上定义的。例如，{% mathjax %}\mathbb{R}^d{% endmathjax %}，即实数的{% mathjax %}d{% endmathjax %}维向量的集合是凸集（毕竟{% mathjax %}\mathbb{R}^d{% endmathjax %}中任意两点之间的线存在{% mathjax %}\mathbb{R}^d{% endmathjax %}）中。在某些情况下，我们使用有界长度的变量，例如球的半径定义为{% mathjax %}\{\mathbf{x}|mathbf{x}\in \mathbb{R}^d\;且\;\lVert \mathbf{x} \rVert \leq r\}{% endmathjax %}。
+###### 凸函数
+
+现在我们有了凸集，我们可以引入**凸函数**(`convex function`){% mathjax %}f{% endmathjax %}。给定一个凸集{% mathjax %}\mathcal{X}{% endmathjax %}，如果对于所有{% mathjax %}x,x'\in \mathcal{X}{% endmathjax %}和所有{% mathjax %}\lambda\in [0,1]{% endmathjax %}，函数{% mathjax %}f:\mathcal{X}\rightarrow \mathbb{R}{% endmathjax %}是凸的，我们可以得到：
+{% mathjax '{"conversion":{"em":14}}' %}
+\lambda f(x) + (1 - \lambda)f(x')\geq f(\lambda x + (1 - \lambda)x')
+{% endmathjax %}
+```python
+f = lambda x: 0.5 * x**2  # 凸函数
+g = lambda x: np.cos(np.pi * x)  # 非凸函数
+h = lambda x: np.exp(0.5 * x)  # 凸函数
+```
+{% asset_img oa_6.png %}
+
+不出所料，余弦函数为非凸的，而抛物线函数和指数函数为凸的。请注意，为使该条件有意义，{% mathjax %}\mathcal{X}{% endmathjax %}是凸集的要求是必要的。否则可能无法很好地界定{% mathjax %}f(\lambda x + (1 - \lambda)x'){% endmathjax %}的结果。
+###### 詹森不等式
+
+给定一个凸函数{% mathjax %}f{% endmathjax %}，最有用的数学工具之一就是**詹森不等式**(`Jensen’s inequality`)。它是凸性定义的一种推广：
+{% mathjax '{"conversion":{"em":14}}' %}
+\sum_i \alpha_i f(x_i)\geq f(\sum_i \alpha_ix_i)\;\text{and}\;E_X[f(X)]\geq f(E_X[X])
+{% endmathjax %}
+其中{% mathjax %}\alpha_i{% endmathjax %}是满足{% mathjax %}\sum_i \alpha_i = 1{% endmathjax %}的非负实数，{% mathjax %}X{% endmathjax %}是随机变量。换句话说凸函数的期望不小于期望的凸函数，其中后者是一个更简单的表达式，为了证明第一个不等式，我们多次将凸性的定义应用于一次求和的一项。詹森不等式的一个常见应用：用一个较简单的表达式约束一个较复杂的表达式。例如，它可以应用于部分观察到的随机变量的对数似然。具体地说，由于{% mathjax %}\int P(Y)P(X|Y)dY = P(X){% endmathjax %}，所以：
+{% mathjax '{"conversion":{"em":14}}' %}
+E_{Y\sim P(Y)}[-\log P(X|Y)]\geq -\log P(X)
+{% endmathjax %}
+这里，{% mathjax %}Y{% endmathjax %}是典型的未观察到的随机变量，{% mathjax %}P(Y){% endmathjax %}是它可能如何分布的最佳猜测，{% mathjax %}P(X){% endmathjax %}是将{% mathjax %}Y{% endmathjax %}积分后的分布。例如，再聚类中{% mathjax %}Y{% endmathjax %}可能是簇标签，而在应用簇标签时，{% mathjax %}P(X|Y){% endmathjax %}是生成模型。
+##### 性质
+
+###### 局部极小值是全局极小值
+
+首先凸函数的局部极小值也是全局极小值。下面我们用反证法给出证明。
