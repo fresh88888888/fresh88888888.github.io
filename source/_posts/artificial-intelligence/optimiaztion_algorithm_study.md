@@ -25,7 +25,14 @@ mathjax:
 深度学习优化存在许多挑战。其中最令人烦恼的是局部最小值、鞍点和梯度消失。
 ###### 局部最小值
 
+对于任何目标函数{% mathjax %}f(x){% endmathjax %}，如果在{% mathjax %}x{% endmathjax %}处对应的{% mathjax %}f(x){% endmathjax %}值小于在{% mathjax %}x{% endmathjax %}附近任意其他点的{% mathjax %}f(x){% endmathjax %}值，那么{% mathjax %}f(x){% endmathjax %}可能是局部最小值。如果{% mathjax %}f(x){% endmathjax %}在{% mathjax %}x{% endmathjax %}处的值是整个域中目标函数的最小值，那么{% mathjax %}f(x){% endmathjax %}是全局最小值。例如，给定函数：
+{% mathjax '{"conversion":{"em":14}}' %}
+f(x) = x\cdot\cos(\pi x)\;\text(for)\; -1.0\leq x\leq 2.0
+{% endmathjax %}
+我们可以近似该函数的局部最小值和全局最小值。
+{% asset_img oa_1.png %}
 
+深度学习模型的目标函数通常有许多局部最优解。当优化问题的数值解接近局部最优值时，随着目标函数解的梯度接近或变为零，通过最终迭代获得的数值解可能仅使目标函数局部最优，而不是全局最优。只有一定程度的噪声可能会使参数跳出局部最小值。事实上，这是小批量随机梯度下降的有利特性之一。在这种情况下，小批量上梯度的自然变化能够将参数从局部极小值中跳出。
 ###### 鞍点
 
 ###### 梯度消失
