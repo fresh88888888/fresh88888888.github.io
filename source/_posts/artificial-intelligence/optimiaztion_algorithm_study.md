@@ -27,7 +27,7 @@ mathjax:
 
 对于任何目标函数{% mathjax %}f(x){% endmathjax %}，如果在{% mathjax %}x{% endmathjax %}处对应的{% mathjax %}f(x){% endmathjax %}值小于在{% mathjax %}x{% endmathjax %}附近任意其他点的{% mathjax %}f(x){% endmathjax %}值，那么{% mathjax %}f(x){% endmathjax %}可能是局部最小值。如果{% mathjax %}f(x){% endmathjax %}在{% mathjax %}x{% endmathjax %}处的值是整个域中目标函数的最小值，那么{% mathjax %}f(x){% endmathjax %}是全局最小值。例如，给定函数：
 {% mathjax '{"conversion":{"em":14}}' %}
-f(x) = x\cdot\cos(\pi x)\;\text(for)\; -1.0\leq x\leq 2.0
+f(x) = x\cdot\cos(\pi x)\;\text{for}\; -1.0\leq x\leq 2.0
 {% endmathjax %}
 我们可以近似该函数的局部最小值和全局最小值。
 {% asset_img oa_1.png %}
