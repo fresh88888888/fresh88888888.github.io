@@ -73,7 +73,7 @@ f(x) = x\cdot\cos(\pi x)\;\text{for}\; -1.0\leq x\leq 2.0
 我们可以毫不费力进一步得到这样的结果：给定凸集{% mathjax %}\mathcal{X}_i{% endmathjax %}，它们的交集{% mathjax %}\cap_i\mathcal{X}_i{% endmathjax %}是凸的，但是反向是不正确的，考虑两个不想交的集合{% mathjax %}\mathcal{X}\cap \mathcal{Y} = \emptyset{% endmathjax %}，取{% mathjax %}a\in \mathcal{X}{% endmathjax %}和{% mathjax %}b\in \mathcal{Y}{% endmathjax %}。因为我们假设{% mathjax %}\mathcal{X}\cap \mathcal{Y} = \emptyset{% endmathjax %}，在下图中连接{% mathjax %}a{% endmathjax %}和{% mathjax %}b{% endmathjax %}的线段需要包含一部分既不在{% mathjax %}\mathcal{X}{% endmathjax %}，也不在{% mathjax %}\mathcal{Y}{% endmathjax %}中。因此线段也不在{% mathjax %}\mathcal{X}\cup \mathcal{Y}{% endmathjax %}中，因此证明了凸集的并集不一定是凸的，即**非凸**(`nonconvex`)的。
 {% asset_img oa_5.png "两个凸集的并集不一定是凸的" %}
 
-通常，深度学习的问题通常是在凸集上定义的。例如，{% mathjax %}\mathbb{R}^d{% endmathjax %}，即实数的{% mathjax %}d{% endmathjax %}维向量的集合是凸集（毕竟{% mathjax %}\mathbb{R}^d{% endmathjax %}中任意两点之间的线存在{% mathjax %}\mathbb{R}^d{% endmathjax %}）中。在某些情况下，我们使用有界长度的变量，例如球的半径定义为{% mathjax %}\{\mathbf{x}|mathbf{x}\in \mathbb{R}^d\;且\;\lVert \mathbf{x} \rVert \leq r\}{% endmathjax %}。
+通常，深度学习的问题通常是在凸集上定义的。例如，{% mathjax %}\mathbb{R}^d{% endmathjax %}，即实数的{% mathjax %}d{% endmathjax %}维向量的集合是凸集（毕竟{% mathjax %}\mathbb{R}^d{% endmathjax %}中任意两点之间的线存在{% mathjax %}\mathbb{R}^d{% endmathjax %}）中。在某些情况下，我们使用有界长度的变量，例如球的半径定义为{% mathjax %}\{\mathbf{x}|\mathbf{x}\in \mathbb{R}^d\;且\;\lVert \mathbf{x} \rVert \leq r\}{% endmathjax %}。
 ###### 凸函数
 
 现在我们有了凸集，我们可以引入**凸函数**(`convex function`){% mathjax %}f{% endmathjax %}。给定一个凸集{% mathjax %}\mathcal{X}{% endmathjax %}，如果对于所有{% mathjax %}x,x'\in \mathcal{X}{% endmathjax %}和所有{% mathjax %}\lambda\in [0,1]{% endmathjax %}，函数{% mathjax %}f:\mathcal{X}\rightarrow \mathbb{R}{% endmathjax %}是凸的，我们可以得到：
