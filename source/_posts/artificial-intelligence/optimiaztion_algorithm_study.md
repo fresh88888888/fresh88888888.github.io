@@ -170,3 +170,10 @@ g(z) = \underset{=}{\text{def}}f(z\mathbf{x} + (1 - z)\mathbf{y})\;\text{where}\
 ##### 约束
 
 凸优化的一个很好的特性是能够让我们有效地处理**约束**(`constraints`)。即它使我们能够解决以下形式的**约束优化**(`constrained optimization`)问题：
+{% mathjax '{"conversion":{"em":14}}' %}
+\underset{x}{\text{minimize}}f(x)\;\text{subject to}\;c_i(\mathbf{x})\leq 0\;\text{for all}\; i\in \{,\ldots, N\}
+{% endmathjax %}
+这里{% mathjax %}f{% endmathjax %}是目标函数，{% mathjax %}c_i{% endmathjax %}是约束函数。例如第一个约束{% mathjax %}c_1(\mathbf{x}) = \lVert\mathbf{x}\rVert_2 - 1{% endmathjax %}，则参数{% mathjax %}\mathbf{x}{% endmathjax %}被限制为单位球。如果第二个约束{% mathjax %}c_2(\mathbf{x}) = \mathbf{v}^{\mathsf{T}}\mathbf{x} + b{% endmathjax %}，那么这对应于半空间上所有的{% mathjax %}\mathbf{x}{% endmathjax %}。同时满足这两个约束等于选择一个球的切片作为约束集。
+###### 拉格朗日函数
+
+通常，求解一个有约束的优化问题是困难的，解决这个问题的一种方法来自物理中相当简单的直觉。想象一个球在一个盒子里，球会滚到最低的地方，重力将与盒子两侧对球施加的力平衡。简而言之，目标函数（即重力）的梯度将被约束函数的梯度所抵消（由于墙壁的“推回”作用，需要保持在盒子内）。请注意，任何不起作用的约束（即球不接触壁）都将无法对球施加任何力。这里我们简略拉格朗日函数{% mathjax %}L{% endmathjax %}的推导，上述推理可以通过以下鞍点优化问题来表示：
