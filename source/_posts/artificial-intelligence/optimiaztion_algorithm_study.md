@@ -113,3 +113,13 @@ f(\lambda x^{\ast} + (1 - \lambda)x') \leq \lambda f(x^{\ast}) + (1 - \lambda)f(
 凸函数的局部最小值也是全局最小值这一性质很方便。这意味着如果我们最小化函数，我们就不会“卡住”。但是请注意，这并不能意味着不能有多个全局最小值，或者可能不存在一个全局最小值。例如，函数{% mathjax %}f(x) = \max(|x| - 1,0){% endmathjax %}在{% mathjax %}[-1,1]{% endmathjax %}区间上的都是最小值。相反，函数{% mathjax %}f(x) = \exp(x){% endmathjax %}在{% mathjax %}\mathbb{R}{% endmathjax %}上没有取得最小值。对于{% mathjax %}x\rightarrow -\infty{% endmathjax %}，它趋近于0，但是没有{% mathjax %}f(x) = 0{% endmathjax %}的{% mathjax %}x{% endmathjax %}。
 ###### 凸函数的下水平集是凸的
 
+我们可以方便地通过凸函数的**下水平集**(`below sets`)定义凸集。具体来说，给定一个定义在凸集{% mathjax %}mathcal{X}{% endmathjax %}上的凸函数{% mathjax %}f{% endmathjax %}，其任意一个下水平集：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathcal{S}_b := \{x|x\in \mathcal{X}\;\text{and}\;f(x)\leq b\}
+{% endmathjax %}
+是凸的。让我们快速证明一下。对于任何{% mathjax %}x,x'\in \mathcal{S}_b{% endmathjax %}，我们需要证明：当{% mathjax %}\lambda\in[0,1]{% endmathjax %}时，{% mathjax %}\lambda x + (1 - \lambda)x'\in \mathcal{S}_b{% endmathjax %}。因为{% mathjax %}f(x) \leq b{% endmathjax %}且{% mathjax %}f(x') \leq b{% endmathjax %}，所以：
+{% mathjax '{"conversion":{"em":14}}' %}
+f(\lambda x + (1 - \lambda)x') \leq \lambda f(x) + (1 - \lambda)f(x') \leq b
+{% endmathjax %}
+###### 凸性和二阶导数
+
