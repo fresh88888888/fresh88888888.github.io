@@ -103,4 +103,13 @@ E_{Y\sim P(Y)}[-\log P(X|Y)]\geq -\log P(X)
 
 ###### 局部极小值是全局极小值
 
-首先凸函数的局部极小值也是全局极小值。下面我们用反证法给出证明。
+首先凸函数的局部极小值也是全局极小值。下面我们用反证法给出证明。假设{% mathjax %}x^{\ast}\in \mathcal{X}{% endmathjax %}是一个局部最小值，则存在一个很小的正值{% mathjax %}p{% endmathjax %}，使得当{% mathjax %}x\in \mathcal{X}{% endmathjax %}满足{% mathjax %}0 < |x - x^{\ast}| \leq p{% endmathjax %}时，有f{% mathjax %}f(x^{\ast}) < f(x){% endmathjax %}。现在假设局部极小值{% mathjax %}x^{\ast}{% endmathjax %}不是{% mathjax %}f{% endmathjax %}的全局极小值：存在{% mathjax %}x'\in \mathcal{X}{% endmathjax %}使得{% mathjax %}f(x') < f(x^{\ast}){% endmathjax %}。则存在{% mathjax %}\lambda \in [0,1){% endmathjax %}，比如{% mathjax %}\lambda = 1 - \frac{p}{|x^{\ast} - x'|}{% endmathjax %}，使得{% mathjax %}0 < |\lambda x^{\ast} + (1 - \lambda)x' - x^{\ast}| \leq p{% endmathjax %}。然而根据凸性的性质有：
+{% mathjax '{"conversion":{"em":14}}' %}
+f(\lambda x^{\ast} + (1 - \lambda)x') \leq \lambda f(x^{\ast}) + (1 - \lambda)f(x') < \lambda f(x^{\ast}) + (1-\lambda)f(x^{\ast}) = f(x^{\ast})
+{% endmathjax %}
+这与{% mathjax %}x^{\ast}{% endmathjax %}是局部最小值相矛盾。因此，不存在{% mathjax %}x'\in \mathcal{X}{% endmathjax %}满足{% mathjax %}f(x') < f(x^{\ast}){% endmathjax %}。综上所述，局部最小值{% mathjax %}x^{\ast}{% endmathjax %}也是全局最小值。例如，对于凸函数{% mathjax %}f(x) = (x - 1)^2{% endmathjax %}，有一个局部最小值{% mathjax %}x = 1{% endmathjax %}，它也是全局最小值。
+{% asset_img oa_7.png %}
+
+凸函数的局部最小值也是全局最小值这一性质很方便。这意味着如果我们最小化函数，我们就不会“卡住”。但是请注意，这并不能意味着不能有多个全局最小值，或者可能不存在一个全局最小值。例如，函数{% mathjax %}f(x) = \max(|x| - 1,0){% endmathjax %}在{% mathjax %}[-1,1]{% endmathjax %}区间上的都是最小值。相反，函数{% mathjax %}f(x) = \exp(x){% endmathjax %}在{% mathjax %}\mathbb{R}{% endmathjax %}上没有取得最小值。对于{% mathjax %}x\rightarrow -\infty{% endmathjax %}，它趋近于0，但是没有{% mathjax %}f(x) = 0{% endmathjax %}的{% mathjax %}x{% endmathjax %}。
+###### 凸函数的下水平集是凸的
+
