@@ -123,3 +123,50 @@ f(\lambda x + (1 - \lambda)x') \leq \lambda f(x) + (1 - \lambda)f(x') \leq b
 {% endmathjax %}
 ###### 凸性和二阶导数
 
+当一个函数的二阶导数{% mathjax %}f:\mathbb{R}^n\rightarrow \mathbb{R}{% endmathjax %}存在时，我们很容易检查这个函数的凸性。我们需要做的就是检查{% mathjax %}\nabla^2 f\succeq 0{% endmathjax %}，即对于所有{% mathjax %}\mathbf{x}\in \mathbb{R}^n, \mathbf{x}^{\mathsf{T}}\mathbf{Hx}\geq 0{% endmathjax %}例如，函数{% mathjax %}f(x) \frac{1}{2}\lVert\mathbf{x}\rVert^2{% endmathjax %}是凸的，因为{% mathjax %}\succeq^2 f = 1{% endmathjax %}，即其导数是单位矩阵。更正式地讲，{% mathjax %}f{% endmathjax %}为凸函数，当且仅当任意二次可微一维函数{% mathjax %}f:\mathcal{R}^n\rightarrow\mathcal{R}{% endmathjax %}，它是凸的当且仅当它的{% mathjax %}\text{Hession}\nabla^2 f\succeq 0{% endmathjax %}。首先我们来证明一下一维情况。为了证明凸函数的{% mathjax %}f''(x)\geq 0{% endmathjax %}，我们使用：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{1}{2}f(x + \epsilon) + \frac{1}{2}f(x - \epsilon) \geq f(\frac{x + \epsilon}{2}, frac{x - \epsilon}{2}) = f(x)
+{% endmathjax %}
+因为二阶导数是由有限差分的极限给出的，所以遵循：
+{% mathjax '{"conversion":{"em":14}}' %}
+f''(x) = \lim_{\epsilon\rightarrow 0} \frac{f(x + \epsilon) + f(x - \epsilon) - 2f(x)}{\epsilon^2} \geq 0
+{% endmathjax %}
+为了证明{% mathjax %}f''\geq 0{% endmathjax %}可以推导{% mathjax %}f{% endmathjax %}是凸的，我们使用这样一个事{% mathjax %}f''\geq 0{% endmathjax %}意味着{% mathjax %}f'{% endmathjax %}是一个单调的非递减函数。假设{% mathjax %}a < x < b{% endmathjax %}是{% mathjax %}\mathbb{R}{% endmathjax %}中的三个点，其中，{% mathjax %}x = (1 - \lambda)a + \lambda b{% endmathjax %}且{% mathjax %}\lambda\in (0,1){% endmathjax %}，根据中值定理，存在{% mathjax %}\alpha\in [a,x]，\beta\in [x,b]{% endmathjax %}，使得
+{% mathjax '{"conversion":{"em":14}}' %}
+f'(\alpha) = \frac{f(x) - f(a)}{x - a}\;且\;f'(\beta) \frac{f(b) - f(x)}{b - x}
+{% endmathjax %}
+通过单调性{% mathjax %}f'(\beta)\geq f'(\alpha){% endmathjax %}，因此
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{x - a}{b - a}f(b) + frac{b - x}{b - a}f(a)\geq f(x)
+{% endmathjax %}
+由于{% mathjax %}x = (1 - \lambda)a + \lambda b{% endmathjax %}，所以
+{% mathjax '{"conversion":{"em":14}}' %}
+\lambda f(b) + (1 - \lambda)f(a) \geq f((1 - \lambda)a + \lambda b)
+{% endmathjax %}
+从而证明了凸性。第二，我们需要一个引理证明多维情况：{% mathjax %}f:\mathbb{R}^n\rightarrow \mathbb{R}{% endmathjax %}是凸的当且仅当对于所有{% mathjax %}\mathbf{x},\mathbf{y}\in \mathbb{R}^n{% endmathjax %}
+{% mathjax '{"conversion":{"em":14}}' %}
+g(z) = \underset{=}{\text{def}}f(z\mathbf{x} + (1 - z)\mathbf{y})\;\text{where}\;z\in [0,1]
+{% endmathjax %}
+是凸的，为了证明{% mathjax %}f{% endmathjax %}的凸性意味着{% mathjax %}g{% endmathjax %}是凸的，我们可以证明，对于所有的{% mathjax %}a,b,\lambda \in [0,1]{% endmathjax %}（这样有{% mathjax %}0\leq \lambda a + (1 - \lambda)b \leq 1{% endmathjax %}）：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+&g(\lambda a + (1 - \lambda)b)  \\ 
+&= f((\lambda a + (1 - \lambda)b)\mathbf{x} + (1 - \lambda a - (1 - \lambda)b)\mathbf{y}) \\ 
+&= f(\lambda(a\mathbf{x} + (1 - a)\mathbf{y}) + (1 - \lambda)(b\mathbf{x} + (1 - b)\mathbf{y})) \\
+&\leq \lambda f(a\mathbf{x} + (1 - a)\mathbf{y}) + (1 - \lambda)f(b\mathbf{x} + (1 - b)\mathbf{y}) \\
+&= \lambda g(a) + (1 -\lambda)g(b)
+\end{align}
+{% endmathjax %}
+为了证明这一点，我们可以证明对{% mathjax %}[0,1]{% endmathjax %}中的所有{% mathjax %}\lambda{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+& f(\lambda\mathbf{x} + (1 - \lambda)\mathbf{y}) \\ 
+&= g(\lambda\cdot 1 + (1 - \lambda)\cdot 0) \\ 
+&\leq \lambda g(1) + (1 - \lambda)g(0) \\
+&= \lambda f(\mathbf{x}) + (1 - \lambda)f(\mathbf{y}) \\
+\end{align}
+{% endmathjax %}
+最后，利用上面的引理和一维情况的结果，我们可以证明多维情况：多维函数{% mathjax %}f:\mathbb{R}^n\rightarrow \mathbb{R}{% endmathjax %}是凸函数，当且仅当{% mathjax %}g(z)\underset{=}{\text{def}} = f(x\mathbf{x} + (1 - z)\mathbf{y}){% endmathjax %}是凸的，这里{% mathjax %}z\in[0,1]，\mathbf{x},\mathbf{y}\in \mathbb{R}^n{% endmathjax %}。根据一维情况，此条成立的条件为，当且仅当对于所有{% mathjax %}\mathbf{x},\mathbf{y}\in \mathbb{R}^n, g'' = (\mathbf{x} - \mathbf{y})^{\mathsf{T}}\mathbf{H}(\mathbf{x} - \mathbf{y})\geq 0 \;(\mathbf{H}\underset{=}{\text{def}} = \nabla^2 f){% endmathjax %}。这相当于根据半正定矩阵的定义，{% mathjax %}\mathbf{H}\succeq 0{% endmathjax %}。
+##### 约束
+
+凸优化的一个很好的特性是能够让我们有效地处理**约束**(`constraints`)。即它使我们能够解决以下形式的**约束优化**(`constrained optimization`)问题：
