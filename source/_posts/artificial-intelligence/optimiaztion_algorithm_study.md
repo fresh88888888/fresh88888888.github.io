@@ -289,3 +289,6 @@ show_trace(gd(2, f_grad), f)
 ##### 多元梯度下降
 
 现在我们对单变量的情况有了更好的理解，让我们考虑一下{% mathjax %}\mathbf{x} = [x_1,x_2,\ldots,x_d]^{\mathsf{T}}{% endmathjax %}的情况，即目标函数{% mathjax %}f:\mathbb{R}\rightarrow \mathbb{R}{% endmathjax %}将向量映射成标量。相应地，它的梯度也是多元的，它是一个由{% mathjax %}d{% endmathjax %}个偏导数组成的向量：
+{% mathjax '{"conversion":{"em":14}}' %}
+\nablaf(\mathbf{x}) = [\frac{\partial f(\mathbf{x})}{\partial x_1},\frac{\partial f(\mathbf{x})}{\partial x_2},\ldots,\frac{\partial f(\mathbf{x})}{\partial x_d}]^{\mathsf{T}}
+{% endmathjax %}
