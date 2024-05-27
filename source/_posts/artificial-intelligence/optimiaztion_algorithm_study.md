@@ -292,3 +292,66 @@ show_trace(gd(2, f_grad), f)
 {% mathjax '{"conversion":{"em":14}}' %}
 \nabla f(\mathbf{x}) = [\frac{\partial f(\mathbf{x})}{\partial x_1},\frac{\partial f(\mathbf{x})}{\partial x_2},\ldots,\frac{\partial f(\mathbf{x})}{\partial x_d}]^{\mathsf{T}}
 {% endmathjax %}
+梯度中的每个偏导数元素{% mathjax %}\partial f(\mathbf{x})/\partial x_i{% endmathjax %}代表了当输入{% mathjax %}x_i{% endmathjax %}时{% mathjax %}f{% endmathjax %}在{% mathjax %}\mathbf{x}{% endmathjax %}处的变化率。和先前单变量的情况一样，我们可以对多变量函数使用相应的泰勒近似来思考。具体来说，
+{% mathjax '{"conversion":{"em":14}}' %}
+f(\mathbf{x} + \matbf{\epsilon}) = f(\mathbf{x}) + \mathbf{\epsilon}^{\mathsf{T}}\nabla f(\mathbf{x}) + \mathcal{O}(\lVert\mathbf{\epsilon}\rVert^2)
+{% endmathjax %}
+换句话说，在{% mathjax %}\mathbf{\epsilon}{% endmathjax %}在二阶项中，最陡下降的方向由负梯度{% mathjax %}-\nabla f(\mathbf{x}){% endmathjax %}得出。选择合适的学习率{% mathjax %}\eta > 0{% endmathjax %}来生成典型的梯度下降算法：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{x}\leftarrow \mathbf{x} - \eta\nabla f(\mathbf{x})
+{% endmathjax %}
+这个算法在实践中的表现如何呢？我们构造一个目标函数{% mathjax %}f(\mathbf{x}) = x_1^2 + 2x_2^2{% endmathjax %}，并由二维向量{% mathjax %}\mathbf{x} = [x_1,x_2]^{\mathsf{T}}{% endmathjax %}作为输入，标量作为输出。梯度由{% mathjax %}\nabla f(\mathbf{x}) = [2x_1,4x_2]^{\mathsf{T}}{% endmathjax %}给出。我们将从初始位置{% mathjax %}[-5,-2]{% endmathjax %}通过梯度下降观察{% mathjax %}x{% endmathjax %}的轨迹。接下来，我们观察学习率{% mathjax %}\eta= 0.1{% endmathjax %}时优化变量{% mathjax %}x{% endmathjax %}的轨迹。可以看到，经过`20`步之后，{% mathjax %}x{% endmathjax %}的值接近其位于[0,0]的最小值。虽然进展相当顺利，但相当缓慢。
+{% asset_img oa_13.png %}
+
+##### 自适应方法
+
+选择“恰到好处”的学习率{% mathjax %}\eta{% endmathjax %}是很棘手的。如果我们把它选得太小，就没有什么进展；如果太大，得到的解就会振荡，甚至可能发散。如果我们可以自动确定{% mathjax %}\eta{% endmathjax %}，或者完全不必选择学习率，会怎么样？除了考虑目标函数的值和梯度、还考虑它的曲率的二阶方法可以帮我们解决这个问题。虽然由于计算代价的原因，这些方法不能直接应用于深度学习，但它们为如何设计高级优化算法提供了有用的思维直觉，这些算法可以模拟下面概述的算法的许多理想特性。
+###### 牛顿法
+
+回顾一下函数{% mathjax %}f:\mathbb{R}^d\rightarrow \mathbb{R}{% endmathjax %}的泰勒展开式，事实上我们可以把它写成：
+{% mathjax '{"conversion":{"em":14}}' %}
+f(\mathbf{x} + \mathbf{\epsilon}) = f(\mathbf{x}) + \mathbf{\epsilon}^{\mathsf{T}}\nabla f(\mathbf{x}) \frac{1}{2}\mathbf{\epsilon}^{\mathsf{T}}\nabla^2 f(\mathbf{x})\epsilon + \mathcal{O}(\lVert\epsilon\rVert^3)
+{% endmathjax %}
+为了避免繁琐的符号，我们将{% mathjax %}\mathbf{H} = \underset{=}{\text{def}} = \nabla^2 f(\mathbf{x}){% endmathjax %}定义为{% mathjax %}f{% endmathjax %}的`Hessian`，是{% mathjax %}d\times d{% endmathjax %}矩阵。当{% mathjax %}d{% endmathjax %}的值很小且问题很简单时，{% mathjax %}\mathbf{H}{% endmathjax %}很容易计算。但是对于深度神经网络而言，考虑到{% mathjax %}\mathbf{H}{% endmathjax %}可能非常大，{% mathjax %}\mathcal{O}(d^2){% endmathjax %}哥条目的存储代价非常大，此外通过反向传播计算可能雪上加霜。然而，我们姑且先忽略这些考量，看看会得到什么算法。毕竟，{% mathjax %}f{% endmathjax %}的最小值满足{% mathjax %}\nabla f = 0{% endmathjax %}，忽略不重要的高阶项，我们便得到：
+{% mathjax '{"conversion":{"em":14}}' %}
+\nabla f(x) + \mathbf{H}\mathbf{\epsilon} = 0\;\text{and hence }\mathbf{\epsilon} = -\mathbf{H}^{-1}\nabla f(\mathbf{x})
+{% endmathjax %}
+也就是说，作为优化问题的一部分，我们需要将`Hessian`矩阵{% mathjax %}\mathbf{H}{% endmathjax %}求逆。
+###### 收敛性分析
+
+在此，我们以部分目标凸函数{% mathjax %}f{% endmathjax %}为例，分析它们的牛顿法收敛速度。这些目标凸函数三次可微，而且二阶导数不为零，即{% mathjax %}f'' > 0{% endmathjax %}。由于多变量情况下的证明是对以下一维参数情况证明的直接拓展，对我们理解这个问题不能提供更多帮助，因此我们省略了多变量情况的证明。用{% mathjax %}x^{(k)}{% endmathjax %}表示{% mathjax %}x{% endmathjax %}在第{% mathjax %}k^{\text{th}}{% endmathjax %}次迭代的值，令{% mathjax %}e^{(k)}\underset{=}{\text{def}} x^{(k)} - x_{\ast}{% endmathjax %}表示{% mathjax %}k^{\text{th}}{% endmathjax %}迭代时与最优性的距离。通过泰勒展开，我们得到条件{% mathjax %}f'(x^{\ast}) = 0{% endmathjax %}可以写成：
+{% mathjax '{"conversion":{"em":14}}' %}
+0 = f'(x^{(k)} - e^{(k)}) = f'(x^{(k)}) - e^{(k)}f''(x^{(k)}) \frac{1}{2}(e^{(k)})^2 f'''(\xi^{(k)})
+{% endmathjax %}
+这对某些{% mathjax %}\xi^{(k)}\in [x^{(k)} - e^{(k)}, x^{(k)}]{% endmathjax %}成立。将上述展开除以{% mathjax %}f''(x^{(k)}){% endmathjax %}得到
+{% mathjax '{"conversion":{"em":14}}' %}
+e^{(k)} - \frac{'(x^{(k)})}{f''(x^{}(k))} = \frac{1}{2}(e^{(k)})^2\frac{f'''(\xi^{(k)})}{f''(x^{(k)})}
+{% endmathjax %}
+回想之前的方程{% mathjax %}x^{(k+1)} = x^{(k)} - f'(x^{(k)})/f''(x^{(k)}){% endmathjax %}。带入这个更新方程，去两边的绝对值，我们得到：
+{% mathjax '{"conversion":{"em":14}}' %}
+|e^{(k + 1)}| \frac{1}{2}(e^{(k)})^2\frac{|f'''(\xi^{(k)})|}{f''(x^{(k)})}
+{% endmathjax %}
+因此，每当我们处于有界区域{% mathjax %}|f'''(\xi^{(k)})|/(2f''(x^{(k)})) \leq c{% endmathjax %}，我们就有一个二次递减误差：
+{% mathjax '{"conversion":{"em":14}}' %}
+|e^{(k+1)}| \leq c(e^{(k)})^2
+{% endmathjax %}
+另一方面，优化研究人员称之为“线性”收敛，而将{% mathjax %}|e^{(k+1)}| \leq \alpha|e^{(k)}|{% endmathjax %}这样的条件称为“恒定”收敛速度。请注意，我们无法估计整体收敛的速度，但是一旦我们接近极小值，收敛将变得非常快。另外，这种分析要求{% mathjax %}f{% endmathjax %}在高阶导数上表现良好，即确保{% mathjax %}f{% endmathjax %}在如何变化它的值方面没有任何“超常”的特性。
+######  预处理
+
+计算和存储完整的`Hessian`非常昂贵，而改善这个问题的一种方法是“预处理”。 它回避了计算整个`Hessian`，而只计算“对角线”项，即如下的算法更新：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{x} \leftarrow \mathbf{x} - \eta\text{diag}(\mathbf{H})^{-1}\nabla f(\mathbf{x})
+{% endmathjax %}
+虽然这不如完整的牛顿法精确，但它仍然比不使用要好得多。为什么预处理有效呢？假设一个变量以毫米表示高度，另一个变量以公里表示高度的情况。假设这两种自然尺度都以米为单位，那么我们的参数化就出现了严重的不匹配。幸运的是，使用预处理可以消除这种情况。梯度下降的有效预处理相当于为每个变量选择不同的学习率（矢量{% mathjax %}\mathbf{x}{% endmathjax %}的坐标）。
+###### 梯度下降和线搜索
+
+梯度下降的一个关键问题是我们可能会超过目标或进展不足，解决这一问题的简单方法是结合使用线搜索和梯度下降。也就是说，我们使用{% mathjax %}\nabla f(\mathbf{x}){% endmathjax %}给出的方向，然后进行二分搜索，以确定哪个学习率{% mathjax %}\eta{% endmathjax %}使{% mathjax %}f(\mathbf{x} - \eta\nablaf(\mathbf{x})){% endmathjax %}取最小值。有关分析和证明，此算法收敛迅速。然而，对深度学习而言，这不太可行。因为线搜索的每一步都需要评估整个数据集上的目标函数，实现它的方式太昂贵了。
+##### 总结
+
+学习率的大小很重要：学习率太大会使模型发散，学习率太小会没有进展。梯度下降会可能陷入局部极小值，而得不到全局最小值。在高维模型中，调整学习率是很复杂的。预处理有助于调节比例。牛顿法在凸问题中一旦开始正常工作，速度就会快得多。对于非凸问题，不要不作任何调整就使用牛顿法。
+
+#### 随机梯度下降
+
+##### 随机梯度更新
+
+在深度学习中，目标函数通常是训练数据集中每个样本的损失函数的平均值。给定{% mathjax %}n{% endmathjax %}个样本的训练数据集，我们假设{% mathjax %}f_i(\mathbf{x}){% endmathjax %}是关于索引{% mathjax %}i{% endmathjax %}的训练样本的损失函数，其中{% mathjax %}\mathbf{x}{% endmathjax %}是参数向量。然后我们得到目标函数。
