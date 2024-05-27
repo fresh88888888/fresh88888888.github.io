@@ -186,17 +186,17 @@ L(\mathbf{x},\alpha_1,\ldots,\alpha_n) = f(\mathbf{x}) + \sum_{i=1}^n \alpha_ic_
 一种至少近似地满足约束优化问题的方法是采用拉格朗日函数{% mathjax %}L{% endmathjax %}。除了满足{% mathjax %}c_i(\mathbf{x})\leq 0{% endmathjax %}之外，我们只需将{% mathjax %}\alpha_ic_i(\mathbf{x}){% endmathjax %}添加到目标函数{% mathjax %}f(x){% endmathjax %}。这样可以确保不会严重违反约束。事实上，我们一直在使用这个技巧。在目标函数中加入{% mathjax %}\frac{\lambda}{2}|\mathbf{w}|^2{% endmathjax %}，以确保{% mathjax %}\mathbf{w}{% endmathjax %}不会增长太大。使用约束优化的观点，我们可以看到，对于若干半径{% mathjax %}r{% endmathjax %}，这将确保{% mathjax %}|\mathbf{w}|^2 - r^2 \leq 0{% endmathjax %}。通过调整{% mathjax %}\lambda{% endmathjax %}的值，我们可以改变{% mathjax %}\mathbf{w}{% endmathjax %}的大小。通常，添加惩罚是确保近似满足约束的一种好方法。在实践中，这被证明比精确的满意度更可靠。此外，对于非凸问题，许多使精确方法在凸情况下的性质（例如，可求最优解）不再成立。
 ###### 投影
 
-满足约束条件的另一种策略是**投影**(projections)。同样，我们之前也遇到过，我们通过：
+满足约束条件的另一种策略是**投影**(`projections`)。同样，我们之前也遇到过，我们通过：
 {% mathjax '{"conversion":{"em":14}}' %}
 \mathbf{g}\leftarrow \mathbf{g}\cdot\min (1,\theta/\lVert\mathbf{g}\rVert)
 {% endmathjax %}
-确保梯度的长度以{% mathjax %}\theta{% endmathjax %}为界限。这就是在半径为{% mathjax %}\theta{% endmathjax %}的球上的投影（projection）。 更泛化地说，在凸集{% mathjax %}\mathcal{X}{% endmathjax %}上的投影被定义为：
+确保梯度的长度以{% mathjax %}\theta{% endmathjax %}为界限。这就是在半径为{% mathjax %}\theta{% endmathjax %}的球上的投影(`projection`)。更泛化地说，在凸集{% mathjax %}\mathcal{X}{% endmathjax %}上的投影被定义为：
 {% mathjax '{"conversion":{"em":14}}' %}
 \text{Proj}_{\mathcal{X}}(\mathbf{x}) = \underset{x'\in \mathcal{X}}{\text{argmin}}\lVert \mathbf{x} - \mathbf{x}'\rVert
 {% endmathjax %}
 {% asset_img oa_8.png "Convex Projections" %}
 
-图中有两个凸集，一个圆和一个菱形。 两个集合内的点（黄色）在投影期间保持不变。两个集合（黑色）之外的点投影到集合中接近原始点（黑色）的点（红色）。虽然对{% mathjax %}L_2{% endmathjax %}的球面来说，方向保持不变，但一般情况下不需要这样。凸投影的一个用途是计算稀疏权重向量。在本例中，我们将权重向量投影到一个{% mathjax %}L_1{% endmathjax %}的球上，这是上图中菱形例子的一个广义版本。
+图中有两个凸集，一个圆和一个菱形。两个集合内的点（黄色）在投影期间保持不变。两个集合（黑色）之外的点投影到集合中接近原始点（黑色）的点（红色）。虽然对{% mathjax %}L_2{% endmathjax %}的球面来说，方向保持不变，但一般情况下不需要这样。凸投影的一个用途是计算稀疏权重向量。在本例中，我们将权重向量投影到一个{% mathjax %}L_1{% endmathjax %}的球上，这是上图中菱形例子的一个广义版本。
 ##### 总结
 
 在深度学习的背景下，凸函数的主要目的是帮助我们详细了解优化算法。我们由此得出梯度下降法和随机梯度下降法是如何相应推导出来的。凸集的交点是凸的，并集不是。根据詹森不等式，“一个多变量凸函数的总期望值”大于或等于“用每个变量的期望值计算这个函数的总值“。一个二次可微函数是凸函数，当且仅当其`Hessian`（二阶导数矩阵）是半正定的。凸约束可以通过拉格朗日函数来添加。在实践中，只需在目标函数中加上一个惩罚就可以了。投影映射到凸集中最接近原始点的点。
