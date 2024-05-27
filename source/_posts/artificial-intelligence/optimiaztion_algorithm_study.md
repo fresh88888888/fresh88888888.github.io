@@ -210,7 +210,7 @@ L(\mathbf{x},\alpha_1,\ldots,\alpha_n) = f(\mathbf{x}) + \sum_{i=1}^n \alpha_ic_
 {% mathjax '{"conversion":{"em":14}}' %}
 f(x + \epsilon) = f(x) + \epsilon f'(x) + \mathcal{O}(\epsilon^2)
 {% endmathjax %}
-即在一阶近似中，f(x + \epsilon)可通过{% mathjax %}x{% endmathjax %}处的函数值{% mathjax %}f(x){% endmathjax %}和一阶导数{% mathjax %}f'(x){% endmathjax %}得出。我们可以假设在负梯度方向上移动的{% mathjax %}\epsilon{% endmathjax %}会减少{% mathjax %}f{% endmathjax %}。为了简单起见，我们选择固定步长{% mathjax %}\eta > 0{% endmathjax %}，然后取{% mathjax %}\epsilon = -\eta f'(x){% endmathjax %}。将其代入泰勒展开式我们可以得到：
+即在一阶近似中，{% mathjax %}f(x + \epsilon){% endmathjax %}可通过{% mathjax %}x{% endmathjax %}处的函数值{% mathjax %}f(x){% endmathjax %}和一阶导数{% mathjax %}f'(x){% endmathjax %}得出。我们可以假设在负梯度方向上移动的{% mathjax %}\epsilon{% endmathjax %}会减少{% mathjax %}f{% endmathjax %}。为了简单起见，我们选择固定步长{% mathjax %}\eta > 0{% endmathjax %}，然后取{% mathjax %}\epsilon = -\eta f'(x){% endmathjax %}。将其代入泰勒展开式我们可以得到：
 {% mathjax '{"conversion":{"em":14}}' %}
 f(x - \eta f'(x)) = f(x) -\eta f'^2(x) + \mathcal{O}(\eta^2 f'^2(x))
 {% endmathjax %}
@@ -220,7 +220,7 @@ f(x - \eta f'(x)) \lessapprox f(x)
 {% endmathjax %}
 这意味着，如果我们使用：
 {% mathjax '{"conversion":{"em":14}}' %}
-x \leftarrow x - \etaf'(x)
+x \leftarrow x - \eta f'(x)
 {% endmathjax %}
 来迭代{% mathjax %}x{% endmathjax %}，函数{% mathjax %}f(x){% endmathjax %}的值可能会下降。因此，在梯度下降中，我们首先选择初始值{% mathjax %}x{% endmathjax %}和常数{% mathjax %}\eta > 0{% endmathjax %}，然后使用它们连续迭代{% mathjax %}x{% endmathjax %}，直到停止条件达成，例如，当梯度{% mathjax %}|f'(x)|{% endmathjax %}的幅度足够小或迭代次数达到某个值时。
 下面我们来展示如何实现梯度下降。为了简单起见，我们选用目标函数{% mathjax %}f(x) = x^2{% endmathjax %}。尽管我们知道{% mathjax %}x = 0{% endmathjax %}时{% mathjax %}f(x){% endmathjax %}能取得最小值，但我们仍然使用这个简单的函数来观察{% mathjax %}x{% endmathjax %}的变化。
