@@ -204,3 +204,88 @@ L(\mathbf{x},\alpha_1,\ldots,\alpha_n) = f(\mathbf{x}) + \sum_{i=1}^n \alpha_ic_
 #### 梯度下降
 
 尽管**梯度下降**(`gradient descent`)很少直接用于深度学习，但了解它是理解随机梯度下降算法的关键。例如，由于学习率过大，优化问题可能会发散，这种现象早已在梯度下降中出现。同样地，**预处理**(`preconditioning`)是梯度下降中的一种常用技术，还被沿用到更高级的算法中。让我们从简单的一维梯度下降开始。
+##### 一维梯度下降
+
+为什么梯度下降算法可以优化目标函数？一维中的梯度下降给我们很好的启发。考虑一类连续可微实值函数{% mathjax %}f:\mathbb{R}\rightarrow \mathbb{R}{% endmathjax %}，利用泰勒展开，我们可以得到：
+{% mathjax '{"conversion":{"em":14}}' %}
+f(x + \epsilon) = f(x) + \epsilon f'(x) + \mathcal{O}(\epsilon^2)
+{% endmathjax %}
+即在一阶近似中，f(x + \epsilon)可通过{% mathjax %}x{% endmathjax %}处的函数值{% mathjax %}f(x){% endmathjax %}和一阶导数{% mathjax %}f'(x){% endmathjax %}得出。我们可以假设在负梯度方向上移动的{% mathjax %}\epsilon{% endmathjax %}会减少{% mathjax %}f{% endmathjax %}。为了简单起见，我们选择固定步长{% mathjax %}\eta > 0{% endmathjax %}，然后取{% mathjax %}\epsilon = -\eta f'(x){% endmathjax %}。将其代入泰勒展开式我们可以得到：
+{% mathjax '{"conversion":{"em":14}}' %}
+f(x - \eta f'(x)) = f(x) -\eta f'^2(x) + \mathcal{O}(\eta^2 f'^2(x))
+{% endmathjax %}
+如果其导数{% mathjax %}f'(x)\neq 0{% endmathjax %}没有消失，我们就能继续展开，这是因为{% mathjax %}\eta f'^2(x) > 0{% endmathjax %}。此外，我们总是可以令{% mathjax %}\eta{% endmathjax %}小到足以使高阶项变得不相关。因此：
+{% mathjax '{"conversion":{"em":14}}' %}
+f(x - \eta f'(x)) \lessapprox f(x)
+{% endmathjax %}
+这意味着，如果我们使用：
+{% mathjax '{"conversion":{"em":14}}' %}
+x \leftarrow x - \etaf'(x)
+{% endmathjax %}
+来迭代{% mathjax %}x{% endmathjax %}，函数{% mathjax %}f(x){% endmathjax %}的值可能会下降。因此，在梯度下降中，我们首先选择初始值{% mathjax %}x{% endmathjax %}和常数{% mathjax %}\eta > 0{% endmathjax %}，然后使用它们连续迭代{% mathjax %}x{% endmathjax %}，直到停止条件达成，例如，当梯度{% mathjax %}|f'(x)|{% endmathjax %}的幅度足够小或迭代次数达到某个值时。
+下面我们来展示如何实现梯度下降。为了简单起见，我们选用目标函数{% mathjax %}f(x) = x^2{% endmathjax %}。尽管我们知道{% mathjax %}x = 0{% endmathjax %}时{% mathjax %}f(x){% endmathjax %}能取得最小值，但我们仍然使用这个简单的函数来观察{% mathjax %}x{% endmathjax %}的变化。
+```python
+import numpy as np
+import tensorflow as tf
+import matplotlib.pyplot as plt
+
+def f(x):  # 目标函数
+    return x ** 2
+
+def f_grad(x):  # 目标函数的梯度(导数)
+    return 2 * x
+
+def gd(eta, f_grad):
+    x = 10.0
+    results = [x]
+    for i in range(10):
+        x -= eta * f_grad(x)
+        results.append(float(x))
+    return results
+
+# 我们使用x = 10, 并假设eta = 0.2, 使用梯度下降法迭代x共10次，x的值最终将接近最优解。
+results = gd(0.2, f_grad)
+
+def show_trace(results, f):
+    n = max(abs(min(results)), abs(max(results)))
+    f_line = tf.range(-n, n, 0.01)
+    plt.figure(figsize=(10, 6))
+    plt.plot([f_line, results], [[f(x) for x in f_line], [f(x) for x in results]], 'x', 'f(x)', fmts=['-', '-o'])
+
+show_trace(results, f)
+```
+{% asset_img oa_9.png %}
+
+###### 学习率
+
+**学习率**(`learning rate`)决定目标函数能否收敛到局部最小值，以及何时收敛到最小值。学习率{% mathjax %}\eta{% endmathjax %}可由算法设计者设置。请注意，如果我们使用的学习率太小，将导致{% mathjax %}x{% endmathjax %}的更新非常缓慢，需要更多的迭代。例如，考虑同一优化问题中{% mathjax %}\eta = 0.05{% endmathjax %}的进度。如下所示，尽管经过了`10`个步骤，我们仍然离最优解很远。
+```python
+show_trace(gd(0.05, f_grad), f)
+```
+{% asset_img oa_10.png %}
+
+相反，如果我们使用过高的学习率，{% mathjax %}|\eta f'(x)|{% endmathjax %}对于一级泰勒展开式可能太大，也就是说{% mathjax %}\mathcal{O}(\eta^2f'^2(x)){% endmathjax %}可能变得显著了，在这种情况下{% mathjax %}x{% endmathjax %}的迭代不能保证降低{% mathjax %}f(x){% endmathjax %}的值。例如，当学习率{% mathjax %}\eta= 1.1{% endmathjax %}，{% mathjax %}x{% endmathjax %}超出了最优解{% mathjax %}x = 0{% endmathjax %}并逐渐发散。
+```python
+show_trace(gd(1.1, f_grad), f)
+```
+{% asset_img oa_11.png %}
+
+###### 局部最小值
+
+为了演示非凸函数的梯度下降，考虑函数{% mathjax %}f(x) = x\cdot \cos(cx){% endmathjax %}，其中{% mathjax %}c{% endmathjax %}为某常数。这个函数有无穷多个局部最小值。根据我们选择的学习率，我们最终可能只会得到许多解的一个。下面的例子说明了（不切实际的）高学习率如何导致较差的局部最小值。
+```python
+c = tf.constant(0.15 * np.pi)
+
+def f(x):  # 目标函数
+    return x * tf.cos(c * x)
+
+def f_grad(x):  # 目标函数的梯度
+    return tf.cos(c * x) - c * x * tf.sin(c * x)
+
+show_trace(gd(2, f_grad), f)
+```
+{% asset_img oa_12.png %}
+
+##### 多元梯度下降
+
+现在我们对单变量的情况有了更好的理解，让我们考虑一下{% mathjax %}\mathbf{x} = [x_1,x_2,\ldots,x_d]^{\mathsf{T}}{% endmathjax %}的情况，即目标函数{% mathjax %}f:\mathbb{R}\rightarrow \mathbb{R}{% endmathjax %}将向量映射成标量。相应地，它的梯度也是多元的，它是一个由{% mathjax %}d{% endmathjax %}个偏导数组成的向量：
