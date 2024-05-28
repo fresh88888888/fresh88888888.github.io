@@ -492,3 +492,18 @@ n \\
 ##### 泄漏平均值
 
 我们讨论了小批量随机梯度下降作为加速计算的手段。它也有很好的副作用，即平均梯度减小了方差。小批量随机梯度下降可以通过以下方式计算：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{g}_{t,t-1} = \partial_w\frac{1}{|\mathcal{B}_t|}\sum_{i\in\mathcal{B}_t} f(\mathbf{x}_i,\mathbf{w}_{t-1}) = \frac{1}{|\mathcal{B}_t|}\sum_{i\in\mathcal{B}_t} \mathbf{h}_{i,t-1}
+{% endmathjax %}
+为了保持记法简单，在这里我们使用{% mathjax %}\mathbf{h}_{i,t-1}{% endmathjax %}作为样本{% mathjax %}i{% endmathjax %}的随机梯度下降，使用时间{% mathjax %}t-1{% endmathjax %}时更新的权重{% mathjax %}t-1{% endmathjax %}。如果我们能够从方差的减少的影响中受益，甚至超过小批量上的梯度平均值，那很不错。完成这项任务的一种选择是用**泄漏平均值**(`leaky average`)取代梯度计算：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{v}_t = \beta \mathbf{v}_{t-1} + \mathbf{g}_{t,t-1}
+{% endmathjax %}
+其中{% mathjax %}\beta\in (0,1){% endmathjax %}。这有效地将瞬时梯度有效地替换为多个“过去”梯度的平均值。{% mathjax %}v{% endmathjax %}被称为动量(`momentum`)，它累加了过去的梯度。为了更详细地解释，让我们递归地将{% mathjax %}\mathbf{v}_t{% endmathjax %}扩展到：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{v}_t = \beta^2\mathbf{v}_{t-2} + \beta\mathbf{g}_{t-1,t-2} + \mathbf{g}_{t,t-1} = \ldots, = \sum_{\tau=0}^{t-1} \beta^{\tau}\mathbf{g}_{t-\tau,t-\tau-1}
+{% endmathjax %}
+其中，较大的{% mathjax %}\beta{% endmathjax %}相当于长期平均值，而较小的{% mathjax %}\beta{% endmathjax %}相对于梯度法只是略有修正。新的梯度替换不再指向特定实例下降最陡的方向，而是指向过去梯度的加权平均值的方向。这使我们能够实现对单批量计算平均值的大部分好处，而不产生实际计算其梯度的代价。上述推理构成了“加速”梯度方法的基础，例如具有动量的梯度。在优化问题条件不佳的情况下（例如，有些方向的进展比其他方向慢得多，类似狭窄的峡谷），“加速”梯度还额外享受更有效的好处。此外，它们允许我们对随后的梯度计算平均值，以获得更稳定的下降方向。诚然，即使是对于无噪声凸问题，加速度这方面也是动量如此起效的关键原因之一。
+##### 动量法
+
+**动量法**(`momentum`)使我们能够解决上面描述的梯度下降问题。观察上面的优化轨迹，我们可能会直觉到计算过去的平均梯度效果会很好。毕竟，在{% mathjax %}x_1{% endmathjax %}方向上，这将聚合非常对齐的梯度，从而增加我们在每一步中覆盖的距离。相反，在梯度振荡的{% mathjax %}x_2{% endmathjax %}方向，由于相互抵消了对方的振荡，聚合梯度将减小步长大小。使用{% mathjax %}\mathbf{v}_t{% endmathjax %}而不是梯度{% mathjax %}\mathbf{g}_t{% endmathjax %}可以生成以下更新等式：
