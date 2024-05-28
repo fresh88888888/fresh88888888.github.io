@@ -364,7 +364,7 @@ f(\mathbf{x}) = \frac{1}{n}\sum_{i=1}^n f_i(\mathbf{x})
 {% endmathjax %}
 如果使用梯度下降法，则每个自变量迭代的计算代价为{% mathjax %}\mathcal{O}(n){% endmathjax %}，它随{% mathjax %}n{% endmathjax %}线性增长。因此，当训练数据集较大时，每次迭代的梯度下降计算代价将较高。**随机梯度下降**(`SGD`)可降低每次迭代时的计算代价。在随机梯度下降的每次迭代中，我们对数据样本随机均匀采样一个索引{% mathjax %}i{% endmathjax %}，其中{% mathjax %}i\in \{1,\ldots,n\}{% endmathjax %}，并计算梯度{% mathjax %}\nabla f_i(\mathbf{x}){% endmathjax %}以更新{% mathjax %}\mathbf{x}{% endmathjax %}：
 {% mathjax '{"conversion":{"em":14}}' %}
-\mathbf{x}\leftarrow \mathbf{x} - \eta\nabla f_i(mathbf{x})
+\mathbf{x}\leftarrow \mathbf{x} - \eta\nabla f_i(\mathbf{x})
 {% endmathjax %}
 其中{% mathjax %}\eta{% endmathjax %}是学习率。我们可以看到，每次迭代的计算代价从梯度下降的{% mathjax %}\mathcal{O}(n){% endmathjax %}将至常数{% mathjax %}\mathcal{O}(1){% endmathjax %}。此外，我们要强调，随机梯度{% mathjax %}\nabla f_i(\mathbf{x}){% endmathjax %}是对完整梯度{% mathjax %}\nabla f(\mathbf{x}){% endmathjax %}的无偏估计，因为：
 {% mathjax '{"conversion":{"em":14}}' %}
