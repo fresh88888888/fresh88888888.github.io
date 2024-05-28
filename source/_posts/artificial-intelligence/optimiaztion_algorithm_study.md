@@ -294,7 +294,7 @@ show_trace(gd(2, f_grad), f)
 {% endmathjax %}
 梯度中的每个偏导数元素{% mathjax %}\partial f(\mathbf{x})/\partial x_i{% endmathjax %}代表了当输入{% mathjax %}x_i{% endmathjax %}时{% mathjax %}f{% endmathjax %}在{% mathjax %}\mathbf{x}{% endmathjax %}处的变化率。和先前单变量的情况一样，我们可以对多变量函数使用相应的泰勒近似来思考。具体来说，
 {% mathjax '{"conversion":{"em":14}}' %}
-f(\mathbf{x} + \matbf{\epsilon}) = f(\mathbf{x}) + \mathbf{\epsilon}^{\mathsf{T}}\nabla f(\mathbf{x}) + \mathcal{O}(\lVert\mathbf{\epsilon}\rVert^2)
+f(\mathbf{x} + \mathbf{\epsilon}) = f(\mathbf{x}) + \mathbf{\epsilon}^{\mathsf{T}}\nabla f(\mathbf{x}) + \mathcal{O}(\lVert\mathbf{\epsilon}\rVert^2)
 {% endmathjax %}
 换句话说，在{% mathjax %}\mathbf{\epsilon}{% endmathjax %}在二阶项中，最陡下降的方向由负梯度{% mathjax %}-\nabla f(\mathbf{x}){% endmathjax %}得出。选择合适的学习率{% mathjax %}\eta > 0{% endmathjax %}来生成典型的梯度下降算法：
 {% mathjax '{"conversion":{"em":14}}' %}
@@ -345,7 +345,7 @@ e^{(k)} - \frac{'(x^{(k)})}{f''(x^{}(k))} = \frac{1}{2}(e^{(k)})^2\frac{f'''(\xi
 虽然这不如完整的牛顿法精确，但它仍然比不使用要好得多。为什么预处理有效呢？假设一个变量以毫米表示高度，另一个变量以公里表示高度的情况。假设这两种自然尺度都以米为单位，那么我们的参数化就出现了严重的不匹配。幸运的是，使用预处理可以消除这种情况。梯度下降的有效预处理相当于为每个变量选择不同的学习率（矢量{% mathjax %}\mathbf{x}{% endmathjax %}的坐标）。
 ###### 梯度下降和线搜索
 
-梯度下降的一个关键问题是我们可能会超过目标或进展不足，解决这一问题的简单方法是结合使用线搜索和梯度下降。也就是说，我们使用{% mathjax %}\nabla f(\mathbf{x}){% endmathjax %}给出的方向，然后进行二分搜索，以确定哪个学习率{% mathjax %}\eta{% endmathjax %}使{% mathjax %}f(\mathbf{x} - \eta\nablaf(\mathbf{x})){% endmathjax %}取最小值。有关分析和证明，此算法收敛迅速。然而，对深度学习而言，这不太可行。因为线搜索的每一步都需要评估整个数据集上的目标函数，实现它的方式太昂贵了。
+梯度下降的一个关键问题是我们可能会超过目标或进展不足，解决这一问题的简单方法是结合使用线搜索和梯度下降。也就是说，我们使用{% mathjax %}\nabla f(\mathbf{x}){% endmathjax %}给出的方向，然后进行二分搜索，以确定哪个学习率{% mathjax %}\eta{% endmathjax %}使{% mathjax %}f(\mathbf{x} - \eta\nabla f(\mathbf{x})){% endmathjax %}取最小值。有关分析和证明，此算法收敛迅速。然而，对深度学习而言，这不太可行。因为线搜索的每一步都需要评估整个数据集上的目标函数，实现它的方式太昂贵了。
 ##### 总结
 
 学习率的大小很重要：学习率太大会使模型发散，学习率太小会没有进展。梯度下降会可能陷入局部极小值，而得不到全局最小值。在高维模型中，调整学习率是很复杂的。预处理有助于调节比例。牛顿法在凸问题中一旦开始正常工作，速度就会快得多。对于非凸问题，不要不作任何调整就使用牛顿法。
