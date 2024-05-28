@@ -310,7 +310,7 @@ f(\mathbf{x} + \mathbf{\epsilon}) = f(\mathbf{x}) + \mathbf{\epsilon}^{\mathsf{T
 
 回顾一下函数{% mathjax %}f:\mathbb{R}^d\rightarrow \mathbb{R}{% endmathjax %}的泰勒展开式，事实上我们可以把它写成：
 {% mathjax '{"conversion":{"em":14}}' %}
-f(\mathbf{x} + \mathbf{\epsilon}) = f(\mathbf{x}) + \mathbf{\epsilon}^{\mathsf{T}}\nabla f(\mathbf{x}) \frac{1}{2}\mathbf{\epsilon}^{\mathsf{T}}\nabla^2 f(\mathbf{x})\epsilon + \mathcal{O}(\lVert\epsilon\rVert^3)
+f(\mathbf{x} + \mathbf{\epsilon}) = f(\mathbf{x}) + \mathbf{\epsilon}^{\mathsf{T}}\nabla f(\mathbf{x}) + \frac{1}{2}\mathbf{\epsilon}^{\mathsf{T}}\nabla^2 f(\mathbf{x})\epsilon + \mathcal{O}(\lVert\epsilon\rVert^3)
 {% endmathjax %}
 为了避免繁琐的符号，我们将{% mathjax %}\mathbf{H} = \underset{=}{\text{def}} = \nabla^2 f(\mathbf{x}){% endmathjax %}定义为{% mathjax %}f{% endmathjax %}的`Hessian`，是{% mathjax %}d\times d{% endmathjax %}矩阵。当{% mathjax %}d{% endmathjax %}的值很小且问题很简单时，{% mathjax %}\mathbf{H}{% endmathjax %}很容易计算。但是对于深度神经网络而言，考虑到{% mathjax %}\mathbf{H}{% endmathjax %}可能非常大，{% mathjax %}\mathcal{O}(d^2){% endmathjax %}哥条目的存储代价非常大，此外通过反向传播计算可能雪上加霜。然而，我们姑且先忽略这些考量，看看会得到什么算法。毕竟，{% mathjax %}f{% endmathjax %}的最小值满足{% mathjax %}\nabla f = 0{% endmathjax %}，忽略不重要的高阶项，我们便得到：
 {% mathjax '{"conversion":{"em":14}}' %}
