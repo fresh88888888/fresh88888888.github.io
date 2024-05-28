@@ -446,10 +446,10 @@ P(\text{choose }i) =  - P(\text{omit }i) = 1 - (1/n)^n \approx e^{-1} \approx 0.
 {% endmathjax %}
 类似的推理表明，挑选一些样本（即训练示例）恰好一次的概率是：
 {% mathjax '{"conversion":{"em":14}}' %}
-\begin{array}{ccc}
+\left(\begin{array}{ccc}
 n \\
 1
-\end{array}
+\end{array}\right)
 \frac{1}{n}(1 - \frac{1}{n})^{n - 1} = \frac{n}{n - 1}(1 - \frac{1}{n})^n \approx 0.37
 {% endmathjax %}
 这导致与无替换采样相比，方差增加并且数据效率降低。因此，在实践中我们执行后者。最后一点注意，重复采用训练数据集的时候，会以不同的随机顺序遍历它。
