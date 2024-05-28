@@ -355,3 +355,84 @@ e^{(k)} - \frac{'(x^{(k)})}{f''(x^{}(k))} = \frac{1}{2}(e^{(k)})^2\frac{f'''(\xi
 ##### 随机梯度更新
 
 在深度学习中，目标函数通常是训练数据集中每个样本的损失函数的平均值。给定{% mathjax %}n{% endmathjax %}个样本的训练数据集，我们假设{% mathjax %}f_i(\mathbf{x}){% endmathjax %}是关于索引{% mathjax %}i{% endmathjax %}的训练样本的损失函数，其中{% mathjax %}\mathbf{x}{% endmathjax %}是参数向量。然后我们得到目标函数。
+{% mathjax '{"conversion":{"em":14}}' %}
+f(\mathbf{x}) = \frac{1}{n}\sum_{i=1}^n f_i(\mathbf{x})
+{% endmathjax %}
+{% mathjax %}\mathbf{x}{% endmathjax %}的目标函数的梯度计算为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\nabla f(\mathbf{x}) \frac{1}{n}\sum_{i=1}^n \nabla f_i(\mathbf{x})
+{% endmathjax %}
+如果使用梯度下降法，则每个自变量迭代的计算代价为{% mathjax %}\mathcal{O}(n){% endmathjax %}，它随{% mathjax %}n{% endmathjax %}线性增长。因此，当训练数据集较大时，每次迭代的梯度下降计算代价将较高。**随机梯度下降**(`SGD`)可降低每次迭代时的计算代价。在随机梯度下降的每次迭代中，我们对数据样本随机均匀采样一个索引{% mathjax %}i{% endmathjax %}，其中{% mathjax %}i\in \{1,\ldots,n\}{% endmathjax %}，并计算梯度{% mathjax %}\nabla f_i(\mathbf{x}){% endmathjax %}以更新{% mathjax %}\mathbf{x}{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{x}\leftarrow \mathbf{x} - \eta\nabla f_i(mathbf{x})
+{% endmathjax %}
+其中{% mathjax %}\eta{% endmathjax %}是学习率。我们可以看到，每次迭代的计算代价从梯度下降的{% mathjax %}\mathcal{O}(n){% endmathjax %}将至常数{% mathjax %}\mathcal{O}(1){% endmathjax %}。此外，我们要强调，随机梯度{% mathjax %}\nabla f_i(\mathbf{x}){% endmathjax %}是对完整梯度{% mathjax %}\nabla f(\mathbf{x}){% endmathjax %}的无偏估计，因为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbb{E}_i\nabla f_i(\mathbf{x}) = \frac{1}{n}\sum_{i = 1}^n \nabla f_i(\mathbf{x}) = \nabla f(x)
+{% endmathjax %}
+这意味着，平均而言，随机梯度是对梯度的良好估计。现在，我们将把它与梯度下降进行比较，方法是向梯度添加均值为0、方差为1的随机噪声，以模拟随机梯度下降。
+```python
+def f(x1, x2):  # 目标函数
+    return x1 ** 2 + 2 * x2 ** 2
+
+def f_grad(x1, x2):  # 目标函数的梯度
+    return 2 * x1, 4 * x2
+
+def sgd(x1, x2, s1, s2, f_grad):
+    g1, g2 = f_grad(x1, x2)
+    # 模拟有噪声的梯度
+    g1 += tf.random.normal([1], 0.0, 1)
+    g2 += tf.random.normal([1], 0.0, 1)
+    eta_t = eta * lr()
+    return (x1 - eta_t * g1, x2 - eta_t * g2, 0, 0)
+
+def constant_lr():
+    return 1
+
+eta = 0.1
+lr = constant_lr  # 常数学习速度
+# ...
+# epoch 50, x1: -0.051145, x2: -0.028135
+```
+{% asset_img oa_14.png %}
+
+正如我们所看到的，随机梯度下降中变量的轨迹比我们在之前观察到的梯度下降中观察到的轨迹嘈杂得多。这是由于梯度的随机性质。也就是说，即使我们接近最小值，我们仍然受到通过{% mathjax %}\eta\nabla f_i(\mathbf{x}){% endmathjax %}的瞬间梯度所注入的不确定性的影响。即使经过`50`次迭代，质量仍然不那么好。更糟糕的是，经过额外的步骤，它不会得到改善。这给我们留下了唯一的选择：改变学习率{% mathjax %}\eta{% endmathjax %}。但是，如果我们选择的学习率太小，我们一开始就不会取得任何有意义的进展。另一方面，如果我们选择的学习率太大，我们将无法获得一个好的解决方案，如上所示。解决这些相互冲突的目标的唯一方法是在优化过程中动态降低学习率。这也是在`sgd`步长函数中添加学习率函数`lr`的原因。
+##### 动态学习率
+
+用与时间相关的学习率{% mathjax %}\eta(t){% endmathjax %}取代{% mathjax %}\eta{% endmathjax %}增加了控制优化算法收敛的复杂性。特别是，我们需要弄清{% mathjax %}\eta{% endmathjax %}的衰减速度。如果太快，我们将过早停止优化。如果减少的太慢，我们会在优化上浪费太多时间。以下是随着时间推移调整{% mathjax %}\eta{% endmathjax %}时使用的一些基本策略：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+& \eta(t) = \eta_i\;\text{if}\; t_i\leq t\leq t_{i+1} &\;\;\text{分段常数}\\ 
+& \eta(t) = \eta_0\cdot e^{-\lambda t} &\;\;\text{指数衰减}  \\
+& \eta(t) = \eta_0\cdot (\beta t + 1)^{-\alpha} &\;\;\text{多项式衰减}  \\
+\end{align}
+{% endmathjax %}
+在第一个**分段常数**(`piecewise constant`)场景中，我们会降低学习率，例如，每当优化进度停顿时。这是训练深度网络的常见策略。或者，我们可以通过**指数衰减**(`exponential decay`)来更积极地减低它。不幸的是，这往往会导致算法收敛之前过早停止。一个受欢迎的选择是{% mathjax %} {% endmathjax %}的**多项式衰减**(`polynomial decay`)。在凸优化的情况下，有许多证据表明这种速率表现良好。让我们看看指数衰减在实践中是什么样子。
+```python
+def exponential_lr():
+    # 在函数外部定义，而在内部更新的全局变量
+    global t
+    t += 1
+    return math.exp(-0.1 * t)
+
+def polynomial_lr():
+    # 在函数外部定义，而在内部更新的全局变量
+    global t
+    t += 1
+    return (1 + 0.1 * t) ** (-0.5)
+
+t = 1
+lr = exponential_lr
+# lr = polynomial_lr
+
+# epoch 1000, x1: -0.749494, x2: -0.058892
+# epoch 50, x1: -0.061881, x2: -0.026958
+```
+{% asset_img oa_15.png %}
+
+正如预期的那样，参数的方差大大减少。但是，这是以未能收敛到最优解{% mathjax %}\mathbf{x} = (0,0){% endmathjax %}为代价的。即使经过`1000`个迭代步骤，我们仍然离最优解很远。事实上，该算法根本无法收敛。另一方面，如果我们使用多项式衰减，其中学习率随迭代次数的平方根倒数衰减，那么仅在`50`次迭代之后，收敛就会更好。
+{% asset_img oa_16.png %}
+
+关于如何设置学习率，还有更多的选择。例如，我们可以从较小的学习率开始，然后使其迅速上涨，再让它降低，尽管这会更慢。我们甚至可以在较小和较大的学习率之间切换。现在，让我们专注于可以进行全面理论分析的学习率计划，即凸环境下的学习率。对一般的非凸问题，很难获得有意义的收敛保证，因为总的来说，最大限度地减少非线性非凸问题是`NP`困难的。
+##### 凸目标的收敛性分析
+
