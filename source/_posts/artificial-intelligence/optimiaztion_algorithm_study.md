@@ -547,3 +547,20 @@ f(\mathbf{x}) = \bar{f}(\bar{\mathbf{x}}) = \frac{1}{2}\bar{\mathbf{x}}^{\mathsf
 ##### 算法
 
 让我们接着上面正式开始讨论。我们使用变量{% mathjax %}\mathbf{s}_t{% endmathjax %}来累加过去的梯度方差，如下所示：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+& \mathbf{g}_t = \partial_w l(y_t,f(\mathbf{x}_t, \mathbf{w})) \\ 
+& \mathbf{s}_t = \mathbf{s}_{t-1} + \mathbf{g}_t^2 \\ 
+& \mathbf{w}_t = \mathbf{w}_{t-1} - \frac{\eta}{\mathbf{s}_t + \epsilon} \cdot \mathbf{g}_t
+\end{align}
+{% endmathjax %}
+在这里，操作是按照坐标顺序应用。也就是说，{% mathjax %}\mathbf{v}^2{% endmathjax %}有条目{% mathjax %}v_i^2{% endmathjax %}。同样，{% mathjax %}\frac{1}{\sqrt{v}}{% endmathjax %}有条目{% mathjax %}\frac{1}{\sqrt{v_i}}{% endmathjax %}，并且{% mathjax %}\mathbf{u}\cdot\mathbf{v}{% endmathjax %}有条目{% mathjax %}u_iv_i{% endmathjax %}。与之前一样，{% mathjax %}\eta{% endmathjax %}是学习率，{% mathjax %}epsilon{% endmathjax %}是一个为维持数值添加的常数，用来确保我们不会除以`0`最后，我们初始化{% mathjax %}\mathbf{s}_0 = 0{% endmathjax %}。
+
+就像在动量法中我们需要跟踪一个辅助变量一样，在`AdaGrad`算法中，我们允许每个坐标有单独的学习率。与`SGD`算法相比，这并没有明显增加`AdaGrad`的计算代价，因为主要计算用在{% mathjax %} {% endmathjax %}及其导数。请注意，在{% mathjax %} {% endmathjax %}中累加平方梯度意味着{% mathjax %} {% endmathjax %}基本上以线性速率增长（由于梯度从最初开始衰减，实际上比线性慢一些）。这产生了一个学习率{% mathjax %} {% endmathjax %}，但是在单个坐标的层面上进行了调整。对于凸问题，这完全足够了。然而，在深度学习中，我们可能希望更慢地降低学习率。这引出了许多`AdaGrad`算法的变体。眼下让我们先看看它在二次凸问题中的表现如何。我们仍然以同一函数为例：
+{% mathjax '{"conversion":{"em":14}}' %}
+f(\mathbf{x}) = 0.1x_1^2 + 2x_2^2
+{% endmathjax %}
+我们将使用与之前相同的学习率来实现`AdaGrad`算法，即{% mathjax %}\eta = 0.4{% endmathjax %}。可以看到，自变量的迭代轨迹较平滑。但由于{% mathjax %}\mathbf{s}_t{% endmathjax %}的累加效果使学习率不断衰减，自变量在迭代后期的移动幅度较小。
+##### 总结
+
+`AdaGrad`算法会在单个坐标层面动态降低学习率。`AdaGrad`算法利用梯度的大小作为调整进度速率的手段：用较小的学习率来补偿带有较大梯度的坐标。在深度学习问题中，由于内存和计算限制，计算准确的二阶导数通常是不可行的。梯度可以作为一个有效的代理。如果优化问题的结构相当不均匀，`AdaGrad`算法可以帮助缓解扭曲。`AdaGrad`算法对于稀疏特征特别有效，在此情况下由于不常出现的问题，学习率需要更慢地降低。在深度学习问题上，`AdaGrad`算法有时在降低学习率方面可能过于剧烈。
