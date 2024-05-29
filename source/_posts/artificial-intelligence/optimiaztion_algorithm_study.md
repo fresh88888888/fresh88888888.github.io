@@ -564,3 +564,10 @@ f(\mathbf{x}) = 0.1x_1^2 + 2x_2^2
 ##### 总结
 
 `AdaGrad`算法会在单个坐标层面动态降低学习率。`AdaGrad`算法利用梯度的大小作为调整进度速率的手段：用较小的学习率来补偿带有较大梯度的坐标。在深度学习问题中，由于内存和计算限制，计算准确的二阶导数通常是不可行的。梯度可以作为一个有效的代理。如果优化问题的结构相当不均匀，`AdaGrad`算法可以帮助缓解扭曲。`AdaGrad`算法对于稀疏特征特别有效，在此情况下由于不常出现的问题，学习率需要更慢地降低。在深度学习问题上，`AdaGrad`算法有时在降低学习率方面可能过于剧烈。
+
+#### RMSProp算法
+
+`RMSProp`算法作为将速率调度与坐标自适应学习率分离的简单修复方法。问题在于，`Adagrad`算法将梯度{% mathjax %}\mathbf{g}_t{% endmathjax %}的平方累加成状态矢量{% mathjax %}\mathbf{s}_t = \mathbf{s}_{t-1} + \mathbf{g}_t^2{% endmathjax %}。因此，由于缺乏规范化，没有约束力，{% mathjax %}\mathbf{s}_t{% endmathjax %}持续增长，几乎是在算法收敛时呈线性递增。解决此问题的一种方法是使用{% mathjax %}\mathbf{s}_t/t{% endmathjax %}。对{% mathjax %}\mathbf{g}_t{% endmathjax %}的合理分布来说，它将收敛。遗憾的是，限制行为生效可能需要很长时间，因为该流程记住了值的完整轨迹。另一种方法是按动量法中的方式使用泄漏平均值，即{% mathjax %}\mathbf{s}_t\leftarrow\gamma \mathbf{s}_{t-1} + (1-\gamma)\mathbf{g}_t^2{% endmathjax %}，其中参数{% mathjax %}\gamma > 0{% endmathjax %}。保持所有其它部分不变就产生了`RMSProp`算法。
+##### 算法
+
+让我们详细写出这些方程式。
