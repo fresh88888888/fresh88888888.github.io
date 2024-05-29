@@ -567,7 +567,7 @@ f(\mathbf{x}) = 0.1x_1^2 + 2x_2^2
 
 #### RMSProp算法
 
-`RMSProp`算法作为将速率调度与坐标自适应学习率分离的简单修复方法。问题在于，`Adagrad`算法将梯度{% mathjax %}\mathbf{g}_t{% endmathjax %}的平方累加成状态矢量{% mathjax %}\mathbf{s}_t = \mathbf{s}_{t-1} + \mathbf{g}_t^2{% endmathjax %}。因此，由于缺乏规范化，没有约束力，{% mathjax %}\mathbf{s}_t{% endmathjax %}持续增长，几乎是在算法收敛时呈线性递增。解决此问题的一种方法是使用{% mathjax %}\mathbf{s}_t/t{% endmathjax %}。对{% mathjax %}\mathbf{g}_t{% endmathjax %}的合理分布来说，它将收敛。遗憾的是，限制行为生效可能需要很长时间，因为该流程记住了值的完整轨迹。另一种方法是按动量法中的方式使用泄漏平均值，即{% mathjax %}\mathbf{s}_t\leftarrow\gamma \mathbf{s}_{t-1} + (1-\gamma)\mathbf{g}_t^2{% endmathjax %}，其中参数{% mathjax %}\gamma > 0{% endmathjax %}。保持所有其它部分不变就产生了`RMSProp`算法。
+`RMSProp`算法作为将速率调度与坐标自适应学习率分离的简单修复方法。问题在于，`Adagrad`算法将梯度{% mathjax %}\mathbf{g}_t{% endmathjax %}的平方累加成状态矢量{% mathjax %}\mathbf{s}_t = \mathbf{s}_{t-1} + \mathbf{g}_t^2{% endmathjax %}。因此，由于缺乏规范化，没有约束力，{% mathjax %}\mathbf{s}_t{% endmathjax %}持续增长，几乎是在算法收敛时呈线性递增。解决此问题的一种方法是使用{% mathjax %}\mathbf{s}_t/t{% endmathjax %}。对{% mathjax %}\mathbf{g}_t{% endmathjax %}的合理分布来说，它将收敛。遗憾的是，限制行为生效可能需要很长时间，因为该流程记住了值的完整轨迹。另一种方法是按动量法中的方式使用泄漏平均值，即{% mathjax %}\mathbf{s}_t \leftarrow\gamma \mathbf{s}_{t-1} + (1-\gamma)\mathbf{g}_t^2{% endmathjax %}，其中参数{% mathjax %}\gamma > 0{% endmathjax %}。保持所有其它部分不变就产生了`RMSProp`算法。
 ##### 算法
 
 让我们详细写出这些方程式。
