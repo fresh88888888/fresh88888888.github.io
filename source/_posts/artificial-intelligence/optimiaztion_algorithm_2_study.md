@@ -35,3 +35,7 @@ mathjax:
 ##### 总结 
 
 `RMSProp`算法与`Adagrad`算法非常相似，因为两者都使用梯度的平方来缩放系数。`RMSProp`算法与动量法都使用泄漏平均值。但是，`RMSProp`算法使用该技术来调整按系数顺序的预处理器。在实验中，学习率需要由实验者调度。系数{% mathjax %}\gamma{% endmathjax %}决定了在调整每坐标比例时历史记录的时长。
+
+#### Adadelta算法
+
+`Adadelta`是`AdaGrad`的另一种变体，主要区别在于前者减少了学习率适应坐标的数量。此外，广义上`Adadelta`被称为没有学习率，因为它使用变化量本身作为未来变化的校准。`Adadelta`使用两个状态变量，{% mathjax %}\mathbf{s}_t{% endmathjax %}用于存储梯度二阶导数的泄露平均值，{% mathjax %}\Delta\mathbf{x}_t{% endmathjax %}用于存储模型本身参数变化二阶导数的泄露平均值。以下是Adadelta的技术细节。鉴于参数`du jour`是{% mathjax %}\rho{% endmathjax %}，我们获得了以下泄漏更新：
