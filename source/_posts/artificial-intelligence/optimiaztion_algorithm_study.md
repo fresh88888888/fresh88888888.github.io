@@ -522,4 +522,28 @@ n \\
 
 ##### 稀疏特征和学习率
 
-假设我们正在训练一个语言模型。为了获得良好的准确性，我们大多希望在训练的过程中降低学习率，速度通常为{% mathjax %}\mathcal{O}(t^{-\frac{1}{2}}){% endmathjax %}或更低。现在讨论关于稀疏特征（即只在偶尔出现的特征）的模型训练，这对自然语言来说很常见。例如，我们看到“预先条件”这个词比“学习”这个词的可能性要小得多。但是，它在计算广告学和个性化协同过滤等其他领域也很常见。只有在这些不常见的特征出现时，与其相关的参数才会得到有意义的更新。鉴于学习率下降，我们可能最终会面临这样的情况：常见特征的参数相当迅速地收敛到最佳值，而对于不常见的特征，我们仍缺乏足够的观测以确定其最佳值。换句话说，学习率要么对于常见特征而言降低太慢，要么对于不常见特征而言降低太快。
+假设我们正在训练一个语言模型。为了获得良好的准确性，我们大多希望在训练的过程中降低学习率，速度通常为{% mathjax %}\mathcal{O}(t^{-\frac{1}{2}}){% endmathjax %}或更低。现在讨论关于稀疏特征（即只在偶尔出现的特征）的模型训练，这对自然语言来说很常见。例如，我们看到“预先条件”这个词比“学习”这个词的可能性要小得多。但是，它在计算广告学和个性化协同过滤等其他领域也很常见。只有在这些不常见的特征出现时，与其相关的参数才会得到有意义的更新。鉴于学习率下降，我们可能最终会面临这样的情况：常见特征的参数相当迅速地收敛到最佳值，而对于不常见的特征，我们仍缺乏足够的观测以确定其最佳值。换句话说，学习率要么对于常见特征而言降低太慢，要么对于不常见特征而言降低太快。解决此问题的一个方法是记录我们看到特定特征的次数，然后将其用作调整学习率。即我们可以使用大小为{% mathjax %}\eta_i = \frac{\eta_0}{\sqrt{s(i,t) + c}}{% endmathjax %}的学习率，而不是{% mathjax %}\eta = \frac{\eta_0}{\sqrt{t + c}}{% endmathjax %}。在这里，{% mathjax %}s(i,t){% endmathjax %}记下了我们截止{% mathjax %}t{% endmathjax %}时观察到特征{% mathjax %}i{% endmathjax %}的次数。其实这很容易实施而不产生额外损耗。`AdaGrad`算法通过将粗略的计数器{% mathjax %}s(i,t){% endmathjax %}替换为先前观察所得梯度的平方之和来解决这个问题。它使用{% mathjax %}s(i,t+1) = s(i,t) + (\partial_i f(\mathbf{x}))^2{% endmathjax %}来调整学习率。这有两个好处：首先，我们不再需要决定梯度何时算足够大。其次，它会随梯度的大小自动变化。通常对应于较大梯度的坐标会显著缩小，而其他梯度较小的坐标则会得到更平滑的处理。在实际应用中，它促成了计算广告学及其相关问题中非常有效的优化程序。但是，它遮盖了`AdaGrad`固有的一些额外优势，这些优势在预处理环境中很容易被理解。
+##### 预处理
+
+凸优化问题有助于分析算法的特点。毕竟对大多数非凸问题来说，获得有意义的理论保证很难，但是直觉和洞察往往会延续。让我们来看看最小化{% mathjax %}f(\mathbf{x}) = \frac{1}{2}\mathbf{x}^{\mathsf{T}}\mathbf{Qx} + \mathbf{c}^{\mathsf{T}}\mathbf{x} + b{% endmathjax %}这一问题。我们可以根据其特征分解{% mathjax %}\mathbf{Q} = \mathbf{U}^{\mathsf{T}}\mathbf{\Lambda U}{% endmathjax %} 重写这个问题，来得到一个简化得多的问题，使每个坐标都可以单独解出：
+{% mathjax '{"conversion":{"em":14}}' %}
+f(\mathbf{x}) = \bar{f}(\bar{\mathbf{x}}) = \frac{1}{2}\bar{\mathbf{x}}^{\mathsf{T}}\mathbf{\Lambda\bar{x}} + \bar{\mathbf{c}}^{\mathsf{T}}\bar{\mathbf{x}} + b
+{% endmathjax %}
+这里我们使用了{% mathjax %}\mathbf{x} = \mathbf{Ux}{% endmathjax %}，且因此{% mathjax %}\mathbf{c} = \mathbf{Uc}{% endmathjax %}。修改后优化器为{% mathjax %}\bar{\mathbf{x}} = -\mathbf{\Lambda}^{-1}\bar{\mathbf{c}}{% endmathjax %}且最小值为{% mathjax %}-\frac{1}{2}\bar{\mathbf{c}}^{\mathsf{T}}\mathbf{\Lambda}^{-1}\bar{\mathbf{c}} + b{% endmathjax %}。这样更容易计算，因为{% mathjax %}\mathbf{\Lambda}{% endmathjax %}是一个包含{% mathjax %}\mathbf{Q}{% endmathjax %}特征值的对角矩阵。
+
+如果稍微扰动{% mathjax %}\mathbf{c}{% endmathjax %}，我们会期望在{% mathjax %}f{% endmathjax %}的最小化器中只产生微小的变化。遗憾的是，情况并非如此。虽然{% mathjax %}\mathbf{c}{% endmathjax %}的微小变化导致了{% mathjax %}\bar{\mathbf{c}}{% endmathjax %}同样的微小变化，但{% mathjax %}f{% endmathjax %}的（以及{% mathjax %}\bar{f}{% endmathjax %}的）最小化器并非如此。每当特征值{% mathjax %}\mathbf{\Lambda}_i{% endmathjax %}很大时，我们只会看到{% mathjax %}\bar{x}_i{% endmathjax %}和{% mathjax %}\bar{f}{% endmathjax %}的最小值发声微小变化。相反，对小的{% mathjax %}\mathbf{\Lambda}_i{% endmathjax %}来说，{% mathjax %}\bar{x}_i{% endmathjax %}的变化可能是剧烈的。最大和最小的特征值之比称为优化问题的**条件数**(`condition number`)。
+{% mathjax '{"conversion":{"em":14}}' %}
+\kappa = \frac{\mathbf{\Lambda}_1}{\mathbf{\Lambda}_d}
+{% endmathjax %}
+如果条件编号{% mathjax %}\kappa{% endmathjax %}很大，准确解决优化问题就会很难。我们需要确保在获取大量动态的特征值范围时足够谨慎：难道我们不能简单地通过扭曲空间来“修复”这个问题，从而使所有特征值都是{% mathjax %}1{% endmathjax %}？理论上这很容易：我们只需要{% mathjax %}\mathbf{Q}{% endmathjax %}的特征值和特征向量即可将问题从{% mathjax %}\mathbf{x}{% endmathjax %}整理到{% mathjax %}\mathbf{x}:=\mathbf{\Lambda}^{\frac{1}{2}}\mathbf{Ux}{% endmathjax %}中的一个。在新的坐标系中，{% mathjax %}\mathbf{x}^{\mathsf{T}}\mathbf{Qx}{% endmathjax %}可以被简化为{% mathjax %}\lVert\mathbf{z}\rVert^2{% endmathjax %}。可惜，这是一个相当不切实际的想法。一般而言，计算特征值和特征向量要比解决实际问题“贵”得多。虽然准确计算特征值可能会很昂贵，但即便只是大致猜测并计算它们，也可能已经比不做任何事情好得多。特别是，我们可以使用{% mathjax %}\mathbf{Q}{% endmathjax %}的对角线条目并相应地重新缩放它。这比计算特征值开销小的多。
+{% mathjax '{"conversion":{"em":14}}' %}
+\tilde{\mathbf{Q}} = \text{diag}^{-\frac{1}{2}}(\mathbf{Q})\mathbf{Q}\text{diag}^{-\frac{1}{2}}(\mathbf{Q})
+{% endmathjax %}
+在这种情况下，我们得到了{% mathjax %}\tilde{\mathbf{Q}}_{ij} = \mathbf{Q}_{ij}/\sqrt{\mathbf{Q}_{ii}\mathbf{Q}_{jj}}{% endmathjax %}，特别注意对于所有{% mathjax %}i{% endmathjax %}，{% mathjax %}\tilde{\mathbf{Q}}_{ii} = 1{% endmathjax %}。在大多数情况下，这大大简化了条件数。例如我们之前讨论的案例，它将完全消除眼下的问题，因为问题是轴对齐的。遗憾的是，我们还面临另一个问题：在深度学习中，我们通常情况甚至无法计算目标函数的二阶导数：对于{% mathjax %}\mathbf{x}\in\mathbb{R}^d{% endmathjax %}，即使只在小批量上，二阶导数可能也需要{% mathjax %}\mathcal{O}(d^2){% endmathjax %}空间来计算，导致几乎不可行。`AdaGrad`算法巧妙的思路是，使用一个代理来表示黑塞矩阵(`Hessian`)的对角线，既相对易于计算又高效。为了了解它是如何生效的，让我们来看看{% mathjax %}\bar{f}(\bar{\mathbf{x}}){% endmathjax %}。我们有：
+{% mathjax '{"conversion":{"em":14}}' %}
+\partial_{\bar{\mathbf{x}}} \bar{f}(\bar{\mathbf{x}}) = \mathbf{\Lambda}\bar{\mathbf{x}} + \bar{\mathbf{c}} = \mathbf{\Lambda}(\bar{\mathbf{x}} - \bar{\mathbf{x}}_0)
+{% endmathjax %}
+其中{% mathjax %}\bar{\mathbf{x}}_0{% endmathjax %}是{% mathjax %}\bar{f}{% endmathjax %}的优化器。因此，梯度的大小取决于{% mathjax %}\mathbf{\Lambda}{% endmathjax %}和与最佳值的差值。如果{% mathjax %}\bar{\mathbf{x}} - \bar{\mathbf{x}}_0{% endmathjax %}没有改变，那这就是我们所求的。毕竟在这种情况下，梯度{% mathjax %}\partial_{\bar{x}}\bar{f}(\bar{\mathbf{x}}){% endmathjax %}的大小就足够了。由于`AdaGrad`算法**是一种随机梯度下降算法**，所以即使是在最佳值中，我们也会看到具有非零方差的梯度。因此，我们可以放心地使用梯度的方差作为黑塞矩阵比例的廉价替代。 
+##### 算法
+
+让我们接着上面正式开始讨论。我们使用变量{% mathjax %}\mathbf{s}_t{% endmathjax %}来累加过去的梯度方差，如下所示：
