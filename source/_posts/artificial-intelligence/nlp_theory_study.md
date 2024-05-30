@@ -46,6 +46,27 @@ p(w_o|w_c) = \frac{\exp(\mathbf{u}_o^{\mathsf{T}}\mathbf{v}_c)}{\sum_{i\in\nu} \
 其中可以省略小于1或大于{% mathjax %}T{% endmathjax %}的时间步。
 ###### 训练
 
-
+跳元模型参数是词表中每个词的中心词向量和上下文词向量。在训练中，我们通过最大化似然函数（即极大似然估计）来学习模型参数。这相当于最小化以下损失函数：
+{% mathjax '{"conversion":{"em":14}}' %}
+-\sum_{t=1}^T\;\;\;\sum_{-m\leq j\leq m, j\neq 0}\;\;\;\log P(w^{(t+j)}|w^{(t)})
+{% endmathjax %}
+当使用随机梯度下降来最小化损失时，在每次迭代中可以随机抽样一个较短的子序列来计算该子序列的（随机）梯度，以更新模型参数。为了计算该（随机）梯度，我们需要获得对数条件概率关于中心词向量和上下文词向量的梯度。涉及中心词{% mathjax %}w_c{% endmathjax %}和上下文词{% mathjax %}w_o{% endmathjax %}的对数条件概率为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\log P(w_o|w_c) = \mathbf{u}_o^{\mathsf{T}}\mathbf{v}_c - \log \big( \sum_{i\in \nu} \exp(\mathbf{u}_i^{\mathsf{t}}\mathbf{v}_c) \big)
+{% endmathjax %}
+通过微分，我们可以获得其相对于中心词向量{% mathjax %}\mathbf{v}_c{% endmathjax %}的梯度为
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+\partial \log P(w_o|w_c) & = \mathbf{u}_o - \frac{\sum_{j\in \nu} \exp(\mathbf{u}_j^{\mathsf{T}}\mathbf{v}_c)\mathbf{u}_j}{\sum_{j\in \nu} \exp(\mathbf{u}_i^{\mathsf{T}}\mathbf{v}_c)} \\
+& = \mathbf{u}_o - \sum_{j\in \nu}(\frac{\exp(\mathbf{u}_j^{\mathsf{T}}\mathbf{v}_c)}{\sum_{i\in \nu} \exp(\mathbf{u}_i^{\mathsf{T}}\mathbf{v}_c)})\mathbf{u}_j \\
+& = \mathbf{u}_o - \sum_{j\in \nu} P(w_j|w_c)\mathbf{u}_j
+\end{align}
+{% endmathjax %}
+注意，以上公式中的计算需要词典中以{% mathjax %}w_c{% endmathjax %}为中心词的所有词的条件概率。其他词向量的梯度可以以相同的方式获得。对词典中索引为{% mathjax %}i{% endmathjax %}的词进行训练后，得到{% mathjax %}\mathbf{v}_i{% endmathjax %}（作为中心词）和{% mathjax %}\mathbf{u}_i{% endmathjax %}（作为上下文词）两个词向量。在自然语言处理应用中，跳元模型的中心词向量通常用作词表示。
 ##### 连续词袋模型（CBOW）
 
+**连续词袋**(`CBOW`)模型类似于跳元模型。与跳元模型的主要区别在于，连续词袋模型假设中心词是基于其在文本序列中的周围上下文词生成的。例如，在文本序列`“the”“man”“loves”“his”“son”`中，在`“loves”`为中心词且上下文窗口为`2`的情况下，连续词袋模型考虑基于上下文词`“the”“man”“him”“son”`（如下图所示）生成中心词`“loves”`的条件概率，即：
+{% mathjax '{"conversion":{"em":14}}' %}
+P(\text{"the","man","his","son"}|\text{"loves"})
+{% endmathjax %}
+{% asset_img nlp_3.png "连续词袋模型考虑了给定周围上下文词生成中心词条件概率¶" %}
