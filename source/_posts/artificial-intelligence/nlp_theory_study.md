@@ -81,13 +81,13 @@ P(w_c|\mathcal{W}_o) = \frac{\exp(\mathbf{u}_c^{\mathsf{T}}\bar{\mathbf{v}}_o)}{
 {% endmathjax %}
 给定长度为{% mathjax %}T{% endmathjax %}的文本序列，其中时间步{% mathjax %}t{% endmathjax %}处的词表示为{% mathjax %}w_{(t)}{% endmathjax %}。对于上下文窗口{% mathjax %}m{% endmathjax %}，连续词袋模型的似然函数是在给定其上下文词的情况下生成所有中心词的概率：
 {% mathjax '{"conversion":{"em":14}}' %}
-\prod_{t=1}^T P(w^{(t)}|w^{(t-m)},\ldots,w^{(t-1)},w^{(t+1)},\lodts,w^{(t+m)})
+\prod_{t=1}^T P(w^{(t)}|w^{(t-m)},\ldots,w^{(t-1)},w^{(t+1)},\ldots,w^{(t+m)})
 {% endmathjax %}
 ###### 训练
 
 训练连续词袋模型与训练跳元模型几乎是一样的。连续词袋模型的最大似然估计等价于最小化以下损失函数：
 {% mathjax '{"conversion":{"em":14}}' %}
--\sum_{t=1}^T \log P(w^{(t)}|w^{(t-m)},\ldots,w^{(t-1)},w^{(t+1)},\lodts,w^{(t+m)})
+-\sum_{t=1}^T \log P(w^{(t)}|w^{(t-m)},\ldots,w^{(t-1)},w^{(t+1)},\ldots,w^{(t+m)})
 {% endmathjax %}
 请注意，
 {% mathjax '{"conversion":{"em":14}}' %}
