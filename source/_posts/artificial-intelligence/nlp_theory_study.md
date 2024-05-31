@@ -188,7 +188,7 @@ q_{ij} = \frac{\exp(\mathbf{u}_j^{\mathsf{T}}\mathbf{v}_i)}{\sum_{k\in \nu} \exp
 
 整合代码，训练`GloVe`是为了尽量降低以下损失函数：
 {% mathjax '{"conversion":{"em":14}}' %}
-\sum_{i\in \nu} x_i \sum_{j\in \nu} h(x_{ij})(\mathbf{u}_j^{\mathsf{T}}\mathbf{v}_i _b_i + c_i - \log x_{ij})^2
+\sum_{i\in \nu} x_i \sum_{j\in \nu} h(x_{ij})(\mathbf{u}_j^{\mathsf{T}}\mathbf{v}_i + b_i + c_i - \log x_{ij})^2
 {% endmathjax %}
 对于权重函数，建议的选择是：当{% mathjax %}x < c{% endmathjax %}（例如，{% mathjax %}c = 100{% endmathjax %}）时，{% mathjax %}h(x) = (x/c)^{\alpha}{% endmathjax %}（例如{% mathjax %}\alpha = 0.75{% endmathjax %}）；否则{% mathjax %}h(x) = 1{% endmathjax %}。在这种情况下，由于{% mathjax %}h(0) = 0{% endmathjax %}，为了提高计算效率，可以省略任意{% mathjax %}x_{ij} = 0{% endmathjax %}的平方损失项。例如，当使用小批量随机梯度下降进行训练时，在每次迭代中，我们随机抽样一小批量非零的{% mathjax %}x_{ij}{% endmathjax %}来计算梯度并更新模型参数。注意，这些非零的{% mathjax %}x_{ij}{% endmathjax %}是预先计算的全局语料库统计数据；因此，该模型`GloVe`被称为**全局向量**。应该强调的是，当词{% mathjax %}w_i{% endmathjax %}出现在词{% mathjax %}w_j{% endmathjax %}的上下文窗口时，词{% mathjax %}w_j{% endmathjax %}也出现在词{% mathjax %}w_i{% endmathjax %}的上下文窗口。因此，{% mathjax %}x_{ij} = x_{ji}{% endmathjax %}。与拟合非对称条件概率{% mathjax %}p_{ij}{% endmathjax %}的`word2vec`不同，`GloVe`拟合对称概率{% mathjax %}\log x_{ij}{% endmathjax %}。因此，在`GloVe`模型中，任意词的中心词向量和上下文词向量在数学上是等价的。但在实际应用中，由于初始值不同，同一个词经过训练后，在这两个向量中可能得到不同的值：`GloVe`将它们相加作为输出向量。
 ##### 从条件概率比值理解GloVe模型
