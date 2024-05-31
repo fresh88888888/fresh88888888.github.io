@@ -108,3 +108,52 @@ P(w_c|\mathcal{W}_o) = \frac{\exp(\mathbf{u}_c^{\mathsf{T}}\bar{\mathbf{v}}_o)}{
 ##### 负采样
 
 负采样修改了原目标函数。给定中心词{% mathjax %}w_c{% endmathjax %}的上下文窗口，任意上下文词{% mathjax %}w_o{% endmathjax %}来自该上下文窗口的被认为是由下式建模概率的事件：
+{% mathjax '{"conversion":{"em":14}}' %}
+P(D= 1|w_c,w_o) = \sigma(\mathbf{u}_o^T\mathbf{v_c})
+{% endmathjax %}
+其中{% mathjax %}\sigma{% endmathjax %}使用了`sigmoid`激活函数的定义：
+{% mathjax '{"conversion":{"em":14}}' %}
+\sigma(x) = \frac{1}{1 + \exp(-x)}
+{% endmathjax %}
+让我们从最大化文本序列中所有这些事件的联合概率开始训练词嵌入。具体而言，给定长度为{% mathjax %}T{% endmathjax %}的文本序列，以{% mathjax %}w^{(t)}{% endmathjax %}表示时间步{% mathjax %}t{% endmathjax %}的词，并使上下文窗口为{% mathjax %}m{% endmathjax %}，考虑最大化联合概率：
+{% mathjax '{"conversion":{"em":14}}' %}
+\prod_{t=1}^T\;\;\;\prod_{-m\leq j\leq m,j\neq 0}\;\;\;P(D=1|w^{(t)},w^{(t+j)})
+{% endmathjax %}
+然而，以上公式只考虑那些正样本的事件。仅当所有词向量都等于无穷大时，以上公式中的联合概率最大化为`1`。当然，这样的结果毫无意义。为了使目标函数更有意义，负采样添加从预定义分布中采样的负样本。用{% mathjax %}S{% endmathjax %}表示上下文词{% mathjax %}w_o{% endmathjax %}来自中心词{% mathjax %}w_o{% endmathjax %}的上下文窗口的事件。对于这个涉及{% mathjax %}w_o{% endmathjax %}的事件，从预定义分布{% mathjax %}P(w){% endmathjax %}中采样{% mathjax %}K{% endmathjax %}个不是来自这个上下文窗口噪声词。用{% mathjax %}N_k{% endmathjax %}表示噪声词{% mathjax %} {% endmathjax %}w_k（{% mathjax %}(k=1,\ldots,K){% endmathjax %}）不是来自{% mathjax %}w_c{% endmathjax %}的上下文窗口的事件。假设正例和负例{% mathjax %}S,N_1,\ldots,N_K{% endmathjax %}的这些事件是相互独立的。负采样将上面公式中的联合概率（仅涉及正例）重写为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\prod_{t=1}^T\;\;\;\prod_{-m\leq j\leq m,j\neq 0}\;\;\;P(w^{(t+j)}|w^{(t)})
+{% endmathjax %}
+通过事件{% mathjax %}S,N_1,\ldots,N_K{% endmathjax %}近似条件概率：
+{% mathjax '{"conversion":{"em":14}}' %}
+P(w^{(t+j)}|w^{(t)}) = P(D=1|w^{(t)},w^{(t+j)})\;\;\;\prod_{k=1,w_k\in P(w)}^K P(D=0|w^{(t)},w_k)
+{% endmathjax %}
+分别用{% mathjax %}i_t{% endmathjax %}和{% mathjax %}h_k{% endmathjax %}表示词{% mathjax %}w^{(t)}{% endmathjax %}和噪声词{% mathjax %}w_k{% endmathjax %}在文本序列的时间步{% mathjax %}t{% endmathjax %}处的索引。关于条件概率的对数损失为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+-\log P(w^{(t+j)}|w^{(t)}) & = -\log P(D=1|w^{(t)},w^{(t+j)}) - \sum_{k=1,w_k\sim P(w)}^K \log P(D=0|w^{(t)},w_k) \\
+& = -\log \sigma(\mathbf{u}_{i_{t+j}}^{\mathsf{T}}\mathbf{v}_{i_t}) - \sum_{k=1,w_k\sim P(w)}^K \log(1 - \sigma(\mathbf{u}_{h_k}^{\mathsf{t}}\mathbf{v}_{i_t})) \\
+& = -\log \sigma(\mathbf{u}_{i_{t+j}}^{\mathsf{T}}\mathbf{v}_{i_t}) - \sum_{k=1,w_k\sim P(w)}^K \log \sigma(\mathbf{u}_{h_k}^{\mathsf{t}}\mathbf{v}_{i_t})
+\end{align}
+{% endmathjax %}
+我们可以看到，现在每个训练步的梯度计算成本与词表大小无关，而是线性依赖于{% mathjax %}K{% endmathjax %}。当将超参数{% mathjax %}K{% endmathjax %}设置为较小的值时，在负采样的每个训练步处的梯度的计算成本较小。
+##### 层序Softmax
+
+作为另一种近似训练方法，层序`Softmax`(`hierarchical softmax`)使用二叉树（下图中说明的数据结构），其中树的每个叶节点表示词表{% mathjax %}\nu{% endmathjax %}中的一个词。
+{% asset_img nlp_4.png "用于近似训练的分层softmax，其中树的每个叶节点表示词表中的一个词" %}
+
+用{% mathjax %}L(w){% endmathjax %}表示二叉树中表示字{% mathjax %}w{% endmathjax %}的从根节点到叶节点的路径上的节点数（包括两端）。设{% mathjax %}n(w,j){% endmathjax %}为该路径上的{% mathjax %}j^{\text{th}}{% endmathjax %}节点，其上下文字向量为{% mathjax %}\mathbf{u}_{n(w,j)}{% endmathjax %}。例如，上图中的{% mathjax %}L(w_3) = 4{% endmathjax %}。分层`softmax`的条件概率近似为：
+{% mathjax '{"conversion":{"em":14}}' %}
+P(w_o|w_c) = \;\prod_{j=1}^{L(w_o) - 1} \sigma([n(w_o,j+1) = \text{leftChild(n(w_o,j))}]\cdot \mathbf{u}_{n(w_o,j)}^{\mathsf{T}}\mathbf{v}_c)
+{% endmathjax %}
+其中函数{% mathjax %}\sigma{% endmathjax %}的定义，{% mathjax %}\text{leftChild}(n){% endmathjax %}是节点{% mathjax %}n{% endmathjax %}的左子节点：如果{% mathjax %}x{% endmathjax %}为真，{% mathjax %}[x] = 1{% endmathjax %};否则{% mathjax %}[x] = -1{% endmathjax %}。为了说明给定词{% mathjax %}w_c{% endmathjax %}生成词{% mathjax %}w_3{% endmathjax %}的条件概率。这需要{% mathjax %}w_c{% endmathjax %}的词向量{% mathjax %}\mathbf{v}_c{% endmathjax %}和从根到{% mathjax %}w_3{% endmathjax %}的路径上的非叶节点向量之间的点积，该路径依次向左、向右和向左遍历：
+{% mathjax '{"conversion":{"em":14}}' %}
+P(w_3|w_c) = \sigma (\mathbf{u}_{n(w_3,1)}^{mathsf{T}}\mathbf{v}_c)\cdot \sigma (\mathbf{u}_{n(w_3,2)}^{mathsf{T}}\mathbf{v}_c)\cdot \sigma (\mathbf{u}_{n(w_3,3)}^{mathsf{T}}\mathbf{v}_c)
+{% endmathjax %}
+由{% mathjax %}\sigma(x) + \sigma(-x) = 1{% endmathjax %}，它认为基于任意词{% mathjax %}w_c{% endmathjax %}生成词表{% mathjax %}\nu{% endmathjax %}中所有词的条件概率总和为`1`：
+{% mathjax '{"conversion":{"em":14}}' %}
+\sum_{w\in \nu} P(w|w_c) = 1
+{% endmathjax %}
+幸运的是，由于二叉树结构，{% mathjax %}L(w_o) - 1{% endmathjax %}大约与{% mathjax %}\mathcal{O}(\log_2 |\nu|){% endmathjax %}是一个数量级。当词表大小{% mathjax %}\nu{% endmathjax %}很大时，与没有近似训练的相比，使用分层`softmax`的每个训练步的计算代价显著降低。
+##### 总结
+
+负采样通过考虑相互独立的事件来构造损失函数，这些事件同时涉及正例和负例。训练的计算量与每一步的噪声词数成线性关系。分层`softmax`使用二叉树中从根节点到叶节点的路径构造损失函数。训练的计算成本取决于词表大小的对数。
