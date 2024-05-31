@@ -194,7 +194,7 @@ q_{ij} = \frac{\exp(\mathbf{u}_j^{\mathsf{T}}\mathbf{v}_i)}{\sum_{k\in \nu} \exp
 ##### 从条件概率比值理解GloVe模型
 
 我们也可以从另一个角度来理解`GloVe`模型。使用下表中的相同符号，设{% mathjax %}p_{ij}\;\underset{=}{\text{def}}\;P(w_j|w_i){% endmathjax %}为生成上下文词{% mathjax %} w_j{% endmathjax %}的条件概率，给定{% mathjax %}w_i{% endmathjax %}作为语料库中的中心词。`tab_glove`根据大量语料库的统计数据，列出了给定单词`“ice”`和`“steam”`的共现概率及其比值。
-**表：label:tab_glove**
+<center> 表：label:tab_glove</center>
 |{% mathjax %}w_k{% endmathjax %}|solid|gas|water|fashion|
 |:-------------------------------|:----|:-----|:-----|:-------|
 |{% mathjax %}p_1 = P(w_k|\text{ice}){% endmathjax %}|0.00019|0.000066|0.003|0.000017|
