@@ -147,7 +147,7 @@ P(w_o|w_c) = \;\prod_{j=1}^{L(w_o) - 1} \sigma([n(w_o,j+1) = \text{leftChild(n(w
 {% endmathjax %}
 其中函数{% mathjax %}\sigma{% endmathjax %}的定义，{% mathjax %}\text{leftChild}(n){% endmathjax %}是节点{% mathjax %}n{% endmathjax %}的左子节点：如果{% mathjax %}x{% endmathjax %}为真，{% mathjax %}[x] = 1{% endmathjax %};否则{% mathjax %}[x] = -1{% endmathjax %}。为了说明给定词{% mathjax %}w_c{% endmathjax %}生成词{% mathjax %}w_3{% endmathjax %}的条件概率。这需要{% mathjax %}w_c{% endmathjax %}的词向量{% mathjax %}\mathbf{v}_c{% endmathjax %}和从根到{% mathjax %}w_3{% endmathjax %}的路径上的非叶节点向量之间的点积，该路径依次向左、向右和向左遍历：
 {% mathjax '{"conversion":{"em":14}}' %}
-P(w_3|w_c) = \sigma (\mathbf{u}_{n(w_3,1)}^{mathsf{T}}\mathbf{v}_c)\cdot \sigma (\mathbf{u}_{n(w_3,2)}^{mathsf{T}}\mathbf{v}_c)\cdot \sigma (\mathbf{u}_{n(w_3,3)}^{mathsf{T}}\mathbf{v}_c)
+P(w_3|w_c) = \sigma (\mathbf{u}_{n(w_3,1)}^{\mathsf{T}}\mathbf{v}_c)\cdot \sigma (\mathbf{u}_{n(w_3,2)}^{\mathsf{T}}\mathbf{v}_c)\cdot \sigma (\mathbf{u}_{n(w_3,3)}^{\mathsf{T}}\mathbf{v}_c)
 {% endmathjax %}
 由{% mathjax %}\sigma(x) + \sigma(-x) = 1{% endmathjax %}，它认为基于任意词{% mathjax %}w_c{% endmathjax %}生成词表{% mathjax %}\nu{% endmathjax %}中所有词的条件概率总和为`1`：
 {% mathjax '{"conversion":{"em":14}}' %}
