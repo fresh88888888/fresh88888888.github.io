@@ -164,6 +164,66 @@ P(w_3|w_c) = \sigma (\mathbf{u}_{n(w_3,1)}^{\mathsf{T}}\mathbf{v}_c)\cdot \sigma
 
 ##### 带全局语料统计的跳元模型
 
+用{% mathjax %}q_{ij}{% endmathjax %}表示词{% mathjax %}w_j{% endmathjax %}的条件概率{% mathjax %}P(w_j|w_i){% endmathjax %}，在跳元模型给定词{% mathjax %} w_i{% endmathjax %}，我们有：
+{% mathjax '{"conversion":{"em":14}}' %}
+q_{ij} = \frac{\exp(\mathbf{u}_j^{\mathsf{T}}\mathbf{v}_i)}{\sum_{k\in \nu} \exp(\mathbf{u}_k^{\mathsf{T}}\mathbf{v}_i)}
+{% endmathjax %}
+其中，对于任意索引{% mathjax %}i{% endmathjax %}，向量{% mathjax %}\mathbf{v}_i{% endmathjax %}和{% mathjax %}\mathbf{u}_i{% endmathjax %}分别表示词{% mathjax %}w_i{% endmathjax %}作为中心词和上下文词，且{% mathjax %}\nu = \{0,1,\ldots,|\nu|-1\}{% endmathjax %}是词表的索引集。考虑词{% mathjax %}w_i{% endmathjax %}可能在语料库中出现多次。在整个语料库中，所有以{% mathjax %}w_i{% endmathjax %}为中心词的上下文词形成一个词索引的多重集{% mathjax %}\mathcal{C}_i{% endmathjax %}，该索引允许同一元素的多个实例。对于任何元素，其实例数称为其重数。举例说明，假设词{% mathjax %}w_i{% endmathjax %}在语料库中出现两次，并且在两个上下文窗口中以{% mathjax %}w_i{% endmathjax %}为其中心词的上下文词索引是{% mathjax %}k,j,m,k{% endmathjax %}和{% mathjax %}k,l,k,j{% endmathjax %}。因此，多重集{% mathjax %}\mathcal{C}_i = \{j,j,k,k,k,k,l,m\}{% endmathjax %}，其中元素{% mathjax %}j,k,l,m{% endmathjax %}的重数分别为`2、4、1、1`。现在，让我们将多重集{% mathjax %} \mathcal{C}_i{% endmathjax %}中的元素{% mathjax %}j{% endmathjax %}的重数表示为{% mathjax %}x_{ij}{% endmathjax %}。这是词{% mathjax %}w_j{% endmathjax %}（作为上下文词）和词{% mathjax %}w_i{% endmathjax %}（作为中心词）在整个语料库的同一上下文窗口中的全局共现计数。使用这样的全局语料库统计，跳元模型的损失函数等价于：
+{% mathjax '{"conversion":{"em":14}}' %}
+-\sum_{i\in \nu}\sum_{j\in \nu} x_{ij}\log q_{ij}
+{% endmathjax %}
+我们用{% mathjax %}x_i{% endmathjax %}表示上下文窗口中的所有上下文词的数量，其中{% mathjax %}w_i{% endmathjax %}作为它们的中心词出现，这相当于{% mathjax %}|\mathcal{C}_i|{% endmathjax %}。设{% mathjax %}p_{ij}{% endmathjax %}为用于生成上下文词{% mathjax %}w_j{% endmathjax %}的条件概率{% mathjax %}x_{ij}/x_i{% endmathjax %}。给定中心词{% mathjax %}w_i{% endmathjax %}，上面公式可以重写为：
+{% mathjax '{"conversion":{"em":14}}' %}
+-\sum_{i\in \nu} x_i \sum_{j\in \nu} p_{ij}\log q_{ij}
+{% endmathjax %}
+{% mathjax %}-\sum_{j\in \nu} p_{ij}\log q_{ij}{% endmathjax %}计算全局语料统计的条件分布{% mathjax %}p_{ij}{% endmathjax %}和模型预测的条件分布{% mathjax %}q_{ij}{% endmathjax %}的交叉熵。如上所述，这一损失也按{% mathjax %}x_i{% endmathjax %}加权。在上个公式中最小化损失函数将使预测的条件分布接近全局语料库统计中的条件分布。
+
+虽然交叉熵损失函数通常用于测量概率分布之间的距离，但在这里可能不是一个好的选择。一方面，规范化{% mathjax %}q_{ij}{% endmathjax %}的代价在于整个词表的求和，这在计算上可能非常昂贵。另一方面，来自大型语料库的大量罕见事件往往被交叉熵损失建模，从而赋予过多的权重。
+##### GloVe模型
+
+有鉴于此，`GloVe`模型基于平方损失对跳元模型做了三个修改：
+- 使用变量{% mathjax %}p_{ij}' = x_{ij}{% endmathjax %}和{% mathjax %}q_{ij}' = \exp(\mathbf{u}_j^{\mathsf{T}}\mathbf{v}_i){% endmathjax %}而非概率分布，并取两者的对数。所以平方损失项是{% mathjax %}(\log p_{ij}' - \log q_{ij}')^2 = (\mathbf{u}_j^{\mathsf{T}}\mathbf{v}_i - \log x_{ij})^2{% endmathjax %}。
+- 为每个词{% mathjax %}w_i{% endmathjax %}添加两个标量模型参数：中心词偏置{% mathjax %}b_i{% endmathjax %}和上下文词偏置{% mathjax %}c_i{% endmathjax %}。
+- 用权重函数{% mathjax %}h(x_{ij}){% endmathjax %}替换每个损失项的权重，其中{% mathjax %}h(x){% endmathjax %}在{% mathjax %}[0,1]{% endmathjax %}的间隔内递增。
+
+整合代码，训练`GloVe`是为了尽量降低以下损失函数：
+{% mathjax '{"conversion":{"em":14}}' %}
+\sum_{i\in \nu} x_i \sum_{j\in \nu} h(x_{ij})(\mathbf{u}_j^{\mathsf{T}}\mathbf{v}_i _b_i + c_i - \log x_{ij})^2
+{% endmathjax %}
+对于权重函数，建议的选择是：当{% mathjax %}x < c{% endmathjax %}（例如，{% mathjax %}c = 100{% endmathjax %}）时，{% mathjax %}h(x) = (x/c)^{\alpha}{% endmathjax %}（例如{% mathjax %}\alpha = 0.75{% endmathjax %}）；否则{% mathjax %}h(x) = 1{% endmathjax %}。在这种情况下，由于{% mathjax %}h(0) = 0{% endmathjax %}，为了提高计算效率，可以省略任意{% mathjax %}x_{ij} = 0{% endmathjax %}的平方损失项。例如，当使用小批量随机梯度下降进行训练时，在每次迭代中，我们随机抽样一小批量非零的{% mathjax %}x_{ij}{% endmathjax %}来计算梯度并更新模型参数。注意，这些非零的{% mathjax %}x_{ij}{% endmathjax %}是预先计算的全局语料库统计数据；因此，该模型`GloVe`被称为**全局向量**。应该强调的是，当词{% mathjax %}w_i{% endmathjax %}出现在词{% mathjax %}w_j{% endmathjax %}的上下文窗口时，词{% mathjax %}w_j{% endmathjax %}也出现在词{% mathjax %}w_i{% endmathjax %}的上下文窗口。因此，{% mathjax %}x_{ij} = x_{ji}{% endmathjax %}。与拟合非对称条件概率{% mathjax %}p_{ij}{% endmathjax %}的`word2vec`不同，`GloVe`拟合对称概率{% mathjax %}\log x_{ij}{% endmathjax %}。因此，在`GloVe`模型中，任意词的中心词向量和上下文词向量在数学上是等价的。但在实际应用中，由于初始值不同，同一个词经过训练后，在这两个向量中可能得到不同的值：`GloVe`将它们相加作为输出向量。
+##### 从条件概率比值理解GloVe模型
+
+我们也可以从另一个角度来理解`GloVe`模型。使用下表中的相同符号，设{% mathjax %}p_{ij}\underset{=}{\text{def}} P(w_j|w_i){% endmathjax %}为生成上下文词{% mathjax %} w_j{% endmathjax %}的条件概率，给定{% mathjax %}w_i{% endmathjax %}作为语料库中的中心词。`tab_glove`根据大量语料库的统计数据，列出了给定单词`“ice”`和`“steam”`的共现概率及其比值。
+**表：label:tab_glove**
+|{% mathjax %}w_k{% endmathjax %}|solid|gas|water|fashion|
+|:-------------------------------|:----|:-----|:-----|:-------|
+|{% mathjax %}p_1 = P(w_k|\text{ice}){% endmathjax %}|0.00019|0.000066|0.003|0.000017|
+|{% mathjax %}p_2 = P(w_k|\text{steam}){% endmathjax %}|0.000022|0.00078|0.0022|0.000018|
+|{% mathjax %}p_1/p_2{% endmathjax %}|8.9|0.085|1.36|0.96|
+
+从`tab_glove中`，我们可以观察到以下几点：
+- 对于与`“ice”`相关但与`“steam”`无关的单词{% mathjax %}w_k{% endmathjax %}，例如{% mathjax %}w_k = \text{solid}{% endmathjax %}，我们预计会有更大的共现概率比值，例如`8.9`。
+- 对于与`“steam”`相关但与`“ice”`无关的单词{% mathjax %}w_k{% endmathjax %}，例如{% mathjax %}w_k = \text{gas}{% endmathjax %}，我们预计较小的共现概率比值，例如`0.085`。
+- 对于同时与`“ice”`和`“steam”`相关的单词{% mathjax %}w_k{% endmathjax %}，例如{% mathjax %}w_k = \text{water}{% endmathjax %}，我们预计其共现概率的比值接近`1`，例如`1.36`.
+- 对于与`“ice”`和`“steam”`都不相关的单词{% mathjax %}w_k{% endmathjax %}，例如{% mathjax %}w_k = \text{fashion}{% endmathjax %}，我们预计共现概率的比值接近`1`，例如`0.96`.
+
+由此可见，共现概率的比值能够直观地表达词与词之间的关系。因此，我们可以设计三个词向量的函数来拟合这个比值。对于共现概率{% mathjax %}p_{ij}/p_{ik}{% endmathjax %}的比值，其中{% mathjax %}w_i{% endmathjax %}是中心词，{% mathjax %}w_j{% endmathjax %}和{% mathjax %}w_k{% endmathjax %}是上下文词，我们希望使用某个函数{% mathjax %}f{% endmathjax %}来拟合该比值：
+{% mathjax '{"conversion":{"em":14}}' %}
+f(\mathbf{u}_j,\mathbf{u}_k,\mathbf{v}_i) \approx \frac{p_{ij}}{p_{ik}}
+{% endmathjax %}
+在{% mathjax %}f{% endmathjax %}的许多可能的设计中，我们只在以下几点中选择了一个合理的选择。因为共现概率的比值是标量，所以我们要求{% mathjax %}f{% endmathjax %}是标量函数，例如{% mathjax %}f(\mathbf{u}_j,\mathbf{u}_k,\mathbf{v}_i) = f((\mathbf{u}_j - \mathbf{u}_k)^{\mathsf{T}}\mathbf{v}_i){% endmathjax %}。在上面公式中交换词索引{% mathjax %}j{% endmathjax %}和{% mathjax %}k{% endmathjax %}，它必须保持{% mathjax %}f(x)f(-x) = 1{% endmathjax %}，所以一种可能性是{% mathjax %}f(x) = \exp(x){% endmathjax %}，即：
+{% mathjax '{"conversion":{"em":14}}' %}
+f(\mathbf{u}_j,\mathbf{u}_k,\mathbf{v}_i) = \frac{\exp(\mathbf{u}_j^{\mathsf{T}}\mathbf{v}_i)}{\exp(\mathbf{u}_k^{\mathsf{T}}\mathbf{v}_i)} \approx \frac{p_{ij}}{p_{ik}}
+{% endmathjax %}
+现在让我们选择{% mathjax %}\exp(\mathbf{u}_j^{\mathsf{T}}\mathbf{v}_i) \approx \alpha p_{ij}{% endmathjax %}，其中{% mathjax %}\alpha{% endmathjax %}是常数。从{% mathjax %}p_{ij} = x_{ij}/x_i{% endmathjax %}开始，取两边的对数得到{% mathjax %}\mathbf{u}_j^{\mathsf{T}}\mathbf{v}_i \approx \log \alpha + \log  x_{ij} - \log x_i{% endmathjax %}。我们可以使用附加的偏置项来拟合{% mathjax %}-\log \alpha + \log x_i{% endmathjax %}，如中心词偏置{% mathjax %}b_i{% endmathjax %}和上下文词偏置{% mathjax %}c_j{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{u}_j^{\mathsf{T}}\mathbf{v}_i + b_i + c_j \approx \log x_{ij}
+{% endmathjax %}
+通过对上面公式的加权平方误差的度量，得到了的`GloVe`损失函数。
+##### 总结
+
+诸如词-词共现计数的全局语料库统计可以来解释跳元模型。交叉熵损失可能不是衡量两种概率分布差异的好选择，特别是对于大型语料库。`GloVe`使用平方损失来拟合预先计算的全局语料库统计数据。对于`GloVe`中的任意词，中心词向量和上下文词向量在数学上是等价的。`GloVe`可以从词-词共现概率的比率来解释。
+
 #### 子词嵌入
 
 在英语中，`“helps”“helped”和“helping”`等单词都是同一个词`“help”`的变形形式。`“dog”`和`“dogs”`之间的关系与`“cat”`和`“cats”`之间的关系相同，`“boy”`和`“boyfriend”`之间的关系与`“girl”`和`“girlfriend”`之间的关系相同。在法语和西班牙语等其他语言中，许多动词有`40`多种变形形式，而在芬兰语中，名词最多可能有`15`种变形。在语言学中，形态学研究单词形成和词汇关系。但是，`word2vec`和`GloVe`都没有对词的内部结构进行探讨。
