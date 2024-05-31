@@ -69,4 +69,42 @@ p(w_o|w_c) = \frac{\exp(\mathbf{u}_o^{\mathsf{T}}\mathbf{v}_c)}{\sum_{i\in\nu} \
 {% mathjax '{"conversion":{"em":14}}' %}
 P(\text{"the","man","his","son"}|\text{"loves"})
 {% endmathjax %}
-{% asset_img nlp_3.png "连续词袋模型考虑了给定周围上下文词生成中心词条件概率¶" %}
+{% asset_img nlp_3.png "连续词袋模型考虑了给定周围上下文词生成中心词条件概率" %}
+
+由于连续词袋模型中存在多个上下文词，因此在计算条件概率时对这些上下文词向量进行平均。具体地说，对于字典中索引{% mathjax %}i{% endmathjax %}的任意词，分别用{% mathjax %}\mathbf{v}_i\in \mathbb{R}^d{% endmathjax %}和{% mathjax %}\mathbf{u}_i\in \mathbb{r}^d{% endmathjax %}表示用作上下文词和中心词的两个向量（符号与跳元模型中相反）。给定上下文词{% mathjax %}w_{o_1},\ldots,w_{o_2m}{% endmathjax %}（在词表中索引是{% mathjax %}o_1,\ldots,o_2m{% endmathjax %}）生成任意中心词{% mathjax %}w_c{% endmathjax %}（在词表中索引是{% mathjax %}c{% endmathjax %}）的条件概率可以由以下公式建模:
+{% mathjax '{"conversion":{"em":14}}' %}
+P(w_c|w_{o_1,\ldots,w_{o_2m}}) = \frac{\exp(\frac{1}{2m}\mathbf{u}_c^{\mathsf{T}}(\mathbf{v}_{o_1}+\ldots,+\mathbf{v}_{o_2m}))}{\sum_{i\in \nu}}
+{% endmathjax %}
+为了简洁起见，我们设为{% mathjax %}\mathcal{W}_o = \{w_{o_1},\ldots,w_{o_2m}\}{% endmathjax %}和{% mathjax %}\bar{\mathbf{v}}_o = (\mathbf{v}_{o_1}+ \ldots,+\mathbf{v}_{o_2m})/(2m){% endmathjax %}，那么可以简化为：
+{% mathjax '{"conversion":{"em":14}}' %}
+P(w_c|\mathcal{W}_o) = \frac{\exp(\mathbf{u}_c^{\mathsf{T}}\bar{\mathbf{v}}_o)}{\sum_{i\in \nu}\exp(\mathbf{u}_i^{\mathsf{T}}\bar{\mathbf{v}}_o)}
+{% endmathjax %}
+给定长度为{% mathjax %}T{% endmathjax %}的文本序列，其中时间步{% mathjax %}t{% endmathjax %}处的词表示为{% mathjax %}w_{(t)}{% endmathjax %}。对于上下文窗口{% mathjax %}m{% endmathjax %}，连续词袋模型的似然函数是在给定其上下文词的情况下生成所有中心词的概率：
+{% mathjax '{"conversion":{"em":14}}' %}
+\prod_{t=1}^T P(w^{(t)}|w^{(t-m)},\ldots,w^{(t-1)},w^{(t+1)},\lodts,w^{(t+m)})
+{% endmathjax %}
+###### 训练
+
+训练连续词袋模型与训练跳元模型几乎是一样的。连续词袋模型的最大似然估计等价于最小化以下损失函数：
+{% mathjax '{"conversion":{"em":14}}' %}
+-\sum_{t=1}^T \log P(w^{(t)}|w^{(t-m)},\ldots,w^{(t-1)},w^{(t+1)},\lodts,w^{(t+m)})
+{% endmathjax %}
+请注意，
+{% mathjax '{"conversion":{"em":14}}' %}
+\log P(w_c|\mathcal{W}_o) = \mathbf{u}_c^T\bar{\mathbf{v}}_o- \log(\sum_{i\in \nu} \exp(\mathbf{u}_i^T\bar{\mathbf{v}}_o))
+{% endmathjax %}
+通过微分，我们可以获得其关于任意上下文词向量{% mathjax %}\mathbf{v}_{o_i}{% endmathjax %}（{% mathjax %}(i=1,\ldots,2m){% endmathjax %}）的梯度，如下：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial \log P(w_c|\mathcal{W}_o)}{\partial \mathbf{v}_{o_i}} = \frac{1}{2m}(\mathbf{u}_c - \sum_{j\in \nu} \frac{\exp(\mathbf{u}_c^{\mathsf{T}}\bar{\mathbf{v}}_o\mathbf{u}_j)}{\sum_{i\in \nu}\exp(\mathbf{u}_i^{\mathsf{T}}\bar{\mathbf{v}}_o)}) = \frac{1}{2m}(\mathbf{u}_c - \sum_{j\in \nu} P(w_j|\mathcal{w}_o)\mathbf{u}_j)
+{% endmathjax %}
+其他词向量的梯度可以以相同的方式获得。与跳元模型不同，连续词袋模型通常使用上下文词向量作为词表示。
+##### 总结
+
+**词向量是用于表示单词意义的向量，也可以看作词的特征向量**。将词映射到实向量的技术称为**词嵌入**。`word2vec`包含**跳元模型和连续词袋模型**。跳元模型假设一个单词可用于在文本序列中，生成其周围的单词；而连续词袋模型假设基于上下文词来生成中心单词。
+
+#### 近似训练
+
+跳元模型的主要思想是使用`softmax`运算来计算基于给定的中心词{% mathjax %}w_c{% endmathjax %}生成上下文字{% mathjax %}w_o{% endmathjax %}的条件概率。由于`softmax`操作的性质，上下文词可以是词表{% mathjax %}\nu{% endmathjax %}中的任意项，与整个词表大小一样多的项的求和。因此，跳元模型的梯度计算和连续词袋模型的梯度计算都包含求和。不幸的是，在一个词典上（通常有几十万或数百万个单词）求和的梯度的计算成本是巨大的！为了降低上述计算复杂度，将介绍两种近似训练方法：负采样和分层`softmax`。由于跳元模型和连续词袋模型的相似性，我们将以跳元模型为例来描述这两种近似训练方法。
+##### 负采样
+
+负采样修改了原目标函数。给定中心词{% mathjax %}w_c{% endmathjax %}的上下文窗口，任意上下文词{% mathjax %}w_o{% endmathjax %}来自该上下文窗口的被认为是由下式建模概率的事件：
