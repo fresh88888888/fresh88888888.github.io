@@ -143,7 +143,7 @@ P(w^{(t+j)}|w^{(t)}) = P(D=1|w^{(t)},w^{(t+j)})\;\;\;\prod_{k=1,w_k\in P(w)}^K P
 
 用{% mathjax %}L(w){% endmathjax %}表示二叉树中表示字{% mathjax %}w{% endmathjax %}的从根节点到叶节点的路径上的节点数（包括两端）。设{% mathjax %}n(w,j){% endmathjax %}为该路径上的{% mathjax %}j^{\text{th}}{% endmathjax %}节点，其上下文字向量为{% mathjax %}\mathbf{u}_{n(w,j)}{% endmathjax %}。例如，上图中的{% mathjax %}L(w_3) = 4{% endmathjax %}。分层`softmax`的条件概率近似为：
 {% mathjax '{"conversion":{"em":14}}' %}
-P(w_o|w_c) = \;\prod_{j=1}^{L(w_o) - 1} \sigma([n(w_o,j+1) = \text{leftChild(n(w_o,j))}]\cdot \mathbf{u}_{n(w_o,j)}^{\mathsf{T}}\mathbf{v}_c)
+P(w_o|w_c) = \;\prod_{j=1}^{L(w_o) - 1} \sigma([n(w_o,j+1) = \text{leftChild}(n(w_o,j))]\cdot \mathbf{u}_{n(w_o,j)}^{\mathsf{T}}\mathbf{v}_c)
 {% endmathjax %}
 其中函数{% mathjax %}\sigma{% endmathjax %}的定义，{% mathjax %}\text{leftChild}(n){% endmathjax %}是节点{% mathjax %}n{% endmathjax %}的左子节点：如果{% mathjax %}x{% endmathjax %}为真，{% mathjax %}[x] = 1{% endmathjax %};否则{% mathjax %}[x] = -1{% endmathjax %}。为了说明给定词{% mathjax %}w_c{% endmathjax %}生成词{% mathjax %}w_3{% endmathjax %}的条件概率。这需要{% mathjax %}w_c{% endmathjax %}的词向量{% mathjax %}\mathbf{v}_c{% endmathjax %}和从根到{% mathjax %}w_3{% endmathjax %}的路径上的非叶节点向量之间的点积，该路径依次向左、向右和向左遍历：
 {% mathjax '{"conversion":{"em":14}}' %}
