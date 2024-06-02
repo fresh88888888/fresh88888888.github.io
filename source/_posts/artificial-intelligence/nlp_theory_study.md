@@ -249,4 +249,6 @@ f(\mathbf{u}_j,\mathbf{u}_k,\mathbf{v}_i) = \frac{\exp(\mathbf{u}_j^{\mathsf{T}}
 
 ##### 从上下文无关到上下文敏感
 
-例如，`word2vec`和`GloVe`都将相同的预训练向量分配给同一个词，而不考虑词的上下文（如果有的话）。形式上，任何词元{% mathjax %}x{% endmathjax %}的上下文无关表示是函数{% mathjax %}f(x){% endmathjax %}，其仅将{% mathjax %}x{% endmathjax %}作为其输入。考虑到自然语言中丰富的多义现象和复杂的语义，上下文无关表示具有明显的局限性。例如，在`“a crane is flying”`（一只鹤在飞）和`“a crane driver came”`（一名吊车司机来了）的上下文中，`“crane”`一词有完全不同的含义；因此，同一个词可以根据上下文被赋予不同的表示。
+例如，`word2vec`和`GloVe`都将相同的预训练向量分配给同一个词，而不考虑词的上下文（如果有的话）。形式上，任何词元{% mathjax %}x{% endmathjax %}的上下文无关表示是函数{% mathjax %}f(x){% endmathjax %}，其仅将{% mathjax %}x{% endmathjax %}作为其输入。考虑到自然语言中丰富的多义现象和复杂的语义，上下文无关表示具有明显的局限性。例如，在`“a crane is flying”`（一只鹤在飞）和`“a crane driver came”`（一名吊车司机来了）的上下文中，`“crane”`一词有完全不同的含义；因此，同一个词可以根据上下文被赋予不同的表示。这推动了“上下文敏感”词表示的发展，其中词的表征取决于它们的上下文。因此，词元{% mathjax %}x{% endmathjax %}的上下文敏感表示是函数{% mathjax %}f(x,c(x)){% endmathjax %}，其取决于{% mathjax %}x{% endmathjax %}及其上下文{% mathjax %}c(x){% endmathjax %}。流行的上下文敏感表示包括`TagLM`（`language-model-augmented sequence tagger`，语言模型增强的序列标记器）、`CoVe`（`Context Vectors`，上下文向量）和`ELMo`（`Embeddings from Language Models`，来自语言模型的嵌入）。
+
+例如，通过将整个序列作为输入，`ELMo`是为输入序列中的每个单词分配一个表示的函数。具体来说，`ELMo`将来自预训练的双向长短期记忆网络的所有中间层表示组合为输出表示。然后，`ELMo`的表示将作为附加特征添加到下游任务的现有监督模型中，例如通过将`ELMo`的表示和现有模型中词元的原始表示（例如`GloVe`）连结起来。一方面，在加入`ELMo`表示后，冻结了预训练的双向`LSTM`模型中的所有权重。另一方面，现有的监督模型是专门为给定的任务定制的。利用当时不同任务的不同最佳模型，添加`ELMo`改进了六种自然语言处理任务的技术水平：情感分析、自然语言推断、语义角色标注、共指消解、命名实体识别和问答。
