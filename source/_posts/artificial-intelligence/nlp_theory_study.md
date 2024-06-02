@@ -261,7 +261,161 @@ f(\mathbf{u}_j,\mathbf{u}_k,\mathbf{v}_i) = \frac{\exp(\mathbf{u}_j^{\mathsf{T}}
 {% asset_img nlp_5.png "ELMo、GPT和BERT的比较" %}
 
 `BERT`进一步改进了`11`种自然语言处理任务的技术水平，这些任务分为以下几个大类：（1）单一文本分类（如情感分析）、（2）文本对分类（如自然语言推断）、（3）问答、（4）文本标记（如命名实体识别）。从上下文敏感的`ELMo`到任务不可知的`GPT`和`BERT`，它们都是在`2018`年提出的。概念上简单但经验上强大的自然语言深度表示预训练已经彻底改变了各种自然语言处理任务的解决方案。
+##### 输入表示
 
+在自然语言处理中，有些任务（如情感分析）以单个文本作为输入，而有些任务（如自然语言推断）以一对文本序列作为输入。`BERT`输入序列明确地表示单个文本和文本对。当输入为单个文本时，`BERT`输入序列是特殊类别词元`“<cls>”`、文本序列的标记、以及特殊分隔词元`“<sep>”`的连结。当输入为文本对时，`BERT`输入序列是`“<cls>”`、第一个文本序列的标记、`“<sep>”`、第二个文本序列标记、以及`“<sep>”`的连结。我们将始终如一地将术语“`BERT`输入序列”与其他类型的“序列”区分开来。例如，一个`BERT`输入序列可以包括一个文本序列或两个文本序列。为了区分文本对，根据输入序列学到的片段嵌入{% mathjax %}\mathbf{e}_A{% endmathjax %}和{% mathjax %}\mathbf{e}_B{% endmathjax %}分别被添加到第一序列和第二序列的词元嵌入中。对于单文本输入，仅使用{% mathjax %}\mathbf{e}_A{% endmathjax %}。
+
+下面的`get_tokens_and_segments`将一个句子或两个句子作为输入，然后返回`BERT`输入序列的标记及其相应的片段索引。
+```python
+def get_tokens_and_segments(tokens_a, tokens_b=None):
+    """获取输入序列的词元及其片段索引"""
+    tokens = ['<cls>'] + tokens_a + ['<sep>']
+    # 0和1分别标记片段A和B
+    segments = [0] * (len(tokens_a) + 2)
+    if tokens_b is not None:
+        tokens += tokens_b + ['<sep>']
+        segments += [1] * (len(tokens_b) + 1)
+    return tokens, segments
+```
+`BERT`选择`Transformer`编码器作为其双向架构。在`Transformer`编码器中常见是，位置嵌入被加入到输入序列的每个位置。然而，与原始的`Transformer`编码器不同，`BERT`使用可学习的位置嵌入。总之，下图表明`BERT`输入序列的嵌入是词元嵌入、片段嵌入和位置嵌入的和。
+{% asset_img nlp_6.png "BERT输入序列的嵌入是词元嵌入、片段嵌入和位置嵌入的和" %}
+
+`BERTEncoder`使用片段嵌入和可学习的位置嵌入。
+```python
+class BERTEncoder(nn.Module):
+    """BERT编码器"""
+    def __init__(self, vocab_size, num_hiddens, norm_shape, ffn_num_input, ffn_num_hiddens, num_heads, num_layers, dropout,
+                 max_len=1000, key_size=768, query_size=768, value_size=768, **kwargs):
+        super(BERTEncoder, self).__init__(**kwargs)
+        self.token_embedding = nn.Embedding(vocab_size, num_hiddens)
+        self.segment_embedding = nn.Embedding(2, num_hiddens)
+        self.blks = nn.Sequential()
+        for i in range(num_layers):
+            self.blks.add_module(f"{i}", d2l.EncoderBlock(key_size, query_size, value_size, num_hiddens, norm_shape,
+                ffn_num_input, ffn_num_hiddens, num_heads, dropout, True))
+        # 在BERT中，位置嵌入是可学习的，因此我们创建一个足够长的位置嵌入参数
+        self.pos_embedding = nn.Parameter(torch.randn(1, max_len,
+                                                      num_hiddens))
+
+    def forward(self, tokens, segments, valid_lens):
+        # 在以下代码段中，X的形状保持不变：（批量大小，最大序列长度，num_hiddens）
+        X = self.token_embedding(tokens) + self.segment_embedding(segments)
+        X = X + self.pos_embedding.data[:, :X.shape[1], :]
+        for blk in self.blks:
+            X = blk(X, valid_lens)
+        return X
+
+# 假设词表大小为10000，为了演示BERTEncoder的前向推断，让我们创建一个实例并初始化它的参数。
+vocab_size, num_hiddens, ffn_num_hiddens, num_heads = 10000, 768, 1024, 4
+norm_shape, ffn_num_input, num_layers, dropout = [768], 768, 2, 0.2
+encoder = BERTEncoder(vocab_size, num_hiddens, norm_shape, ffn_num_input,ffn_num_hiddens, num_heads, num_layers, dropout)
+
+tokens = torch.randint(0, vocab_size, (2, 8))
+segments = torch.tensor([[0, 0, 0, 0, 1, 1, 1, 1], [0, 0, 0, 1, 1, 1, 1, 1]])
+encoded_X = encoder(tokens, segments, None)
+encoded_X.shape
+
+# torch.Size([2, 8, 768])
+```
+我们将`tokens`定义为长度为`8`的`2`个输入序列，其中每个词元是词表的索引。使用输入`tokens`的`BERTEncoder`的前向推断返回编码结果，其中每个词元由向量表示，其长度由超参数`num_hiddens`定义。此超参数通常称为`Transformer`编码器的隐藏大小（隐藏单元数）。
+##### 预训练
+
+`BERTEncoder`的前向推断给出了输入文本的每个词元和插入的特殊标记`“<cls>”`及`“<seq>”`的`BERT`表示。接下来，我们将使用这些表示来计算预训练`BERT`的损失函数。预训练包括以下两个任务：掩蔽语言模型和下一句预测。
+###### 掩蔽语言模型（Masked Language Modeling）
+
+为了双向编码上下文以表示每个词元，`BERT`随机掩蔽词元并使用来自双向上下文的词元以自监督的方式预测掩蔽词元。此任务称为**掩蔽语言模型**。在这个预训练任务中，将随机选择`15%`的词元作为预测的掩蔽词元。要预测一个掩蔽词元而不使用标签作弊，一个简单的方法是总是用一个特殊的`“<mask>”`替换输入序列中的词元。然而，人造特殊词元`“<mask>”`不会出现在微调中。为了避免预训练和微调之间的这种不匹配，如果为预测而屏蔽词元（例如，在`“this movie is great”`中选择掩蔽和预测`“great”`），则在输入中将其替换为：
+- `80%`时间为特殊的`“<mask>“`词元（例如，`“this movie is great”`变为`“this movie is<mask>”`；
+- `10%`时间为随机词元（例如，`“this movie is great”`变为`“this movie is drink”`）；
+- `10%`时间内为不变的标签词元（例如，`“this movie is great”`变为`“this movie is great”`）。
+
+请注意，在`15%`的时间中，有`10%`的时间插入了随机词元。这种偶然的噪声鼓励`BERT`在其双向上下文编码中不那么偏向于掩蔽词元（尤其是当标签词元保持不变时）。我们实现了下面的`MaskLM`类来预测`BERT`预训练的掩蔽语言模型任务中的掩蔽标记。预测使用单隐藏层的多层感知机(`self.mlp`)。在前向推断中，它需要两个输入：`BERTEncoder`的编码结果和用于预测的词元位置。输出是这些位置的预测结果。
+```python
+class MaskLM(nn.Module):
+    """BERT的掩蔽语言模型任务"""
+    def __init__(self, vocab_size, num_hiddens, num_inputs=768, **kwargs):
+        super(MaskLM, self).__init__(**kwargs)
+
+        self.mlp = nn.Sequential(nn.Linear(num_inputs, num_hiddens), nn.ReLU(),nn.LayerNorm(num_hiddens),nn.Linear(num_hiddens, vocab_size))
+
+    def forward(self, X, pred_positions):
+        num_pred_positions = pred_positions.shape[1]
+        pred_positions = pred_positions.reshape(-1)
+        batch_size = X.shape[0]
+        batch_idx = torch.arange(0, batch_size)
+        batch_idx = torch.repeat_interleave(batch_idx, num_pred_positions)
+        masked_X = X[batch_idx, pred_positions]
+        masked_X = masked_X.reshape((batch_size, num_pred_positions, -1))
+        mlm_Y_hat = self.mlp(masked_X)
+        return mlm_Y_hat
+
+# mlm的前向推断返回encoded_X的所有掩蔽位置mlm_positions处的预测结果mlm_Y_hat。对于每个预测，结果的大小等于词表的大小。
+mlm = MaskLM(vocab_size, num_hiddens)
+mlm_positions = torch.tensor([[1, 5, 2], [6, 1, 5]])
+mlm_Y_hat = mlm(encoded_X, mlm_positions)
+mlm_Y_hat.shape
+
+# torch.Size([2, 3, 10000])
+
+# 通过掩码下的预测词元mlm_Y的真实标签mlm_Y_hat，我们可以计算在BERT预训练中的遮蔽语言模型任务的交叉熵损失。
+mlm_Y = torch.tensor([[7, 8, 9], [10, 20, 30]])
+loss = nn.CrossEntropyLoss(reduction='none')
+mlm_l = loss(mlm_Y_hat.reshape((-1, vocab_size)), mlm_Y.reshape(-1))
+mlm_l.shape
+
+# torch.Size([6])
+```
+###### 下一句预测（Next Sentence Prediction）
+
+尽管掩蔽语言建模能够编码双向上下文来表示单词，但它不能显式地建模文本对之间的逻辑关系。为了帮助理解两个文本序列之间的关系，`BERT`在预训练中考虑了一个二元分类任务——下一句预测。在为预训练生成句子对时，有一半的时间它们确实是标签为“真”的连续句子；在另一半的时间里，第二个句子是从语料库中随机抽取的，标记为“假”。下面的`NextSentencePred`类使用单隐藏层的多层感知机来预测第二个句子是否是`BERT`输入序列中第一个句子的下一个句子。由于`Transformer`编码器中的自注意力，特殊词元`“<cls>”`的`BERT`表示已经对输入的两个句子进行了编码。因此，多层感知机分类器的输出层(`self.output`)以`X`作为输入，其中`X`是多层感知机隐藏层的输出，而`MLP`隐藏层的输入是编码后的`“<cls>”`词元。
+```python
+class NextSentencePred(nn.Module):
+    """BERT的下一句预测任务"""
+    def __init__(self, num_inputs, **kwargs):
+        super(NextSentencePred, self).__init__(**kwargs)
+        self.output = nn.Linear(num_inputs, 2)
+
+    def forward(self, X):
+        # X的形状：(batchsize,num_hiddens)
+        return self.output(X)
+
+encoded_X = torch.flatten(encoded_X, start_dim=1)
+# NSP的输入形状:(batchsize，num_hiddens)
+nsp = NextSentencePred(encoded_X.shape[-1])
+nsp_Y_hat = nsp(encoded_X)
+nsp_Y_hat.shape
+
+# torch.Size([2, 2])
+
+# 还可以计算两个二元分类的交叉熵损失。
+nsp_y = torch.tensor([0, 1])
+nsp_l = loss(nsp_Y_hat, nsp_y)
+nsp_l.shape
+
+# torch.Size([2])
+```
+值得注意的是，上述两个预训练任务中的所有标签都可以从预训练语料库中获得，而无需人工标注。原始的``BERT``已经在图书语料库和英文维基百科的连接上进行了预训练。这两个文本语料库非常庞大：它们分别有`8`亿个单词和`25`亿个单词。在预训练BERT时，最终的损失函数是掩蔽语言模型损失函数和下一句预测损失函数的线性组合。现在我们可以通过实例化三个类`BERTEncoder、MaskLM`和`NextSentencePred`来定义`BERTModel`类。前向推断返回编码后的`BERT`表示`encoded_X`、掩蔽语言模型预测`mlm_Y_hat`和下一句预测`nsp_Y_hat`。
+```python
+class BERTModel(nn.Module):
+    """BERT模型"""
+    def __init__(self, vocab_size, num_hiddens, norm_shape, ffn_num_input,ffn_num_hiddens, num_heads, num_layers, dropout,max_len=1000, 
+                    key_size=768, query_size=768, value_size=768, hid_in_features=768, mlm_in_features=768, nsp_in_features=768):
+        super(BERTModel, self).__init__()
+        self.encoder = BERTEncoder(vocab_size, num_hiddens, norm_shape,ffn_num_input, ffn_num_hiddens, num_heads, num_layers,
+                    dropout, max_len=max_len, key_size=key_size,query_size=query_size, value_size=value_size)
+        self.hidden = nn.Sequential(nn.Linear(hid_in_features, num_hiddens), nn.Tanh())
+        self.mlm = MaskLM(vocab_size, num_hiddens, mlm_in_features)
+        self.nsp = NextSentencePred(nsp_in_features)
+
+    def forward(self, tokens, segments, valid_lens=None, pred_positions=None):
+        encoded_X = self.encoder(tokens, segments, valid_lens)
+        if pred_positions is not None:
+            mlm_Y_hat = self.mlm(encoded_X, pred_positions)
+        else:
+            mlm_Y_hat = None
+        # 用于下一句预测的多层感知机分类器的隐藏层，0是“<cls>”标记的索引
+        nsp_Y_hat = self.nsp(self.hidden(encoded_X[:, 0, :]))
+        return encoded_X, mlm_Y_hat, nsp_Y_hat
+```
 ##### 总结
 
 `word2vec`和`GloVe`等词嵌入模型与上下文无关。它们将相同的预训练向量赋给同一个词，而不考虑词的上下文（如果有的话）。它们很难处理好自然语言中的一词多义或复杂语义。对于上下文敏感的词表示，如`ELMo`和`GPT`，词的表示依赖于它们的上下文。`ELMo`对上下文进行双向编码，但使用特定于任务的架构（然而，为每个自然语言处理任务设计一个特定的体系架构实际上并不容易）；而`GPT`是任务无关的，但是从左到右编码上下文。`BERT`结合了这两个方面的优点：它对上下文进行双向编码，并且需要对大量自然语言处理任务进行最小的架构更改。`BERT`输入序列的嵌入是词元嵌入、片段嵌入和位置嵌入的和。预训练包括两个任务：**掩蔽语言模型和下一句预测**。前者能够编码双向上下文来表示单词，而后者则显式地建模文本对之间的逻辑关系。
