@@ -242,7 +242,7 @@ len(encoder.decoder)
 
 # 50257
 ```
-词汇表以及决定字符串如何分解的**字节对组合**(`byte-pair merges`)，是通过训练分词器获得的。当我们加载分词器，就会从一些文件加载已经训练好的词汇表和字节对组合，这些文件在我们运行**load_encoder_hparams_and_params**的时候，随着模型文件被一起下载了。你可以查看**models/124M/encoder.json**(**词汇表**)和**models/124M/vocab.bpe**(**字节对组合**)。
+词汇表以及决定字符串如何分解的**字节对组合**(`byte-pair merges`)，是通过训练分词器获得的。当我们加载分词器，就会从一些文件加载已经训练好的词汇表和字节对组合，这些文件在我们运行`load_encoder_hparams_and_params`的时候，随着模型文件被一起下载了。你可以查看`models/124M/encoder.json`(**词汇表**)和`models/124M/vocab.bpe`(**字节对组合**)。
 ##### 超参数
 
 `hparams`是一个字典，这个字典包含着我们模型的超参：
@@ -362,9 +362,148 @@ linear(x, w, b).shape # shape after linear projection
 # (64, 10)
 ```
 
-##### GPT架构
+#### GPT架构
 
 {% asset_img gpt_4.png %}
 
 但它仅仅使用了解码器层（上图中的右边部分）：
 {% asset_img gpt_5.png "GPT架构" %}
+
+从宏观的角度来看，`GPT`架构有三个部分组成：
+- 文本 + 位置嵌入(`positional embeddings`)。
+- 基于transformer的解码器层(decoder stack)。
+- 投影为词汇表(`projection to vocab`)的步骤。
+
+代码层面的话，就像这样：
+```python
+def gpt2(inputs, wte, wpe, blocks, ln_f, n_head):  # [n_seq] -> [n_seq, n_vocab]
+    # token + positional embeddings
+    x = wte[inputs] + wpe[range(len(inputs))]  # [n_seq] -> [n_seq, n_embd]
+
+    # forward pass through n_layer transformer blocks
+    for block in blocks:
+        x = transformer_block(x, **block, n_head=n_head)  # [n_seq, n_embd] -> [n_seq, n_embd]
+
+    # projection to vocab
+    x = layer_norm(x, **ln_f)  # [n_seq, n_embd] -> [n_seq, n_embd]
+    return x @ wte.T  # [n_seq, n_embd] -> [n_seq, n_vocab]
+```
+##### 嵌入层
+
+###### Token 嵌入
+
+对于神经网络而言，`token ID`本身并不是一个好的表示。第一，`token ID`的相对大小会传递错误的信息（比如，在我们的词汇表中，如果`Apple = 5，Table=10`，那就意味着`2 * Table = Apple`？显然不对）。其二，单个的数也没有足够的维度喂给神经网络，也就是说单个的数字包含的特征信息不够丰富。为了解决这些限制，我们将利用词向量，即通过一个学习到的嵌入矩阵：
+```python
+wte[inputs] # [n_seq] -> [n_seq, n_embd]
+```
+`wte`是一个`[n_vocab, n_emdb]`的矩阵。这就像一个查找表，矩阵中的第{% mathjax %}i{% endmathjax %}行对应我们的词汇表中的第{% mathjax %}i{% endmathjax %}个`token`的向量表示（学出来的）。`wte[inputs]`使用了`integer array indexing`来检索我们输入中每个`token`所对应的向量。就像神经网络中的其他参数，`wte`是可学习的。也就是说，在训练开始的时候它是随机初始化的，然后随着训练的进行，通过梯度下降不断更新。
+###### 位置嵌入（Positional Embeddings）
+
+单纯的`Transformer`架构的一个古怪地方在于它并不考虑位置。当我们随机打乱输入位置顺序的时候，输出可以保持不变（输入的顺序对输出并未产生影响）。可是词的顺序当然是语言中重要的部分啊，因此我们需要使用某些方式将位置信息编码进我们的输入。为了这个目标，我们可以使用另一个学习到的嵌入矩阵：
+```python
+wpe[range(len(inputs))] # [n_seq] -> [n_seq, n_embd]
+```
+`wpe`是一个`[n_ctx, n_emdb]`矩阵。矩阵的第{% mathjax %}i{% endmathjax %}行包含一个编码输入中第{% mathjax %}i{% endmathjax %}个位置信息的向量。与`wte`类似，这个矩阵也是通过梯度下降来学习到的。需要注意的是，这将限制模型的最大序列长度为`n_ctx`。也就是说必须满足`len(inputs) <= n_ctx`。
+###### 组合
+
+现在我们可以将`token`嵌入与位置嵌入联合为一个组合嵌入，这个嵌入将`token`信息和位置信息都编码进来。
+```python
+# token + positional embeddings
+x = wte[inputs] + wpe[range(len(inputs))]  # [n_seq] -> [n_seq, n_embd]
+
+# x[i] represents the word embedding for the ith word + the positional embedding for the ith position
+```
+##### 解码层
+
+我们将刚才的嵌入通过一连串的`n_layertransformer`解码器模块。一方面，堆叠更多的层让我们可以控制到底我们的网络有多“深”。以`GPT-3`为例，其高达`96`层。另一方面，选择一个更大的`n_embd`值，让我们可以控制网络有多“宽”（还是以`GPT-3`为例，它使用的嵌入大小为`12288`）。
+```python
+# forward pass through n_layer transformer blocks
+for block in blocks:
+    x = transformer_block(x, **block, n_head=n_head)  # [n_seq, n_embd] -> [n_seq, n_embd]
+```
+##### 投影为词汇表(projection to vocab)
+
+在最后的步骤中，我们将`Transformer`最后一个结构块的输入投影为字符表的一个概率分布：
+```python
+# projection to vocab
+x = layer_norm(x, **ln_f)  # [n_seq, n_embd] -> [n_seq, n_embd]
+return x @ wte.T  # [n_seq, n_embd] -> [n_seq, n_vocab]
+```
+- 在进行投影操作之前，我们先将x通过**最后的层归一化层**。这是`GPT-2`架构所特有的（并没有出现在`GPT`原始论文和`Transformer`论文中）。
+- 我们复用了嵌入矩阵`wte`进行投影操作。其它的`GPT`实现当然可以选择使用另外学习到的权重矩阵进行投影，但是权重矩阵共享具有以下一些优势：
+    - 你可以节省一些参数。
+    - 考虑到这个矩阵作用于转换到词与来自于词的两种转换，理论上，相对于分别使用两个矩阵来做这件事，使用同一个矩阵将学到更为丰富的表征。
+- 在最后，我们并未使用`softmax`，因此我们的输出是`logits`而不是`0-1`之间的概率。这样做的理由是：
+    - `softmax`是单调的，因此对于贪心采样而言，`np.argmax(logits)`和`np.argmax(softmax(logits))`是等价的，因此使用`softmax`就变得多此一举。
+    - `softmax`是不可逆的，这意味着我们总是可以通过`softmax`将`logits`变为`probabilities`，但不能从`probabilities`变为`softmax`，为了让灵活性最大，我们选择直接输出`logits`。
+    - 数值稳定性的考量。比如计算交叉熵损失的时候，相对于`log_softmax(logits)，log(softmax(logits))`的数值稳定性就差。
+
+投影为词汇表的过程有时候也被称之为**语言建模头**(`language modeling head`)。这里的“头”是什么意思呢？你的`GPT`一旦被预训练完毕，那么你可以通过更换其他投影操作的语言建模头，比如你可以将其更换为**分类头**，从而在一些分类任务上微调你的模型（让其完成分类任务）。因此你的模型可以拥有多种头。
+
+##### 解码器模块
+
+`Transformer`解码器模块由两个子层组成：
+- 多头因果自注意力(`Multi-head causal self attention`)
+- 逐位置前馈神经网络(`Position-wise feed forward neural network`)
+
+```python
+def transformer_block(x, mlp, attn, ln_1, ln_2, n_head):  # [n_seq, n_embd] -> [n_seq, n_embd]
+    # multi-head causal self attention
+    x = x + mha(layer_norm(x, **ln_1), **attn, n_head=n_head)  # [n_seq, n_embd] -> [n_seq, n_embd]
+
+    # position-wise feed forward network
+    x = x + ffn(layer_norm(x, **ln_2), **mlp)  # [n_seq, n_embd] -> [n_seq, n_embd]
+
+    return x
+```
+每个子层都在输入上使用了层归一化，也使用了残差连接（即将子层的输入直接连接到子层的输出）。
+- **多头因果自注意力机制**便于输入之间的通信。在网络的其它地方，模型是不允许输入相互“看到”彼此的。嵌入层、逐位置前馈网络、层归一化以及投影到词汇表的操作，都是逐位置对我们的输入进行的。建模输入之间的关系完全由注意力机制来处理。
+- **逐位置前馈神经网络**只是一个常规的两层全连接神经网络。它只是为我们的模型增加一些可学习的参数，以促进学习过程。
+- 在原始的`Transformer`论文中，层归一化被放置在输出层`layer_norm(x + sublayer(x))`上，而我们在这里为了匹配`GPT-2`，将层归一化放置在输入`x + sublayer(layer_norm(x))`上。这被称为**预归一化**，并且已被证明在改善`Transformer`的性能方面尤为重要。
+- **残差连接**这这里有几个不同的目的：1.使得深度神经网络（即层数非常多的神经网络）更容易进行优化。其思想是为梯度提供“捷径”，使得梯度更容易地回传到网络的初始的层，从而更容易进行优化；2.如果没有残差连接的话，加深模型层数会导致性能下降（可能是因为梯度很难在没有损失信息的情况下回传到整个深层网络中）。残差连接似乎可以为更深层的网络提供一些精度提升；3.可以帮助解决梯度消失/爆炸的问题。
+
+###### 逐位置前馈网络
+
+**逐位置前馈网络**(`Position-wise Feed Forward Network`)是一个简单的两层的多层感知器：
+```python
+def ffn(x, c_fc, c_proj):  # [n_seq, n_embd] -> [n_seq, n_embd]
+    # project up
+    a = gelu(linear(x, **c_fc))  # [n_seq, n_embd] -> [n_seq, 4*n_embd]
+
+    # project back down
+    x = linear(a, **c_proj)  # [n_seq, 4*n_embd] -> [n_seq, n_embd]
+
+    return x
+```
+这里没有什么特别的技巧，我们只是将`n_embd`投影到一个更高的维度`4*n_embd`，然后再将其投影回`n_embd`。回忆一下我们的`params`字典，我们的`mlp`参数如下：
+```bash
+"mlp": {
+    "c_fc":   {"b": [4*n_embd], "w": [n_embd, 4*n_embd]},
+    "c_proj": {"b": [n_embd], "w": [4*n_embd, n_embd]},
+}
+```
+###### 多头因果自注意力
+
+这一层可能是理解`Transformer`最困难的部分。因此我们通过分别解释“**多头因果自注意力**”的每个词，一步步理解“**多头因果自注意力**”：
+- 注意力（`Attention`）。
+- 自身(`Self`)。
+- 因果(`Causal`)。
+- 多头(`Multi-Head`)。
+
+**注意力**
+我从头开始推导了原始`Transformer`论文中提出的缩放点积方程：
+{% mathjax '{"conversion":{"em":14}}' %}
+\text{attention}(Q,K,V) = \text{softmax}(\frac{QK^T}{\sqrt{d_k}})V
+{% endmathjax %}
+注意力实现：
+```python
+def attention(q, k, v):  # [n_q, d_k], [n_k, d_k], [n_k, d_v] -> [n_q, d_v]
+    return softmax(q @ k.T / np.sqrt(q.shape[-1])) @ v
+```
+**自身**
+当`q, k`和`v`来自同一来源时，我们就是在执行自注意力（即让我们的输入序列自我关注）：
+```python
+def self_attention(x): # [n_seq, n_embd] -> [n_seq, n_embd]
+    return attention(q=x, k=x, v=x)
+```
+例如，如果我们的输入是`“Jay went to the store, he bought 10 apples.”`，我们让单词`“he”`关注所有其它单词，包括`“Jay”`，这意味着模型可以学习到`“he”`指的是`“Jay”`。
