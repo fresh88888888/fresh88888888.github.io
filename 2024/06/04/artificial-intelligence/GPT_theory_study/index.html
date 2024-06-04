@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+  <meta name="google-site-verification" content="lk2gSYFP_NyLNFob-fFnt7fm-I_n1ZYws-WZll7mshg">
+  <meta name="msvalidate.01" content="6Jdc01DjYOLguhS5">
+  <meta name="baidu-site-verification" content="code-NR10G09zww">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic%7Ccursive:300,300italic,400,400italic,700,700italic%7CSource+Code+Pro:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/yellow/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
+
+    <meta name="description" content="GPT代表生成式预训练Transformer(Generative Pre-trained Transformer)。这是一类基于Transformer的神经网络架构。生成式(Generative)：GPT可以生成文本；预训练(Pre-trained)：GPT基于来自于书本、互联网等来源的海量文本进行训练；Transformer：GPT是一个decoder-only的Transformer神经网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GPT模型探析（LLM）(Numpy)">
+<meta property="og:url" content="https://fresh88888888.github.io/2024/06/04/artificial-intelligence/GPT_theory_study/index.html">
+<meta property="og:site_name" content="UMBRELLA">
+<meta property="og:description" content="GPT代表生成式预训练Transformer(Generative Pre-trained Transformer)。这是一类基于Transformer的神经网络架构。生成式(Generative)：GPT可以生成文本；预训练(Pre-trained)：GPT基于来自于书本、互联网等来源的海量文本进行训练；Transformer：GPT是一个decoder-only的Transformer神经网络">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/06/04/artificial-intelligence/GPT_theory_study/gpt_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/06/04/artificial-intelligence/GPT_theory_study/gpt_2.png">
+<meta property="article:published_time" content="2024-06-04T03:30:11.000Z">
+<meta property="article:modified_time" content="2024-06-04T03:30:11.000Z">
+<meta property="article:author" content="umbrella">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2024/06/04/artificial-intelligence/GPT_theory_study/gpt_1.png">
+
+
+<link rel="canonical" href="https://fresh88888888.github.io/2024/06/04/artificial-intelligence/GPT_theory_study/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/06/04/artificial-intelligence/GPT_theory_study/","path":"2024/06/04/artificial-intelligence/GPT_theory_study/","title":"GPT模型探析（LLM）(Numpy)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>GPT模型探析（LLM）(Numpy) | UMBRELLA</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">UMBRELLA</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">未雨绸缪，举重若轻</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-算法"><a href="/Algorithm/" rel="section"><i class="fa fa-calendar fa-fw"></i>算法</a></li><li class="menu-item menu-item-c++-&nbsp;编程"><a href="/Programming-C++/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>C++ &nbsp;编程</a></li><li class="menu-item menu-item-rust-编程"><a href="/Programming-Rust/" rel="section"><i class="fa fa-cat fa-fw"></i>Rust 编程</a></li><li class="menu-item menu-item-go-&nbsp;&nbsp;&nbsp;编程"><a href="/Programming-Go/" rel="section"><i class="fa fa-hippo fa-fw"></i>Go &nbsp;&nbsp;&nbsp;编程</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%85%A5-%E8%BE%93%E5%87%BA"><span class="nav-number">1.</span> <span class="nav-text">输入&#x2F;输出</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BE%93%E5%85%A5"><span class="nav-number">1.1.</span> <span class="nav-text">输入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BE%93%E5%87%BA"><span class="nav-number">1.2.</span> <span class="nav-text">输出</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E6%96%87%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">生成文本</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%9B%9E%E5%BD%92"><span class="nav-number">2.1.</span> <span class="nav-text">自回归</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%87%87%E6%A0%B7"><span class="nav-number">2.2.</span> <span class="nav-text">采样</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83"><span class="nav-number">3.</span> <span class="nav-text">训练</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA%EF%BC%88prompting%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">提示（prompting）</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="umbrella"
+      src="/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">umbrella</p>
+  <div class="site-description" itemprop="description">没事就多看看书</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">188</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fresh88888888" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fresh88888888" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fresh888888@foxmail.com" title="E-Mail → mailto:fresh888888@foxmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.rust-lang.org/zh-CN/" title="https:&#x2F;&#x2F;www.rust-lang.org&#x2F;zh-CN&#x2F;" rel="noopener" target="_blank">Rust</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://go.dev/" title="https:&#x2F;&#x2F;go.dev&#x2F;" rel="noopener" target="_blank">Golang</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://isocpp.org/" title="https:&#x2F;&#x2F;isocpp.org&#x2F;" rel="noopener" target="_blank">C++</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.python.org/" title="https:&#x2F;&#x2F;www.python.org&#x2F;" rel="noopener" target="_blank">Python</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://doc.rust-lang.org/cargo/index.html" title="https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;cargo&#x2F;index.html" rel="noopener" target="_blank">Cargo</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://gist.github.com/rxaviers/7360908" title="https:&#x2F;&#x2F;gist.github.com&#x2F;rxaviers&#x2F;7360908" rel="noopener" target="_blank">Emoji</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+        <div class="pjax">
+        </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/06/04/artificial-intelligence/GPT_theory_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="GPT模型探析（LLM）(Numpy) | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GPT模型探析（LLM）(Numpy)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-06-04 11:30:11" itemprop="dateCreated datePublished" datetime="2024-06-04T11:30:11+08:00">2024-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><code>GPT</code>代表生成式预训练<code>Transformer</code>(<code>Generative Pre-trained Transformer</code>)。这是一类基于<code>Transformer</code>的神经网络架构。<strong>生成式</strong>(<code>Generative</code>)：<code>GPT</code>可以生成文本；<strong>预训练</strong>(<code>Pre-trained</code>)：<code>GPT</code>基于来自于书本、互联网等来源的海量文本进行训练；<code>Transformer</code>：<code>GPT</code>是一个<code>decoder-only</code>的<code>Transformer</code>神经网络结构。</p>
+<span id="more"></span>
+<h4 id="输入-输出"><a href="#输入-输出" class="headerlink" title="输入&#x2F;输出"></a>输入&#x2F;输出</h4><h5 id="输入"><a href="#输入" class="headerlink" title="输入"></a>输入</h5><p>输入是一些文本字符串，使用<code>tokenizer</code>（分词器）将这些文本字符串拆解为”小片段“，我们将这些片段称之为<code>token</code>。最后我们使用词汇表(<code>vocabulary</code>)将<code>token</code>映射为整数。在实际使用中，我们不仅仅使用简单的通过空格分隔去做分词，我们还会使用一些更高级的方法，比如<code>Byte-Pair Encoding</code>或者<code>WordPiece</code>，但它们的原理是一样的：</p>
+<ul>
+<li>有一个<code>vocab</code>即词汇表，可以将字符串<code>token</code>映射为整数索引。</li>
+<li>有一个<code>encode</code>方法，即编码方法，可以实现<code>str</code> -&gt; <code>list[int]</code>的转化。</li>
+<li>有一个<code>decode</code>方法，即解码方法，可以实现<code>list[int]</code> -&gt; <code>str</code>的转化。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># the index of a token in the vocab represents the integer id for that token</span></span><br><span class="line"><span class="comment"># the integer id for &quot;heroes&quot; would be 2, since vocab[2] = &quot;heroes&quot;</span></span><br><span class="line">vocab = [<span class="string">&quot;all&quot;</span>, <span class="string">&quot;not&quot;</span>, <span class="string">&quot;heroes&quot;</span>, <span class="string">&quot;the&quot;</span>, <span class="string">&quot;wear&quot;</span>, <span class="string">&quot;.&quot;</span>, <span class="string">&quot;capes&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># a pretend tokenizer that tokenizes on whitespace</span></span><br><span class="line">tokenizer = WhitespaceTokenizer(vocab)</span><br><span class="line"></span><br><span class="line"><span class="comment"># the encode() method converts a str -&gt; list[int]</span></span><br><span class="line">ids = tokenizer.encode(<span class="string">&quot;not all heroes wear&quot;</span>) <span class="comment"># ids = [1, 0, 2, 4]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># we can see what the actual tokens are via our vocab mapping</span></span><br><span class="line">tokens = [tokenizer.vocab[i] <span class="keyword">for</span> i <span class="keyword">in</span> ids] <span class="comment"># tokens = [&quot;not&quot;, &quot;all&quot;, &quot;heroes&quot;, &quot;wear&quot;]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># the decode() method converts back a list[int] -&gt; str</span></span><br><span class="line">text = tokenizer.decode(ids) <span class="comment"># text = &quot;not all heroes wear&quot;</span></span><br></pre></td></tr></table></figure>
+<h5 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h5><p>输出是一个二维数组，其中<code>output[i][j]</code>表示模型的预测概率，这个概率代表了词汇表中位于<code>vocab[j]</code>的<code>token</code>是下一个<code>tokeninputs[i+1]</code>的概率。为了针对整个序列获得下一个<code>token</code>预测，我们可以简单的选择<code>output[-1]</code>中概率最大的那个token, 比如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">vocab = [<span class="string">&quot;all&quot;</span>, <span class="string">&quot;not&quot;</span>, <span class="string">&quot;heroes&quot;</span>, <span class="string">&quot;the&quot;</span>, <span class="string">&quot;wear&quot;</span>, <span class="string">&quot;.&quot;</span>, <span class="string">&quot;capes&quot;</span>]</span><br><span class="line">inputs = [<span class="number">1</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>] <span class="comment"># &quot;not&quot; &quot;all&quot; &quot;heroes&quot; &quot;wear&quot;</span></span><br><span class="line">output = gpt(inputs)</span><br><span class="line"></span><br><span class="line"><span class="comment">#              [&quot;all&quot;, &quot;not&quot;, &quot;heroes&quot;, &quot;the&quot;, &quot;wear&quot;, &quot;.&quot;, &quot;capes&quot;]</span></span><br><span class="line"><span class="comment"># output[0] =  [0.75    0.1     0.0       0.15    0.0   0.0    0.0  ]</span></span><br><span class="line"><span class="comment"># 在&quot;not&quot;给出的情况下，我们可以看到，(对于下一个token)模型预测&quot;all&quot;具有最高的概率</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#              [&quot;all&quot;, &quot;not&quot;, &quot;heroes&quot;, &quot;the&quot;, &quot;wear&quot;, &quot;.&quot;, &quot;capes&quot;]</span></span><br><span class="line"><span class="comment"># output[1] =  [0.0     0.0      0.8     0.1    0.0    0.0   0.1  ]</span></span><br><span class="line"><span class="comment"># 在序列[&quot;not&quot;, &quot;all&quot;]给出的情况下，(对于下一个token)模型预测&quot;heroes&quot;具有最高的概率</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#              [&quot;all&quot;, &quot;not&quot;, &quot;heroes&quot;, &quot;the&quot;, &quot;wear&quot;, &quot;.&quot;, &quot;capes&quot;]</span></span><br><span class="line"><span class="comment"># output[-1] = [0.0     0.0     0.0     0.1     0.0    0.05  0.85  ]</span></span><br><span class="line"><span class="comment"># 在整个序列[&quot;not&quot;, &quot;all&quot;, &quot;heroes&quot;, &quot;wear&quot;]给出的情况下，(对于下一个token)模型预测&quot;capes&quot;具有最高的概率</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># next_token_id = 6</span></span><br><span class="line">next_token_id = np.argmax(output[-<span class="number">1</span>]) </span><br><span class="line"><span class="comment"># next_token = &quot;capes&quot;</span></span><br><span class="line">next_token = vocab[next_token_id] </span><br></pre></td></tr></table></figure>
+<p>将具有最高概率的<code>token</code>作为我们的预测，称为<code>greedy decoding</code>。在一个序列中预测下一个逻辑词(<code>logical word</code>)的任务被称之为<strong>语言建模</strong>。因此我们可以称<code>GPT</code>为语言模型。</p>
+<h4 id="生成文本"><a href="#生成文本" class="headerlink" title="生成文本"></a>生成文本</h4><h5 id="自回归"><a href="#自回归" class="headerlink" title="自回归"></a>自回归</h5><p>我们可以迭代地通过模型获取下一个<code>token</code>的预测，从而生成整个句子。这个过程是在预测未来的值（回归），并且将预测的值添加回输入中去（<code>auto</code>），这就是为什么你会看到GPT被描述为<strong>自回归模型</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">generate</span>(<span class="params">inputs, n_tokens_to_generate</span>):</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n_tokens_to_generate): <span class="comment"># 自回归的解码循环</span></span><br><span class="line">        output = gpt(inputs) <span class="comment"># 模型前向传递</span></span><br><span class="line">        next_id = np.argmax(output[-<span class="number">1</span>]) <span class="comment"># 贪心采样</span></span><br><span class="line">        inputs.append(<span class="built_in">int</span>(next_id)) <span class="comment"># 将预测添加回输入</span></span><br><span class="line">    <span class="keyword">return</span> inputs[<span class="built_in">len</span>(inputs) - n_tokens_to_generate :]  <span class="comment"># 只返回生成的ids</span></span><br><span class="line"></span><br><span class="line">input_ids = [<span class="number">1</span>, <span class="number">0</span>] <span class="comment"># &quot;not&quot; &quot;all&quot;</span></span><br><span class="line">output_ids = generate(input_ids, <span class="number">3</span>) <span class="comment"># output_ids = [2, 4, 6]</span></span><br><span class="line">output_tokens = [vocab[i] <span class="keyword">for</span> i <span class="keyword">in</span> output_ids] <span class="comment"># &quot;heroes&quot; &quot;wear&quot; &quot;capes&quot;</span></span><br></pre></td></tr></table></figure>
+<h5 id="采样"><a href="#采样" class="headerlink" title="采样"></a>采样</h5><p>我们可以通过对概率分布进行采样来替代贪心采样，从而为我们的生成引入一些随机性（<code>stochasticity</code>）。这样子，我们就可以基于同一个输入产生不同的输出句子啦。当我们结合更多的比如<code>top-k</code>，<code>top-p</code>和<code>temperature</code>这样的技巧的时候（这些技巧能够能更改采样的分布），我们输出的质量也会有很大的提高。这些技巧也引入了一些超参数，通过调整这些超参，我们可以获得不同的生成表现(<code>behaviors</code>)。比如提高<code>temperature</code>超参，我们的模型就会更加冒进，从而变得更有“创造力”。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 随机采样</span></span><br><span class="line">inputs = [<span class="number">1</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>] <span class="comment"># &quot;not&quot; &quot;all&quot; &quot;heroes&quot; &quot;wear&quot;</span></span><br><span class="line">output = gpt(inputs)</span><br><span class="line">np.random.choice(np.arange(vocab_size), p=output[-<span class="number">1</span>]) <span class="comment"># capes</span></span><br><span class="line">np.random.choice(np.arange(vocab_size), p=output[-<span class="number">1</span>]) <span class="comment"># hats</span></span><br><span class="line">np.random.choice(np.arange(vocab_size), p=output[-<span class="number">1</span>]) <span class="comment"># capes</span></span><br><span class="line">np.random.choice(np.arange(vocab_size), p=output[-<span class="number">1</span>]) <span class="comment"># capes</span></span><br><span class="line">np.random.choice(np.arange(vocab_size), p=output[-<span class="number">1</span>]) <span class="comment"># pants</span></span><br></pre></td></tr></table></figure>
+<h4 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h4><p>与其它神经网络训练一样，针对特定的<strong>损失函数</strong>使用梯度下降训练<code>GPT</code>。对于<code>GPT</code>，我们使用语言建模任务的交叉熵损失：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">lm_loss</span>(<span class="params">inputs: <span class="built_in">list</span>[<span class="built_in">int</span>], params</span>) -&gt; <span class="built_in">float</span>:</span><br><span class="line">    <span class="comment"># the labels y are just the input shifted 1 to the left</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># inputs = [not,     all,   heros,   wear,   capes]</span></span><br><span class="line">    <span class="comment">#      x = [not,     all,   heroes,  wear]</span></span><br><span class="line">    <span class="comment">#      y = [all,  heroes,     wear,  capes]</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># of course, we don&#x27;t have a label for inputs[-1], so we exclude it from x</span></span><br><span class="line">    <span class="comment"># as such, for N inputs, we have N - 1 langauge modeling example pairs</span></span><br><span class="line">    x, y = inputs[:-<span class="number">1</span>], inputs[<span class="number">1</span>:]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># forward pass all the predicted next token probability distributions at each position</span></span><br><span class="line">    output = gpt(x, params)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># cross entropy loss we take the average over all N-1 examples</span></span><br><span class="line">    loss = np.mean(-np.log(output[y]))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> loss</span><br><span class="line"></span><br><span class="line"><span class="comment"># 一个极度简化的训练设置</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train</span>(<span class="params">texts: <span class="built_in">list</span>[<span class="built_in">list</span>[<span class="built_in">str</span>]], params</span>) -&gt; <span class="built_in">float</span>:</span><br><span class="line">    <span class="keyword">for</span> text <span class="keyword">in</span> texts:</span><br><span class="line">        inputs = tokenizer.encode(text)</span><br><span class="line">        <span class="comment"># 计算语言建模损失</span></span><br><span class="line">        loss = lm_loss(inputs, params)</span><br><span class="line">        <span class="comment"># 损失决定了梯度，我们可以通过反向传播计算梯度</span></span><br><span class="line">        gradients = compute_gradients_via_backpropagation(loss, params)</span><br><span class="line">        <span class="comment"># 梯度来更新模型参数</span></span><br><span class="line">        params = gradient_descent_update_step(gradients, params)</span><br><span class="line">    <span class="keyword">return</span> params</span><br></pre></td></tr></table></figure>
+<div class="note warning"><p><strong>请注意</strong>，我们在这里并未使用明确的标注数据。取而代之的是，我们可以通过原始文本自身，产生大量的输入&#x2F;标签对(<code>input/label pairs</code>)。这就是所谓的<strong>自监督学习</strong>。</p>
+</div>
+<p><strong>自监督学习的范式</strong>，让我们能够海量扩充训练数据。我们只需要尽可能多的搞到大量的文本数据，然后将其丢入模型即可。比如，<code>GPT-3</code>就是基于来自互联网和书籍的<code>3000</code>亿<code>token</code>进行训练的：这里你就需要一个足够大的模型有能力去从这么大量的数据中学到内容，这就是为什么<code>GPT-3</code>模型拥有<code>1750</code>亿的参数，并且大概消耗了<code>100</code>万–<code>1000</code>万美元的计算费用进行训练。</p>
+<img data-src="/2024/06/04/artificial-intelligence/GPT_theory_study/gpt_1.png" class="">
+
+<p><strong>自监督训练</strong>的步骤称之为<strong>预训练</strong>，而我们可以重复使用预训练模型权重来训练下游任务上的特定模型，比如对文本进行分类（分类某条推文是有害的还是无害的）。<strong>预训练模型</strong>有时也被称为<strong>基础模型</strong>(<code>foundation models</code>)。在下游任务上训练模型被称之为<strong>微调</strong>，由于模型权重已经预训练好了，已经能够理解语言了，那么我们需要做的就是针对特定的任务去微调这些权重。这个所谓“<strong>在通用任务上预训练 + 特定任务上微调</strong>”的策略就称之为<strong>迁移学习</strong>。</p>
+<h4 id="提示（prompting）"><a href="#提示（prompting）" class="headerlink" title="提示（prompting）"></a>提示（prompting）</h4><p>本质上看，原始的<code>GPT</code>论文只是提供了用来迁移学习的<code>Transformer</code>模型的预训练。文章显示，一个<code>117M</code>的<code>GPT</code>预训练模型，在针对下游任务的标注数据上微调之后，它能够在各种<code>NLP</code>(<code>natural language processing</code>)任务上达到最优性能。一个<code>GPT</code>模型只要在足够多的数据上训练，只要模型拥有足够多的参数，那么不需要微调，模型本身就有能力执行各种任务。只要你对模型进行提示，运行自回归语言模型就会得到合适的响应。这就是所谓的<strong>上下文学习</strong>(<code>in-context learning</code>)，也就是说模型仅仅根据提示的内容，就能够执行各种任务。<strong>上下文学习</strong>可以是<code>zero shot</code>,<code>one shot</code>,或者<code>few shot</code>（<code>zero shot</code>表示我们直接拿着大模型就能用于我们的任务了；<code>one shot</code>表示我们需要提供给大模型关于我们特定任务的一个列子；<code>few shot</code>表示我们需要提供给大模型关于我们特定任务的几个例子；）。</p>
+<img data-src="/2024/06/04/artificial-intelligence/GPT_theory_study/gpt_2.png" class="">
+
+<p>基于提示内容生成文本也被称之为条件生成，因为我们的模型是基于特定的输入（条件）进行生成的。当然，<code>GPT</code>也不仅限于自然语言处理任务(<code>NLP</code>)。你可以将模型用于任何你想要的条件下。比如你可以将<code>GPT</code>变成一个聊天机器人(即：<code>ChatGPT</code>)，这里的条件就是你的对话历史。你也可以进一步条件化你的聊天机器人，通过提示词进行某种描述，限定其表现为某种行为（比如你可以提示：“你是个聊天机器人，请礼貌一点，请讲完整的句子，不要说有害的东西，等等”）。像这样条件化你的模型，你完全可以得到一个定制化私人助理机器人。但是这样的方式不一定很健壮，你仍然可以对你的模型进行越狱，然后让它表现失常。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>umbrella
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://fresh88888888.github.io/2024/06/04/artificial-intelligence/GPT_theory_study/" title="GPT模型探析（LLM）(Numpy)">https://fresh88888888.github.io/2024/06/04/artificial-intelligence/GPT_theory_study/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/05/30/artificial-intelligence/nlp_theory_study/" rel="prev" title="自然语言处理 (预训练)">
+                  <i class="fa fa-chevron-left"></i> 自然语言处理 (预训练)
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">辽ICP备15012817号-2 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2022 – 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">umbrella</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">829k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">46:02</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/fresh88888888" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.0.8/medium-zoom.min.js" integrity="sha256-7PhEpEWEW0XXQ0k6kQrPKwuoIomz8R8IYyuU1Qew4P8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/comments.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/motion.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/next-boot.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/pjax.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/search/local-search.min.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.12/pdfobject.min.js","integrity":"sha256-g2xji1rlE3KsGVClvuxTbcR0Kn2+wtQADSff2Tbb4zA="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/tags/pdf.min.js"></script>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/fancybox.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/pace.min.js"></script>
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2024/06/04/artificial-intelligence/GPT_theory_study/"}</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
+
+</body>
+</html>
