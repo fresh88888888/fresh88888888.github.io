@@ -370,8 +370,8 @@ linear(x, w, b).shape # shape after linear projection
 {% asset_img gpt_5.png "GPT架构" %}
 
 从宏观的角度来看，`GPT`架构有三个部分组成：
-- 文本 + 位置嵌入(`positional embeddings`)。
-- 基于transformer的解码器层(decoder stack)。
+- 文本 `+` 位置嵌入(`positional embeddings`)。
+- 基于`Transformer`的解码器层(`decoder stack`)。
 - 投影为词汇表(`projection to vocab`)的步骤。
 
 代码层面的话，就像这样：
@@ -507,3 +507,413 @@ def self_attention(x): # [n_seq, n_embd] -> [n_seq, n_embd]
     return attention(q=x, k=x, v=x)
 ```
 例如，如果我们的输入是`“Jay went to the store, he bought 10 apples.”`，我们让单词`“he”`关注所有其它单词，包括`“Jay”`，这意味着模型可以学习到`“he”`指的是`“Jay”`。
+
+我们可以通过为`q、k、v`和注意力输出引入投影来增强自注意力：
+```python
+def self_attention(x, w_k, w_q, w_v, w_proj): # [n_seq, n_embd] -> [n_seq, n_embd]
+    # qkv projections
+    q = x @ w_k # [n_seq, n_embd] @ [n_embd, n_embd] -> [n_seq, n_embd]
+    k = x @ w_q # [n_seq, n_embd] @ [n_embd, n_embd] -> [n_seq, n_embd]
+    v = x @ w_v # [n_seq, n_embd] @ [n_embd, n_embd] -> [n_seq, n_embd]
+
+    # perform self attention
+    x = attention(q, k, v) # [n_seq, n_embd] -> [n_seq, n_embd]
+
+    # out projection
+    x = x @ w_proj # [n_seq, n_embd] @ [n_embd, n_embd] -> [n_seq, n_embd]
+
+    return x
+```
+这使得我们的模型为`q, k, v`学到一个最好的映射，以帮助注意力区分输入之间的关系。如果我们将`w_q、w_k`和`w_v`组合成一个单独的矩阵`w_fc`，执行投影操作，然后拆分结果，我们就可以将矩阵乘法的数量从`4`个减少到`2`个：
+```python
+def self_attention(x, w_fc, w_proj): # [n_seq, n_embd] -> [n_seq, n_embd]
+    # qkv projections
+    x = x @ w_fc # [n_seq, n_embd] @ [n_embd, 3*n_embd] -> [n_seq, 3*n_embd]
+
+    # split into qkv
+    q, k, v = np.split(x, 3, axis=-1) # [n_seq, 3*n_embd] -> 3 of [n_seq, n_embd]
+
+    # perform self attention
+    x = attention(q, k, v) # [n_seq, n_embd] -> [n_seq, n_embd]
+
+    # out projection
+    x = x @ w_proj # [n_seq, n_embd] @ [n_embd, n_embd] = [n_seq, n_embd]
+
+    return x
+```
+这样会更加高效，因为现代加速器（如`GPU`）可以更好地利用一个大的矩阵乘法，而不是顺序执行`3`个独立的小矩阵乘法。最后，我们添加偏置向量以匹配`GPT-2`的实现，然后使用我们的`linear`函数，并将参数重命名以匹配我们的`params`字典：
+```python
+def self_attention(x, c_attn, c_proj): # [n_seq, n_embd] -> [n_seq, n_embd]
+    # qkv projections
+    x = linear(x, **c_attn) # [n_seq, n_embd] -> [n_seq, 3*n_embd]
+
+    # split into qkv
+    q, k, v = np.split(x, 3, axis=-1) # [n_seq, 3*n_embd] -> 3 of [n_seq, n_embd]
+
+    # perform self attention
+    x = attention(q, k, v) # [n_seq, n_embd] -> [n_seq, n_embd]
+
+    # out projection
+    x = linear(x, **c_proj) # [n_seq, n_embd] @ [n_embd, n_embd] = [n_seq, n_embd]
+
+    return x
+```
+回忆一下，从我们的`params`字典中可知，`attn`参数类似：
+```bash
+"attn": {
+    "c_attn": {"b": [3*n_embd], "w": [n_embd, 3*n_embd]},
+    "c_proj": {"b": [n_embd], "w": [n_embd, n_embd]},
+}
+```
+**因果**
+我们当前的自注意力设置存在一个问题，就是我们的输入能够“看到”未来的信息！比如，如果我们的输入是`[“not”, “all”, “heroes”, “wear”, “capes”]`，在自注意力中，`“wear”`可以看到`“capes”`。这意味着`“wear”`的输出概率将会受到偏差，因为模型已经知道正确的答案是`“capes”`。这是不好的，因为我们的模型会从中学习到，输入{% mathjax %}i{% endmathjax %}的正确答案可以从输入{% mathjax %}i+1{% endmathjax %}中获取。为了防止这种情况发生，我们需要修改注意力矩阵，以隐藏或屏蔽我们的输入，使其无法看到未来的信息。例如，假设我们的注意力矩阵如下所示：
+```bash
+        not    all   heroes wear   capes
+   not 0.116  0.159  0.055  0.226  0.443
+   all 0.180  0.397  0.142  0.106  0.175
+heroes 0.156  0.453  0.028  0.129  0.234
+  wear 0.499  0.055  0.133  0.017  0.295
+ capes 0.089  0.290  0.240  0.228  0.153
+
+```
+这里每一行对应一个查询(`query`)，每一列对应一个键值(`key`)。在这个例子中，查看`“wear”`对应的行，可以看到它在最后一列以`0.295`的权重与`“capes”`相关。为了防止这种情况发生，我们要将这项设为`0.0`:
+```bash
+        not    all    heroes wear   capes
+   not 0.116  0.159  0.055  0.226  0.443
+   all 0.180  0.397  0.142  0.106  0.175
+heroes 0.156  0.453  0.028  0.129  0.234
+  wear 0.499  0.055  0.133  0.017  0.
+ capes 0.089  0.290  0.240  0.228  0.153
+```
+通常，为了防止输入中的所有查询看到未来信息，我们将所有满足{% mathjax %}j > i{% endmathjax %}的位置{% mathjax %}i,j{% endmathjax %}都设置为`0`：
+```bash
+         not    all    heroes wear   capes
+   not 0.116  0.     0.     0.     0.
+   all 0.180  0.397  0.     0.     0.
+heroes 0.156  0.453  0.028  0.     0.
+  wear 0.499  0.055  0.133  0.017  0.
+ capes 0.089  0.290  0.240  0.228  0.153
+```
+我们将这称为**掩码**(`masking`)。掩码方法的一个问题是我们的行不再加起来为`1`（因为我们在使用`softmax`后才将它们设为`0`）。为了确保我们的行仍然加起来为`1`，我们需要在使用`softmax`之前先修改注意力矩阵。
+```python
+def attention(q, k, v, mask):  # [n_q, d_k], [n_k, d_k], [n_k, d_v], [n_q, n_k] -> [n_q, d_v]
+    return softmax(q @ k.T / np.sqrt(q.shape[-1]) + mask) @ v
+```
+其中`mask`表示矩阵`（n_seq=5）`：
+```bash
+0 -1e10 -1e10 -1e10 -1e10
+0   0   -1e10 -1e10 -1e10
+0   0     0   -1e10 -1e10
+0   0     0     0   -1e10
+0   0     0     0     0
+```
+我们用`-1e10`替换`-np.inf`， 因为`-np.inf`会导致`nans`错误。添加`mask`到我们的注意力矩阵中，而不是明确设置值为`-1e10`，是因为在实际操作中，任何数加上`-inf`还是`-inf`。我们可以在`NumPy`中通过`(1 - np.tri(n_seq)) * -1e10`来计算`mask`矩阵。我们得到：
+```python
+def attention(q, k, v, mask):  # [n_q, d_k], [n_k, d_k], [n_k, d_v], [n_q, n_k] -> [n_q, d_v]
+    return softmax(q @ k.T / np.sqrt(q.shape[-1]) + mask) @ v
+
+def causal_self_attention(x, c_attn, c_proj): # [n_seq, n_embd] -> [n_seq, n_embd]
+    # qkv projections
+    x = linear(x, **c_attn) # [n_seq, n_embd] -> [n_seq, 3*n_embd]
+
+    # split into qkv
+    q, k, v = np.split(x, 3, axis=-1) # [n_seq, 3*n_embd] -> 3 of [n_seq, n_embd]
+
+    # causal mask to hide future inputs from being attended to
+    causal_mask = (1 - np.tri(x.shape[0]), dtype=x.dtype) * -1e10  # [n_seq, n_seq]
+
+    # perform causal self attention
+    x = attention(q, k, v, causal_mask) # [n_seq, n_embd] -> [n_seq, n_embd]
+
+    # out projection
+    x = linear(x, **c_proj) # [n_seq, n_embd] @ [n_embd, n_embd] = [n_seq, n_embd]
+
+    return x
+```
+**多头**
+我们可以进一步改进我们的实现，通过进行`n_head`个独立的注意力计算，将我们的查询(`queries`)，键(`keys`)和值(`values`)拆分到多个头(`heads`)里去：
+```python
+def mha(x, c_attn, c_proj, n_head):  # [n_seq, n_embd] -> [n_seq, n_embd]
+    # qkv projection
+    x = linear(x, **c_attn)  # [n_seq, n_embd] -> [n_seq, 3*n_embd]
+
+    # split into qkv
+    qkv = np.split(x, 3, axis=-1)  # [n_seq, 3*n_embd] -> [3, n_seq, n_embd]
+
+    # split into heads(拆分q， k， v到n_head个头)
+    qkv_heads = list(map(lambda x: np.split(x, n_head, axis=-1), qkv))  # [3, n_seq, n_embd] -> [3, n_head, n_seq, n_embd/n_head]
+
+    # causal mask to hide future inputs from being attended to
+    causal_mask = (1 - np.tri(x.shape[0], dtype=x.dtype)) * -1e10  # [n_seq, n_seq]
+
+    # perform attention over each head(为每个头计算注意力)
+    out_heads = [attention(q, k, v, causal_mask) for q, k, v in zip(*qkv_heads)]  # [3, n_head, n_seq, n_embd/n_head] -> [n_head, n_seq, n_embd/n_head]
+
+    # merge heads(合并每个头的输出)
+    x = np.hstack(out_heads)  # [n_head, n_seq, n_embd/n_head] -> [n_seq, n_embd]
+
+    # out projection
+    x = linear(x, **c_proj)  # [n_seq, n_embd] -> [n_seq, n_embd]
+
+    return x
+```
+这里添加了三步:
+- 拆分`q， k， v`到`n_head`个头。
+- 为每个头计算注意力。
+- 合并每个头的输出。
+
+{% note warning %}
+**注意**，这样可以将每个注意力计算的维度从`n_embd`减少到`n_embd/n_head`。这是一个权衡。对于缩减了的维度，我们的模型在通过注意力建模关系时获得了额外的子空间。例如，也许一个注意力头负责将代词与代词所指的人联系起来；也许另一个注意力头负责通过句号将句子分组；另一个则可能只是识别哪些单词是实体，哪些不是。虽然这可能也只是另一个神经网络黑盒而已。我们编写的代码按顺序循环执行每个头的注意力计算（每次一个），当然这并不是很高效。在实践中，你会希望并行处理这些计算。当然在本文中考虑到简洁性，我们将保持这种顺序执行。
+{% endnote %}
+
+#### 完整代码
+
+```python
+import numpy as np
+
+def gelu(x):
+    return 0.5 * x * (1 + np.tanh(np.sqrt(2 / np.pi) * (x + 0.044715 * x**3)))
+
+def softmax(x):
+    exp_x = np.exp(x - np.max(x, axis=-1, keepdims=True))
+    return exp_x / np.sum(exp_x, axis=-1, keepdims=True)
+
+def layer_norm(x, g, b, eps: float = 1e-5):
+    mean = np.mean(x, axis=-1, keepdims=True)
+    variance = np.var(x, axis=-1, keepdims=True)
+    x = (x - mean) / np.sqrt(variance + eps)  # normalize x to have mean=0 and var=1 over last axis
+    return g * x + b  # scale and offset with gamma/beta params
+
+def linear(x, w, b):  # [m, in], [in, out], [out] -> [m, out]
+    return x @ w + b
+
+def ffn(x, c_fc, c_proj):  # [n_seq, n_embd] -> [n_seq, n_embd]
+    # project up
+    a = gelu(linear(x, **c_fc))  # [n_seq, n_embd] -> [n_seq, 4*n_embd]
+
+    # project back down
+    x = linear(a, **c_proj)  # [n_seq, 4*n_embd] -> [n_seq, n_embd]
+
+    return x
+
+def attention(q, k, v, mask):  # [n_q, d_k], [n_k, d_k], [n_k, d_v], [n_q, n_k] -> [n_q, d_v]
+    return softmax(q @ k.T / np.sqrt(q.shape[-1]) + mask) @ v
+
+def mha(x, c_attn, c_proj, n_head):  # [n_seq, n_embd] -> [n_seq, n_embd]
+    # qkv projection
+    x = linear(x, **c_attn)  # [n_seq, n_embd] -> [n_seq, 3*n_embd]
+
+    # split into qkv
+    qkv = np.split(x, 3, axis=-1)  # [n_seq, 3*n_embd] -> [3, n_seq, n_embd]
+
+    # split into heads
+    qkv_heads = list(map(lambda x: np.split(x, n_head, axis=-1), qkv))  # [3, n_seq, n_embd] -> [3, n_head, n_seq, n_embd/n_head]
+
+    # causal mask to hide future inputs from being attended to
+    causal_mask = (1 - np.tri(x.shape[0], dtype=x.dtype)) * -1e10  # [n_seq, n_seq]
+
+    # perform attention over each head
+    out_heads = [attention(q, k, v, causal_mask) for q, k, v in zip(*qkv_heads)]  # [3, n_head, n_seq, n_embd/n_head] -> [n_head, n_seq, n_embd/n_head]
+
+    # merge heads
+    x = np.hstack(out_heads)  # [n_head, n_seq, n_embd/n_head] -> [n_seq, n_embd]
+
+    # out projection
+    x = linear(x, **c_proj)  # [n_seq, n_embd] -> [n_seq, n_embd]
+
+    return x
+
+def transformer_block(x, mlp, attn, ln_1, ln_2, n_head):  # [n_seq, n_embd] -> [n_seq, n_embd]
+    # multi-head causal self attention
+    x = x + mha(layer_norm(x, **ln_1), **attn, n_head=n_head)  # [n_seq, n_embd] -> [n_seq, n_embd]
+
+    # position-wise feed forward network
+    x = x + ffn(layer_norm(x, **ln_2), **mlp)  # [n_seq, n_embd] -> [n_seq, n_embd]
+
+    return x
+
+def gpt2(inputs, wte, wpe, blocks, ln_f, n_head):  # [n_seq] -> [n_seq, n_vocab]
+    # token + positional embeddings
+    x = wte[inputs] + wpe[range(len(inputs))]  # [n_seq] -> [n_seq, n_embd]
+
+    # forward pass through n_layer transformer blocks
+    for block in blocks:
+        x = transformer_block(x, **block, n_head=n_head)  # [n_seq, n_embd] -> [n_seq, n_embd]
+
+    # projection to vocab
+    x = layer_norm(x, **ln_f)  # [n_seq, n_embd] -> [n_seq, n_embd]
+    return x @ wte.T  # [n_seq, n_embd] -> [n_seq, n_vocab]
+
+def generate(inputs, params, n_head, n_tokens_to_generate):
+    from tqdm import tqdm
+
+    for _ in tqdm(range(n_tokens_to_generate), "generating"):  # auto-regressive decode loop
+        logits = gpt2(inputs, **params, n_head=n_head)  # model forward pass
+        next_id = np.argmax(logits[-1])  # greedy sampling
+        inputs.append(int(next_id))  # append prediction to input
+
+    return inputs[len(inputs) - n_tokens_to_generate :]  # only return generated ids
+
+def main(prompt: str, n_tokens_to_generate: int = 40, model_size: str = "124M", models_dir: str = "models"):
+    from utils import load_encoder_hparams_and_params
+
+    # load encoder, hparams, and params from the released open-ai gpt-2 files
+    encoder, hparams, params = load_encoder_hparams_and_params(model_size, models_dir)
+
+    # encode the input string using the BPE tokenizer
+    input_ids = encoder.encode(prompt)
+
+    # make sure we are not surpassing the max sequence length of our model
+    assert len(input_ids) + n_tokens_to_generate < hparams["n_ctx"]
+
+    # generate output ids
+    output_ids = generate(input_ids, params, hparams["n_head"], n_tokens_to_generate)
+
+    # decode the ids back into a string
+    output_text = encoder.decode(output_ids)
+
+    return output_text
+
+
+if __name__ == "__main__":
+    import fire
+
+    fire.Fire(main)
+```
+#### GPU/TPU支持
+
+将`NumPy`替换为`JAX`：
+```python
+import jax.numpy as np
+
+# 计算梯度
+def lm_loss(params, inputs, n_head) -> float:
+    x, y = inputs[:-1], inputs[1:]
+    output = gpt2(x, **params, n_head=n_head)
+    loss = np.mean(-np.log(output[y]))
+    return loss
+
+grads = jax.grad(lm_loss)(params, inputs, n_head)
+
+# gpt2函数批量化
+gpt2_batched = jax.vmap(gpt2, in_axes=[0, None, None, None, None, None])
+gpt2_batched(batched_inputs) # [batch, seq_len] -> [batch, seq_len, vocab]
+```
+#### 优化
+
+我们的实现相当低效。除了支持`GPU`和批处理之外，最快且最有效的优化可能是实现一个键值缓存。此外，我们顺序地实现了注意力头计算，而实际上我们应该使用并行计算等。
+
+#### 训练
+
+训练`GPT`对于神经网络来说是非常标准的行为（针对损失函数进行梯度下降）。当然，在训练`GPT`时你还需要使用一堆常规的技巧（使用`Adam`优化器，找到最佳的学习率，通过`dropout`和`/`或权重衰减进行正则化，使用学习率规划器，使用正确的权重初始化，进行分批处理等等）。而训练一个好的`GPT`模型的**真正秘诀在于能够扩展数据和模型，这也是真正的挑战所在**。
+
+为了扩展数据量，您需要拥有大规模、高质量、多样化的文本语料库。
+- **大规模**意味着拥有数十亿的`token`（数百万`GB`的数据）。例如可以查看`The Pile`，这是一个用于大型语言模型的开源预训练数据集。
+- **高质量**意味着需要过滤掉重复的示例、未格式化的文本、不连贯的文本、垃圾文本等等。
+- **多样性**意味着序列长度变化大，涵盖了许多不同的主题，来自不同的来源，具有不同的观点等等。当然，如果数据中存在任何偏见，它将反映在模型中，因此您需要谨慎处理。
+
+将模型扩展到数十亿个参数需要超级大量的工程（金钱）可以使用`NVIDIA`的`Megatron Framework, Cohere`的训练框架, `Google`的`PALM`, 开源的`mesh-transformer-jax`（用于训练`EleutherAI`的开源模型）
+
+#### 评估
+
+老实说，这是一个非常困难的问题。`HELM`是一个相当全面且不错的起点，但你应该始终对基准测试和评估指标保持怀疑的态度。
+
+#### 停止生成
+
+我们当前的实现需要事先指定要生成的确切`token`数量。这不是一个很好的方法，因为我们生成的文本可能会太长、太短或在句子中间截断。为了解决这个问题，我们可以引入一个特殊的句子结束（`EOS`）`token`。在预训练期间，我们在输入的末尾附加`EOS token`（比如，`tokens = ["not", "all", "heroes", "wear", "capes", ".", "<|EOS|>"]`）。在生成过程中，我们只需要在遇到`EOS token`时停止（或者达到最大序列长度）：
+```python
+def generate(inputs, eos_id, max_seq_len):
+	prompt_len = len(inputs)
+	while inputs[-1] != eos_id and len(inputs) < max_seq_len:
+        output = gpt(inputs)
+        next_id = np.argmax(output[-1])
+        inputs.append(int(next_id))
+    return inputs[prompt_len:]
+```
+`GPT-2`没有使用`EOS token`进行预训练，因此我们无法在我们的代码中使用这种方法，但是现在大多数`LLMs`都已经使用`EOS token`了。
+
+#### 无条件生成
+
+使用我们的模型生成文本需要对其提供提示条件。但是我们也可以让模型执行无条件生成，即模型在没有任何输入提示的情况下生成文本。这是通过在预训练期间在输入开头加上一个特殊的句子开头（`BOS`）`token`来实现的（例如 `tokens = ["<|BOS|>", "not", "all", "heroes", "wear", "capes", "."]`）。要进行无条件文本生成的话，我们就输入一个仅包含`BOS token`的列表：
+```python
+def generate_unconditioned(bos_id, n_tokens_to_generate):
+	inputs = [bos_id]
+    for _ in range(n_tokens_to_generate):
+        output = gpt(inputs)
+        next_id = np.argmax(output[-1])
+        inputs.append(int(next_id))
+    return inputs[1:]
+```
+`GPT-2`的预训练是带有`BOS token`的（不过它有一个令人困惑的名字`<|endoftext|>`），因此在我们的实现中要运行无条件生成的话，只需要简单地将这行代码更改为：
+```python
+input_ids = encoder.encode(prompt) if prompt else [encoder.encoder["<|endoftext|>"]]
+```
+由于我们使用的是贪心采样，所以输出结果不是很好（重复的内容较多），且每次运行代码的输出结果都是确定的。为了获得更高质量的、不确定性更大的生成结果，我们需要直接从概率分布中进行采样（最好在使用`top-p`之类的方法后进行采样）。无条件生成不是特别有用，但它是演示GPT能力的一种有趣方式。
+
+#### 微调
+
+我们在训练部分简要介绍了微调。回想一下，微调是指我们复用预训练的权重，对模型在某些下游任务上进行训练。我们称这个过程为**迁移学习**。理论上，我们可以使用零样本或少样本提示来让模型完成我们的任务，但是如果您可以访问一个标注的数据集，对`GPT`进行微调将会产生更好的结果（这些结果可以在获得更多数据和更高质量的数据时进行扩展）。
+##### 分类微调
+
+在分类微调中，我们会给模型一些文本，并要求它预测它属于哪个类别。以`IMDB`数据集为例，它包含着电影评论，将电影评为好或坏：
+```bash
+--- Example 1 ---
+Text: I wouldn't rent this one even on dollar rental night.
+Label: Bad
+--- Example 2 ---
+Text: I don't know why I like this movie so well, but I never get tired of watching it.
+Label: Good
+--- Example 3 ---
+...
+```
+为了微调我们的模型，我们需要用分类头替换语言建模头，将其应用于最后一个`token`的输出：
+```python
+def gpt2(inputs, wte, wpe, blocks, ln_f, cls_head, n_head):
+    x = wte[inputs] + wpe[range(len(inputs))]
+    for block in blocks:
+        x = transformer_block(x, **block, n_head=n_head)
+    x = layer_norm(x, **ln_f)
+
+	# project to n_classes [n_embd] @ [n_embd, n_classes] -> [n_classes]
+    return x[-1] @ cls_head
+```
+这里我们只使用最后一个`token`的输出`x[-1]`，因为我们只需要为整个输入产生一个单一的概率分布，而不是像语言模型一样产生`n_seq`个分布。我们特别选择最后一个`token`（而不是第一个`token`或所有`token`的组合），因为最后一个`token`是唯一允许关注整个序列的`token`，因此它具有关于整个输入文本的信息。同往常一样，我们根据交叉熵损失进行优化：
+```python
+def singe_example_loss_fn(inputs: list[int], label: int, params) -> float:
+    logits = gpt(inputs, **params)
+    probs = softmax(logits)
+    loss = -np.log(probs[label]) # cross entropy loss
+    return loss
+```
+我们还可以执行多标签分类（即一个样本可以属于多个类别，而不仅仅是一个类别），这可以通过使用`sigmoid`替代`softmax`并针对每个类别采用二分交叉熵损失。
+##### 生成式微调
+
+有些任务无法被简单地认为是分类，如摘要的任务。我们可以通过对输入和标签拼接进行语言建模，从而实现这类任务的微调。例如，下面就是一个摘要训练样本的示例：
+```bash
+--- Article ---
+This is an article I would like to summarize.
+--- Summary ---
+This is the summary.
+```
+我们就像预训练时那样训练这个模型（根据语言建模的损失进行优化）。在预测时，我们将直到`"--- Summary ---"`的输入喂给模型，然后执行自回归语言建模以生成摘要。定界符"`--- Article ---"`和`"--- Summary ---"`的选择是任意的。如何选择文本格式由您决定，只要在训练和推断中保持一致即可。请注意，其实我们也可以将分类任务表述为生成任务（以`IMDB`为例）：
+```bash
+--- Text ---
+I wouldn't rent this one even on dollar rental night.
+--- Label ---
+Bad
+```
+然而，这种方法的表现很可能会比直接进行分类微调要差（损失函数包括对整个序列进行语言建模，而不仅仅是对最终预测的输出进行建模，因此与预测有关的损失将被稀释）。
+#### 指令微调
+
+目前大多数最先进的大型语言模型在预训练后还需要经过一个额外的指令微调步骤。在这个步骤中，模型在成千上万个由人工标注的指令提示+补全对上进行微调（生成式）。指令微调也可以称为监督式微调，因为数据是人工标记的（即有监督的）。那指令微调的好处是什么呢？虽然在预测维基百科文章中的下一个词时，模型在续写句子方面表现得很好，但它并不擅长遵循说明、进行对话或对文件进行摘要（这些是我们希望`GPT`能够做到的事情）。在人类标记的指令 + 完成对中微调它们是教育模型如何变得更有用，并使它们更容易交互的一种方法。我们将其称为`AI`对齐(`AI alignment`)，因为我们需要模型以我们想要的方式做事和表现。对齐是一个活跃的研究领域，它不仅仅只包括遵循说明（还涉及偏见、安全、意图等）的问题。那么这些指令数据到底是什么样子的呢？`Google`的`FLAN`模型是在多个学术的自然语言处理数据集（这些数据集已经被人工标注）上进行训练的：
+{% asset_img gpt_6.png %}
+
+`OpenAI`的`InstructGPT`则使用了从其`API`中收集的提示进行训练。然后他们雇佣工人为这些提示编写补全。下面是这些数据的详细信息：
+{% asset_img gpt_7.png %}
+
+#### 参数高效微调（Parameter Efficient Fine-tuning）
+
+当我们在上面的部分讨论微调时，我们是在更新模型的所有参数。虽然这可以获得最佳性能，但成本非常高，无论是在计算方面（需要经过整个模型进行反向传播），还是在存储方面（对于每个微调的模型，您需要存储一份全新的参数副本）。最简单的解决方法是**只更新模型头部并冻结模型的其它部分**。虽然这样做可以加速训练并大大减少新参数的数量，但其表现并不好，因为某种意义上我们损失了深度学习中的深度。相反，我们可以**选择性地冻结特定层**（例如冻结除了最后四层外的所有层，或每隔一层进行冻结，或冻结除多头注意力参数外的所有参数），那么这将有助于恢复深度。这种方法的性能要好得多，但我们也变得不那么参数高效(`parameter efficient`)，同时也失去了一些训练速度的优势。除此之外，我们还可以利用**参数高效微调**(`Parameter Efficient Fine-tuning`)方法。这仍然是一个活跃的研究领域。
+
+我们可以看看`Adapters`论文。在这种方法中，我们在`Transformer`模块的`FFN`和`MHA`层后添加了一个额外的`“adapter”`层。这里的`adapter`层只是一个简单的两层全连接神经网络，其中输入和输出维度是`n_embd`，而隐藏维度小于`n_embd`。适配器方法中，隐藏层的大小是一个我们可以设置的超参数，这使我们能够在参数和性能之间进行权衡。该论文表明，对于`BERT`模型，使用这种方法可以将训练参数数量降低到`2％`，而与完全微调相比仅有少量的性能下降(`<1%`)。
+{% asset_img gpt_8.png %}
