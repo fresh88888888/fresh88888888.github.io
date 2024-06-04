@@ -203,7 +203,7 @@ if __name__ == "__main__":
     - `wte, wpe, blocks, ln_f`这些都是模型的参数。
     - `n_head`是前向计算过程中需要的超参。
 - `generate`函数是我们之前看到的自回归解码算法。为了简洁，我们使用贪心采样算法。`tqdm`是一个进度条库，它可以帮助我们随着每次生成一个`token`，可视化地观察解码过程。
-- main函数主要处理：
+- `main`函数主要处理：
     - 加载分词器(`encoder`)，模型权重（`params`），超参（`hparams`）。
     - 使用分词器将输入提示词编码为`token ID`。
     - 调用生成函数。
@@ -287,9 +287,9 @@ print(shape_tree(params))
 ```
 在实现`GPT`的过程中，你可能会需要参考这个字典来确认权重的形状。为了一致性，我们将会使代码中的变量名和字典的键值保持对齐。
 
-#### 基础层
+##### 基础层
 
-##### GELU
+###### GELU
 
 `GPT-2`的非线性（激活函数）选择是`GELU`（高斯误差线性单元），这是一种类似`ReLU`的激活函数：
 {% asset_img gpt_3.png %}
@@ -305,7 +305,7 @@ gelu(np.array([[1, 2], [-2, 0.5]]))
 
 # array([[ 0.84119,  1.9546 ],[-0.0454 ,  0.34571]])
 ```
-##### Softmax
+###### Softmax
 
 ```python
 def softmax(x):
@@ -326,7 +326,7 @@ x.sum(axis=-1)
 
 # array([1., 1.])
 ```
-##### 层归一化
+###### 层归一化
 
 层归一化将数值标准化为均值为`0`，方差为`1`的值：
 {% mathjax '{"conversion":{"em":14}}' %}
@@ -341,7 +341,7 @@ def layer_norm(x, g, b, eps: float = 1e-5):
     return g * x + b  # scale and offset with gamma/beta params
 ```
 层归一化确保每层的输入总是在一个一致的范围里，而这将为训练过程的加速和稳定提供支持。与批归一化类似，归一化之后的输出通过两个可学习参数{% mathjax %}\gamma{% endmathjax %}和{% mathjax %}\beta{% endmathjax %}进行缩放和偏移。分母中的小`epsilon`项用来避免计算中的分母为零错误。
-##### 线性（变换）
+###### 线性（变换）
 
 这里是标准的矩阵乘法+偏置：
 ```python
@@ -362,7 +362,7 @@ linear(x, w, b).shape # shape after linear projection
 # (64, 10)
 ```
 
-#### GPT架构
+##### GPT架构
 
 {% asset_img gpt_4.png %}
 
