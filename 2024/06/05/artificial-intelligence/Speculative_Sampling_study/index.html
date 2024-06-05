@@ -324,7 +324,7 @@
 <li>使用我们希望从中采样的更大、更强的模型对草稿进行评分。我们将此模型称为目标模型。</li>
 <li>使用修改后的拒绝采样方案，从左到右接受<code>𝐾 draft tokens</code>的子集，在此过程中恢复目标模型的分布。</li>
 </ul>
-<p>直观来说，存在下一个<code>token</code>是比较明显的序列。因此，如果<code>draft</code>模型和目标模型在给定<code>token</code>或<code>token</code>子序列的分布之间存在很强的一致性，则此设置允许每次调用目标模型时生成多个<code>token</code>。表明draft token的预期接受率足以抵消大语言模型的draft过程的开销，从而产生一种有效且实用的方法来降低采样延迟。且无需修改目标模型或偏差样本分布。</p>
+<p>直观来说，存在下一个<code>token</code>是比较明显的序列。因此，如果<code>draft</code>模型和目标模型在给定<code>token</code>或<code>token</code>子序列的分布之间存在很强的一致性，则此设置允许每次调用目标模型时生成多个<code>token</code>。表明<code>draft token</code>的预期接受率足以抵消大语言模型的<code>draft</code>过程的开销，从而产生一种有效且实用的方法来降低采样延迟。且无需修改目标模型或偏差样本分布。</p>
 <h4 id="自回归采样"><a href="#自回归采样" class="headerlink" title="自回归采样"></a>自回归采样</h4><p>虽然可以在<code>TPU</code>和<code>GPU</code>上高效且并行地训练<code>Transformer</code>，但样本通常还是以自回归方式绘制（参见算法1）。对于大多数应用，<strong>自回归采样</strong>(<code>ArS</code>)受到内存带宽的高度限制，因此无法有效利用现代加速器。内存绑定模型调用仅为批次中的每个序列生成一个<code>token</code>，因此生成多个<code>token</code>会在使用它的系统中引入大量延迟。随着模型中参数数量的增加，显得尤为严重。由于所有模型参数都需要通过至少一个加速器芯片，因此模型大小除以所有芯片的总内存带宽为最大自回归采样速度的上限。更大的模型还需要在多个加速器上运行，由于设备间通信开销而引入了另一个延迟的源头。</p>
 <h4 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h4><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2302.01318">利用推测采样加速大型语言模型解码</a></p>
 
