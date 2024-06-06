@@ -27,6 +27,35 @@ mathjax:
 
 虽然可以在`TPU`和`GPU`上高效且并行地训练`Transformer`，但样本通常还是以自回归方式绘制（参见算法1）。对于大多数应用，**自回归采样**(`ArS`)受到内存带宽的高度限制，因此无法有效利用现代加速器。内存绑定模型调用仅为批次中的每个序列生成一个`token`，因此生成多个`token`会在使用它的系统中引入大量延迟。随着模型中参数数量的增加，显得尤为严重。由于所有模型参数都需要通过至少一个加速器芯片，因此模型大小除以所有芯片的总内存带宽为最大自回归采样速度的上限。更大的模型还需要在多个加速器上运行，由于设备间通信开销而引入了另一个延迟的源头。
 
+以下是自回归采样算法：
+{% asset_img ss_1.png %}
+
+以下是推测性采样算法：
+{% asset_img ss_2.png %}
+
+#### 推测采样
+
+对于推测性采样（参见算法`2`），我们首先观察到，并行`𝐾 token`的对数计算的延迟与单个`token`采样的延迟非常相似。我们将注意力主要集中在以`Megatron`风格分割的`Transformer`上。对于这些模型，大部分采样花费的时间包含三个部分：
+- **线性层**：对于小批量，每个线性层仅处理少量的嵌入。这会导致前馈层、查询、键、值计算和最终注意力投影中的密集矩阵乘法受到内存限制。对于较小的`𝐾`值，这将继续受到内存的限制，因此同样需要花费大量的时间。
+- **注意力机制**：注意力机制也会受到内存的限制。在采样期间，我们需要维护序列中先前标记的所有键和值的缓存，以避免重新计算。这些`KV`缓存很大，占注意力机制内存带宽的大部分。但是，由于`KV`缓存大小不会随着我们增加`𝐾`而变化，因此该组件几乎没有增量。
+- **全归约**：随着模型规模的扩大，其参数需要分布在多个加速器上，从而导致通信开销。对于`Megatron`，这表现为每个前馈和注意层之后的全归约。由于只传输少量`token`的激活，因此采样和评分（对于较小的`𝐾`）通常受延迟的限制，而不是吞吐量的限制。同时，这将会导致两种情况下花费的时间相似。
+
+可能存在其他方面开销，具体取决于`Tranformer`的实现方式。因此，编码、解码方法的选择（例如，可能需要对核采样进行排序）、硬件限制等有可能在评分和采样之间存在一些差异。但是，如果满足上述条件，则对于较小的`𝐾`，评分数值不应该变慢。
+##### 改进的拒绝采样
+
+我们需要一种方法来从`draft`模型的样本中恢复目标模型的分布，以及来自两个模型的`tokens`的对数。为了实现这一点，我们引入了以下对草稿令牌的拒绝采样方案。给定由{% mathjax %}p(.|.){% endmathjax %}生成的`token`序列{% mathjax %}x_1,\ldots,x_n{% endmathjax %}和`𝐾 draft tokens`{% mathjax %}\tilde{x}_{n+1},\ldots,\tilde{x}_{n + K}{% endmathjax %}，{% mathjax %}\tilde{x}_{n+1}{% endmathjax %}的概率为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\min(1,\frac{q(\tilde{x}_{n+1}|x_1,\ldots,x_n)}{p(\tilde{x}_{n+1}|x,\ldots,x_n)})
+{% endmathjax %}
+其中{% mathjax %}q(\tilde{x}_{n+1}|x_1,\ldots,x_n){% endmathjax %}和{% mathjax %}p(\tilde{x}_{n+1}|x,\ldots,x_n){% endmathjax %}分别是根据目标模型和`draft`模型得出{% mathjax %}\tilde{x}_{n+1}{% endmathjax %}的概率。如果`token`被接受，我们设置{% mathjax %}x_{n+1}\leftarrow \tilde{x}_{n+1}{% endmathjax %}，并对{% mathjax %}\tilde{x}_{n+2}{% endmathjax %}重复此过程，直到`token`被拒绝或所有`token`都被接受。如果{% mathjax %}\tilde{x}_{n+1}{% endmathjax %}被拒绝，我们将根据以下分布重新采样{% mathjax %}x_{n+1}{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+x_{n+1} \sim (q(x|x_1,\ldots,x_n) - p(x|x_1,\ldots,x_n))_+
+{% endmathjax %}
+其中{% mathjax %}(.)_+{% endmathjax %}表示为：
+{% mathjax '{"conversion":{"em":14}}' %}
+(f(x))_+ = \frac{\max(0, f(x))}{\sum_x \max(0,f(x))}
+{% endmathjax %}
+
 #### 引用
 
 [利用推测采样加速大型语言模型解码](https://arxiv.org/abs/2302.01318)
