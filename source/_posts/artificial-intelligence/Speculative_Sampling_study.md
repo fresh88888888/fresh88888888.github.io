@@ -232,7 +232,7 @@ if __name__ == "__main__":
 
     fire.Fire(main)
 ```
-对于` HumanEval`，我们获得了`2.65`的理论加速，而论文报告的经验加速为`2.46`。对于 XSum，我们获得了`2.05`的理论加速，而论文报告的经验加速为`1.92`。
+对于` HumanEval`，我们获得了`2.65`的理论加速，而论文报告的经验加速为`2.46`。对于 `XSum`，我们获得了`2.05`的理论加速，而论文报告的经验加速为`1.92`。
 ```bash
 python main.py \
     --prompt "Alan Turing theorized that computers would one day become" \
