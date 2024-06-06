@@ -82,6 +82,197 @@ x_{n+1} \sim (q(x|x_1,\ldots,x_n) - p(x|x_1,\ldots,x_n))_+
 
 在这项工作中，展示了一种用于加速语言模型解码的新算法和工作流程。**推测性采样**不需要对目标语言模型的参数或架构进行任何修改，在数值上证明是无损的，可以与适当的`draft`模型很好地扩展，并且补充了许多现有技术以减少小批量设置中的延迟。我们使用一个易于用现有基础设施训练的`draft`模型优化并将该技术扩展到`Chinchilla 70B`，证明它在基准测试任务中的常见解码方法产生了很大的加速。并验证了它在其下游任务中确实是无损的。
 
+#### 代码实现
+
+```python
+import functools
+import sys
+import time
+import numpy as np
+from tqdm import tqdm
+from gpt2 import gpt2, softmax
+from utils import load_encoder_hparams_and_params
+
+def max_fn(x):
+    x_max = np.where(x > 0, x, 0)
+    return x_max / np.sum(x_max)
+
+def sample(p):
+    return np.random.choice(np.arange(p.shape[-1]), p=p)
+
+def autoregressive_sampling(x, model, N):
+    n = len(x)
+    T = len(x) + N
+
+    with tqdm(total=N, desc="autoregressive sampling") as pbar:
+        while n < T:
+            x = np.append(x, sample(model(x)[-1]))
+            n += 1
+            pbar.update(1)
+
+    return x
+
+def speculative_sampling(x, draft_model, target_model, N, K):
+    # NOTE: paper indexes arrays starting from 1, python indexes from 0, so
+    # we have to add an extra -1 term when indexing using n, T, or t
+    n = len(x)
+    T = len(x) + N
+
+    with tqdm(total=N, desc="speculative sampling") as pbar:
+        while n < T:
+            prev_n = n
+
+            # Step 1: auto-regressive decode K tokens from draft model and get final p
+            x_draft = x
+            for _ in range(K):
+                p = draft_model(x_draft)
+                x_draft = np.append(x_draft, sample(p[-1]))
+
+            # Step 2: target model forward passes on x_draft
+            q = target_model(x_draft)
+
+            # Step 3: append draft tokens based on rejection criterion and resample
+            # a token on rejection
+            all_accepted = True
+            for _ in range(K):
+                i = n - 1
+                j = x_draft[i + 1]
+                if np.random.random() < min(1, q[i][j] / p[i][j]):  # accepted
+                    x = np.append(x, j)
+                    n += 1
+                else:  # rejected
+                    x = np.append(x, sample(max_fn(q[i] - p[i])))  # resample
+                    n += 1
+                    all_accepted = False
+                    break
+
+            # Step 4: if all draft tokens were accepted, sample a final token
+            if all_accepted:
+                x = np.append(x, sample(q[-1]))
+                n += 1
+
+            # just keeping my sanity
+            pbar.update(n - prev_n)
+            assert n == len(x), f"{n} {len(x)}"
+
+    return x
+
+def create_model_fn(params, hparams, temperature, eps=1e-10):
+    f = functools.partial(gpt2, **params, n_head=hparams["n_head"])
+
+    def model_fn(inputs):
+        logits = f(inputs)
+        logits = logits / (temperature + eps)  # eps to avoid division by zero
+        probs = softmax(logits)
+        return probs
+
+    return model_fn
+
+def main(
+    prompt: str = "Alan Turing theorized that computers would one day become",
+    n_tokens_to_generate: int = 40,
+    draft_model_size: str = "124M",
+    target_model_size: str = "1558M",
+    models_dir: str = "models",
+    K: int = 4,
+    temperature: float = 0.0,
+    seed: int = 123,
+):
+    # seed numpy rng
+    np.random.seed(seed)
+
+    # load encoder, hparams, and params from the released open-ai gpt-2 files
+    encoder, draft_hparams, draft_params = load_encoder_hparams_and_params(draft_model_size, models_dir)
+    _, target_hparams, target_params = load_encoder_hparams_and_params(target_model_size, models_dir)
+    draft_model = create_model_fn(draft_params, draft_hparams, temperature)
+    target_model = create_model_fn(target_params, target_hparams, temperature)
+
+    # encode inputs
+    input_ids = encoder.encode(prompt)
+
+    def run_sampling_fn(decode_fn, input_ids, **kwargs):
+        start = time.perf_counter()
+        output_ids = decode_fn(x=input_ids, **kwargs)
+        text = encoder.decode(output_ids)
+        elapsed_time = time.perf_counter() - start
+        return text, elapsed_time
+
+    # autoregressive
+    autoregressive_text, autoregressive_time = run_sampling_fn(
+        autoregressive_sampling,
+        input_ids,
+        model=target_model,
+        N=n_tokens_to_generate,
+    )
+
+    # speculative
+    speculative_text, speculative_time = run_sampling_fn(
+        speculative_sampling,
+        input_ids,
+        target_model=target_model,
+        draft_model=draft_model,
+        N=n_tokens_to_generate,
+        K=K,
+    )
+
+    # print results
+    print()
+    print("Autoregressive Decode")
+    print("---------------------")
+    print(f"Time = {autoregressive_time:.2f}s")
+    print(f"Text = {autoregressive_text}")
+    print()
+    print("Speculative Decode")
+    print("------------------")
+    print(f"Time = {speculative_time:.2f}s")
+    print(f"Text = {speculative_text}")
+
+if __name__ == "__main__":
+    import fire
+
+    fire.Fire(main)
+```
+对于` HumanEval`，我们获得了`2.65`的理论加速，而论文报告的经验加速为`2.46`。对于 XSum，我们获得了`2.05`的理论加速，而论文报告的经验加速为`1.92`。
+```bash
+python main.py \
+    --prompt "Alan Turing theorized that computers would one day become" \
+    --n_tokens_to_generate 40 \
+    --draft_model_size "124M"  \
+    --target_model_size "1558M" \
+    --K 4 \
+    --temperature 0 \
+    --seed 123
+```
+输出结果为：
+```bash
+Time = 60.64s
+Text = Alan Turing theorized that computers would one day become so powerful that they would be able to think like humans.
+
+In the 1950s, he proposed a way to build a computer that could think like a human. He called it the "T
+
+Speculative Decode
+------------------
+Time = 27.15s
+Text = Alan Turing theorized that computers would one day become so powerful that they would be able to think like humans.
+
+In the 1950s, he proposed a way to build a computer that could think like a human. He called it the "T
+```
+这使得速度提高了`2.23`倍。请注意，由于使用了，这两种方法的输出完全相同`temperature = 0`，这对应于贪婪采样（始终取具有最高概率的标记）。如果使用非零温度，情况就不是这样了。虽然推测采样在数学上与直接从目标模型采样相同，但由于随机性，自回归和推测采样的结果会有所不同。推测采样给出与自回归采样不同的结果类似于运行自回归采样，但使用不同的种子。但是，当时`temperature = 0，100%`的概率被分配给单个标记，因此从分布中抽样变得确定性，这就是输出相同的原因。如果我们改用`temperature = 0.5`，我们会得到不同的输出：
+```bash
+Autoregressive Decode
+---------------------
+Time = 49.06s
+Text = Alan Turing theorized that computers would one day become self-aware. This is known as the "Turing Test" and it is 
+a test that has been used to determine if a computer is intelligent.
+
+The Turing Test is based on the
+
+Speculative Decode
+------------------
+Time = 31.60s
+Text = Alan Turing theorized that computers would one day become so powerful that they would be able to simulate the behavior 
+of human minds. The Turing Test is a test that asks a computer to recognize whether a given piece of text is a human or a computer generated
+```
 #### 引用
 
 [利用推测采样加速大型语言模型解码](https://arxiv.org/abs/2302.01318)
