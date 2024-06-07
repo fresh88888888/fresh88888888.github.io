@@ -83,3 +83,77 @@ sns.boxplot(x="Species", y="PetalLengthCm", data=iris)
 ```
 {% asset_img dv_4.png %}
 
+我们扩展该图的一种方法是在上面添加一层单独的点。我们将使用`jitter=True`以便所有点都不会落在单个垂直线上。
+```python
+# One way we can extend this plot is adding a layer of individual points on top of
+# it through Seaborn's striplot
+ax = sns.boxplot(x="Species", y="PetalLengthCm", data=iris)
+ax = sns.stripplot(x="Species", y="PetalLengthCm", data=iris, jitter=True, edgecolor="gray")
+```
+{% asset_img dv_5.png %}
+
+小提琴图结合了前两个图的优点并简化了它们在小提琴图中，数据的密集区域更厚，稀疏区域更薄。
+```python
+# A violin plot combines the benefits of the previous two plots and simplifies them
+# Denser regions of the data are fatter, and sparser thiner in a violin plot
+sns.violinplot(x="Species", y="PetalLengthCm", data=iris, size=6)
+```
+{% asset_img dv_6.png %}
+
+用于查看单变量关系的最后一个`seaborn`图是`kdeplot`，创建并可视化底层特征的核密度估计。
+```python
+# A final seaborn plot useful for looking at univariate relations is the kdeplot,
+# which creates and visualizes a kernel density estimate of the underlying feature
+sns.FacetGrid(iris, hue="Species", size=6).map(sns.kdeplot, "PetalLengthCm").add_legend()
+```
+{% asset_img dv_7.png %}
+
+另一个有用的`seaborn`图是`pairplot`，它显示了每对特征之间的二元关系。从配对图中，我们可以看到，在所有特征组合中，`Iris-setosa`物种都与其他两种物种分离。
+```python
+# Another useful seaborn plot is the pairplot, which shows the bivariate relation
+# between each pair of features
+# 
+# From the pairplot, we'll see that the Iris-setosa species is separataed from the other
+# two across all feature combinations
+sns.pairplot(iris.drop("Id", axis=1), hue="Species", size=3)
+```
+{% asset_img dv_8.png %}
+
+既然我们已经介绍了`seaborn`，让我们回顾一下我们可以用`Pandas`制作的一些图。我们可以用`Pandas`快速制作一个箱线图，按物种划分每个特征。
+```python
+# Now that we've covered seaborn, let's go back to some of the ones we can make with Pandas
+# We can quickly make a boxplot with Pandas on each feature split out by species
+iris.drop("Id", axis=1).boxplot(by="Species", figsize=(12, 6))
+```
+{% asset_img dv_9.png %}
+
+`Pandas`中有一个更酷更复杂的技术叫做安德鲁斯曲线。安德鲁斯曲线涉及使用样本的属性作为傅里叶级数的系数。
+```python
+# One cool more sophisticated technique pandas has available is called Andrews Curves
+# Andrews Curves involve using attributes of samples as coefficients for Fourier series
+# and then plotting these
+from pandas.plotting import andrews_curves
+andrews_curves(iris.drop("Id", axis=1), "Species")
+```
+{% asset_img dv_10.png %}
+
+`pandas`的另一种多元可视化技术是`parallel_coordinates`平行坐标将每个特征绘制在单独的列上，然后绘制连接每个数据样本特征的线。
+```python
+# Another multivariate visualization technique pandas has is parallel_coordinates
+# Parallel coordinates plots each feature on a separate column & then draws lines
+# connecting the features for each data sample
+from pandas.plotting import parallel_coordinates
+parallel_coordinates(iris.drop("Id", axis=1), "Species")
+```
+{% asset_img dv_11.png %}
+
+`pandas`的最后一项多元可视化技术是`radviz`。它将每个特征作为二维平面上的一个点，然后模拟将每个样本通过一个由该特征的相对值加权的弹簧连接到这些点。
+```python
+# A final multivariate visualization technique pandas has is radviz
+# Which puts each feature as a point on a 2D plane, and then simulates
+# having each sample attached to those points through a spring weighted
+# by the relative value for that feature
+from pandas.plotting import radviz
+radviz(iris.drop("Id", axis=1), "Species")
+```
+{% asset_img dv_12.png %}
