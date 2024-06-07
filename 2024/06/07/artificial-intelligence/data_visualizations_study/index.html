@@ -37,6 +37,14 @@
 <meta property="og:image" content="https://fresh88888888.github.io/2024/06/07/artificial-intelligence/data_visualizations_study/dv_2.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/06/07/artificial-intelligence/data_visualizations_study/dv_3.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/06/07/artificial-intelligence/data_visualizations_study/dv_4.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/06/07/artificial-intelligence/data_visualizations_study/dv_5.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/06/07/artificial-intelligence/data_visualizations_study/dv_6.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/06/07/artificial-intelligence/data_visualizations_study/dv_7.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/06/07/artificial-intelligence/data_visualizations_study/dv_8.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/06/07/artificial-intelligence/data_visualizations_study/dv_9.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/06/07/artificial-intelligence/data_visualizations_study/dv_10.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/06/07/artificial-intelligence/data_visualizations_study/dv_11.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/06/07/artificial-intelligence/data_visualizations_study/dv_12.png">
 <meta property="article:published_time" content="2024-06-07T03:40:11.000Z">
 <meta property="article:modified_time" content="2024-06-07T03:40:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -303,14 +311,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>483</span>
+      <span>1.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>4 分钟</span>
     </span>
 </div>
 
@@ -345,6 +353,37 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># We can look at an individual feature in Seaborn through a boxplot</span></span><br><span class="line">sns.boxplot(x=<span class="string">&quot;Species&quot;</span>, y=<span class="string">&quot;PetalLengthCm&quot;</span>, data=iris)</span><br></pre></td></tr></table></figure>
 <img data-src="/2024/06/07/artificial-intelligence/data_visualizations_study/dv_4.png" class="">
 
+<p>我们扩展该图的一种方法是在上面添加一层单独的点。我们将使用<code>jitter=True</code>以便所有点都不会落在单个垂直线上。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># One way we can extend this plot is adding a layer of individual points on top of</span></span><br><span class="line"><span class="comment"># it through Seaborn&#x27;s striplot</span></span><br><span class="line">ax = sns.boxplot(x=<span class="string">&quot;Species&quot;</span>, y=<span class="string">&quot;PetalLengthCm&quot;</span>, data=iris)</span><br><span class="line">ax = sns.stripplot(x=<span class="string">&quot;Species&quot;</span>, y=<span class="string">&quot;PetalLengthCm&quot;</span>, data=iris, jitter=<span class="literal">True</span>, edgecolor=<span class="string">&quot;gray&quot;</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/06/07/artificial-intelligence/data_visualizations_study/dv_5.png" class="">
+
+<p>小提琴图结合了前两个图的优点并简化了它们在小提琴图中，数据的密集区域更厚，稀疏区域更薄。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># A violin plot combines the benefits of the previous two plots and simplifies them</span></span><br><span class="line"><span class="comment"># Denser regions of the data are fatter, and sparser thiner in a violin plot</span></span><br><span class="line">sns.violinplot(x=<span class="string">&quot;Species&quot;</span>, y=<span class="string">&quot;PetalLengthCm&quot;</span>, data=iris, size=<span class="number">6</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/06/07/artificial-intelligence/data_visualizations_study/dv_6.png" class="">
+
+<p>用于查看单变量关系的最后一个<code>seaborn</code>图是<code>kdeplot</code>，创建并可视化底层特征的核密度估计。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># A final seaborn plot useful for looking at univariate relations is the kdeplot,</span></span><br><span class="line"><span class="comment"># which creates and visualizes a kernel density estimate of the underlying feature</span></span><br><span class="line">sns.FacetGrid(iris, hue=<span class="string">&quot;Species&quot;</span>, size=<span class="number">6</span>).<span class="built_in">map</span>(sns.kdeplot, <span class="string">&quot;PetalLengthCm&quot;</span>).add_legend()</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/06/07/artificial-intelligence/data_visualizations_study/dv_7.png" class="">
+
+<p>另一个有用的<code>seaborn</code>图是<code>pairplot</code>，它显示了每对特征之间的二元关系。从配对图中，我们可以看到，在所有特征组合中，<code>Iris-setosa</code>物种都与其他两种物种分离。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Another useful seaborn plot is the pairplot, which shows the bivariate relation</span></span><br><span class="line"><span class="comment"># between each pair of features</span></span><br><span class="line"><span class="comment"># </span></span><br><span class="line"><span class="comment"># From the pairplot, we&#x27;ll see that the Iris-setosa species is separataed from the other</span></span><br><span class="line"><span class="comment"># two across all feature combinations</span></span><br><span class="line">sns.pairplot(iris.drop(<span class="string">&quot;Id&quot;</span>, axis=<span class="number">1</span>), hue=<span class="string">&quot;Species&quot;</span>, size=<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/06/07/artificial-intelligence/data_visualizations_study/dv_8.png" class="">
+
+<p>既然我们已经介绍了<code>seaborn</code>，让我们回顾一下我们可以用<code>Pandas</code>制作的一些图。我们可以用<code>Pandas</code>快速制作一个箱线图，按物种划分每个特征。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Now that we&#x27;ve covered seaborn, let&#x27;s go back to some of the ones we can make with Pandas</span></span><br><span class="line"><span class="comment"># We can quickly make a boxplot with Pandas on each feature split out by species</span></span><br><span class="line">iris.drop(<span class="string">&quot;Id&quot;</span>, axis=<span class="number">1</span>).boxplot(by=<span class="string">&quot;Species&quot;</span>, figsize=(<span class="number">12</span>, <span class="number">6</span>))</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/06/07/artificial-intelligence/data_visualizations_study/dv_9.png" class="">
+
+<p><code>Pandas</code>中有一个更酷更复杂的技术叫做安德鲁斯曲线。安德鲁斯曲线涉及使用样本的属性作为傅里叶级数的系数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># One cool more sophisticated technique pandas has available is called Andrews Curves</span></span><br><span class="line"><span class="comment"># Andrews Curves involve using attributes of samples as coefficients for Fourier series</span></span><br><span class="line"><span class="comment"># and then plotting these</span></span><br><span class="line"><span class="keyword">from</span> pandas.plotting <span class="keyword">import</span> andrews_curves</span><br><span class="line">andrews_curves(iris.drop(<span class="string">&quot;Id&quot;</span>, axis=<span class="number">1</span>), <span class="string">&quot;Species&quot;</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/06/07/artificial-intelligence/data_visualizations_study/dv_10.png" class="">
+
+<p><code>pandas</code>的另一种多元可视化技术是<code>parallel_coordinates</code>平行坐标将每个特征绘制在单独的列上，然后绘制连接每个数据样本特征的线。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Another multivariate visualization technique pandas has is parallel_coordinates</span></span><br><span class="line"><span class="comment"># Parallel coordinates plots each feature on a separate column &amp; then draws lines</span></span><br><span class="line"><span class="comment"># connecting the features for each data sample</span></span><br><span class="line"><span class="keyword">from</span> pandas.plotting <span class="keyword">import</span> parallel_coordinates</span><br><span class="line">parallel_coordinates(iris.drop(<span class="string">&quot;Id&quot;</span>, axis=<span class="number">1</span>), <span class="string">&quot;Species&quot;</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/06/07/artificial-intelligence/data_visualizations_study/dv_11.png" class="">
+
+<p><code>pandas</code>的最后一项多元可视化技术是<code>radviz</code>。它将每个特征作为二维平面上的一个点，然后模拟将每个样本通过一个由该特征的相对值加权的弹簧连接到这些点。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># A final multivariate visualization technique pandas has is radviz</span></span><br><span class="line"><span class="comment"># Which puts each feature as a point on a 2D plane, and then simulates</span></span><br><span class="line"><span class="comment"># having each sample attached to those points through a spring weighted</span></span><br><span class="line"><span class="comment"># by the relative value for that feature</span></span><br><span class="line"><span class="keyword">from</span> pandas.plotting <span class="keyword">import</span> radviz</span><br><span class="line">radviz(iris.drop(<span class="string">&quot;Id&quot;</span>, axis=<span class="number">1</span>), <span class="string">&quot;Species&quot;</span>)</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/06/07/artificial-intelligence/data_visualizations_study/dv_12.png" class="">
 
     </div>
 
@@ -424,7 +463,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">46:49</span>
+    <span title="站点阅读时长">46:51</span>
   </span>
 </div>
 <div class="busuanzi-count">
