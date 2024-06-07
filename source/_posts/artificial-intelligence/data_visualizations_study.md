@@ -75,3 +75,11 @@ sns.jointplot(x="SepalLengthCm", y="SepalWidthCm", data=iris, size=5)
 sns.FacetGrid(iris, hue="Species", size=5).map(plt.scatter, "SepalLengthCm", "SepalWidthCm").add_legend()
 ```
 {% asset_img dv_3.png %}
+
+我们可以通过箱线图查看`Seaborn`中的单个特征。
+```python
+# We can look at an individual feature in Seaborn through a boxplot
+sns.boxplot(x="Species", y="PetalLengthCm", data=iris)
+```
+{% asset_img dv_4.png %}
+
