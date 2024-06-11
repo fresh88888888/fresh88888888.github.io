@@ -51,3 +51,22 @@ mathjax:
 a_{ij} = \text{softmax}(\frac{\mathbf{q}_i {\mathbf{k}_j}^\top}{\sqrt{d_k}}) = \frac{\exp(\mathbf{q}_i {\mathbf{k}_j}^\top)}{\sqrt{d_k}\sum_{r\in S_i } \exp(\mathbf{q}_i {\mathbf{k}_r}^\top)}
 {% endmathjax %}
 #### 多头自注意力
+
+**多头自注意力**模块是`Transformer`中的关键组件。多头机制不是只计算一次注意力，而是将输入拆分成更小的块，然后并行计算每个子块上的缩放点积注意力。单个注意力输出只是简单地连接起来并线性变换为预期的维度。
+{% mathjax '{"conversion":{"em":14}}' %}
+\text{MultiHeadAttn}(\mathbf{X}_q,\mathbf{X}_k,\mathbf{X}_v) = [\text{head}_1;\ldots;\text{head}_h]\mathbf{W}^o\;\;\text{where head}_i = \text{Attention}(\mathbf{X}_q \mathbf{W}_i^q, \mathbf{X}_k \mathbf{W}_i^k, \mathbf{X}_v \mathbf{W}_i^v)
+{% endmathjax %}
+在这里{% mathjax %}[\cdot;\cdot]{% endmathjax %}是一个连接运算。{% mathjax %}\mathbf{W}_i^q,\mathbf{W}_i^k\in \mathbb{R}^{d\times d_k/h}, \mathbf{W}_i^v\in \mathbb{R}^{d\times d_v/h}{% endmathjax %}是权重矩阵，用于映射大小为{% mathjax %}L\times d{% endmathjax %}的查询、键和值矩阵。并且{% mathjax %}\mathbf{W}^o\in \mathbb{R}^{d_v\times d}{% endmathjax %}是输出线性变换。所有权重都应在训练期间学习。
+{% asset_img t_1.png "多头缩放点积注意机制示意图" %}
+
+#### 编码器-解码器架构
+
+**编码器**生成基于注意力机制的表示，能够从上下文中定位特定信息。它由`6`个模块的堆栈组成，每个模块包含两个子模块、一个多头自注意力层和一个逐点全连接前馈网络。逐点意味着它对序列中的每个元素应用相同的线性变换（具有相同的权重）。这也可以看作是过滤器大小为`1`的卷积层。每个子模块都有一个残差连接和层规范化。所有子模块都输出相同维度的数据{% mathjax %}d{% endmathjax %}。`Transformer`解码器的功能是从编码表示中检索信息。该架构与编码器非常相似，不同之处在于解码器包含两个多头注意子模块，而不是相同的重复模块中都有一个。第一个多头注意子模块被屏蔽，以防止位置关注未来。
+#### 位置编码
+
+由于自注意力操作具有排列不变性，因此使用适当的位置编码为模型提供顺序信息非常重要。位置编码{% mathjax %}\mathbf{P}\in \mathbb{R}^{L\times d}{% endmathjax %}与输入嵌入具有相同的维度，因此可以直接添加到输入中。`vanilla Transformer`考虑了两种类型的编码：
+##### 正弦位置编码
+
+##### 学习位置编码
+
+##### 相对位置编码
