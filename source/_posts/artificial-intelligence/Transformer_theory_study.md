@@ -62,12 +62,24 @@ a_{ij} = \text{softmax}(\frac{\mathbf{q}_i {\mathbf{k}_j}^\top}{\sqrt{d_k}}) = \
 #### 编码器-解码器架构
 
 **编码器**生成基于注意力机制的表示，能够从上下文中定位特定信息。它由`6`个模块的堆栈组成，每个模块包含两个子模块、一个多头自注意力层和一个逐点全连接前馈网络。逐点意味着它对序列中的每个元素应用相同的线性变换（具有相同的权重）。这也可以看作是过滤器大小为`1`的卷积层。每个子模块都有一个残差连接和层规范化。所有子模块都输出相同维度的数据{% mathjax %}d{% endmathjax %}。`Transformer`解码器的功能是从编码表示中检索信息。该架构与编码器非常相似，不同之处在于解码器包含两个多头注意子模块，而不是相同的重复模块中都有一个。第一个多头注意子模块被屏蔽，以防止位置关注未来。
+{% asset_img t_2.png "原始Transformer模型的架构" %}
+
 #### 位置编码
 
 由于自注意力操作具有排列不变性，因此使用适当的位置编码为模型提供顺序信息非常重要。位置编码{% mathjax %}\mathbf{P}\in \mathbb{R}^{L\times d}{% endmathjax %}与输入嵌入具有相同的维度，因此可以直接添加到输入中。`vanilla Transformer`考虑了两种类型的编码：
 ##### 正弦位置编码
 
-正弦位置编码定义如下，给定`token`位置
+正弦位置编码定义如下，给定`token`位置{% mathjax %}i=1,\ldots,L{% endmathjax %}和维度{% mathjax %}\delta = 1,\ldots,d{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{PE}(i,\delta) = 
+\begin{cases}
+    \sin(\frac{i}{10000^{2\delta '/d}}) & \text{if }\delta = 2\delta '\\
+    \cos(\frac{i}{10000^{2\delta '/d}}) & \text{if }\delta = 2\delta ' + 1\\
+\end{cases}
+{% endmathjax %}
+这样，位置编码的每个维度都对应于不同维度中不同波长的正弦波，从{% mathjax %}2\pi{% endmathjax %}到{% mathjax %}10000\cdot 2\pi{% endmathjax %}。
+{% asset_img t_3.png "正弦位置编码L=32和d=128。介于-1(黑色)~1(白色)之间，值-0为灰色" %}
+
 ##### 学习位置编码
 
 ##### 相对位置编码
