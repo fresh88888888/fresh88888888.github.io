@@ -17,7 +17,7 @@ mathjax:
 #### 符号
 
 |符号|含义|
-|:--:|:--:|
+|:--|:--|
 |{% mathjax %}d{% endmathjax %}|模型大小/隐藏状态维度/位置编码大小。|
 |{% mathjax %}h{% endmathjax %}|多头注意力层中的头的数量。|
 |{% mathjax %}L{% endmathjax %}|输入序列的段长度。|
@@ -31,7 +31,7 @@ mathjax:
 |{% mathjax %}\mathbf{Q} = \mathbf{XW}^q\in \mathbb{R}^{L\times d_k}{% endmathjax %}|嵌入输入的查询。|
 |{% mathjax %}\mathbf{K} = \mathbf{XW}^k\in \mathbb{R}^{L\times d_k}{% endmathjax %}|嵌入输入的键。|
 |{% mathjax %}\mathbf{V} = \mathbf{XW}^v\in \mathbb{R}^{L\times d_v}{% endmathjax %}|嵌入输入的值。|
-|{% mathjax %}\mathbf{q}_i,\mathbf{k}_i\in \mathbb{R}^{d_k},\mathbf{v}_i\in \mathbb{R}^{d_v}{% endmathjax %}|查询、键、值矩阵中的行向量，{% mathjax %}\mathbf{Q,K}和{% mathjax %}\mathbf{V}{% endmathjax %}{% endmathjax %}|
+|{% mathjax %}\mathbf{q}_i,\mathbf{k}_i\in \mathbb{R}^{d_k},\mathbf{v}_i\in \mathbb{R}^{d_v}{% endmathjax %}|查询、键、值矩阵中的行向量，{% mathjax %}\mathbf{Q,K}{% endmathjax %}和{% mathjax %}\mathbf{V}{% endmathjax %}|
 |{% mathjax %}\mathbf{S}_i{% endmathjax %}|第{% mathjax %}i{% endmathjax %}个查询{% mathjax %}\mathbf{q}_i{% endmathjax %}的键值对集合|
 |{% mathjax %}\mathbf{A}\in \mathbb{R}^{L\times L}{% endmathjax %}|长度为{% mathjax %}L{% endmathjax %}的注意力，{% mathjax %}\mathbf{A} = \text{softmax(\mathbf{QK}^{\mathsf{T}}/\sqrt{d_k})}{% endmathjax %}。|
 |{% mathjax %}a_{ij}\in \mathbf{A}{% endmathjax %}|查询{% mathjax %}i{% endmathjax %}和{% mathjax %}j{% endmathjax %}之间的标量注意得分{% mathjax %}\mathbf{q}_i{% endmathjax %}和键{% mathjax %}\mathbf{k}_j{% endmathjax %}。|
