@@ -48,6 +48,6 @@ mathjax:
 {% endmathjax %}
 对于查询和键向量{% mathjax %}\mathbf{q}_i,\mathbf{k}_i\in \mathbb{R}^d{% endmathjax %}（查询和键矩阵中的行向量），我们有一个标量分数：
 {% mathjax '{"conversion":{"em":14}}' %}
-a_{ij} = \text{softmax}(\frac{\mathbf{q}_i\mathbf{k}_j^{\mathsf{T}}}{\sqrt{d_k}}) = \frac{\exp(\mathbf{q}_i\mathbf{k}_j^{\mathsf{T}})}{\sqrt{d_k}\sum_{r\in S_i } \exp(\mathbf{q}_i \mathbf{k}_r^{\mathsf{T}})}
+a_{ij} = \text{softmax}(\frac{\mathbf{q}_i {\mathbf{k}_j}^\top}{\sqrt{d_k}}) = \frac{\exp(\mathbf{q}_i {\mathbf{k}_j}^\top)}{\sqrt{d_k}\sum_{r\in S_i } \exp(\mathbf{q}_i {\mathbf{k}_r}^\top)}
 {% endmathjax %}
 #### 多头自注意力
