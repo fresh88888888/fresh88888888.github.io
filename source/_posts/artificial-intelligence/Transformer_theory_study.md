@@ -82,4 +82,31 @@ a_{ij} = \text{softmax}(\frac{\mathbf{q}_i {\mathbf{k}_j}^\top}{\sqrt{d_k}}) = \
 
 ##### 学习位置编码
 
+学习到的位置编码为每个元素分配一个学习到的列向量，该向量对其绝对位置进行编码（`Gehring`等人，`2017`年），而且每层都可以通过不同的方式学习这种编码（`Al-Rfou`等人，`2018`年）。
 ##### 相对位置编码
+
+`Shaw`等人（`2018`年）将相对位置信息纳入{% mathjax %}\mathbf{W}^k{% endmathjax %}和{% mathjax %}\mathbf{W}^v{% endmathjax %}最大相对位置被限制为最大绝对值{% mathjax %}k{% endmathjax %}这种裁剪操作使得模型能够推广到未知的序列长度。因此，在{% mathjax %}2k + 1{% endmathjax %}的标签范围内，将{% mathjax %}\mathbf{P}^k,\mathbf{P}^v\in \mathbb{R}^{2k+1}{% endmathjax %}作为可学习的相对位置表示。
+{% mathjax '{"conversion":{"em":14}}' %}
+A_{ij}^k = P_{\text{clip}(j-i,k)}^k\;A_{ij}^v = P_{\text{clip}(j-i,k)}^v\; \text{where clip}(x,k) = \text{clip}(x,-k,k)
+{% endmathjax %}
+`Transformer-XL`（`Dai`等人，`2019`年）提出了一种基于键和查询点积重参数化的相对位置编码。为了保持位置信息在各个段之间连贯流动，`Transformer-XL`对相对位置进行编码，因为知道位置偏移量就足以做出良好的预测，即{% mathjax %}i-j{% endmathjax %}，一个键向量{% mathjax %}\mathbf{k}_{\tau , j}{% endmathjax %}及其查询向量{% mathjax %}\mathbf{q}_{\tau , i}{% endmathjax %}。如果省略标量{% mathjax %}、\frac{1}{\sqrt{d_k}}{% endmathjax %}以及{% mathjax %}\text{softmax}{% endmathjax %}中的归一化项，包括位置编码，我们可以将位置处的查询注意力得分写为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+a_{ij} & = \mathbf{q}_i {\mathbf{k}_j}^\top = (\mathbf{x}_i + \mathbf{p}_i)\mathbf{W}^q ((\mathbf{x}_j + \mathbf{p}_j)\mathbf{W}^k)^\top \\
+& = \mathbf{x}_i\mathbf{W}^q {\mathbf{W}^k}^\top \mathbf{x}_j^\top + \mathbf{x}_i\mathbf{W}^q {\mathbf{W}^k}^\top \mathbf{p}_j^\top + \mathbf{p}_i\mathbf{W}^q {\mathbf{W}^k}^\top \mathbf{x}_j^\top + \mathbf{p}_i\mathbf{W}^q {\mathbf{W}^k}^\top \mathbf{p}_j^\top 
+\end{align}
+{% endmathjax %}
+`Transformer-XL`对上述四个项重新参数化如下：
+{% mathjax '{"conversion":{"em":14}}' %}
+a_{ij}^{\text{rel}} = 
+\underbrace{ \mathbf{x}_i\mathbf{W}^q \color{blue}{ {\mathbf{W}_E^k}^\top } \mathbf{x}_j^\top }_{\text{content-based addressing}} +
+\underbrace{ \mathbf{x}_i\mathbf{W}^q \color{blue}{ {\mathbf{W}_R^k}^\top } \color{green}{\mathbf{r}_{i-j}^\top} }_{\text{content-dependent positional bias}} +
+\underbrace{\color{red}{\mathbf{u}} \color{blue}{{\mathbf{W}_E^k}^\top} \mathbf{x}_j^\top }_{\text{global content bias}} +
+\underbrace{\color{red}{\mathbf{v}} \color{blue}{{\mathbf{W}_R^k}^\top} \color{green}{\mathbf{x}_{i-j}^\top} }_{\text{global positional bias}}
+{% endmathjax %}
+- 代替{% mathjax %}\mathbf{p}_j{% endmathjax %}使用相对位置编码{% mathjax %}\mathbf{r}_{i-j}\in \mathbb{R}^d{% endmathjax %}。
+- 代替{% mathjax %}\mathbf{p}_i\mathbf{W}^q{% endmathjax %}具有两个可训练参数{% mathjax %}\mathbf{u}{% endmathjax %}(内容)和{% mathjax %}\mathbf{v}{% endmathjax %}(表示位置)有两个不同的术语。
+- 将{% mathjax %}\mathbf{W}^k{% endmathjax %}分裂成两个矩阵，{% mathjax %}\mathbf{W}_E^k{% endmathjax %}为内容信息，{% mathjax %}\mathbf{W}_R^k{% endmathjax %}为位置信息。
+##### 旋转位置嵌入
+
+旋转位置嵌入（`RoPE`；`Su`等人，`2021`）使用旋转矩阵对绝对位置进行编码，并将每个注意层的键和值矩阵与其相乘，以在每一层注入相对位置信息。当将相对位置信息编码到第{% mathjax %}i{% endmathjax %}键和第{% mathjax %}j{% endmathjax %}个查询，我们希望以这样一种方式来定义函数，即内积仅与相对位置{% mathjax %}i-j{% endmathjax %}有关。旋转位置嵌入（`RoPE`）利用欧几里得空间中的旋转操作，将相对位置嵌入构建为简单地将特征矩阵旋转与其位置索引成比例的角度。
