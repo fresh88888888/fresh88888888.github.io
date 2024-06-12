@@ -160,3 +160,23 @@ R^d_{\Theta,i} =
 \mathbf{h}_{\tau + 1}^{(n)} & = \text{transformer-layer}(\mathbf{Q}_{\tau + 1}^{(n)},\mathbf{K}_{\tau + 1}^{(n)},\mathbf{V}_{\tau + 1}^{(n)})
 \end{align}
 {% endmathjax %}
+请注意，键和值都依赖于扩展的隐藏状态，而查询仅使用当前步骤的隐藏状态。连接操作{% mathjax %}[\cdot\circ\cdot]{% endmathjax %}沿着序列长度维度。`Transformer-XL`需要使用相对位置编码，因为如果我们对绝对位置进行编码，则前一个段和当前段将被分配相同的编码，这是我们不希望看到的。`Compressive Transformer`（`Rae`等人，`2019`年）通过压缩过去的记忆来扩展`Transformer-XL`，以支持更长的序列。它明确添加了大小为{% mathjax %}m_m{% endmathjax %}每层存储该层的过去激活，以保留长上下文。当一些过去的激活变得足够旧时，它们会被压缩并保存在一个额外的压缩内存中，每层大小为{% mathjax %}m_{cm}{% endmathjax %}。
+{% asset_img t_6.png "压缩Transformer维护两种类型的记忆槽，即记忆和压缩记忆，以支持长上下文" %}
+
+内存和压缩内存都是`FIFO`队列。模型上下文长度为{% mathjax %}L{% endmathjax %}，压缩函数定义为：{% mathjax %}f_c:\mathbb{R}^{L\times d}\rightarrow \mathbb{[\frac{L}{c}]\times d}{% endmathjax %}、{% mathjax %}L{% endmathjax %}的映射激活压缩内存{% mathjax %}[\frac{L}{c}]{% endmathjax %}。压缩函数有多种选择：
+- 内核的池化最大或平均和步幅大小{% mathjax %}c{% endmathjax %}。
+- 具有内核和步幅大小的一维卷积{% mathjax %}c{% endmathjax %}（需要了解额外的参数）。
+- 扩张卷积（需要学习其他参数）。
+- 经常使用的内存。
+
+`Compressive Transformer`还有两个额外的训练损失：
+- **自动编码损失**（无损压缩目标）衡量我们压缩记忆-重建原始记忆的能力。
+- **注意力重建损失**（有损目标）重建基于内容的注意力对记忆与压缩记忆的注意力，并最小化差异：
+
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathcal{L}_{ac} = \lVert \mathbf{old_mem}^{(i)} - g(\mathbf{new_cm^{(i)}})\rVert_2
+{% endmathjax %}
+翻转压缩函数{% mathjax %}f{% endmathjax %}为{% mathjax %}g:\mathbb{R}^{[\frac{L}{c}]\times d}\rightarrow \mathbb{R}^{L\times d}{% endmathjax %}
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathcal{L}_{ar} = \lVert\text{attn}(\mathbf{h}^{(i)},\mathbf{old_mem}^{(i)}) - \text{attn}(\mathbf{h}^{(i)}, \mathbf{new_cm}^{(i)})\rVert_2
+{% endmathjax %}
