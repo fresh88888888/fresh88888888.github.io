@@ -110,3 +110,31 @@ a_{ij}^{\text{rel}} =
 ##### 旋转位置嵌入
 
 旋转位置嵌入（`RoPE`；`Su`等人，`2021`）使用旋转矩阵对绝对位置进行编码，并将每个注意层的键和值矩阵与其相乘，以在每一层注入相对位置信息。当将相对位置信息编码到第{% mathjax %}i{% endmathjax %}键和第{% mathjax %}j{% endmathjax %}个查询，我们希望以这样一种方式来定义函数，即内积仅与相对位置{% mathjax %}i-j{% endmathjax %}有关。旋转位置嵌入（`RoPE`）利用欧几里得空间中的旋转操作，将相对位置嵌入构建为简单地将特征矩阵旋转与其位置索引成比例的角度。
+
+给定一个向量{% mathjax %}\mathbf{z}{% endmathjax %}，如果我们想将其逆时针旋转{% mathjax %}\theta{% endmathjax %}，我们可以将其乘以旋转矩阵得到{% mathjax %}R\mathbf{z}{% endmathjax %}旋转矩阵{% mathjax %}R{% endmathjax %}定义为：
+{% mathjax '{"conversion":{"em":14}}' %}
+R = 
+\begin{bmatrix}
+\cos\theta & -\sin\theta \\
+\sin\theta & \cos\theta
+\end{bmatrix}
+{% endmathjax %}
+当推广到更高维空间时，`RoPE`将{% mathjax %}d{% endmathjax %}拓展到{% mathjax %}d/2{% endmathjax %}维空间，并构造旋转矩阵{% mathjax %}R{% endmathjax %}，大小为{% mathjax %}d\times d{% endmathjax %}，位置处的标记为{% mathjax %}i{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+R^d_{\Theta,i} = 
+\begin{bmatrix}
+\cos i\theta_1 & -\sin i\theta_1 & 0 & 0 & \ldots & 0 & 0 \\
+\sin i\theta_1 & \cos i\theta_1 & 0 & 0 & \ldots & 0 & 0 \\
+0 & 0 & \cos i\theta_2 & -\sin i\tjeta_2 & \ldots & 0 & 0 \\
+0 & 0 & \sin i\theta_2 & \cos i\theta_2 & \ldota & 0 & 0 \\
+\vdots & \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+0 & 0 & 0 & 0 & \ldots & \cos i\theta_{d/2} & -\sin i\theta_{d/2} \\
+0 & 0 & 0 & 0 & \ldots & \sin i\theta_{d/2} & \cos i\theta_{d/2} \\
+\end{bmatrix}
+{% endmathjax %}
+在论文中{% mathjax %}\Theta = \theta_i = 10000^{-2(i-1)/d}, i\in [1,2,\ldots, d/2]{% endmathjax %}。请注意，这本质上等同于张娴位置编码，但以旋转矩阵的形式表示。然而键矩阵和查询矩阵都通过与此旋转矩阵相乘来整合位置信息。
+{% mathjax '{"conversion":{"em":14}}' %}
+{\mathbf{q}_i}^\top \mathbf{k}_j = (R^d_{\Theta,i}\mathbf{W}^q \mathbf{x}_i)^\top (R^d_{\Theta,j} \mathbf{W}^k \mathbf{x}_j) = {\mathbf{x}_i}^\top \mathbf{W}^q R^d_{\Theta, j - i} \mathbf{W}^k \mathbf{x}_j \; \text{where }R^d_{\Theta, j-i} = (R^d_{\Theta, i})^\top R^d_{\Theta, j}
+{% endmathjax %}
+{% asset_img t_4.png "旋转位置嵌入实现方式" %}
+
