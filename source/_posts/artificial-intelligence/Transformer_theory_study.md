@@ -174,9 +174,9 @@ R^d_{\Theta,i} =
 - **注意力重建损失**（有损目标）重建基于内容的注意力对记忆与压缩记忆的注意力，并最小化差异：
 
 {% mathjax '{"conversion":{"em":14}}' %}
-\mathcal{L}_{ac} = \lVert \mathbf{old_mem}^{(i)} - g(\mathbf{new_cm^{(i)}})\rVert_2
+\mathcal{L}_{ac} = \lVert \mathbf{\text{old_mem}}^{(i)} - g(\mathbf{\text{new_cm}}^{(i)})\rVert_2
 {% endmathjax %}
 翻转压缩函数{% mathjax %}f{% endmathjax %}为{% mathjax %}g:\mathbb{R}^{[\frac{L}{c}]\times d}\rightarrow \mathbb{R}^{L\times d}{% endmathjax %}
 {% mathjax '{"conversion":{"em":14}}' %}
-\mathcal{L}_{ar} = \lVert\text{attn}(\mathbf{h}^{(i)},\mathbf{old_mem}^{(i)}) - \text{attn}(\mathbf{h}^{(i)}, \mathbf{new_cm}^{(i)})\rVert_2
+\mathcal{L}_{ar} = \lVert\text{attn}(\mathbf{h}^{(i)},\mathbf{\text{old_mem}}^{(i)}) - \text{attn}(\mathbf{h}^{(i)}, \mathbf{\text{new_cm}}^{(i)})\rVert_2
 {% endmathjax %}
