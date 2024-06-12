@@ -137,4 +137,26 @@ R^d_{\Theta,i} =
 {\mathbf{q}_i}^\top \mathbf{k}_j = (R^d_{\Theta,i}\mathbf{W}^q \mathbf{x}_i)^\top (R^d_{\Theta,j} \mathbf{W}^k \mathbf{x}_j) = {\mathbf{x}_i}^\top \mathbf{W}^q R^d_{\Theta, j - i} \mathbf{W}^k \mathbf{x}_j \; \text{where }R^d_{\Theta, j-i} = (R^d_{\Theta, i})^\top R^d_{\Theta, j}
 {% endmathjax %}
 {% asset_img t_4.png "旋转位置嵌入实现方式" %}
+#### Transformer改进
 
+`Transformer`模型在推理时的输入序列长度上限取决于训练的上下文长度。单纯增加上下文长度会导致时间和空间的大量消耗({% mathjax %}\mathcal{O}(L^2d){% endmathjax %})，并且由于硬件所限而不能支持。
+#### 上下文内存
+
+原始`Transformer`的注意力持续时间是固定且有限的。该模型在每个步骤更新只能关注同一段中的元素，并且没有信息可以跨越固定长度分段移动。这种上下文分段会导致以下几个问题：
+- 该模型无法捕捉比较长的依赖关系。
+- 在没有上下文或者上下文很稀少的情况下，很难预测每个片段中的前几个`token`。
+- 评估的代价是昂贵的。每当片段向右移动一位时，新的片段都会从头开始重新处理，尽管有很多重叠的`token`。
+
+`Transformer-XL`（`Dai`等人，`2019`年；`“XL”`表示“超长”）修改了架构，使用附加内存复用了段之间的隐藏状态。通过不断使用先前段的隐藏状态，将段之间的循环连接引入到模型中。
+{% asset_img t_5.png "Transformer与Transformer-XL 的训练短语在段长度为4的比较" %}
+
+让我们标记隐藏状态{% mathjax %}(\tau + 1){% endmathjax %}，第{% mathjax %}n{% endmathjax %}层模型中的第{% mathjax %}\mathbf{h}_{\tau + 1}^{(n)}\in \mathbb{R}^{L\times d}{% endmathjax %}段，除了最后一层隐藏状态为同一段{% mathjax %}\mathbf{h}_{\tau + 1}^{(n-1)}{% endmathjax %}，它还取决于前一段的同一层的隐藏状态{% mathjax %}\mathbf{h}_{\tau}^{(n)}{% endmathjax %}通过整合先前隐藏状态的信息，该模型可以将注意力跨度延长到过去的更长时间，涵盖了多个片段。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+\color{red}{ \tilde{\mathbf{h}}_{\tau + 1}^{n - 1} } & = [\text{stop-gradient}(\mathbf{h}_{\tau}^{(n-1)})\circ \mathbf{h}_{\tau + 1}^{(n-1)}] \\
+\mathbf{Q}_{\tau + 1}^{(n)} & = \mathbf{h}_{\tau + 1}^{(n-1)}\mathbf{W}^q \\
+\mathbf{K}_{\tau + 1}^{(n)} & = \color{red}{ \tilde{\mathbf{h}}_{\tau + 1}^{n - 1} \mathbf{W}^k} \\
+\mathbf{V}_{\tau + 1}^{(n)} & = \color{red}{ \tilde{\mathbf{h}}_{\tau + 1}^{n - 1} \mathbf{W}^v} \\
+\mathbf{h}_{\tau + 1}^{(n)} & = \text{transformer-layer}(\mathbf{Q}_{\tau + 1}^{(n)},\mathbf{K}_{\tau + 1}^{(n)},\mathbf{V}_{\tau + 1}^{(n)})
+\end{align}
+{% endmathjax %}
