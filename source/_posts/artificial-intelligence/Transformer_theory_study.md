@@ -101,8 +101,8 @@ a_{ij} & = \mathbf{q}_i {\mathbf{k}_j}^\top = (\mathbf{x}_i + \mathbf{p}_i)\math
 a_{ij}^{\text{rel}} = 
 \underbrace{ \mathbf{x}_i\mathbf{W}^q \color{blue}{ {\mathbf{W}_E^k}^\top } \mathbf{x}_j^\top }_{\text{content-based addressing}} +
 \underbrace{ \mathbf{x}_i\mathbf{W}^q \color{blue}{ {\mathbf{W}_R^k}^\top } \color{green}{\mathbf{r}_{i-j}^\top} }_{\text{content-dependent positional bias}} +
-\underbrace{\color{red}{\mathbf{u}} \color{blue}{{\mathbf{W}_E^k}^\top} \mathbf{x}_j^\top }_{\text{global content bias}} +
-\underbrace{\color{red}{\mathbf{v}} \color{blue}{{\mathbf{W}_R^k}^\top} \color{green}{\mathbf{x}_{i-j}^\top} }_{\text{global positional bias}}
+\underbrace{ \color{red}{\mathbf{u}} \color{blue}{ {\mathbf{W}_E^k}^\top } \mathbf{x}_j^\top }_{\text{global content bias}} +
+\underbrace{ \color{red}{\mathbf{v}} \color{blue}{ {\mathbf{W}_R^k}^\top } \color{green}{ \mathbf{x}_{i-j}^\top} }_{\text{global positional bias}}
 {% endmathjax %}
 - 代替{% mathjax %}\mathbf{p}_j{% endmathjax %}使用相对位置编码{% mathjax %}\mathbf{r}_{i-j}\in \mathbb{R}^d{% endmathjax %}。
 - 代替{% mathjax %}\mathbf{p}_i\mathbf{W}^q{% endmathjax %}具有两个可训练参数{% mathjax %}\mathbf{u}{% endmathjax %}(内容)和{% mathjax %}\mathbf{v}{% endmathjax %}(表示位置)有两个不同的术语。
