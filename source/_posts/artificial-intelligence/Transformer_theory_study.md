@@ -125,8 +125,8 @@ R^d_{\Theta,i} =
 \begin{bmatrix}
 \cos i\theta_1 & -\sin i\theta_1 & 0 & 0 & \ldots & 0 & 0 \\
 \sin i\theta_1 & \cos i\theta_1 & 0 & 0 & \ldots & 0 & 0 \\
-0 & 0 & \cos i\theta_2 & -\sin i\tjeta_2 & \ldots & 0 & 0 \\
-0 & 0 & \sin i\theta_2 & \cos i\theta_2 & \ldota & 0 & 0 \\
+0 & 0 & \cos i\theta_2 & -\sin i\theta_2 & \ldots & 0 & 0 \\
+0 & 0 & \sin i\theta_2 & \cos i\theta_2 & \ldots & 0 & 0 \\
 \vdots & \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
 0 & 0 & 0 & 0 & \ldots & \cos i\theta_{d/2} & -\sin i\theta_{d/2} \\
 0 & 0 & 0 & 0 & \ldots & \sin i\theta_{d/2} & \cos i\theta_{d/2} \\
