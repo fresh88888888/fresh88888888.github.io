@@ -226,7 +226,7 @@ f(\mathbf{R}^{(i)};\beta_i) & = \frac{1 + \exp(\beta_i)}{1+ \exp(\beta_i - \math
 在这里{% mathjax %}\alpha_i{% endmathjax %}是头部特定的加权标量。与`DA-transformer`不同，{% mathjax %}\alpha_i{% endmathjax %}不是固定的序列，例如，对于8个头，{% mathjax %}\alpha_i = \frac{1}{2},\frac{1}{2^2},\ldots,\frac{1}{2^8}{% endmathjax %}。总体思路与相对位置编码所要解决的问题非常相似。
 {% asset_img t_10.png "ALiBi如何通过位置偏差项提高注意力分数" %}
 
-`ALiBi`在训练期间对上下文长度为`1024`的`1.3B`模型进行了训练，并在推理时推断为`2046`。
+`ALiBi`在训练期间对上下文长度为`1024`的`1.3B`模型进行了训练，并在推理时推测为`2046`。
 {% asset_img t_11.png "正弦位置编码、旋转位置编码、T5和ALiBi中的简化相对位置编码。所有模型都以较小的上下文长度进行训练，但推理运行的上下文长度要长得多" %}
 ##### 参数复用
 
