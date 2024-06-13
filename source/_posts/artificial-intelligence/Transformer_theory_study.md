@@ -180,3 +180,34 @@ R^d_{\Theta,i} =
 {% mathjax '{"conversion":{"em":14}}' %}
 \mathcal{L}_{ar} = \lVert\text{attn}(\mathbf{h}^{(i)},\mathbf{\text{old_mem}}^{(i)}) - \text{attn}(\mathbf{h}^{(i)}, \mathbf{\text{new_cm}}^{(i)})\rVert_2
 {% endmathjax %}
+`Transformer-XL`的内存大小为{% mathjax %}m{% endmathjax %}，最大时间范围是{% mathjax %}m\times N{% endmathjax %}，模型的层数为{% mathjax %}N{% endmathjax %}。注意力的时间耗时为{% mathjax %}\mathcal{O}(L^2 + Lm){% endmathjax %}，压缩`Transformer`的时间为{% mathjax %}(m_m + c\cdot m_{cm})\times N{% endmathjax %}，且注意力的时间耗时为{% mathjax %}\mathcal{O}(L^2 + L(m_m + m_{cm})){% endmathjax %}。注意力权重权重存储在三个位置：压缩内存 → 内存 → 因果掩蔽序列。在实验中，他们观察到注意力权重从存储在常规内存中的最旧激活增加到存储在压缩内存中的激活，这意味着网络正在学习保存重要信息。
+{% asset_img t_7.png "注意力权重与记忆位置的关系，以一个标准差作为误差线，从最旧（左）到最新（右）" %}
+
+##### 外部存储器
+
+`kNN-LM`（`Khandelwal`等人，`2020`年）通过单独的{% mathjax %}k{% endmathjax %}通过线性插值两个模型预测的下一个`token`概率，可以得到`kNN`模型。`kNN`模型建立在外部键值存储之上，该存储可以存储任何大型预训练数据集或`OOD`新数据集。此数据存储经过预处理以保存大量数据（上下文的`LM`嵌入表示、下一个`token`），并且最近邻检索发生在`LM`嵌入空间中。由于数据存储可能非常庞大，我们需要依靠库进行快速密集向量搜索，例如`FAISS`或`ScaNN`。索引过程仅发生一次，并且在推理时很容易实现并行性。在推理时，下一个`token`的概率是两个预测​​的加权和：
+{% mathjax '{"conversion":{"em":14}}' %}
+p(y|\mathbf{x})= \lambda p\text{kNN}(y|\mathbf{x}) + (1-\lambda)p\text{LM}(y|\mathbf{x})\;\;p\text{kNN}(y|\mathbf{x})\propto \sum_{(k_i,w_i)\in \mathcal{N}} \mathbb{1}[y = w_i]\exp(-d(k_i,f(x)))
+{% endmathjax %}
+{% mathjax %}\mathcal{N}{% endmathjax %}包含一组以最近邻数据{% mathjax %}k{% endmathjax %}的神经网络；{% mathjax %}d(\cdot,\cdot){% endmathjax %}是一个距离函数，例如`L2`距离。`SPALM`（自适应参数语言模型；`Yogatama`等人，`2021`年）结合了`Transformer-XL`风格的记忆，用于从外部上下文中获取隐藏状态作为短期记忆，`kNN-LM`风格的键值存储作为长记忆。
+{% asset_img t_8.png "SPALM如何将过去隐藏状态的上下文记忆（短期记忆）与外部键值数据存储（长期记忆）相结合以支持更长的上下文" %}
+
+`SPALM`运行`kNN`搜索获取`k`具有相关上下文的`token`。对于每个`token`，我们可以获得预训练`LM`提供的相同嵌入表示。表示为{% mathjax %}\{\mathbf{y}_i\}_{i=1}^k{% endmathjax %}。门控机制首先使用一个简单的注意力层聚合检索到的`token`嵌入{% mathjax %}\mathbf{h}_t^R{% endmathjax %}（token 的隐藏状态在层{% mathjax %}R{% endmathjax %}）作为查询，然后学习门控参数{% mathjax %}\mathbf{g}_t{% endmathjax %}平衡本地信息{% mathjax %}\mathbf{h}_t^R{% endmathjax %}和长期信息{% mathjax %}\mathbf{m}_t{% endmathjax %}。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+\mathbf{m}_t & = \sum_{i=1}^k \frac{\exp(\mathbf{y}_i^\top \mathbf{h}_t^R)}{\sum_{j=1}^k \exp(\mathbf{y}_j^\top \mathbf{h}_t^R)}\cdot \mathbf{y}_i \\
+\mathbf{g}_t & = \sigma (\mathbf{w}_g^\top \mathbf{h}_t^R) \\
+\mathbf{z}_t & = (1 - \mathbf{g}_t) \odot \mathbf{m}_t + \mathbf{g}_t\odot \mathbf{h}_t^R \\
+p(x_{t+1}| \mathbf{x}_{\leq t}) & = \text{softmax}(\mathbf{z}_t;\mathbf{W})
+\end{align}
+{% endmathjax %}
+{% mathjax %}\mathbf{w}_g{% endmathjax %}是需要学习的参数向量；{% mathjax %}\sigma(\cdot){% endmathjax %}是S形的；{% mathjax %}\mathbf{W}{% endmathjax %}是输入和输出`token`之间共享的词嵌入矩阵。不同于`kNN-LM`，没有发现最近距离对检索到的`token`的聚合有帮助。在训练期间，长期记忆中的关键表示保持不变，由预训练的`LM`产生，但值编码器（又称词嵌入矩阵）会进行更新。`Memorizing Transformer`（`Wu`等人，`2022`年）添加了一个`kNN`增强注意力层位于仅解码器的`Transformer`的顶部堆栈附近。这个特殊的层维护着过去键值对的`Transformer-XL`样式`FIFO`缓存。局部注意力和`kNN`机制。`kNN`查找返回顶部`k`（键，值）对用于输入序列中的每个查询，然后通过自注意力堆栈对其进行处理，以计算检索到的值的加权平均。两种类型的注意力与可学习的门控参数相结合。为了防止值幅度出现较大的分布偏移，缓存中的键和值都经过了规范化。`Memorizing Transformer`在实验中发现了以下现象：
+- 一些实验观察，使用较小内存训练模型，然后使用较大内存进行微调比从头开始使用较大内存进行训练效果更好。
+- 较小的`Memorizing Transformer`内存中只有`8k`的`token`，其困惑度可以与`vanilla Transformer`相媲美，且可训练参数相比高`5`倍。
+- 增加外部存储器的大小可以获得一致的增益，最高可达`262K`。
+- 非记忆`Tronsformer`在使用内存的情况下可以进行微调。
+
+{% asset_img t_9.png "使用键值记忆对vanilla Transformer进行微调可实现与从头开始训练记忆Transformer达到类似的性能" %}
+
+##### 距离增强注意力评分
+
