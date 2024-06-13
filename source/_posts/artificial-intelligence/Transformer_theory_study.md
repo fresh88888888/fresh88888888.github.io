@@ -185,7 +185,7 @@ R^d_{\Theta,i} =
 
 ##### 外部存储器
 
-`kNN-LM`（`Khandelwal`等人，`2020`年）通过单独的{% mathjax %}k{% endmathjax %}通过线性插值两个模型预测的下一个`token`概率，可以得到`kNN`模型。`kNN`模型建立在外部键值存储之上，该存储可以存储任何大型预训练数据集或`OOD`新数据集。此数据存储经过预处理以保存大量数据（上下文的`LM`嵌入表示、下一个`token`），并且最近邻检索发生在`LM`嵌入空间中。由于数据存储可能非常庞大，我们需要依靠库进行快速密集向量搜索，例如`FAISS`或`ScaNN`。索引过程仅发生一次，并且在推理时很容易实现并行性。在推理时，下一个`token`的概率是两个预测​​的加权和：
+对于`kNN-LM`（`Khandelwal`等人，`2020`年）通过单独的{% mathjax %}k{% endmathjax %}通过线性插值两个模型预测的下一个`token`概率，可以得到`kNN`模型。`kNN`模型建立在外部键值存储之上，该存储可以存储任何大型预训练数据集或`OOD`新数据集。此数据存储经过预处理以保存大量数据（上下文的`LM`嵌入表示、下一个`token`），并且最近邻检索发生在`LM`嵌入空间中。由于数据存储可能非常庞大，我们需要依靠库进行快速密集向量搜索，例如`FAISS`或`ScaNN`。索引过程仅发生一次，并且在推理时很容易实现并行性。在推理时，下一个`token`的概率是两个预测​​的加权和：
 {% mathjax '{"conversion":{"em":14}}' %}
 p(y|\mathbf{x})= \lambda p\text{kNN}(y|\mathbf{x}) + (1-\lambda)p\text{LM}(y|\mathbf{x})\;\;p\text{kNN}(y|\mathbf{x})\propto \sum_{(k_i,w_i)\in \mathcal{N}} \mathbb{1}[y = w_i]\exp(-d(k_i,f(x)))
 {% endmathjax %}
@@ -201,7 +201,7 @@ p(y|\mathbf{x})= \lambda p\text{kNN}(y|\mathbf{x}) + (1-\lambda)p\text{LM}(y|\ma
 p(x_{t+1}| \mathbf{x}_{\leq t}) & = \text{softmax}(\mathbf{z}_t;\mathbf{W})
 \end{align}
 {% endmathjax %}
-{% mathjax %}\mathbf{w}_g{% endmathjax %}是需要学习的参数向量；{% mathjax %}\sigma(\cdot){% endmathjax %}是S形的；{% mathjax %}\mathbf{W}{% endmathjax %}是输入和输出`token`之间共享的词嵌入矩阵。不同于`kNN-LM`，没有发现最近距离对检索到的`token`的聚合有帮助。在训练期间，长期记忆中的关键表示保持不变，由预训练的`LM`产生，但值编码器（又称词嵌入矩阵）会进行更新。`Memorizing Transformer`（`Wu`等人，`2022`年）添加了一个`kNN`增强注意力层位于仅解码器的`Transformer`的顶部堆栈附近。这个特殊的层维护着过去键值对的`Transformer-XL`样式`FIFO`缓存。局部注意力和`kNN`机制。`kNN`查找返回顶部`k`（键，值）对用于输入序列中的每个查询，然后通过自注意力堆栈对其进行处理，以计算检索到的值的加权平均。两种类型的注意力与可学习的门控参数相结合。为了防止值幅度出现较大的分布偏移，缓存中的键和值都经过了规范化。`Memorizing Transformer`在实验中发现了以下现象：
+在这里{% mathjax %}\mathbf{w}_g{% endmathjax %}是需要学习的参数向量；{% mathjax %}\sigma(\cdot){% endmathjax %}是`S`形的；{% mathjax %}\mathbf{W}{% endmathjax %}是输入和输出`token`之间共享的词嵌入矩阵。不同于`kNN-LM`，没有发现最近距离对检索到的`token`的聚合有帮助。在训练期间，长期记忆中的关键表示保持不变，由预训练的`LM`产生，但值编码器（又称词嵌入矩阵）会进行更新。`Memorizing Transformer`（`Wu`等人，`2022`年）添加了一个`kNN`增强注意力层位于仅解码器的`Transformer`的顶部堆栈附近。这个特殊的层维护着过去键值对的`Transformer-XL`样式`FIFO`缓存。局部注意力和`kNN`机制。`kNN`查找返回顶部`k`（键，值）对用于输入序列中的每个查询，然后通过自注意力堆栈对其进行处理，以计算检索到的值的加权平均。两种类型的注意力与可学习的门控参数相结合。为了防止值幅度出现较大的分布偏移，缓存中的键和值都经过了规范化。`Memorizing Transformer`在实验中发现了以下现象：
 - 一些实验观察，使用较小内存训练模型，然后使用较大内存进行微调比从头开始使用较大内存进行训练效果更好。
 - 较小的`Memorizing Transformer`内存中只有`8k`的`token`，其困惑度可以与`vanilla Transformer`相媲美，且可训练参数相比高`5`倍。
 - 增加外部存储器的大小可以获得一致的增益，最高可达`262K`。
