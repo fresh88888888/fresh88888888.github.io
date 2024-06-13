@@ -216,7 +216,7 @@ p(x_{t+1}| \mathbf{x}_{\leq t}) & = \text{softmax}(\mathbf{z}_t;\mathbf{W})
 \begin{align}
 \mathbf{R}^{(i)} & = \alpha_i\mathbf{R}\;\;\text{where }R_{ij} = |i - j| \\
 f(\mathbf{R}^{(i)};\beta_i) & = \frac{1 + \exp(\beta_i)}{1+ \exp(\beta_i - \mathbf{R}^{(i)})} \\
-\text{attn}(\mathbf{Q}^{(i)},\mathbf{K}^{(i)},\mathbf{V}^{(i)}) = \text{row-softmax}(\frac{\text{ReLU}(\mathbf{Q}^{(i)}\mathbf{K}^{(i)\top})f(\mathbf{R}^{(i)})}{\sqrt{d}})\mathbf{V}^{(i)}
+\text{attn}(\mathbf{Q}^{(i)},\mathbf{K}^{(i)},\mathbf{V}^{(i)}) & = \text{row-softmax}(\frac{\text{ReLU}(\mathbf{Q}^{(i)}\mathbf{K}^{(i)\top})f(\mathbf{R}^{(i)})}{\sqrt{d}})\mathbf{V}^{(i)}
 \end{align}
 {% endmathjax %}
 在这里{% mathjax %}\alpha_i{% endmathjax %}是一个可以学习的参数，用于对每个头部的相对距离进行不同的加权，其中头部用上标{% mathjax %}^{(i)}{% endmathjax %}表示；{% mathjax %}\beta_i{% endmathjax %}也是一个可以学习的参数，用于控制距离的上限和上升斜率第{% mathjax %}i{% endmathjax %}个注意力头。权重函数{% mathjax %}f(\cdot){% endmathjax %}定义如下：1.{% mathjax %}f(0) = 1{% endmathjax %}；2.{% mathjax %}f(\mathbf{R}^{(i)}) = 0\;\mathbf{R}^{(i)}\rightarrow -\infty{% endmathjax %}；3.{% mathjax %}f(\mathbf{R}^{(i)})\;\mathbf{R}^{(i)}\rightarrow +\infty{% endmathjax %}；4.规模可调；5.函数单调；{% mathjax %}f(\mathbf{R}^{(i)}){% endmathjax %}的时间复杂度为{% mathjax %}\mathcal{O}(2h){% endmathjax %}相对于自注意力的复杂度{% mathjax %}\mathcal{O}(L^2){% endmathjax %}来说小很多、内存消耗也很小。`ALiBi`（`Press`等人，`2022`年）不使用乘数，而是在查询关键字注意力得分上添加了一个常数偏差项，该偏差项与成对距离成比例。偏差引入了强烈的近因偏好，并惩罚距离太远的关键字。惩罚在不同的头中以不同的速率增加。
