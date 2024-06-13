@@ -211,3 +211,22 @@ p(x_{t+1}| \mathbf{x}_{\leq t}) & = \text{softmax}(\mathbf{z}_t;\mathbf{W})
 
 ##### 距离增强注意力评分
 
+`Distance Aware Transformer`（`DA-Transformer`；`Wu`等人，`2021`年）和具有线性偏差的注意力机制（`ALiBi；Press`等人，`2022`年）类似 — 为了鼓励模型在比模型训练的更长的上下文中进行推断，我们可以根据键`token`和查询`token`之间的距离，将位置信息明确地附加到每对注意力分数上。请注意，`vanilla Transformer`中默认的位置编码只会向输入序列添加位置信息，而后来改进的编码机制会改变每一层的注意力分数，例如旋转位置嵌入，它们的形式与距离增强注意力分数非常相似。`DA-Transformer`（`Wu`等人，`2021`年）将每一层的注意力得分乘以可学习的偏差，该偏差由键和查询之间的距离函数表示。不同的注意力头使用不同的参数来区分对短期和长期的不同偏好。给定两个位置，{% mathjax %}i,j{% endmathjax %}，`DA-Transformer`使用以下加权函数来改变自注意力分数：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+\mathbf{R}^{(i)} & = \alpha_i\mathbf{R}\;\;\text{where }R_{ij} = |i - j| \\
+f(\mathbf{R}^{(i)};\beta_i) & = \frac{1 + \exp(\beta_i)}{1+ \exp(\beta_i - \mathbf{R}^{(i)})} \\
+\text{attn}(\mathbf{Q}^{(i)},\mathbf{K}^{(i)},\mathbf{V}^{(i)}) = \text{row-softmax}(\frac{\text{ReLU}(\mathbf{Q}^{(i)}\mathbf{K}^{(i)\top})f(\mathbf{R}^{(i)})}{\sqrt{d}})\mathbf{V}^{(i)}
+\end{align}
+{% endmathjax %}
+在这里{% mathjax %}\alpha_i{% endmathjax %}是一个可以学习的参数，用于对每个头部的相对距离进行不同的加权，其中头部用上标{% mathjax %}^{(i)}{% endmathjax %}表示；{% mathjax %}\beta_i{% endmathjax %}也是一个可以学习的参数，用于控制距离的上限和上升斜率第{% mathjax %}i{% endmathjax %}个注意力头。权重函数{% mathjax %}f(\cdot){% endmathjax %}定义如下：1.{% mathjax %}f(0) = 1{% endmathjax %}；2.{% mathjax %}f(\mathbf{R}^{(i)}) = 0\;\mathbf{R}^{(i)}\rightarrow -\infty{% endmathjax %}；3.{% mathjax %}f(\mathbf{R}^{(i)})\;\mathbf{R}^{(i)}\rightarrow +\infty{% endmathjax %}；4.规模可调；5.函数单调；{% mathjax %}f(\mathbf{R}^{(i)}){% endmathjax %}的时间复杂度为{% mathjax %}\mathcal{O}(2h){% endmathjax %}相对于自注意力的复杂度{% mathjax %}\mathcal{O}(L^2){% endmathjax %}来说小很多、内存消耗也很小。`ALiBi`（`Press`等人，`2022`年）不使用乘数，而是在查询关键字注意力得分上添加了一个常数偏差项，该偏差项与成对距离成比例。偏差引入了强烈的近因偏好，并惩罚距离太远的关键字。惩罚在不同的头中以不同的速率增加。
+{% mathjax '{"conversion":{"em":14}}' %}
+\text{softmax}(\mathbf{q}_i\mathbf{K}^\top + \alpha_i\cdot[0,-1,-2,\ldots, -(i-1)])
+{% endmathjax %}
+在这里{% mathjax %}\alpha_i{% endmathjax %}是头部特定的加权标量。与`DA-transformer`不同，{% mathjax %}\alpha_i{% endmathjax %}不是固定的序列，例如，对于8个头，{% mathjax %}\alpha_i = \frac{1}{2},\frac{1}{2^2},\ldots,\frac{1}{2^8}{% endmathjax %}。总体思路与相对位置编码所要解决的问题非常相似。
+{% asset_img t_10.png "ALiBi如何通过位置偏差项提高注意力分数" %}
+
+`ALiBi`在训练期间对上下文长度为`1024`的`1.3B`模型进行了训练，并在推理时推断为`2046`。
+{% asset_img t_11.png "正弦位置编码、旋转位置编码、T5和ALiBi中的简化相对位置编码。所有模型都以较小的上下文长度进行训练，但推理运行的上下文长度要长得多" %}
+##### 参数复用
+
