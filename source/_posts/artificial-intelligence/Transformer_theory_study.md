@@ -417,7 +417,52 @@ z^g_i = \sum^{n_g}_{j=1} A^{g2g}_{ij} x^g_j \mathbf{W}^V
 - {% mathjax %}N{% endmathjax %}层比单层模型大{% mathjax %}N-{% endmathjax %}倍，因为我们需要存储反向传播的激活。
 - 中间的`FF`层通常相当大。
 
-提出了两项​​主要改动：
+提出了两项​​主要改进：
 - 用局部敏感哈希(`LSH`)注意力机制代替点积注意力机制，从而降低复杂度{% mathjax %}\mathcal{O}(L^2){% endmathjax %}到{% mathjax %}\mathcal{O}(L\log L){% endmathjax %}。
 - 用可逆残差层替换标准残差块，这样可以在训练期间仅存储一次激活，而不是{% mathjax %}N{% endmathjax %}倍（即与层数成正比）。
+
+在{% mathjax %}\mathbf{QK}^\top{% endmathjax %}作为注意力公式的一部分，我们只对最大的元素感兴趣，因为只有大元素在`softmax`之后才会做出很大贡献。对于每个查询{% mathjax %}\mathbf{q}_i\in \mathbf{Q}{% endmathjax %}，我们正在寻找{% mathjax %}\mathbf{K}{% endmathjax %}最靠近{% mathjax %}\mathbf{q}_i{% endmathjax %}为了在高维空间中快速找到最近邻居，`Reformer`将局部敏感哈希(`LSH`)纳入其注意力机制中。哈希方案{% mathjax %}x\longmapsto h(x){% endmathjax %}如果它保留了数据点之间的距离信息，那么它就是局部敏感的，这样距离近的向量会获得相似的哈希值，而距离远的向量会获得非常不同的哈希值。`Reformer`采用这样的哈希方案，给定一个固定的随机矩阵{% mathjax %} \mathbf{R}\in \mathbb{R}^{d\times b/2}{% endmathjax %}（{% mathjax %}b{% endmathjax %}是超参数），哈希函数是{% mathjax %}h(x) = \arg\max([xR;-xR]){% endmathjax %}。
+{% asset_img t_20.png "LSH注意力机制由4个步骤组成：分桶、排序、分块和注意力计算 & 局部敏感哈希(LSH)注意力机制示意图" %}
+
+在`LSH`注意力机制中，查询只能关注同一哈希桶中的位置，{% mathjax %}S_i = \{j:h(\mathbf{q}_i) = \mathbf{h}(\mathbf{k}_j)\}{% endmathjax %}其具体过程如下，如左上图所示：
+- 完全注意力的注意力矩阵通常很稀疏。
+- 使用`LSH`，我们可以根据哈希桶对要对齐的键和查询进行排序。
+- 设置{% mathjax %}\mathbf{Q} = \mathbf{K}{% endmathjax %}（{% mathjax %}\mathbf{k}_j = \mathbf{q}_j/|\mathbf{q}_j{% endmathjax %})，这样在一个`bucket`中就有相等数量的键和查询，更容易进行批处理。有趣的是，这种`“shared-QK”`配置不会影响`Transformer`的性能。
+- 应用批处理，其中{% mathjax %}m{% endmathjax %}连续的查询被分组在一起。
+
+`Reformer`的另一项改进是使用**可逆残差层**（`Gomez`等人，`2017`年）。可逆残差网络的动机是设计一种架构，使得任何给定层的激活都可以从下一层的激活中恢复，仅使用模型参数即可。因此，我们可以通过在反向传播期间重新计算激活来节省内存，而不是存储所有激活。给定一个层{% mathjax %}x\longmapsto y{% endmathjax %}，正常残差层{% mathjax %}y = x + F(x){% endmathjax %}但可逆层将输入和输出分成对{% mathjax %}(x_1,x_2)\longmapsto (y_1,y_2){% endmathjax %}然后执行以下操作：
+{% mathjax '{"conversion":{"em":14}}' %}
+y_1 = x_1 + F(_2), y_2 = x_2 + G(y_1)
+{% endmathjax %}
+Reformer 将同样的思想应用到 Transformer 中，结合了注意力机制（{% mathjax %}F{% endmathjax %}) 和前馈层 ({% mathjax %}G{% endmathjax %}）在可逆网络块内：
+{% mathjax '{"conversion":{"em":14}}' %}
+x_2 = y_2 - G(y_1),x_1 = y_1 - F(x_2)
+{% endmathjax %}
+通过对前馈计算进行分块，可以进一步减少内存：
+{% mathjax '{"conversion":{"em":14}}' %}
+Y_1 = X_1 + \text{Attention}(X_2), \; Y_2 = X_2 + \text{FeedForward}(Y_1)
+{% endmathjax %}
+通过对前馈计算进行分块，可以进一步减少内存：
+{% mathjax '{"conversion":{"em":14}}' %}
+Y_2 = [Y_2^{(1)}; \dots; Y_2^{(c)}] = [X_2^{(1)} + \text{FeedForward}(Y_1^{(1)}); \dots; X_2^{(c)} + \text{FeedForward}(Y_1^{(c)})]
+{% endmathjax %}
+由此产生的可逆`Transformer`不需要在每一层存储激活。`Routing Transformer`（`Roy`等人，`2021`年）也基于上下文的键和查询聚类。它不使用`LSH`之类的静态哈希函数，而是利用在线{% mathjax %}k{% endmathjax %}均值聚类，并将其与局部、时间稀疏注意力相结合，以降低注意力复杂度{% mathjax %}\mathcal{O}(L^2){% endmathjax %}到{% mathjax %}\mathcal{O}(L^{1.5}){% endmathjax %}。在路由注意力中，键和查询都聚类在一起{% mathjax %}k{% endmathjax %}均值聚类方法和同一组质心{% mathjax %}\mu= (\mu_1,\ldots,\mu_k)\in \mathbb{R}^{k\times d}{% endmathjax %}。查询被路由到分配到相同质心的键。总复杂度为{% mathjax %}\mathcal{O}(Lkd + L^2 d/k){% endmathjax %}，在这里{% mathjax %}\mathcal{O}(Lkd){% endmathjax %}用于运行聚类分配，{% mathjax %}\mathcal{O}(L^2 d/k){% endmathjax %}用于注意力计算。使用所有相关键和查询，通过`EMA`（指数移动平均）更新集群质心。在`Routing Transformer`的实验中，一些最佳配置仅在模型的最后两层和一半的注意力头中启用路由注意力，而另一半则使用局部注意力。他们还观察到局部注意力是一个非常强大的基线，更大的注意力窗口总是会带来更好的结果。
+##### 低秩注意力
+
+`Linformer`（`Wang`等人，`2020`年）用低秩矩阵近似整个注意力矩阵，将时间和空间复杂度降低到线性。`Linformer`不使用昂贵的`SVD`来识别低秩分解，而是添加了两个线性投影{% mathjax %} \mathbf{E}_i,\mathbf{F}_i\in \mathbb{R}^{L\times k}{% endmathjax %}对于键和值矩阵，分别将其维度从{% mathjax %}L\times d{% endmathjax %}到{% mathjax %}k\times d{% endmathjax %}。只要{% mathjax %}k \ll L{% endmathjax %}，注意力记忆就会大大降低。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+\overline{\text{head}}_i 
+&= \text{attn}(\mathbf{X}_q\mathbf{W}^q_i, \mathbf{E}_i\mathbf{X}_k\mathbf{W}^k_i, \mathbf{F}_i\mathbf{X}_v\mathbf{W}^v_i) \\
+&= \underbrace{\text{softmax}\Big( \frac{\mathbf{X}_q\mathbf{W}^q_i (\mathbf{E}_i \mathbf{X}_k\mathbf{W}^k_i)^\top}{\sqrt{d}} \Big)}_{\text{low rank attention matrix }\bar{A} \in \mathbb{R}^{k \times d}} \mathbf{F}_i \mathbf{X}_v\mathbf{W}^v_i
+\end{aligned}
+{% endmathjax %}
+可以采用其他技术来进一步提高`Linformer`的效率：
+- 投影层之间的参数共享，例如头部、键值和层（跨所有层）共享。
+- 使用不同的{% mathjax %}k{% endmathjax %}在不同的层上，因为较高层的头部往往具有更倾斜的分布（较低的等级），因此我们可以使用较小的{% mathjax %}k{% endmathjax %}在更高层。
+- 使用不同类型的投影；例如均值/最大池化、带核和步幅的卷积层{% mathjax %}L/k{% endmathjax %}。
+
+{% asset_img t_21.png "（左）Informer 为键和值添加了两个投影层。（右）推理时间与序列长度的关系图" %}
+
+
 
