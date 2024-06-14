@@ -466,3 +466,30 @@ Y_2 = [Y_2^{(1)}; \dots; Y_2^{(c)}] = [X_2^{(1)} + \text{FeedForward}(Y_1^{(1)})
 
 随机特征注意力（`RFA；Peng`等人，`2021`年）依赖于随机特征方法（`Rahimi & Recht，2007`) 用低秩特征图来近似自注意力中的`softmax`操作，以实现线性时间和空间复杂度。`Performers`(`Choromanski`等人，`2021`年) 还采用了随机特征注意，并改进了内核构造，以进一步降低内核近似误差。
 
+#### 基于强化学习的Transformer
+
+自注意力机制避免将整个过去压缩为固定大小的隐藏状态，并且不会像`RNN`那样遭受梯度消失或爆炸的影响。强化学习任务肯定可以从这些特性中受益。然而，即使在监督学习中训练`Transformer`也相当困难，更不用说在强化学习环境中了。毕竟，单独训练`LSTM`代理可能相当具有挑战性。`Gated Transformer-XL`（`GTrXL；Parisotto`等人，`2019`）是将`Transformer`用于强化学习的一种尝试。`GTrXL`在`Transformer-XL`的基础上进行了两项改进，成功实现了训练的稳定：
+- 层归一化仅适用于残差模块中的输入流，而不适用于快捷方式流。这种重新排序的一个主要好处是允许原始输入从第一层流到最后一层。
+- 残差连接被`GRU`风格（门控循环单元；`Chung`等，`2014`）门控机制取代。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+r &= \sigma(W_r^{(l)} y + U_r^{(l)} x) \\
+z &= \sigma(W_z^{(l)} y + U_z^{(l)} x - b_g^{(l)}) \\
+\hat{h} &= \tanh(W_g^{(l)} y + U_g^{(l)} (r \odot x)) \\
+g^{(l)}(x, y) &= (1-z)\odot x + z\odot \hat{h}
+\end{aligned}
+{% endmathjax %}
+
+门控函数参数被明确初始化为接近恒等映射-这就是为什么存在{% mathjax %}b_g{% endmathjax %}期限。{% mathjax %}b_g > 0{% endmathjax %}对学习加速有很大帮助。
+{% asset_img t_22.png "Transformer-XL、层范数重新排序的Transformer-XL和Gated Transformer-XL的模型架构比较" %}
+
+决策`Transformer`(`DT；Chen`等人 `2021`) 将强化学习问题表述为条件序列建模的过程，输出以期望回报、过去状态和动作为条件的最佳动作。因此，使用`Transformer`架构变得非常简单。决策`Transformer`适用于策略强化学习，其中模型只能访问由其他策略收集的固定轨迹集合。为了鼓励模型学习如何行动以实现期望的回报，它会向模型提供期望的未来回报{% mathjax %}\hat{R} = \sum_{t'=t}^T r_{t'}{% endmathjax %}而不是当前的奖励。轨迹由三元组列表组成，并将其作为`Transformer`的输入序列：
+{% mathjax '{"conversion":{"em":14}}' %}
+\tau = (\hat{R}_1, s_1, a_1, \hat{R}_2, s_2, a_2, \dots, \hat{R}_T, s_T, a_T)
+{% endmathjax %}
+添加并训练三个线性层，分别用于返回、状态和动作，以提取`token`嵌入。预测头学习预测{% mathjax %}a_t{% endmathjax %}对应于输入`token`{% mathjax %}s_t{% endmathjax %}。训练对离散动作使用交叉熵损失，对连续动作使用 `MSE`。在他们的实验中，预测状态或返回动作并没有发现有助于提高性能。实验将`DT`与几种`RL`算法基线进行了比较，结果显示：
+ - 在低数据环境下，`DT`比行为克隆更有效率。
+ - `DT`可以很好地模拟回报分布。
+ - 拥有长上下文对于获得良好的结果至关重要。
+ - `DT`可以与稀疏奖励一起工作。
+
