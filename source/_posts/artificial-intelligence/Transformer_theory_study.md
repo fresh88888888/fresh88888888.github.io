@@ -390,4 +390,34 @@ A_{ij} & \text{if }M_{ij} = 1 \\
 {% endmathjax %}
 在这里{% mathjax %}\hat{\mathbf{q}}_i,\hat{\mathbf{k}}_i{% endmathjax %}和{% mathjax %}\hat{\mathbf{v}}_i{% endmathjax %}分别为`QKV`块矩阵中的行。每个{% mathjax %}\mathbf{q}_i\mathbf{k}_{\pi(i)}^\top, \forall i = 1, \dots, n{% endmathjax %}大小为{% mathjax %}\frac{N}{n}\times\frac{N}{n}{% endmathjax %}因此`Blockwise Attention`能够将注意力矩阵的记忆复杂度从{% mathjax %}\mathcal{O}(L^2){% endmathjax %}到{% mathjax %}\mathcal{O}(\frac{L}{n}\times\frac{L}{n} \times n) = \mathcal{O}(L^2/n){% endmathjax %}。
 
-`ETC`（扩展`Transformer`构造；`Ainslie`等人，`2019`年）、`Longformer`（`Beltagy`等人，`2020`年）和`Big Bird`（`Zaheer`等人，`2020`年）模型在构建注意力矩阵时结合了局部和全局组合。所有这些模型都可以从现有的预训练模型中初始化。
+`ETC`（扩展`Transformer`构造；`Ainslie`等人，`2019`年）、`Longformer`（`Beltagy`等人，`2020`年）和`Big Bird`（`Zaheer`等人，`2020`年）模型在构建注意力矩阵时结合了局部和全局组合。所有这些模型都可以从现有的预训练模型中初始化。ETC的全局-局部注意力机制（`Ainslie`等人，`2019`年）接受两个输入，（1）长输入{% mathjax %}\mathbf{x}^l{% endmathjax %}大小{% mathjax %}n_l{% endmathjax %}这是常规输入序列，（2）全局输入{% mathjax %}\mathbf{x}^g{% endmathjax %}大小{% mathjax %}n_g{% endmathjax %}包含少量的辅助`token`，{% mathjax %}n_g\ll n_l{% endmathjax %}。因此，注意力根据这两个输入的方向性注意力被分为四个部分：`g2g、g2l、l2g`和`l2l`。由于`l2l`注意力部分可能非常大，因此它被限制在固定大小的注意力范围半径内{% mathjax %}w{% endmathjax %}（即局部注意力广度）并且`l2l`矩阵可以重塑为{% mathjax %}n_l \times (2w + 1){% endmathjax %}。ETC 利用四个二进制矩阵来处理结构化输入，{% mathjax %}\mathbf{M}^{g2g},\mathbf{M}^{g2l},\mathbf{M}^{l2g}{% endmathjax %}和{% mathjax %}\mathbf{M}^{l2l}{% endmathjax %}。例如，每个元素{% mathjax %}z_i^g\in \mathbb{R}^d{% endmathjax %}在注意力输出中{% mathjax %}z^g = (z_1^g,\ldots,z^g_{n_g}){% endmathjax %}对于`g2g`注意力片段的格式如下：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+a^{g2g}_{ij} = \frac{1}{\sqrt{d}} x^g_i \mathbf{W}^Q (x^g_j \mathbf{W}^K + P^K_{ij})^\top - (1- M^{g2g}_{ij})C \\
+A^{g2g}_{ij} = \frac{\exp(a^{g2g}_{ij})}{\sum_{k=1}^{n_g} \exp(a^{g2g}_{ik})} \quad
+z^g_i = \sum^{n_g}_{j=1} A^{g2g}_{ij} x^g_j \mathbf{W}^V
+\end{aligned}
+{% endmathjax %}
+在这里{% mathjax %}P_{ij}^K{% endmathjax %}是相对位置编码的可学习向量，{% mathjax %}C{% endmathjax %}是一个非常大的常数（{% mathjax %}C=10000{% endmathjax %}在论文中）来抵消摘下口罩时的注意力权重。
+{% asset_img t_19.png "ETC、Longformer 和 Big Bird 的注意力模式" %}
+
+`ETC`的另一个更新是整合了`CPC`（对比预测编码）任务，使用NCE 损失进入预训练阶段，除了`MLM`任务之外：当一句话被掩盖时，它的表征应该和它周围上下文的表征相似。全局输入{% mathjax %}\mathbf{x}^g{% endmathjax %}
+`ETC`的构造如下：假设长输入（例如句子）中有一些片段，每个片段都附加一个辅助标记以学习全局输入。相对位置编码用于用标记位置标记全局片段标记。发现在一个方向上的硬掩码（即，前后标记的标记不同）可以在某些数据集中带来性能提升。
+
+`Longformer`中的注意力模式包含三个部分：
+- 局部注意力：与`ETC`类似，局部注意力由固定大小的滑动窗口控制{% mathjax %}w{% endmathjax %}。
+- 预选`token`的全局注意力：`Longformer`为一些预选`token`（例如`[CLS]token`）分配了全局注意力跨度，也就是说，关注输入序列中的其他`token`。
+- 扩张注意力机制：固定大小的扩张滑动窗口{% mathjax %}r{% endmathjax %}以及扩张尺寸的间隙{% mathjax %}d{% endmathjax %}，类似于`Sparse Transformer`。
+
+`Big Bird`与`Longformer`非常相似，既配备了局部注意力机制，又配备了一些具有全局注意力范围的预选`token`，但`Big Bird`用一种新机制取代了扩张注意力机制，即所有`token`都关注一组随机`token`。这种设计的动机是，注意力模式可以看作是有向图，而随机图具有信息能够在任意一对节点之间快速流动的特性。`Longformer`在较低层使用较小的窗口大小，在较高层使用较大的窗口大小。消融研究表明，这种设置比反向或固定大小的配置效果更好。较低层没有扩大的滑动窗口，无法更好地学习使用直接的局部上下文。`Longformer`还有一个分阶段的训练程序，其中最初使用小窗口大小训练模型以从局部上下文中学习，然后在后续的训练阶段增加窗口大小并降低学习率。
+##### 基于上下文注意力
+
+`Reformer`（`Kitaev`等人，`2020`年）提出的改进旨在解决`vanilla Transformer`中的以下痛点：
+- 自注意力模块内的二次方时间和内存复杂度。
+- {% mathjax %}N{% endmathjax %}层比单层模型大{% mathjax %}N-{% endmathjax %}倍，因为我们需要存储反向传播的激活。
+- 中间的`FF`层通常相当大。
+
+提出了两项​​主要改动：
+- 用局部敏感哈希(`LSH`)注意力机制代替点积注意力机制，从而降低复杂度{% mathjax %}\mathcal{O}(L^2){% endmathjax %}到{% mathjax %}\mathcal{O}(L\log L){% endmathjax %}。
+- 用可逆残差层替换标准残差块，这样可以在训练期间仅存储一次激活，而不是{% mathjax %}N{% endmathjax %}倍（即与层数成正比）。
+
