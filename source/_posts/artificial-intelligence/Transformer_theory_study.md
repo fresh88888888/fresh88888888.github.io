@@ -298,7 +298,7 @@ q^*_{\text{lik}}(\mathbf{x},\mathbf{y}) & = \delta(\arg\max_n LL^n - \lambda n) 
 \end{align}
 {% endmathjax %}
 在这里{% mathjax %}\delta{% endmathjax %}是狄拉克德尔塔（单位脉冲）函数，{% mathjax %}-\lambda n{% endmathjax %}是一个正则化项，用于鼓励较低层退出。
-- **特定于token的深度分类器（多项式）**：每个 token 用不同的出口块解码，根据第一个解码器隐藏状态进行预测{% mathjax %}\mathbf{h}^1_t{% endmathjax %}：
+- **特定于token的深度分类器（多项式）**：每个`token`用不同的出口块解码，根据第一个解码器隐藏状态进行预测{% mathjax %}\mathbf{h}^1_t{% endmathjax %}：
 {% mathjax '{"conversion":{"em":14}}' %}
 q_t(n|\mathbf{x},\mathbf{y}_{<t}) = \text{softmax}(\mathbf{W}_n\mathbf{h}_t^1 + b_n)
 {% endmathjax %}
@@ -315,6 +315,7 @@ q^*_{lik}(\mathbf{x}, \mathbf{y}) & = \delta(\arg\max_n\tilde{LL}_t^n - \lambda 
 \text{or }q^*_{\text{corr}}(\mathbf{x},\mathbf{y}) & = \delta(\arg\max_n\tilde{C}_t^n - \lambda n) \text{ where }C_t^n = \mathbb{1}[y_t = \arg\max_y p(y|\mathbf{h}_{t-1}^n)],\;\tilde{C}_t^n= \sum_{t' =1}^{|y|} \mathcal{k}(t,t')C_{t'}^n
 \end{align}
 {% endmathjax %}
+
 在推理时，需要校准做出退出决策的置信度阈值。深度自适应`Transformer`通过网格搜索在验证集上找到这样的阈值。`CALM`（`Schuste`r等人，`2022`年）使用测试(`LTT`)框架（`Angelopoulos`等人，`2021`年）来识别有效阈值的子集，并选择最小值作为推理的阈值。除了训练每层退出分类器外，`CALM`还探索了其他自适应深度预测方法，包括`softmax`激活（即前两个`softmax`输出之间的差异）和隐藏状态饱和（即{% mathjax %}\cos(\mathbf{h}_t^n,\mathbf{h}_t^{n+1}){% endmathjax %}作为退出决策的置信度分数。他们发现`softmax`激活可带来最佳的推理加速。
 
 #### 高效的注意力
