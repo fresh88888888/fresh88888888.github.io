@@ -289,5 +289,34 @@ LL_t^n = \log p(y_t|\mathbf{h}^n_{t-1})\;\;LL^n = \sum_{t=1}^{|y|} LL_t^n
 自适应深度分类器输出参数分布为{% mathjax %}q_t{% endmathjax %}，使用交叉熵损失对`oracle`分布进行训练{% mathjax %}q_t^*{% endmathjax %}。在这里主要探讨了如何学习这种分类器的三种配置{% mathjax %}q_t{% endmathjax %}。
 {% asset_img t_16.png "三种自适应深度分类器的图示" %}
 
-- **序列特定的深度分类器**：同一序列的所有标记共享相同的出口块。它取决于序列的编码器表示的平均值。给定一个输入序列
-- **特定于token的深度分类器（多项式）**：每个 token 用不同的出口块解码，根据第一个解码器隐藏状态进行预测
+- **序列特定的深度分类器**：同一序列的所有标记共享相同的出口。它取决于序列的编码器表示的平均值。给定一个输入序列{% mathjax %}\mathbf{x}{% endmathjax %}，长度为{% mathjax %}L{% endmathjax %}，分类器采用{% mathjax %}\bar{\mathbf{x}} = \frac{1}{L}\sum_{t=1}^L \mathbf{x}_t{% endmathjax %}作为输入和输出多项分布，{% mathjax %}N{% endmathjax %}为层数。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+q(n|\mathbf{x}) & = \text{softmax}(\mathbf{W}_n\bar{x} + b_n)\in \mathbb{R}^N \\
+q^*_{\text{lik}}(\mathbf{x},\mathbf{y}) & = \delta(\arg\max_n LL^n - \lambda n) \\
+\text{or }q^*_{\text{corr}}(\mathbf{x},\mathbf{y}) & = \delta(\arg\max_n C^n - \lambda n)\text{ where }C^n = |\{t|y_t = \arg\max_y p(y|\mathbf{h}^n_{t-1})\}|
+\end{align}
+{% endmathjax %}
+在这里{% mathjax %}\delta{% endmathjax %}是狄拉克德尔塔（单位脉冲）函数，{% mathjax %}-\lambda n{% endmathjax %}是一个正则化项，用于鼓励较低层退出。
+- **特定于token的深度分类器（多项式）**：每个 token 用不同的出口块解码，根据第一个解码器隐藏状态进行预测{% mathjax %}\mathbf{h}^1_t{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+q_t(n|\mathbf{x},\mathbf{y}_{<t}) = \text{softmax}(\mathbf{W}_n\mathbf{h}_t^1 + b_n)
+{% endmathjax %}
+- **特定于token的深度分类器**（类似几何）：每个`token`每层都有一个二进制出口预测分布{% mathjax %}\mathcal{X}_t^n{% endmathjax %}。`RBF`内核{% mathjax %}\mathcal{k}(t,t') = \exp(\frac{|t-t'|^2}{\sigma}){% endmathjax %}用于平滑预测，以纳入当前决策对未来时间步长的影响。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+\mathcal{X}_t^n & = \text{sigmoid}(\mathbf{w}_n^\top \mathbf{h}_t^n + b_n)\;\forall n\in [1,ldots,N-1] \\
+q_t(n|\mathbf{x},\mathbf{y}_{<t}) & = 
+\begin{cases}
+\mathcal{X}_t^n\prod_{n'<n} (1-\mathcal{X}_t^{n'}) & \text{ if }n<N \\
+\prod_{n' < N} (1 - \mathcal{X}_t^{n'}) & \text{ otherwise } \\
+\end{cases} \\
+q^*_{lik}(\mathbf{x}, \mathbf{y}) & = \delta(\arg\max_n\tilde{LL}_t^n - \lambda n) \text{ where }\tilde{LL}_t^n = \sum_{t'=1}^{|y|} \mathcal{k}(t,t')LL_{t'}^n \\
+\text{or }q^*_{\text{corr}}(\mathbf{x},\mathbf{y}) & = \delta(\arg\max_n\tilde{C}_t^n - \lambda n) \text{ where }C_t^n = \mathbb{1}[y_t = \arg\max_y p(y|\mathbf{h}_{t-1}^n)],\;\tilde{C}_t^n= \sum_{t' =1}^{|y|} \mathcal{k}(t,t')C_{t'}^n
+\end{align}
+{% endmathjax %}
+在推理时，需要校准做出退出决策的置信度阈值。深度自适应`Transformer`通过网格搜索在验证集上找到这样的阈值。`CALM`（`Schuste`r等人，`2022`年）使用测试(`LTT`)框架（`Angelopoulos`等人，`2021`年）来识别有效阈值的子集，并选择最小值作为推理的阈值。除了训练每层退出分类器外，`CALM`还探索了其他自适应深度预测方法，包括`softmax`激活（即前两个`softmax`输出之间的差异）和隐藏状态饱和（即{% mathjax %}\cos(\mathbf{h}_t^n,\mathbf{h}_t^{n+1}){% endmathjax %}作为退出决策的置信度分数。他们发现`softmax`激活可带来最佳的推理加速。
+
+#### 高效的注意力
+
+普通`Transformer`的计算和内存成本随序列长度呈二次方增长，因此很难应用于非常长的序列。`Transformer`架构的许多效率改进都与自注意力模块有关-使其更便宜、更小或运行速度更快。
