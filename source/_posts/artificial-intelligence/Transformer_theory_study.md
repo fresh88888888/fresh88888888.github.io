@@ -302,7 +302,7 @@ q^*_{\text{lik}}(\mathbf{x},\mathbf{y}) & = \delta(\arg\max_n LL^n - \lambda n) 
 {% mathjax '{"conversion":{"em":14}}' %}
 q_t(n|\mathbf{x},\mathbf{y}_{<t}) = \text{softmax}(\mathbf{W}_n\mathbf{h}_t^1 + b_n)
 {% endmathjax %}
-- **特定于token的深度分类器**（类似几何）：每个`token`每层都有一个二进制出口预测分布{% mathjax %}\mathcal{X}_t^n{% endmathjax %}。`RBF`内核{% mathjax %}\mathcal{k}(t,t') = \exp(\frac{|t-t'|^2}{\sigma}){% endmathjax %}用于平滑预测，以纳入当前决策对未来时间步长的影响。
+- **特定于token的深度分类器（类似几何）**：每个`token`每层都有一个二进制出口预测分布{% mathjax %}\mathcal{X}_t^n{% endmathjax %}。`RBF`内核{% mathjax %}\mathcal{k}(t,t') = \exp(\frac{|t-t'|^2}{\sigma}){% endmathjax %}用于平滑预测，以纳入当前决策对未来时间步长的影响。
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
 \mathcal{X}_t^n & = \text{sigmoid}(\mathbf{w}_n^\top \mathbf{h}_t^n + b_n)\;\forall n\in [1,ldots,N-1] \\
@@ -321,3 +321,73 @@ q^*_{lik}(\mathbf{x}, \mathbf{y}) & = \delta(\arg\max_n\tilde{LL}_t^n - \lambda 
 #### 高效的注意力
 
 普通`Transformer`的计算和内存成本随序列长度呈二次方增长，因此很难应用于非常长的序列。`Transformer`架构的许多效率改进都与自注意力模块有关-使其更便宜、更小或运行速度更快。
+##### 稀疏注意力模式
+
+###### 固定局部上下文
+
+降低自我注意力成本的一个简单方法是将每个标记的注意力范围限制在局部上下文中，这样自我注意力就会随着序列长度线性增长。该想法由`Image Transformer`（`Parmer`等人，`2018`年）提出，它将图像生成表述为使用编码器-解码器`Transformer`架构的序列建模：
+- 编码器生成源图像的上下文、每个像素通道表示。
+- 解码器自回归生成输出图像，每个时间步、每个像素一个通道。
+
+我们将要生成的当前像素的表示`token`为查询{% mathjax %}\mathbf{q}{% endmathjax %}。其他位置的表示将计算{% mathjax %}\mathbf{q}{% endmathjax %}的键向量{% mathjax %}\mathbf{k}_1,\mathbf{k}_2,\ldots{% endmathjax %}，它们共同组成记忆矩阵{% mathjax %}\mathbf{M}{% endmathjax %}。`Image Transformer`引入了两种类型的局部，如下图所示。
+{% asset_img t_17.png "Image Transformer 中视觉输入的1D和2D注意力跨度说明。黑线标记查询块，青色勾勒出像素q的实际注意力跨度" %}
+
+- 1D局部注意力：输入图像按光栅扫描顺序展平，即从左到右、从上到下。然后将线性的图像划分为不重叠的查询块。上下文窗口由与查询块相同的像素组成{% mathjax %}\mathbf{q}{% endmathjax %}以及在此查询块之前生成的固定数量的附加像素。
+- 2D局部注意力：图像被划分为多个不重叠的矩形查询块。查询像素可以关注同一记忆块中的所有其他像素。为了确保左上角的像素也可以具有有效的上下文窗口，记忆块分别向上、向左和向右扩展固定量。
+##### 步进上下文
+
+`Sparse Transformer`（`Child`等人，`2019`年）通过稀疏矩阵分解引入了分解式自注意力，从而可以在高达`16,384`的序列长度上训练具有数百层的密集注意力网络，否则这在现代硬件上是不可行的。给定一组注意力连接模式{% mathjax %}\mathcal{S} = \{S_1,\ldots,S_n\}{% endmathjax %}，其中每个{% mathjax %}S_i{% endmathjax %}记录第{% mathjax %}i{% endmathjax %}个关键位置查询向量。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+\text{Attend}(\mathbf{X},\mathcal{S}) & = (a(\mathbf{x}_i,S_i))_{i\in \{1,\ldots,L\}} \\
+\text{ where }a(\mathbf{x}_i,S_i) & = \text{softmax}(\frac{(\mathbf{x}_i\mathbf{W}^q)(\mathbf{x}_j\mathbf{W}^k)_{j\in S_i}^\top}{\sqrt{d_k}})(\mathbf{x}_j\mathbf{W}^v)_{j\in S_i}
+\end{align}
+{% endmathjax %}
+注意，尽管{% mathjax %}S_i{% endmathjax %}不固定，a(\mathbf{x}_i,S_i)总是大小为{% mathjax %}d_v{% endmathjax %}，因此{% mathjax %}\text{}Attend(\mathbf{X},\mathcal{S})\in \mathbb{R}^{L\times d}{% endmathjax %}。在自回归模型中，一个注意力跨度定义为{% mathjax %}S_i = \{j:j\leq i\}{% endmathjax %}，因为它允许每个`token`关注过去的所有位置。在分解自注意力机制中，集合{% mathjax %}S_i{% endmathjax %}分解成一个依赖关系树，这样对于每一对{% mathjax %}(i,j){% endmathjax %} j\leq i，有一条路径连接{% mathjax %}i{% endmathjax %}回到{% mathjax %}j{% endmathjax %}并且无论是直接还是间接{% mathjax %}i{% endmathjax %}是可以加入到{% mathjax %}j{% endmathjax %}。`Sparse Transformer`提出了两种类型的分形注意力机制。下图以二维图像输入为例，更容易理解这些概念。
+{% asset_img t_18.png "顶行展示了(a)Transformer、(b)具有步进注意力的 Sparse Transformer和(c)具有固定注意力的 Sparse Transformer 中的注意力连接模式。底行包含相应的自注意力连接矩阵。请注意，顶行和底行的比例不同。" %}
+
+- **带步长的步进注意力**{% mathjax %}\ell \sim \sqrt{n}{% endmathjax %}这适用于图像数据，因为结构与步幅对齐。在图像上面，每个像素都会关注所有先前的{% mathjax %}\ell{% endmathjax %}按光栅扫描顺序关注像素（自然覆盖图像的整个宽度），然后这些像素关注同一列中的其他像素（由另一个注意连接子集定义）。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+ A_i^{(1)} &= \{ t, t+1, \dots, i\} \text{, where } t = \max(0, i - \ell) \\
+ A_i^{(2)} &= \{j: (i-j) \mod \ell = 0\}
+\end{aligned}
+{% endmathjax %}
+- 固定注意力。一小部分`token`汇总了之前的位置，并将该信息传播到所有未来的位置。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+ A_i^{(1)} &= \{j: \lfloor \frac{j}{\ell} \rfloor = \lfloor \frac{i}{\ell} \rfloor \} \\
+ A_i^{(2)} &= \{j: j \mod \ell \in \{\ell-c, \dots, \ell-1\} \}
+ \end{aligned}
+{% endmathjax %}
+
+在这里{% mathjax %}c{% endmathjax %}是超参数。如果{% mathjax %}c = 1{% endmathjax %}它限制了表示，而许多表示依赖于少数位置。本文选择了{% mathjax %}c\in \{8,16,32\}{% endmathjax %}并且{% mathjax %}\ell\in \{128,256\}{% endmathjax %}。在`Transformer`架构中，有三种方法可以使用稀疏分解注意力模式：
+- 每个残差块是一种注意力类型，然后将它们交错，{% mathjax %}\text{attn}(\mathbf{X}) = \text{Attend}(\mathbf{X}, A^{(n \mod p)}) \mathbf{W}^o{% endmathjax %}，在这里{% mathjax %}n{% endmathjax %}是当前残差块的索引。
+- 设置一个单独的主管，负责所有分解后的主管负责的位置，{% mathjax %}\text{attn}(\mathbf{X}) = \text{Attend}(\mathbf{X}, \cup_{m=1}^p A^{(m)}) \mathbf{W}^o{% endmathjax %}。
+- 使用多头注意力机制，但与原始 Transformer 不同，每个头可能采用上面提出的模式`1`或`2`，该选项通常效果最佳。
+
+`Sparse Transformer`还提出了一系列变化，以便将`Transformer`训练到数百层，包括梯度检查点、在后向传递期间重新计算注意力和`FF`层、混合精度训练、高效的块稀疏实现等。分块注意力(`Qiu et al`. `2019`) 引入了一个稀疏块矩阵，只允许每个`token`关注一小部分其他`token`。每个注意力矩阵的大小为{% mathjax %}L\times L{% endmathjax %}被划分成了{% mathjax %}n\times n{% endmathjax %}更小的块{% mathjax %}frac{L}{n}\times\frac{L}{n}{% endmathjax %}和一个稀疏块矩阵{% mathjax %}\mathbf{M}\in \{0,1\}^{L\times L}{% endmathjax %}。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+\text{attn}(\mathbf{Q}, \mathbf{K}, \mathbf{V}, \mathbf{M}) &= \text{softmax}\Big(\frac{\mathbf{Q}\mathbf{K}^\top}{\sqrt{d}} \odot \mathbf{M}\Big)\mathbf{V} \\
+(\mathbf{A} \odot \mathbf{M})_{ij} &= \begin{cases}
+A_{ij} & \text{if }M_{ij} = 1 \\
+-\infty & \text{if }M_{ij} = 0 \\
+\end{cases} \\
+\text{where } M_{ij} &= \begin{cases}
+1 & \text{if }\pi\big(\lfloor\frac{(i-1)n}{L} + 1\rfloor\big) = \lfloor\frac{(j-1)n}{L} + 1\rfloor \\
+0 & \text{otherwise}
+\end{cases}
+\end{aligned}
+{% endmathjax %}
+`Blockwise Attention`的实际实现将`QKV`存储为块矩阵，每个矩阵的大小为{% mathjax %}n\times n{% endmathjax %}
+{% mathjax '{"conversion":{"em":14}}' %}
+\text{Blockwise-attn}(\mathbf{Q}, \mathbf{K}, \mathbf{V}, \mathbf{M}) = \begin{bmatrix}
+\text{softmax}\big(\frac{\hat{\mathbf{q}}_1\hat{\mathbf{k}}_{\pi(1)}^\top}{\sqrt{d}} \Big)\hat{\mathbf{v}}_{\pi(1)} \\
+\vdots \\
+\text{softmax}\big(\frac{\hat{\mathbf{q}}_n\hat{\mathbf{k}}_{\pi(n)}^\top}{\sqrt{d}} \odot \Big)\hat{\mathbf{v}}_{\pi(n)} \\
+\end{bmatrix}
+{% endmathjax %}
+在这里{% mathjax %}\hat{\mathbf{q}}_i,\hat{\mathbf{k}}_i{% endmathjax %}和{% mathjax %}\hat{\mathbf{v}}_i{% endmathjax %}分别为`QKV`块矩阵中的行。每个{% mathjax %}\mathbf{q}_i\mathbf{k}_{\pi(i)}^\top, \forall i = 1, \dots, n{% endmathjax %}大小为{% mathjax %}\frac{N}{n}\times\frac{N}{n}{% endmathjax %}因此`Blockwise Attention`能够将注意力矩阵的记忆复杂度从{% mathjax %}\mathcal{O}(L^2){% endmathjax %}到{% mathjax %}\mathcal{O}(\frac{L}{n}\times\frac{L}{n} \times n) = \mathcal{O}(L^2/n){% endmathjax %}。
+
+`ETC`（扩展`Transformer`构造；`Ainslie`等人，`2019`年）、`Longformer`（`Beltagy`等人，`2020`年）和`Big Bird`（`Zaheer`等人，`2020`年）模型在构建注意力矩阵时结合了局部和全局组合。所有这些模型都可以从现有的预训练模型中初始化。
