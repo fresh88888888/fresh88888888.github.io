@@ -236,7 +236,7 @@ f(\mathbf{R}^{(i)};\beta_i) & = \frac{1 + \exp(\beta_i)}{1+ \exp(\beta_i - \math
 给定长度的输入序列{% mathjax %}L{% endmathjax %}，Universal Transformer迭代更新表示为{% mathjax %}\mathbf{h}^t\in \mathbb{R}^{L\times d}{% endmathjax %}。在第{% mathjax %}0{% endmathjax %}步，{% mathjax %}\mathbf{h}^0{% endmathjax %}初始化与输入嵌入矩阵相同，所有位置在多头自注意力机制中并行处理，然后经过循环转换函数。
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
-\mathbf{A}^t & = \text{LayerNorm}(\mathbf{h}^{t-1}+\text{MultiHeadAttention(\mathbf{h}^{t-1} + \mathbf{P}^t)}) \\
+\mathbf{A}^t & = \text{LayerNorm}(\mathbf{h}^{t-1}+\text{MultiHeadAttention}(\mathbf{h}^{t-1} + \mathbf{P}^t)) \\
 \mathbf{h}^t & = \text{LayerNorm}(\mathbf{A}^{t-1} + \text{Transition}(\mathbf{A}^t))
 \end{align}
 {% endmathjax %}
