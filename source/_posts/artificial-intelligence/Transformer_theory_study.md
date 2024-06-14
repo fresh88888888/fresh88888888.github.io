@@ -230,3 +230,27 @@ f(\mathbf{R}^{(i)};\beta_i) & = \frac{1 + \exp(\beta_i)}{1+ \exp(\beta_i - \math
 {% asset_img t_11.png "正弦位置编码、旋转位置编码、T5和ALiBi中的简化相对位置编码。所有模型都以较小的上下文长度进行训练，但推理运行的上下文长度要长得多" %}
 ##### 参数复用
 
+`Universal Transformer`（`Dehghani`等人，`2019`年）将`Transformer`中的自注意力机制与`RNN`中的循环机制相结合，旨在从`Transformer`捕获的长期依赖关系和`RNN`的学习归纳偏差中获益。`Universal Transformer`不是固定数量的层，而是使用自适应计算动态的调整步数。如果我们固定步数，`Universal Transformer`相当于一个跨层共享参数的多层`Transformer`。从高层次来看，通用`Transformer`可以看作是一个循环函数，用于学习每个`token`的隐藏状态表示。循环函数在`token`位置之间并行演化，位置之间的信息通过自注意力机制共享。
+{% asset_img t_12.png "Universal Transformer如何并行地为每个位置反复细化一组隐藏状态表示" %}
+
+给定长度的输入序列{% mathjax %}L{% endmathjax %}，Universal Transformer迭代更新表示为{% mathjax %}\mathbf{h}^t\in \mathbb{R}^{L\times d}{% endmathjax %}。在第{% mathjax %}0{% endmathjax %}步，{% mathjax %}\mathbf{h}^0{% endmathjax %}初始化与输入嵌入矩阵相同，所有位置在多头自注意力机制中并行处理，然后经过循环转换函数。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+\mathbf{A}^t & = \text{LayerNorm}(\mathbf{h}^{t-1}+\text{MultiHeadAttention(\mathbf{h}^{t-1} + \mathbf{P}^t)}) \\
+\mathbf{h}^t & = \text{LayerNorm}(\mathbf{A}^{t-1} + \text{Transition}(\mathbf{A}^t))
+\end{align}
+{% endmathjax %}
+在这里{% mathjax %}\text{Transition}(\cdot){% endmathjax %}是一个可分离卷积或全连接神经网络`affine transformation` + `ReLU`由两种位置(每一行的{% mathjax %}\mathbf{A}^t{% endmathjax %}都是独立的)组成。位置编码{% mathjax %}\mathbf{P}^t{% endmathjax %}使用正弦位置编码，但带有额外的时间维度：
+{% mathjax '{"conversion":{"em":14}}' %}
+\text{PE}(i, t, \delta) = 
+\begin{cases}
+\sin(\frac{i}{10000^{2\delta'/d}}) \oplus \sin(\frac{t}{10000^{2\delta'/d}}) & \text{if } \delta = 2\delta' \\
+\cos(\frac{i}{10000^{2\delta'/d}}) \oplus \cos(\frac{t}{10000^{2\delta'/d}}) & \text{if } \delta = 2\delta' + 1 \\
+\end{cases}
+{% endmathjax %}
+{% asset_img t_13.png "通用Transformer的简化图。编码器和解码器共享相同的基本循环结构" %}
+
+在自适应版本的`Universal Transformer`中，循环步骤的数量{% mathjax %}T{% endmathjax %}由`ACT`动态确定。每个位置都配备了动态`ACT`停止机制。一旦每个`token`循环块停止，它就会停止进行更多循环更新，而只是将当前值复制到下一步，直到所有块都停止或模型达到最大步数限制。
+
+#### 自适应建模
+
