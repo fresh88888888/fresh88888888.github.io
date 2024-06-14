@@ -261,3 +261,33 @@ f(\mathbf{R}^{(i)};\beta_i) & = \frac{1 + \exp(\beta_i)}{1+ \exp(\beta_i - \math
 {% asset_img t_14.png "同一模型中的两个注意力头A和B在同一个上下文窗口内分配不同的注意力。注意力头A更多地关注最近的标记，而注意力头B则均匀地回顾过去" %}
 
 鉴于第{% mathjax %}i{% endmathjax %}个`token`，我们需要计算这个`token`和其注意力范围内其他键之间的注意力权重{% mathjax %}s{% endmathjax %}。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+e_{ij} & = \mathbf{q}_i {\mathbf{k}_j}^\top \\
+a_{ij} & = \text{softmax}(e_{ij}) = \frac{\exp(e_{ij})}{\sum_{r=i-s}^{i-1}\exp(e_{ir})} \\
+\mathbf{y}_i & = \sum_{r=i-s}^{i-1} a_{ir}\mathbf{v}_r = \sum_{r=i-s}^{i-1} a_{ir}\mathbf{x}_r \mathbf{W}^v
+\end{align}
+{% endmathjax %}
+{% mathjax %}m_z{% endmathjax %}被添加到控制中以获得有效的可调注意力跨度，将查询和键之间的距离映射到{% mathjax %}[0,1]{% endmathjax %}。{% mathjax %}m_z{% endmathjax %}参数化为{% mathjax %}z\in [0,s]{% endmathjax %}并且{% mathjax %}z{% endmathjax %}需要学习的是：
+{% mathjax '{"conversion":{"em":14}}' %}
+m_z(x) = \text{clip}(\frac{1}{R}(R + z - x),0,1)
+{% endmathjax %}
+在这里{% mathjax %}R{% endmathjax %}是一个超参数，它定义了{% mathjax %}m_z{% endmathjax %}：
+{% asset_img t_15.png "自适应注意力跨度中使用的软遮罩函数" %}
+
+软遮罩函数应用于注意力权重中的`softmax`元素：
+{% mathjax '{"conversion":{"em":14}}' %}
+a_{ij} = \frac{m_z(i-j)\exp(s_{ij})}{\sum_{r=i-s}^{i-1} m_z(i-r)\exp(s_{ir})}
+{% endmathjax %}
+在上面的等式中，{% mathjax %}z{% endmathjax %}是可微的，因此它与模型的其它部分联合训练。参数{% mathjax %}z^{(i)},i=1,\ldots,h{% endmathjax %}是每个头分别学习的，此外，损失函数有一个额外的惩罚({% mathjax %}\sum_{i=1}^h z^{(i)}{% endmathjax %})。使用自适应计算时间，该方法可以得到进一步增强，具有灵活的注意力跨度长度，可动态适应当前输入。注意力跨度参数{% mathjax %}z_t{% endmathjax %}是集中在时间{% mathjax %}t{% endmathjax %}上的{% mathjax %}S{% endmathjax %}函数，{% mathjax %}z_t = S\sigma(\mathbf{v}\cdot \mathbf{x}_t + b){% endmathjax %}，其中向量{% mathjax %}\mathbf{v}{% endmathjax %}和偏差标量{% mathjax %}b{% endmathjax %}跟其他参数共同学习。在具有自适应注意力跨度的`Transformer`实验中，`Sukhbaatar`等人（`2019`）发现一个普遍趋势，即较低层不需要非常长的注意力跨度，而较高层中的少数注意力头可能使用较长的跨度。自适应注意力跨度还有助于大大减少`FLOPS`数值，尤其是在具有许多注意力层和较大上下文长度的大型模型中。
+##### 深度自适应Transformer
+
+在推理时，我们自然会认为某些`token`更容易预测，因此不需要像其他`token`那样多的计算量。因此，我们可能只通过有限数量的层来处理其预测，以在速度和性能之间取得良好的平衡。深度自适应`Transformer`（`Elabyad`等人，`2020`年）和置信自适应语言模型（`CALM`；`Schuster`等人，`2022`年）都受到这一想法的启发，并学习预测不同输入`token`所需的最佳层数。深度自适应`Transformer`将输出分类器附加到每一层，以根据该层的激活产生退出预测。分类器权重矩阵可以每层不同，也可以跨层共享。在训练期间，模型会采样不同的退出序列，以便使用不同层的隐藏状态优化模型。学习目标结合了在不同层预测的似然概率，{% mathjax %}n=1,\ldots,N{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+LL_t^n = \log p(y_t|\mathbf{h}^n_{t-1})\;\;LL^n = \sum_{t=1}^{|y|} LL_t^n
+{% endmathjax %}
+自适应深度分类器输出参数分布为{% mathjax %}q_t{% endmathjax %}，使用交叉熵损失对`oracle`分布进行训练{% mathjax %}q_t^*{% endmathjax %}。在这里主要探讨了如何学习这种分类器的三种配置{% mathjax %}q_t{% endmathjax %}。
+{% asset_img t_16.png "三种自适应深度分类器的图示" %}
+
+- **序列特定的深度分类器**：同一序列的所有标记共享相同的出口块。它取决于序列的编码器表示的平均值。给定一个输入序列
+- **特定于token的深度分类器（多项式）**：每个 token 用不同的出口块解码，根据第一个解码器隐藏状态进行预测
