@@ -85,3 +85,67 @@ torch.Size([6, 16])
 
 索引{% mathjax %}i{% endmathjax %}指索引序列`token`的索引位置。其长度为{% mathjax %}T{% endmathjax %}
 {% asset_img a_2.png  %}
+
+这里的{% mathjax %}\mathbf{q}^{(i)},\mathbf{k}^{(i)}{% endmathjax %}是维度{% mathjax %}d_k{% endmathjax %}的两个向量。投影矩阵{% mathjax %}\mathbf{W}_q{% endmathjax %}和{% mathjax %}\mathbf{W}_k{% endmathjax %}的形状为{% mathjax %}d_k\times d{% endmathjax %}，而{% mathjax %}\mathbf{W}_v{% endmathjax %}的形状为{% mathjax %}d_v\times d{% endmathjax %}（{% mathjax %}d{% endmathjax %}表示每个词向量的大小）。由于我们正在计算查询和键向量之间的点积，因此这两个向量必须包含相同数量的元素({% mathjax %}d_q = d_k{% endmathjax %})。当然，值向量{% mathjax %}\mathbf{v}_{(i)}{% endmathjax %}中的元素数量决定了得到的上下文向量的大小。我们这里假设{% mathjax %}d_q= d_k = 24{% endmathjax %}，并且{% mathjax %}d_v = 28{% endmathjax %}，初始化投影矩阵如下：
+```python
+torch.manual_seed(123)
+
+d_q, d_k, d_v = 24, 24, 28
+d = embedded_sentence.shape[1]
+W_query = torch.nn.Parameter(torch.rand(d_q, d))
+W_key = torch.nn.Parameter(torch.rand(d_k, d))
+W_value = torch.nn.Parameter(torch.rand(d_v, d))
+```
+#### 计算非规范化注意力权重
+
+现在，假设我们想计算第二个输入元素的注意向量—第二个输入元素在这里充当查询：
+{% asset_img a_3.png  %}
+
+在代码中，它看起来如下所示：
+```python
+x_2 = embedded_sentence[1]
+query_2 = W_query.matmul(x_2)
+key_2 = W_key.matmul(x_2)
+value_2 = W_value.matmul(x_2)
+
+print(query_2.shape)
+print(key_2.shape)
+print(value_2.shape)
+
+# torch.Size([24])
+# torch.Size([24])
+# torch.Size([28])
+```
+然后，我们可以将其推广到计算所有输入的剩余键和值元素，因为在下一步计算非规范化注意力权重时，我们将需要{% mathjax %}\omega{% endmathjax %}。
+```python
+keys = W_key.matmul(embedded_sentence.T).T
+values = W_value.matmul(embedded_sentence.T).T
+
+print("keys.shape:", keys.shape)
+print("values.shape:", values.shape)
+
+# keys.shape: torch.Size([6, 24])
+# values.shape: torch.Size([6, 28])
+```
+现在我们有了所有的键和值，我们可以继续下一步，计算非规范化的注意力权重{% mathjax %}\omega{% endmathjax %}。如下图所示：
+{% asset_img a_4.png  %}
+
+如上图所示，我们计算的{% mathjax %}\omega_{i,j}{% endmathjax %}是查询和键序列的点积，{% mathjax %}\omega_{i,j} = \mathbf{q}^{(i)^\top}\mathbf{k}^{(j)}{% endmathjax %}。例如，我们可以计算查询和第`5`个输入元素（对应索引位置`4`）的非规范化注意力权重，如下所示：
+```python
+omega_24 = query_2.dot(keys[4])
+print(omega_24)
+
+# tensor(11.1466)
+```
+由于我们稍后需要它们来计算注意力分数，因此我们来计算{% mathjax %}\omega{% endmathjax %}所有输入`token`的值如上图所示：
+```python
+omega_2 = query_2.matmul(keys.T)
+print(omega_2)
+
+# tensor([ 8.5808, -7.6597,  3.2558,  1.0395, 11.1466, -0.4800])
+```
+#### 计算注意力分数
+
+自注意力的后续步骤是对未规范化的注意力权重进行规范化，{% mathjax %}\omega{% endmathjax %}获得规范化注意力权重，{% mathjax %}\alpha{% endmathjax %}应`用softmax`函数。此外，{% mathjax %}1/\sqrt{d_k}{% endmathjax %}用于扩展{% mathjax %}\omega{% endmathjax %}通过softmax函数对其进行规范化，如下所示：
+{% asset_img a_5.png  %}
+
