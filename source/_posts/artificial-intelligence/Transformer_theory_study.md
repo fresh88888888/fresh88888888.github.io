@@ -466,6 +466,45 @@ Y_2 = [Y_2^{(1)}; \dots; Y_2^{(c)}] = [X_2^{(1)} + \text{FeedForward}(Y_1^{(1)})
 
 随机特征注意力（`RFA；Peng`等人，`2021`年）依赖于随机特征方法（`Rahimi & Recht，2007`) 用低秩特征图来近似自注意力中的`softmax`操作，以实现线性时间和空间复杂度。`Performers`(`Choromanski`等人，`2021`年) 还采用了随机特征注意，并改进了内核构造，以进一步降低内核近似误差。
 
+`RFA`背后的主要定理来自(`Rahimi & Recht`, `2007`)，{% mathjax %}\phi : \mathbb{R}^d\rightarrow \mathbb{R}^{2D}{% endmathjax %}是一个非线性变换：
+{% mathjax '{"conversion":{"em":14}}' %}
+\phi(\mathbf{x}) = \frac{1}{\sqrt{D}}[\sin(\mathbf{w}_1^\top \mathbf{x}), \dots, \sin(\mathbf{w}_D^\top \mathbf{x}), \cos(\mathbf{w}_1^\top \mathbf{x}), \dots, \cos(\mathbf{w}_D^\top \mathbf{x})]^\top
+{% endmathjax %}
+{% mathjax %}d{% endmathjax %}维随机向量{% mathjax %}w_i{% endmathjax %}来自{% mathjax %}\mathcal{N}(\mathbf{0}, \sigma^2\mathbf{I}_d){% endmathjax %},{% mathjax %}\mathbb{E}_{\mathbf{w}_i} [\phi(\mathbf{x}) \cdot \phi(\mathbf{y})] = \exp(-\frac{\| \mathbf{x} - \mathbf{y} \|^2}{2\sigma^2}){% endmathjax %}，无偏估计{% mathjax %}\exp(\mathbf{x}\cdot \mathbf{y}){% endmathjax %}是：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+\exp(\mathbf{x} \cdot \mathbf{y} / \sigma^2) 
+&= \exp(\frac{1}{2\sigma^2}(\|\mathbf{x}\|^2 + \|\mathbf{y}\|^2 - \|\mathbf{x} - \mathbf{y}\|^2) \\
+&= \exp(\frac{\|\mathbf{x}\|^2}{2\sigma^2}) \exp(\frac{\|\mathbf{y}\|^2}{2\sigma^2}) ( - \frac{\|\mathbf{x} - \mathbf{y}\|^2}{2\sigma^2}) \\
+&\approx \exp(\frac{\|\mathbf{x}\|^2}{2\sigma^2}) \exp(\frac{\|\mathbf{y}\|^2}{2\sigma^2})\;\phi(\mathbf{x})\cdot\phi(\mathbf{y}) \\
+&= \exp(\frac{1}{\sigma^2})\;\phi(\mathbf{x})\cdot\phi(\mathbf{y}) & \text{; unit vectors}
+\end{aligned}
+{% endmathjax %}
+然后我们可以编写如下注意力函数，其中{% mathjax %}\otimes{% endmathjax %}是外积运算，{% mathjax %}\sigma^2{% endmathjax %}是温度。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+\text{attn}(\mathbf{q}_t, \{\mathbf{k}_i\}, \{\mathbf{v}_i\}) 
+&= \sum_i \frac{\exp(\mathbf{q}_t\cdot\mathbf{k}_i/\sigma^2)}{\sum_j \exp(\mathbf{q}_t\cdot\mathbf{k}_j/\sigma^2)}\mathbf{v}_i^\top
+\approx \sum_i \frac{\phi(\mathbf{q}_t)\phi(\mathbf{k}_i)\mathbf{v}_i^\top}{\sum_j \phi(\mathbf{q}_t)\phi(\mathbf{k}_j)} \\
+&= \color{green}{\frac{\phi(\mathbf{q}_t)^\top \sum_i \phi(\mathbf{k}_i)\otimes\mathbf{v}_i}{\phi(\mathbf{q}_t)^\top \sum_j \phi(\mathbf{k}_j)}
+= \text{RFA}(\mathbf{q}_t, \{\mathbf{k}_i\}, \{\mathbf{v}_i\})}
+\end{aligned}
+{% endmathjax %}
+{% asset_img t_23.png "（左）默认 softmax 运算的计算顺序。（右）使用随机特征注意时的计算顺序，比默认softmax性能好很多。" %}
+
+因果注意`RFA`在时间步骤中有`token`{% mathjax %}t{% endmathjax %}仅关注较早的键和值{% mathjax %}\{\mathbf{k_i}\}_{i\leq t},\{\mathbf{v}\}_{i\leq t}{% endmathjax %}。让我们使用一个变量元组，{% mathjax %}(\mathbf{S}_t\in \mathbb{R}^{2D\times d}, \mathbf{z}\in \mathbb{R}^{2D}){% endmathjax %}，跟踪时间步的隐藏状态历史{% mathjax %}t{% endmathjax %}，类似于`RNN`：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+&\text{causal-RFA}(\mathbf{q}_t, \{\mathbf{k}_i\}_{i \leq t}, \{\mathbf{v}_i\}_{i \leq t}) = \frac{\phi(\mathbf{q}_t)^\top \mathbf{S}_t}{\phi(\mathbf{q}_t) \cdot \mathbf{z}_t} \\
+&\text{where } 
+\mathbf{S}_t = \mathbf{S}_{t-1} + \phi(\mathbf{k}_t)\otimes\mathbf{v}_t,
+\quad 
+\mathbf{z}_t = \mathbf{z}_{t-1} + \phi(\mathbf{k}_t)
+\end{aligned}
+{% endmathjax %}
+在这里{% mathjax %}2D{% endmathjax %}大小为{% mathjax %}\phi(\cdot){% endmathjax %}并且{% mathjax %}D{% endmathjax %}不应小于模型尺寸{% mathjax %}d{% endmathjax %}以获得合理的近似。`Performer`使用正随机特征图修改随机特征注意，以减少估计误差。它还保持随机采样{% mathjax %}\mathbf{w}_1,\ldots,\mathbf{w}_D{% endmathjax %}正交以进一步减少估计量的方差。
+ {% asset_img t_24.png "使用（左）IID与正交特征和（右）sin/cos与正随机特征时的近似误差比较" %}
+
 #### 基于强化学习的Transformer
 
 自注意力机制避免将整个过去压缩为固定大小的隐藏状态，并且不会像`RNN`那样遭受梯度消失或爆炸的影响。强化学习任务肯定可以从这些特性中受益。然而，即使在监督学习中训练`Transformer`也相当困难，更不用说在强化学习环境中了。毕竟，单独训练`LSTM`代理可能相当具有挑战性。`Gated Transformer-XL`（`GTrXL；Parisotto`等人，`2019`）是将`Transformer`用于强化学习的一种尝试。`GTrXL`在`Transformer-XL`的基础上进行了两项改进，成功实现了训练的稳定：
