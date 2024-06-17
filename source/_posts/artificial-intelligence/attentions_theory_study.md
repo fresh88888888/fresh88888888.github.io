@@ -86,7 +86,7 @@ torch.Size([6, 16])
 索引{% mathjax %}i{% endmathjax %}指索引序列`token`的索引位置。其长度为{% mathjax %}T{% endmathjax %}
 {% asset_img a_2.png  %}
 
-这里的{% mathjax %}\mathbf{q}^{(i)},\mathbf{k}^{(i)}{% endmathjax %}是维度{% mathjax %}d_k{% endmathjax %}的两个向量。投影矩阵{% mathjax %}\mathbf{W}_q{% endmathjax %}和{% mathjax %}\mathbf{W}_k{% endmathjax %}的形状为{% mathjax %}d_k\times d{% endmathjax %}，而{% mathjax %}\mathbf{W}_v{% endmathjax %}的形状为{% mathjax %}d_v\times d{% endmathjax %}（{% mathjax %}d{% endmathjax %}表示每个词向量的大小）。由于我们正在计算查询和键向量之间的点积，因此这两个向量必须包含相同数量的元素({% mathjax %}d_q = d_k{% endmathjax %})。当然，值向量{% mathjax %}\mathbf{v}_{(i)}{% endmathjax %}中的元素数量决定了得到的上下文向量的大小。我们这里假设{% mathjax %}d_q= d_k = 24{% endmathjax %}，并且{% mathjax %}d_v = 28{% endmathjax %}，初始化投影矩阵如下：
+这里的{% mathjax %}\mathbf{q}^{(i)},\mathbf{k}^{(i)}{% endmathjax %}是维度{% mathjax %}d_k{% endmathjax %}的两个向量。投影矩阵{% mathjax %}\mathbf{W}_q{% endmathjax %}和{% mathjax %}\mathbf{W}_k{% endmathjax %}的形状为{% mathjax %}d_k\times d{% endmathjax %}，而{% mathjax %}\mathbf{W}_v{% endmathjax %}的形状为{% mathjax %}d_v\times d{% endmathjax %}（{% mathjax %}d{% endmathjax %}表示每个词向量的大小）。由于我们正在计算查询和键向量之间的点积，因此这两个向量必须包含相同数量的元素({% mathjax %}d_q = d_k{% endmathjax %})。当然，值向量{% mathjax %}\mathbf{v}^{(i)}{% endmathjax %}中的元素数量决定了得到的上下文向量的大小。我们这里假设{% mathjax %}d_q= d_k = 24{% endmathjax %}，并且{% mathjax %}d_v = 28{% endmathjax %}，初始化投影矩阵如下：
 ```python
 torch.manual_seed(123)
 
