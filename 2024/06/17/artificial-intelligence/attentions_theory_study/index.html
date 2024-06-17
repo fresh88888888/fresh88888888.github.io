@@ -324,11 +324,8 @@
 <span id="more"></span>
 
 <p>为了解决这个问题，我们引入了注意力机制，以便在每个时间步骤中访问所有序列元素。关键是要有选择性，并确定哪些词在特定上下文中是最重要的。<code>2017</code>年，<code>Transformer</code>架构引入了独立的自注意力机制，完全消除了对<code>RNN</code>的需要。我们可以将自注意力机制视为一种通过包含有关输入上下文的信息来增强输入嵌入信息内容的机制。换句话说，自注意力机制使模型能够衡量输入序列中不同元素的重要性，并动态调整它们对输出的影响。这对于语言处理任务尤为重要，因为单词的含义可以根据句子或文档中的上下文而改变。</p>
-<details class="note "><summary><p>warring</p>
-</summary>
-<p><strong>注意</strong>，自注意力机制有很多变体。其中特别关注的是提高自注意力机制的效率。然而，大多数论文仍然采用<strong>缩放点积注意力机制</strong>，因为它通常能带来更高的准确率，而且对于大多数训练大规模 <code>Transformer</code>的公司来说，自注意力机制很少成为计算瓶颈。</p>
-
-</details>
+<div class="note warning"><p><strong>注意</strong>，自注意力机制有很多变体。其中特别关注的是提高自注意力机制的效率。然而，大多数论文仍然采用<strong>缩放点积注意力机制</strong>，因为它通常能带来更高的准确率，而且对于大多数训练大规模 <code>Transformer</code>的公司来说，自注意力机制很少成为计算瓶颈。</p>
+</div>
 <p>我们重点介绍原始的<strong>缩放点积注意力机制</strong>（称为自注意力机制），它仍然是实践中最流行、应用最广泛的注意力机制。</p>
 <h4 id="嵌入输入句子"><a href="#嵌入输入句子" class="headerlink" title="嵌入输入句子"></a>嵌入输入句子</h4><p>在开始之前，我们先考虑一个输入句子“<code>Life is short, eat dessert first</code>”，我们想将其放入自注意力机制中。与其他类型的文本处理建模方法（例如，使用循环神经网络或卷积神经网络）类似，我们首先创建一个句子嵌入。为简单起见，此处我们的词典<code>dc</code>仅限于输入句子中出现的单词。在实际应用中，我们会考虑训练数据集中的所有单词（典型词汇量在<code>30k~50k</code>之间）。<br>输入：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sentence = <span class="string">&#x27;Life is short, eat dessert first&#x27;</span></span><br><span class="line">dc = &#123;s:i <span class="keyword">for</span> i,s <span class="keyword">in</span> <span class="built_in">enumerate</span>(<span class="built_in">sorted</span>(sentence.replace(<span class="string">&#x27;,&#x27;</span>, <span class="string">&#x27;&#x27;</span>).split()))&#125;</span><br><span class="line"><span class="built_in">print</span>(dc)</span><br></pre></td></tr></table></figure>
