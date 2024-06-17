@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">191</span>
+          <span class="site-state-item-count">192</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -231,6 +231,112 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2023/07/21/%E3%80%90Rust%E3%80%91cross/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/07/21/%E3%80%90Rust%E3%80%91cross/" class="post-title-link" itemprop="url">【Rust】使用Cross进行跨平台编译</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-07-21 22:16:13" itemprop="dateCreated datePublished" datetime="2023-07-21T22:16:13+08:00">2023-07-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><code>Rust</code> 的编译速度和跨平台编译相比 <code>Go</code> 语言就要难用很多，但这也是语言特点，当你从中受益时，必然要付出一些代价，本文主要介绍如何实现跨平台编译，使用 <a target="_blank" rel="noopener" href="https://github.com/cross-rs/cross"><code>cross</code></a> 这个工具。</p>
+<p>我的工作台是 <code>Mac M2</code>，想编译出 <code>Linux</code> 和 <code>Windows</code> 的可执行文件，使用的代码很简单，就是 <code>Hello World</code> 示例程序，这个不是重点。</p>
+<p>使用 <code>cross</code> 首先当然是安装，按照官方的描述，可以使用下面的命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo install cross --git https://github.com/cross-rs/cross</span><br></pre></td></tr></table></figure>
+
+<p>然后是安装 <code>docker</code> 或者 <code>podman</code>，本文以 <code>docker</code> 为例，讲述使用过程中遇到的问题及其解决方案。<code>cross</code> 的使用很简单，例如，如果我要编译 <code>target</code> 为 <code>aarch64-unknown-linux-gnu</code>，执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cross build  --target aarch64-unknown-linux-gnu</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/07/21/%E3%80%90Rust%E3%80%91cross/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1161,122 +1267,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/06/30/%E3%80%90Rust%E3%80%91Rustup%20%E4%BB%8B%E7%BB%8D/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/06/30/%E3%80%90Rust%E3%80%91Rustup%20%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">【Rust】Rustup 介绍</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-06-30 14:46:32" itemprop="dateCreated datePublished" datetime="2022-06-30T14:46:32+08:00">2022-06-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.7k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>9 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>学习 <code>rust</code> 的第一步当然是安装，在 <code>rust</code> 中，工具链的安装，升级版本切换都是由 <code>rustup</code> 来完成的。<code>rust</code> 的工具链分布在三个不同的 <code>channel</code> ：<code>stable</code>，<code>beta</code> 和 <code>nightly</code>。</p>
-<p>可以将 <code>rustup</code> 看做 <code>rust</code> 的版本管理器，方便我们在不同的 <code>channel</code> 之间进行切换。 在国内 <code>rust</code> 的相关网站是没有被 <code>GFW</code> 屏蔽的，但是访问速度还是很慢。好在国内有很多镜像源，例如，我这里使用的是中国科学技术大学的镜像，配置的话只需要添加两个环境变量：</p>
-<ul>
-<li><code>export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static</code></li>
-<li><code>export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup</code></li>
-</ul>
-<p><code>rustup</code> 的安装我们依然使用官方的方式：</p>
-<blockquote>
-<p>curl –proto ‘&#x3D;https’ –tlsv1.2 -sSf <a target="_blank" rel="noopener" href="https://sh.rustup.rs/">https://sh.rustup.rs</a> | sh</p>
-</blockquote>
-<p>执行结束之后，应该能看到下面这样的信息，而且会默认安装 <code>nightly</code>（每日构建）版本：</p>
-<img data-src="/2022/06/30/%E3%80%90Rust%E3%80%91Rustup%20%E4%BB%8B%E7%BB%8D/install-success.png" class="">
-
-<p>我们可以顺手配置以下 <code>cargo</code> 的镜像地址，参考自 <a target="_blank" rel="noopener" href="https://lug.ustc.edu.cn/wiki/mirrors/help/rust-crates/">中科大 <code>Rust Crates</code> 镜像使用帮助</a></p>
-<figure class="highlight yaml"><figcaption><span>~/.cargo/config</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">source.crates-io</span>]</span><br><span class="line"><span class="string">registry</span> <span class="string">=</span> <span class="string">&quot;https://github.com/rust-lang/crates.io-index&quot;</span></span><br><span class="line"><span class="string">replace-with</span> <span class="string">=</span> <span class="string">&#x27;ustc&#x27;</span></span><br><span class="line"></span><br><span class="line">[<span class="string">source.ustc</span>]</span><br><span class="line"><span class="string">registry</span> <span class="string">=</span> <span class="string">&quot;git://mirrors.ustc.edu.cn/crates.io-index&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>也推荐的字节跳动的 <code>Rustup</code> 镜像和 <code>crates.io</code> 镜像，具体请看 <a target="_blank" rel="noopener" href="https://rsproxy.cn/"><code>https://rsproxy.cn/</code></a>。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/06/30/%E3%80%90Rust%E3%80%91Rustup%20%E4%BB%8B%E7%BB%8D/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/15/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><span class="page-number current">16</span><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/17/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1303,14 +1293,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">858k</span>
+    <span title="站点总字数">859k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">47:39</span>
+    <span title="站点阅读时长">47:42</span>
   </span>
 </div>
 <div class="busuanzi-count">
