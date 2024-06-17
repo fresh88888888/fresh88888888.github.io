@@ -492,7 +492,7 @@ Y_2 = [Y_2^{(1)}; \dots; Y_2^{(c)}] = [X_2^{(1)} + \text{FeedForward}(Y_1^{(1)})
 {% endmathjax %}
 {% asset_img t_23.png "（左）默认 softmax 运算的计算顺序。（右）使用随机特征注意时的计算顺序，比默认softmax性能好很多。" %}
 
-因果注意`RFA`在时间步骤中有`token`{% mathjax %}t{% endmathjax %}仅关注较早的键和值{% mathjax %}\{\mathbf{k}_i\}_{i\leq t},\{\mathbf{v}_i\}_{i\leq t}{% endmathjax %}。让我们使用一个变量元组，{% mathjax %}(\mathbf{S}_t\in \mathbb{R}^{2D\times d}, \mathbf{z}\in \mathbb{R}^{2D}){% endmathjax %}，跟踪时间步的隐藏状态历史{% mathjax %}t{% endmathjax %}，类似于`RNN`：
+因果注意`RFA`在时间步骤中有{% mathjax %}t{% endmathjax %}(`token`)仅关注较早的键和值{% mathjax %}\{\mathbf{k}_i\}_{i\leq t},\{\mathbf{v}_i\}_{i\leq t}{% endmathjax %}。让我们使用一个变量元组，{% mathjax %}(\mathbf{S}_t\in \mathbb{R}^{2D\times d}, \mathbf{z}\in \mathbb{R}^{2D}){% endmathjax %}，跟踪时间步的隐藏状态历史{% mathjax %}t{% endmathjax %}，类似于`RNN`：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{aligned}
 &\text{causal-RFA}(\mathbf{q}_t, \{\mathbf{k}_i\}_{i \leq t}, \{\mathbf{v}_i\}_{i \leq t}) = \frac{\phi(\mathbf{q}_t)^\top \mathbf{S}_t}{\phi(\mathbf{q}_t) \cdot \mathbf{z}_t} \\
