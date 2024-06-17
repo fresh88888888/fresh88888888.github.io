@@ -477,7 +477,7 @@ Y_2 = [Y_2^{(1)}; \dots; Y_2^{(c)}] = [X_2^{(1)} + \text{FeedForward}(Y_1^{(1)})
 &= \exp(\frac{1}{2\sigma^2}(\|\mathbf{x}\|^2 + \|\mathbf{y}\|^2 - \|\mathbf{x} - \mathbf{y}\|^2) \\
 &= \exp(\frac{\|\mathbf{x}\|^2}{2\sigma^2}) \exp(\frac{\|\mathbf{y}\|^2}{2\sigma^2}) ( - \frac{\|\mathbf{x} - \mathbf{y}\|^2}{2\sigma^2}) \\
 &\approx \exp(\frac{\|\mathbf{x}\|^2}{2\sigma^2}) \exp(\frac{\|\mathbf{y}\|^2}{2\sigma^2})\;\phi(\mathbf{x})\cdot\phi(\mathbf{y}) \\
-&= \exp(\frac{1}{\sigma^2})\;\phi(\mathbf{x})\cdot\phi(\mathbf{y}) & \text{; unit vectors}
+&= \exp(\frac{1}{\sigma^2})\;\phi(\mathbf{x})\cdot\phi(\mathbf{y})
 \end{aligned}
 {% endmathjax %}
 然后我们可以编写如下注意力函数，其中{% mathjax %}\otimes{% endmathjax %}是外积运算，{% mathjax %}\sigma^2{% endmathjax %}是温度。
@@ -492,7 +492,7 @@ Y_2 = [Y_2^{(1)}; \dots; Y_2^{(c)}] = [X_2^{(1)} + \text{FeedForward}(Y_1^{(1)})
 {% endmathjax %}
 {% asset_img t_23.png "（左）默认 softmax 运算的计算顺序。（右）使用随机特征注意时的计算顺序，比默认softmax性能好很多。" %}
 
-因果注意`RFA`在时间步骤中有`token`{% mathjax %}t{% endmathjax %}仅关注较早的键和值{% mathjax %}\{\mathbf{k_i}\}_{i\leq t},\{\mathbf{v}\}_{i\leq t}{% endmathjax %}。让我们使用一个变量元组，{% mathjax %}(\mathbf{S}_t\in \mathbb{R}^{2D\times d}, \mathbf{z}\in \mathbb{R}^{2D}){% endmathjax %}，跟踪时间步的隐藏状态历史{% mathjax %}t{% endmathjax %}，类似于`RNN`：
+因果注意`RFA`在时间步骤中有`token`{% mathjax %}t{% endmathjax %}仅关注较早的键和值{% mathjax %}\{\mathbf{k}_i\}_{i\leq t},\{\mathbf{v}_i\}_{i\leq t}{% endmathjax %}。让我们使用一个变量元组，{% mathjax %}(\mathbf{S}_t\in \mathbb{R}^{2D\times d}, \mathbf{z}\in \mathbb{R}^{2D}){% endmathjax %}，跟踪时间步的隐藏状态历史{% mathjax %}t{% endmathjax %}，类似于`RNN`：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{aligned}
 &\text{causal-RFA}(\mathbf{q}_t, \{\mathbf{k}_i\}_{i \leq t}, \{\mathbf{v}_i\}_{i \leq t}) = \frac{\phi(\mathbf{q}_t)^\top \mathbf{S}_t}{\phi(\mathbf{q}_t) \cdot \mathbf{z}_t} \\
