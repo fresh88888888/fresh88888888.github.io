@@ -82,6 +82,6 @@ q(\mathbf{x}^a \vert \mathbf{z}_t) &\approx \mathcal{N}\big[\hat{\mathbf{x}}^a_\
 {% endmathjax %}
 在这里{% mathjax %}\hat{\mathbf{x}}^a_\theta (\mathbf{z}_t), \hat{\mathbf{x}}^b_\theta (\mathbf{z}_t){% endmathjax %}是重建{% mathjax %}\mathbf{x}^a,\mathbf{x}^b{% endmathjax %}由去噪模型提供。并且{% mathjax %}\omega_r{% endmathjax %}是一个权重因子，而且很大{% mathjax %}\omega_r > 1{% endmathjax %}可以提高样本质量。请注意，也可以同时对低分辨率视频进行条件处理，以使用相同的重建引导方法将样本扩展至高分辨率。
 
-#### 模型架构：3D U-Net和DiT
+##### 模型架构：3D U-Net和DiT
 
 与文本到图像的扩散模型类似，`U-net`和`Transformer`仍然是两种常见的架构选择。谷歌基于`U-net`架构发表了一系列扩散视频建模论文，而`OpenAI`最近提出的`Sora`模型则利用了`Transformer`架构。
