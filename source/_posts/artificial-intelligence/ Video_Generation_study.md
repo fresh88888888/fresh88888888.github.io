@@ -80,7 +80,7 @@ q(\mathbf{x}^a \vert \mathbf{z}_t) &\approx \mathcal{N}\big[\hat{\mathbf{x}}^a_\
 \tilde{\mathbf{x}}^b_\theta (\mathbf{z}_t) &= \hat{\mathbf{x}}^b_\theta (\mathbf{z}_t) - \frac{w_r \alpha_t}{2} \nabla_{\mathbf{z}_t^b} \| \mathbf{x}^a - \hat{\mathbf{x}}^a_\theta (\mathbf{z}_t) \|^2_2 & {\small \text{; an adjusted denoising model for }\mathbf{x}^b}
 \end{aligned}
 {% endmathjax %}
-在这里{% mathjax %}\hat{\mathbf{x}}^a_\theta (\mathbf{z}_t), \hat{\mathbf{x}}^b_\theta (\mathbf{z}_t){% endmathjax %}是重建{% mathjax %}\mathbf{x}^a,\mathbf{x}^b{% endmathjax %}由去噪模型提供。并且{% mathjax %}\omega_r{% endmathjax %}是一个权重因子，而且很大{% mathjax_r %}\omega > 1{% endmathjax %}可以提高样本质量。请注意，也可以同时对低分辨率视频进行条件处理，以使用相同的重建引导方法将样本扩展至高分辨率。
+在这里{% mathjax %}\hat{\mathbf{x}}^a_\theta (\mathbf{z}_t), \hat{\mathbf{x}}^b_\theta (\mathbf{z}_t){% endmathjax %}是重建{% mathjax %}\mathbf{x}^a,\mathbf{x}^b{% endmathjax %}由去噪模型提供。并且{% mathjax %}\omega_r{% endmathjax %}是一个权重因子，而且很大{% mathjax %}\omega_r > 1{% endmathjax %}可以提高样本质量。请注意，也可以同时对低分辨率视频进行条件处理，以使用相同的重建引导方法将样本扩展至高分辨率。
 
 #### 模型架构：3D U-Net和DiT
 
