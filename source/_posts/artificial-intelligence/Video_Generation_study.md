@@ -120,3 +120,65 @@ q(\mathbf{x}^a \vert \mathbf{z}_t) &\approx \mathcal{N}\big[\hat{\mathbf{x}}^a_\
 {% mathjax '{"conversion":{"em":14}}' %}
 \hat{\mathbf{y}}_t = \text{SR}_h \circ \text{SR}^t_l \circ \uparrow_F \circ D^t \circ P \circ (\hat{\mathbf{x}}, \text{CLIP}_\text{text}(\mathbf{x}))
 {% endmathjax %}
+在这里：
+- {% mathjax %}x{% endmathjax %}是文本。
+- {% mathjax %}\hat{x}{% endmathjax %}是`BPE`编码的文本。
+- {% mathjax %}\text{CLIP}_{\text{text}}(\cdot){% endmathjax %}是`CLIP`文本编码器，{% mathjax %}\mathbf{x}_e\text{CLIP}_{\text{text}}(\mathbf{x}){% endmathjax %}。
+- {% mathjax %}P(\cdot){% endmathjax %}是先验，生成图像嵌入{% mathjax %}\mathbf{y}_e{% endmathjax %}、给定文本嵌入{% mathjax %}\mathbf{x}_e{% endmathjax %}和`BPE`编码的文本{% mathjax %}\hat{\mathbf{x}}:\mathbf{y}_e = P(\mathbf{x}_e,\hat{\mathbf{x}}){% endmathjax %}，这部分是在文本图像对上训练的，而不是在视频数据上微调的。
+- {% mathjax %}D^t(\cdot){% endmathjax %}是时空解码器，可生成`16`帧，其中每帧都是低分辨率{% mathjax %}64\times 64{% endmathjax %}RGB图像{% mathjax %}\hat{\mathbf{y}}_l{% endmathjax %}。
+- {% mathjax %}\uparrow_F (\cdot){% endmathjax %}是帧差值网络，通过在生成的帧之间进行差值来提高有效帧速率。这是一个针对预测视频采样蒙版帧任务的微调模型。
+- {% mathjax %}SR_h (\cdot),SR_l^t(\cdot){% endmathjax %}是空间和时间超分辨率模型，分别将图像分辨率提高到{% mathjax %}256\times 256{% endmathjax %}和{% mathjax %}768\times 768{% endmathjax %}。
+- {% mathjax %}\hat{\mathbf{y}}_t{% endmathjax %}即为最终生成的视频。
+
+时空`SR`层包含伪`3D`卷积层和伪`3D`注意力层：
+- **伪3D卷积层**：每个空间`2D`卷积层（从预训练图像模型初始化）后面都有一个时间`1D`层（初始化为恒等函数）。从概念上讲，卷积`2D`层首先生成多个帧，然后将这些帧重塑为视频片段。
+- **伪3D注意力层**：在每个（预训练的）空间注意层之后，堆叠一个时间注意力层，并用于近似完整的时空注意力层。
+
+{% asset_img vg_7.png "伪3D卷积（左）和注意力层（右）的工作原理" %}
+
+它们可以表示为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+\text{Conv}_\text{P3D} &= \text{Conv}_\text{1D}(\text{Conv}_\text{2D}(\mathbf{h}) \circ T) \circ T \\
+\text{Attn}_\text{P3D} &= \text{flatten}^{-1}(\text{Attn}_\text{1D}(\text{Attn}_\text{2D}(\text{flatten}(\mathbf{h})) \circ T) \circ T)
+\end{aligned}
+{% endmathjax %}
+输入张量{% mathjax %}\mathbf{h} \in \mathbb{R}^{B\times C \times F \times H \times W}{% endmathjax %}（对应批次大小、通道、框架、高度和重量）；以及{% mathjax %}\circ T{% endmathjax %}在时间和空间维度之间切换；{% mathjax %}\text{flatten}(.){% endmathjax %}是矩阵运算符来转换{% mathjax %}\mathbf{h}{% endmathjax %}成为{% mathjax %}\mathbf{h}’ \in \mathbb{R}^{B \times C \times F \times HW}{% endmathjax %}和{% mathjax %}\text{flatten}^{-1}(.){% endmathjax %}逆转该过程。在训练期间，`Make-A-Video`流程的不同组件会进行独立训练。
+- 解码器{% mathjax %}D^t{% endmathjax %}，事先的{% mathjax %}P{% endmathjax %}以及两个超分辨率组件{% mathjax %}\text{SR}_t,\text{SR}_l^t{% endmathjax %}首先仅对图像进行训练，没有配对的文本。
+- 接下来添加新的时间层，将其初始化为身份函数，然后对未标记的视频数据进行微调。
+
+`Tune-A-Video`([`Wu`等人，`2023`年](https://openaccess.thecvf.com/content/ICCV2023/html/Wu_Tune-A-Video_One-Shot_Tuning_of_Image_Diffusion_Models_for_Text-to-Video_Generation_ICCV_2023_paper.html))扩展了一个预先训练的图像扩散模型，以实现一次性视频调整：给定一个包含{% mathjax %}m{% endmathjax %}框架，{% mathjax %}\mathcal{V}= \{v_i|i=1,\ldots,m\}{% endmathjax %}，并附有描述性提示{% mathjax %}\tau{% endmathjax %}，任务是生成一个新的视频{% mathjax %}\mathcal{V}^*{% endmathjax %}根据微调和相关的文本提示{% mathjax %}\tau^*{% endmathjax %}。例如，{% mathjax %}\tau{% endmathjax %}="A man is skiing"可以扩展为{% mathjax %}\tau^*{% endmathjax %}= "Spiderman is skiing on the beach"。Tune-A-Video 旨在用于对象编辑、背景更改和风格转换。除了扩大`2D`卷积层之外，`Tune-A-Video`的`U-Net`架构还结合了ST-Attention（时空注意）模块，通过查询前几帧中的相关位置来捕获时间一致性。给定帧的潜在特征{% mathjax %}v_i{% endmathjax %}、前几帧{% mathjax %}v_{i-1}{% endmathjax %}以及第一帧{% mathjax %}v_1{% endmathjax %}预计查询{% mathjax %}\mathbf{Q}{% endmathjax %}，键{% mathjax %}\mathbf{K}{% endmathjax %}和值{% mathjax %}\mathbf{V}{% endmathjax %}，`ST-attention`定义为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+&\mathbf{Q} = \mathbf{W}^Q \mathbf{z}_{v_i}, \quad \mathbf{K} = \mathbf{W}^K [\mathbf{z}_{v_1}, \mathbf{z}_{v_{i-1}}], \quad \mathbf{V} = \mathbf{W}^V [\mathbf{z}_{v_1}, \mathbf{z}_{v_{i-1}}] \\
+&\mathbf{O} = \text{softmax}\Big(\frac{\mathbf{Q} \mathbf{K}^\top}{\sqrt{d}}\Big) \cdot \mathbf{V}
+\end{aligned}
+{% endmathjax %}
+ 
+{% asset_img vg_8.png "Tune-A-Video架构概览。它首先在采样阶段之前对单个视频运行轻量级微调阶段。请注意，整个时间自注意力(T-Attn)层都会得到微调，因为它们是新添加的，但只有 ST-Attn和Cross-Attn中的查询投影会在微调期间更新，以保留先前的文本到图像知识。ST-Attn提高了时空一致性，Cross-Attn改进了文本-视频对齐" %}
+
+`Runway`的`Gen-1`模型([`Esser`等人，`2023`年](https://arxiv.org/abs/2302.03011))旨在根据文本输入编辑给定视频。它分解了对视频结构和内容的考虑{% mathjax %}p(\mathbf{x},s,c){% endmathjax %}生成条件。然而，要对这两个方面进行清晰的分解并不容易。
+- 内容{% mathjax %}c{% endmathjax %}指视频的外观和语义，从文本中采样以进行条件编辑。帧的`CLIP`嵌入是内容的良好表示，并且与结构特征基本保持正交。
+- 结构{% mathjax %}s{% endmathjax %}描述几何和动态，包括形状、位置、物体的时间变化，以及{% mathjax %}s{% endmathjax %}是从输入视频中采样的。可以使用深度估计或其他特定于任务的辅助信息（例如，用于人体视频合成的人体姿势或面部特征点）。
+
+`Gen-1`中的架构变化非常标准，即在其残差块中在每个`2D`空间卷积层之后添加`1D`时间卷积层，在其注意力块中在每个`2D`空间注意力块之后添加`1D`时间注意力块。在训练过程中，结构变量{% mathjax %}s{% endmathjax %}与扩散潜变量{% mathjax %}z{% endmathjax %}连接，其中内容变量{% mathjax %}c{% endmathjax %}在交叉注意力层中提供。在推理时，剪辑嵌入通过预先转换将`CLIP`文本嵌入转换为`CLIP`图像嵌入。
+{% asset_img vg_9.png "Gen-1 模型训练流程" %}
+
+视频`LDM`([`Blattmann`等人，`2023`年](https://arxiv.org/abs/2304.08818))首先训练`LDM`（潜在扩散模型）图像生成器。然后对模型进行微调，以生成添加了时间维度的视频。微调仅适用于编码图像序列上这些新添加的时间层。时间层{% mathjax %}\{l^i_\phi \mid i = \ 1, \dots, L\}{% endmathjax %}在视频`LDM`中与现有的空间层交错{% mathjax %}l^i_{\theta}{% endmathjax %}在微调过程中保持冻结状态。也就是说，我们只微调新参数{% mathjax %}\phi{% endmathjax %}但不是预先训练的图像骨干模型参数{% mathjax %}\theta{% endmathjax %}。`Video LDM`的流水线首先以低`fps`生成关键帧，然后通过`2`步潜在帧插值来提高`fps`。长度的输入序列{% mathjax %}T{% endmathjax %}被解释为一批图像（即{% mathjax %}B\cdot T{% endmathjax %}）为基础图像模型{% mathjax %}\theta{% endmathjax %}然后重新塑造成视频格式{% mathjax %}l^i_{\theta}{% endmathjax %}时间层。有一个跳跃连接导致时间层输出的组合{% mathjax %}\mathbf{x}'{% endmathjax %}和空间输出{% mathjax %}\mathbf{z}{% endmathjax %}通过学习合并参数{% mathjax %}\alpha{% endmathjax %}实践中实现了两种类型的时间混合层:(1)时间注意力和(2)基于`3D`卷积的残差块。
+{% asset_img vg_10.png "用于图像合成的预训练 LDM被扩展为视频生成器。B、T、C、H、W分别是批量大小、序列长度、通道、高度和宽度。cs是一个可选的条件/上下文框架" %}
+
+但是，`LDM`的预训练自动编码器仍然存在一个问题，它只能看到图像而看不到视频。如果天真地使用它来生成视频，可能会导致闪烁伪影，并且没有良好的时间连贯性。因此，视频`LDM`在解码器中添加了额外的时间层，并使用由`3D`卷积构建的逐块时间鉴别器对视频数据进行微调，而编码器保持不变，以便我们仍然可以重复使用预训练的`LDM`。在时间解码器微调期间，冻结的编码器会独立处理视频中的每一帧，并使用视频感知鉴别器强制跨帧进行时间连贯的重建。
+{% asset_img vg_11.png "视频潜在扩散模型中自动编码器的训练流程。解码器经过微调，具有新的跨帧鉴别器的时间一致性，而编码器保持冻结状态" %}
+
+与视频`LDM`类似，**稳定视频扩散**([`SVD；Blattmann`等人，`2023`年](https://arxiv.org/abs/2311.15127))的架构设计也是基于`LDM`，在每个空间卷积和注意力层之后插入时间层，但`SVD`会对整个模型进行微调。训练视频`LDM`分为三个阶段：
+- 文本到图像的预训练很重要，有助于提高质量和快速跟进。
+- 视频预训练有利于分离，理想情况下应该在更大规模、精选的数据集上进行。
+- 高质量视频微调适用于较小、预先带有高视觉保真度字幕的视频。
+
+`SVD`特别强调了数据集管理在模型性能中的关键作用。他们应用了剪切检测管道来获取每个视频的更多剪切，然后应用了三种不同的字幕模型：(1)`CoCa`用于中间帧，(2)`V-BLIP`用于视频字幕，(3)基于前两个字幕的`LLM`字幕。然后，他们能够继续改进视频数据集，方法是删除运动较少的剪辑（通过以`2fps`计算的低光流分数进行过滤）、过多的文本存在（应用光学字符识别来识别包含大量文本的视频）或通常美学价值较低的剪辑（使用`CLIP`嵌入注释每个剪辑的第一帧、中间帧和最后一帧并计算美学分数和文本-图像相似性）。实验表明，经过过滤的更高质量的数据集可以提高模型质量，即使这个数据集小很多。首先生成远距离关键帧，然后添加具有时间超分辨率的插值，其关键挑战在于如何保持高质量的时间一致性。`Lumiere`([`Bar-Tal`等人，`2024`年](https://arxiv.org/abs/2401.12945))采用了时空`U-Net`(`STUNet`)架构，该架构通过传递一次性生成视频的整个时间，从而消除了对`TSR`（时间超分辨率）组件的依赖。`STUNet`在时间和空间维度上对视频进行下采样，因此在紧凑的时空潜在空间中进行昂贵的计算。
+{% asset_img vg_12.png "Lumiere移除了TSR（时间超分辨率）模型。由于内存限制，膨胀的SSR网络只能在视频的短片段上运行，因此SSR模型在一组较短但重叠的视频片段上运行" %}
+
+`STUNet`扩展了预训练的文本到图像的`U-net`，使其能够在时间和空间维度上对视频进行上/下采样。基于卷积的块由预训练的文本到图像层组成，后跟分解的空间时间卷积。最粗略的`U-Net`级别的基于注意力的块包含预训练的文本到图像，后跟时间注意力。进一步的训练只发生在新添加的层上。
+{% asset_img vg_13.png "(a)时空U-Net(STUNet)、(b)基于卷积的块和 (c)基于注意力的块的架构" %}
+##### 无需训练的适应性
+
