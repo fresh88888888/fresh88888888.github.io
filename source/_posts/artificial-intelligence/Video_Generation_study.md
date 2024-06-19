@@ -214,7 +214,7 @@ W_k &\gets \text{a warping operation of }\boldsymbol{\delta}^k = \lambda(k-1)\bo
 在这里{% mathjax %}\mathbf{x}_t^k{% endmathjax %}是实际的潜在代码，{% mathjax %}\bar{\mathbf{x}}^k_t{% endmathjax %}是背景上的扭曲潜在代码；{% mathjax %}\alpha{% endmathjax %}是一个超参数，在论文的实验中{% mathjax %}\alpha = 0.6{% endmathjax %}。`Text2video-zero`可以与`ControlNet`结合使用，其中`ControlNet`预训练复制分支在每个帧上使用{% mathjax %}\mathbf{x}_t^k{% endmathjax %}为了{% mathjax %}k = 1, \dots, m{% endmathjax %}在每个扩散时间步长中{% mathjax %}t = T , \dots, 1{% endmathjax %}并将`ControlNet`分支输出添加到主`U-net`的跳过连接。
 
 `ControlVideo`([`Zhang`等人，`2023`年](https://arxiv.org/abs/2305.13077))旨在生成以文本提示为条件的视频{% mathjax %}\tau{% endmathjax %}以及运动序列（例如深度或边缘图），{% mathjax %}\mathbf{c} = \{c^i\}_{i=0}^{N-1}{% endmathjax %}。它改编自`ControlNet`，并添加了三种新机制：
-- **跨帧注意**：在自注意力模块中添加完全跨帧交互。它通过将所有时间步中的潜在帧映射到{% mathjax %}\mathbf{Q},\mathbf{K},\mathbf{V}{% endmathjax %}矩阵，不同于`Text2Video-zero`仅配置所有帧来关注第一帧。
+- **跨帧注意力**：在自注意力模块中添加完全跨帧交互。它通过将所有时间步中的潜在帧映射到{% mathjax %}\mathbf{Q},\mathbf{K},\mathbf{V}{% endmathjax %}矩阵，不同于`Text2Video-zero`仅配置所有帧来关注第一帧。
 - **交错帧平滑器**：是一种在交替帧上使用帧插值来减少闪烁效果的机制。在每个时间步{% mathjax %}t{% endmathjax %}，平滑器会插入偶数或奇数帧以平滑其对应的三帧剪辑。请注意，在平滑步骤之后，帧数会随时间减少。
 - **分层采样器**：利用分层采样器在内存受限的情况下实现具有时间一致性的长视频。长视频被分成多个短片段，每个片段都有一个关键帧。该模型使用完全跨帧注意力预生成这些关键帧以实现长期一致性，并且每个相应的短片段都根据关键帧按顺序合成。
 
