@@ -202,6 +202,7 @@ W_k &\gets \text{a warping operation of }\boldsymbol{\delta}^k = \lambda(k-1)\bo
 \mathbf{x}^k_T &= \text{DDIM-forward}(\tilde{\mathbf{x}}^k_{T'}, \Delta t)\text{ for }k=2, \dots, m
 \end{aligned}
 {% endmathjax %}
+
 此外，`Text2Video-Zero`用一种新的跨帧注意力机制（参考第一帧）取代了预训练`SD`模型中的自注意力层。其目的是在整个生成的视频中保留有关前景对象的外观、形状和身份的信息。
 {% mathjax '{"conversion":{"em":14}}' %}
 \text{Cross-Frame-Attn}(\mathbf{Q}^k, \mathbf{K}^{1:m}, \mathbf{V}^{1:m}) = \text{Softmax}\Big( \frac{\mathbf{Q}^k (\mathbf{K}^1)^\top}{\sqrt{c}} \Big) \mathbf{V}^1
