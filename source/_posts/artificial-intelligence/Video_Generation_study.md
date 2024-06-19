@@ -182,3 +182,13 @@ q(\mathbf{x}^a \vert \mathbf{z}_t) &\approx \mathcal{N}\big[\hat{\mathbf{x}}^a_\
 {% asset_img vg_13.png "(a)时空U-Net(STUNet)、(b)基于卷积的块和 (c)基于注意力的块的架构" %}
 ##### 无需训练的适应性
 
+令人惊讶的是，可以采用预先训练的文本转图像模型来输出视频，而无需任何训练。如果我们天真地随机采样潜在代码序列，然后构建解码后的相应图像的视频，则无法保证对象和语义在时间上的一致性。`Text2Video-Zero`([`Khachatryan`等人，`2023`年](https://arxiv.org/abs/2303.13439)) 通过增强预训练的图像扩散模型，实现零样本、无需训练的视频生成，该模型具有两种实现时间一致性的关键机制：
+- 对具有运动动态的潜在代码序列进行采样，以保持全局场景和背景时间的一致性。
+- 重新编程帧级自注意力，在第一帧上使用每帧的新的跨帧注意力，以保留前景对象的上下文、外观和身份。
+
+{% asset_img vg_14.png "Text2Video-Zero管道" %}
+
+对一系列潜在变量进行采样的过程，{% mathjax %}\mathbf{x}^1_T, \dots, \mathbf{x}^m_T{% endmathjax %}，其运动信息描述如下：
+- 确定方向{% mathjax %}\boldsymbol{\delta} = (\delta_x, \delta_y) \in \mathbb{R}^2{% endmathjax %}用于控制全局场景和相机运动；默认情况下，我们设置{% mathjax %}\boldsymbol{\delta} = (1, 1){% endmathjax %}。还定义一个超参数{% mathjax %}\lambda > 0{% endmathjax %}控制整体运动量。
+- 首先随机采样第一帧的潜在代码，{% mathjax %}\mathbf{x}^1_T \sim \mathcal{N}(0, I){% endmathjax %}。
+- 履行{% mathjax %}\Delta t \geq 0{% endmathjax %}`DDIM`使用预先训练的图像扩散模型（例如本文中的稳定扩散(`SD`)模型）进行后向更新步骤，并获取相应的潜在代码{% mathjax %}\mathbf{x}^1_{T'}{% endmathjax %}，在这里{% mathjax %}T’ = T - \Delta t{% endmathjax %}。
