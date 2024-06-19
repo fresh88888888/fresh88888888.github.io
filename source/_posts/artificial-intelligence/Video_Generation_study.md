@@ -192,3 +192,30 @@ q(\mathbf{x}^a \vert \mathbf{z}_t) &\approx \mathcal{N}\big[\hat{\mathbf{x}}^a_\
 - 确定方向{% mathjax %}\boldsymbol{\delta} = (\delta_x, \delta_y) \in \mathbb{R}^2{% endmathjax %}用于控制全局场景和相机运动；默认情况下，我们设置{% mathjax %}\boldsymbol{\delta} = (1, 1){% endmathjax %}。还定义一个超参数{% mathjax %}\lambda > 0{% endmathjax %}控制整体运动量。
 - 首先随机采样第一帧的潜在代码，{% mathjax %}\mathbf{x}^1_T \sim \mathcal{N}(0, I){% endmathjax %}。
 - 履行{% mathjax %}\Delta t \geq 0{% endmathjax %}`DDIM`使用预先训练的图像扩散模型（例如本文中的稳定扩散(`SD`)模型）进行后向更新步骤，并获取相应的潜在代码{% mathjax %}\mathbf{x}^1_{T'}{% endmathjax %}，在这里{% mathjax %}T’ = T - \Delta t{% endmathjax %}。
+- 对于潜在代码序列中的每一帧，我们使用运动平移和扭曲操作，其定义为{% mathjax %}\boldsymbol{\delta}^k = \lambda(k-1)\boldsymbol{\delta}{% endmathjax %}去得到{% mathjax %}\tilde{\mathbf{x}}^k_{T'}{% endmathjax %}。
+- 最后将`DDIM`应用于所有的{% mathjax %}\tilde{\mathbf{x}}^{2:m}_{T’}{% endmathjax %}，去得到{% mathjax %}\mathbf{x}^{2:m}_T{% endmathjax %}。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+\mathbf{x}^1_{T'} &= \text{DDIM-backward}(\mathbf{x}^1_T, \Delta t)\text{ where }T' = T - \Delta t \\
+W_k &\gets \text{a warping operation of }\boldsymbol{\delta}^k = \lambda(k-1)\boldsymbol{\delta} \\
+\tilde{\mathbf{x}}^k_{T'} &= W_k(\mathbf{x}^1_{T'})\\
+\mathbf{x}^k_T &= \text{DDIM-forward}(\tilde{\mathbf{x}}^k_{T'}, \Delta t)\text{ for }k=2, \dots, m
+\end{aligned}
+{% endmathjax %}
+此外，`Text2Video-Zero`用一种新的跨帧注意力机制（参考第一帧）取代了预训练`SD`模型中的自注意力层。其目的是在整个生成的视频中保留有关前景对象的外观、形状和身份的信息。
+{% mathjax '{"conversion":{"em":14}}' %}
+\text{Cross-Frame-Attn}(\mathbf{Q}^k, \mathbf{K}^{1:m}, \mathbf{V}^{1:m}) = \text{Softmax}\Big( \frac{\mathbf{Q}^k (\mathbf{K}^1)^\top}{\sqrt{c}} \Big) \mathbf{V}^1
+{% endmathjax %}
+可以使用背景蒙版进一步平滑背景并提高背景一致性。假设我们获得相应的前景蒙版{% mathjax %}\mathbf{M}_k{% endmathjax %}为了第{% mathjax %}k{% endmathjax %}帧使用一些现有方法，背景平滑在扩散步骤中合并扭曲的潜在代码{% mathjax %} {% endmathjax %}，相对于背景矩阵：
+{% mathjax '{"conversion":{"em":14}}' %}
+\bar{\mathbf{x}}^k_t = \mathbf{M}^k \odot \mathbf{x}^k_t + (1 − \mathbf{M}^k) \odot (\alpha\tilde{\mathbf{x}}^k_t +(1−\alpha)\mathbf{x}^k_t)\quad\text{for }k=1, \dots, m
+{% endmathjax %}
+在这里{% mathjax %}\mathbf{x}_t^k{% endmathjax %}是实际的潜在代码，{% mathjax %}\bar{\mathbf{x}}^k_t{% endmathjax %}是背景上的扭曲潜在代码；{% mathjax %}\alpha{% endmathjax %}是一个超参数，在论文的实验中{% mathjax %}\alpha = 0.6{% endmathjax %}。`Text2video-zero`可以与`ControlNet`结合使用，其中`ControlNet`预训练复制分支在每个帧上使用{% mathjax %}\mathbf{x}_t^k{% endmathjax %}为了{% mathjax %}k = 1, \dots, m{% endmathjax %}在每个扩散时间步长中{% mathjax %}t = T , \dots, 1{% endmathjax %}并将`ControlNet`分支输出添加到主`U-net`的跳过连接。
+
+`ControlVideo`([`Zhang`等人，`2023`年](https://arxiv.org/abs/2305.13077))旨在生成以文本提示为条件的视频{% mathjax %}\tau{% endmathjax %}以及运动序列（例如深度或边缘图），{% mathjax %}\mathbf{c} = \{c^i\}_{i=0}^{N-1}{% endmathjax %}。它改编自`ControlNet`，并添加了三种新机制：
+- **跨帧注意**：在自注意力模块中添加完全跨帧交互。它通过将所有时间步中的潜在帧映射到{% mathjax %}\mathbf{Q},\mathbf{K},\mathbf{V}{% endmathjax %}矩阵，不同于`Text2Video-zero`仅配置所有帧来关注第一帧。
+- **交错帧平滑器**：是一种在交替帧上使用帧插值来减少闪烁效果的机制。在每个时间步{% mathjax %}t{% endmathjax %}，平滑器会插入偶数或奇数帧以平滑其对应的三帧剪辑。请注意，在平滑步骤之后，帧数会随时间减少。
+- **分层采样器**：利用分层采样器在内存受限的情况下实现具有时间一致性的长视频。长视频被分成多个短片段，每个片段都有一个关键帧。该模型使用完全跨帧注意力预生成这些关键帧以实现长期一致性，并且每个相应的短片段都根据关键帧按顺序合成。
+
+{% asset_img vg_15.png "ControlVideo架构" %}
+
