@@ -30,4 +30,4 @@ q(\mathbf{x}_{1:T} \vert \mathbf{x}_0) = \prod^T_{t=1} q(\mathbf{x}_t \vert \mat
 数据样本{% mathjax %}\mathbf{x}_0{% endmathjax %}随着步伐的加快，其特征逐渐消失，{% mathjax %}t{% endmathjax %}变得更大。最终，当{% mathjax %}T\rightarrow \infty,\mathbf{x}_T{% endmathjax %}相当于各向同性的高斯分布。
 {% asset_img dm_2.png "通过缓慢添加（去除）噪声生成样本的正向（反向）扩散过程的马尔可夫链" %}
 
-上述过程的一个优点是我们可以采样{% mathjax %}\mathbf{x}_t{% endmathjax %}在任何时间步{% mathjax %}t{% endmathjax %}使用重新参数化以封闭形式呈现。
+上述过程的一个优点是我们可以采样{% mathjax %}\mathbf{x}_t{% endmathjax %}在任何时间步{% mathjax %}t{% endmathjax %}使用重置参数化以封闭形式呈现。
