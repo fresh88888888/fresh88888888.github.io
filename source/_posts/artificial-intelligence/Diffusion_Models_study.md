@@ -57,7 +57,7 @@ q(\mathbf{x}_t \vert \mathbf{x}_0) &= \mathcal{N}(\mathbf{x}_t; \sqrt{\bar{\alph
 p_\theta(\mathbf{x}_{0:T}) = p(\mathbf{x}_T) \prod^T_{t=1} p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t) \quad
 p_\theta(\mathbf{x}_{t-1} \vert \mathbf{x}_t) = \mathcal{N}(\mathbf{x}_{t-1}; \boldsymbol{\mu}_\theta(\mathbf{x}_t, t), \boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t))
 {% endmathjax %}
-{% asset_img dm_2.png "训练扩散模型以对2D瑞士卷数据进行建模的示例" %}
+{% asset_img dm_3.png "训练扩散模型以对2D瑞士卷数据进行建模的示例" %}
 
 值得注意的是，当满足以下条件时，逆向条件概率是可处理的({% mathjax %}\mathbf{x}_0{% endmathjax %})：
 {% mathjax '{"conversion":{"em":14}}' %}
