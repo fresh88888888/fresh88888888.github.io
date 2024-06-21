@@ -293,7 +293,7 @@ q_{\sigma, s < t}(\mathbf{x}_s \vert \mathbf{x}_t, \mathbf{x}_0)
 f_\theta(\mathbf{x}, t) = c_\text{skip}(t)\mathbf{x} + c_\text{out}(t) F_\theta(\mathbf{x}, t)
 {% endmathjax %}
 一致性模型可以一步生成样本，同时仍保持通过多步采样过程来交易计算以获得更好质量的灵活性。论文介绍了两种训练一致性模型的方法：
-- **一致性蒸馏(CD)**：通过最小化由相同轨迹生成的对之间的模型输出差异，将扩散模型蒸馏为一致性模型。这使得抽样评估的成本大大降低。一致性蒸馏损失为：
+- 一致性蒸馏(`CD`)：通过最小化由相同轨迹生成的对之间的模型输出差异，将扩散模型蒸馏为一致性模型。这使得抽样评估的成本大大降低。一致性蒸馏损失为：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{aligned}
  \mathcal{L}^N_\text{CD} (\theta, \theta^-; \phi) &= \mathbb{E}
@@ -302,20 +302,20 @@ f_\theta(\mathbf{x}, t) = c_\text{skip}(t)\mathbf{x} + c_\text{out}(t) F_\theta(
  \end{aligned}
 {% endmathjax %}
 在这里：
-- {% mathjax %}\Phi(.;\phi){% endmathjax %}是单步`ODE`求解器的更新函数；
-- {% mathjax %}n \sim \mathcal{U}[1, N-1]{% endmathjax %}，具有均匀分布{% mathjax %}1, \dots, N-1{% endmathjax %}；
-- 网络参数{% mathjax %}\theta^{-}{% endmathjax %}是`EMA`版本的{% mathjax %}\theta{% endmathjax %}这极大地稳定了训练（就像在`DQN`或动量对比学习中一样）；
-- {% mathjax %}d(.,.){% endmathjax %}是一个正距离度量函数，满足{% mathjax %}\forall \mathbf{x}, \mathbf{y}: d(\mathbf{x}, \mathbf{y}) \leq 0{% endmathjax %}和{% mathjax %}d(\mathbf{x}, \mathbf{y}) = 0{% endmathjax %}当且仅当{% mathjax %}\mathbf{x} = \mathbf{y}{% endmathjax %}。例如{% mathjax %}\ell_2{% endmathjax %}，{% mathjax %}\ell_1{% endmathjax %}或`LPIPS`（学习感知图像块相似性）距离；
-- {% mathjax %}\lambda(.) \in \mathbb{R}^+{% endmathjax %}是一个正权重函数，论文中设置{% mathjax %}\lambda(t_n)=1{% endmathjax %}。
+  - {% mathjax %}\Phi(.;\phi){% endmathjax %}是单步`ODE`求解器的更新函数；
+  - {% mathjax %}n \sim \mathcal{U}[1, N-1]{% endmathjax %}，具有均匀分布{% mathjax %}1, \dots, N-1{% endmathjax %}；
+  - 网络参数{% mathjax %}\theta^{-}{% endmathjax %}是`EMA`版本的{% mathjax %}\theta{% endmathjax %}这极大地稳定了训练（就像在`DQN`或动量对比学习中一样）；
+  - {% mathjax %}d(.,.){% endmathjax %}是一个正距离度量函数，满足{% mathjax %}\forall \mathbf{x}, \mathbf{y}: d(\mathbf{x}, \mathbf{y}) \leq 0{% endmathjax %}和{% mathjax %}d(\mathbf{x}, \mathbf{y}) = 0{% endmathjax %}当且仅当{% mathjax %}\mathbf{x} = \mathbf{y}{% endmathjax %}。例如{% mathjax %}\ell_2{% endmathjax %}，{% mathjax %}\ell_1{% endmathjax %}或`LPIPS`（学习感知图像块相似性）距离；
+  - {% mathjax %}\lambda(.) \in \mathbb{R}^+{% endmathjax %}是一个正权重函数，论文中设置{% mathjax %}\lambda(t_n)=1{% endmathjax %}。
 
-- **一致性训练(CT)**：另一种选择是独立训练一致性模型。请注意，在`CD`中，预先训练的评分模型{% mathjax %}s_\phi(\mathbf{x}, t){% endmathjax %}用于近似真实得分{% mathjax %}\nabla\log p_t(\mathbf{x}){% endmathjax %}但在`CT`中，我们需要一种方法来估计这个得分函数，结果是{% mathjax %}\nabla\log p_t(\mathbf{x}){% endmathjax %}存在为{% mathjax %}-\frac{\mathbf{x}_t - \mathbf{x}}{t^2}{% endmathjax %}`CT`损失定义如下：
+- 一致性训练(`CT`)：另一种选择是独立训练一致性模型。请注意，在`CD`中，预先训练的评分模型{% mathjax %}s_\phi(\mathbf{x}, t){% endmathjax %}用于近似真实得分{% mathjax %}\nabla\log p_t(\mathbf{x}){% endmathjax %}但在`CT`中，我们需要一种方法来估计这个得分函数，结果是{% mathjax %}\nabla\log p_t(\mathbf{x}){% endmathjax %}存在为{% mathjax %}-\frac{\mathbf{x}_t - \mathbf{x}}{t^2}{% endmathjax %}`CT`损失定义如下：
 {% mathjax '{"conversion":{"em":14}}' %}
 \mathcal{L}^N_\text{CT} (\theta, \theta^-; \phi) = \mathbb{E}
 [\lambda(t_n)d(f_\theta(\mathbf{x} + t_{n+1} \mathbf{z},\;t_{n+1}), f_{\theta^-}(\mathbf{x} + t_n \mathbf{z},\;t_n)]
 \text{ where }\mathbf{z} \in \mathcal{N}(\mathbf{0}, \mathbf{I})
 {% endmathjax %}
 根据论文中的实验，他们发现:
-- Heun ODE 求解器比欧拉一阶求解器效果更好，因为高阶 ODE 求解器在同样的条件下估计误差更小{% mathjax %}N{% endmathjax %}。
+- `Heun ODE`求解器比欧拉一阶求解器效果更好，因为高阶 ODE 求解器在同样的条件下估计误差更小{% mathjax %}N{% endmathjax %}。
 - 在距离度量函数的不同选项中{% mathjax %}d(\cdot){% endmathjax %}，`LPIPS`指标比{% mathjax %}\ell_1{% endmathjax %}和{% mathjax %}\ell_2{% endmathjax %}距离。
 - 较小{% mathjax %}N{% endmathjax %}导致更快的收敛但样本更差，而更大的{% mathjax %}N{% endmathjax %}导致收敛速度较慢，但​​收敛时样本更好。
 {% asset_img dm_12.png "不同配置下一致性模型性能比较。CD的最佳配置是LPIPS距离度量、Heun ODE求解器和N = 18" %}
