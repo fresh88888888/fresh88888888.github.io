@@ -198,3 +198,68 @@ L_\text{simple} = L_t^\text{simple} + C
 
 ##### 逆向过程方差的参数化\sum_{\theta}
 
+[`Ho`等人,`2020`年](https://arxiv.org/abs/2006.11239)选择修复{% mathjax %}\beta_t{% endmathjax %}作为常量，而不是让它们可学习和设置{% mathjax %}\boldsymbol{\sum}_{theta}(\mathbf{x}_t,t) = \sigma^2_t\mathbf{I}{% endmathjax %}，在这里{% mathjax %}\sigma_t{% endmathjax %}不是学习而是设置为{% mathjax %}\beta_t{% endmathjax %}或者{% mathjax %}\tilde{\beta}_t = \frac{1 - \bar{\alpha}_{t-1}}{1 - \bar{\alpha}_t} \cdot \beta_t{% endmathjax %}因为发现学习对角方差{% mathjax %}\boldsymbol{\sum}_{\theta}{% endmathjax %}导致训练不稳定，样本质量较差。[`Nichol & Dhariwal,2021`](https://arxiv.org/abs/2102.09672)提出学习{% mathjax %}\boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t){% endmathjax %}作为之间的插值{% mathjax %}\beta_t{% endmathjax %}和{% mathjax %}\tilde{\beta}_t{% endmathjax %}通过模型预测混合向量{% mathjax %}\mathbf{v}{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+\boldsymbol{\Sigma}_\theta(\mathbf{x}_t, t) = \exp(\mathbf{v} \log \beta_t + (1-\mathbf{v}) \log \tilde{\beta}_t)
+{% endmathjax %}
+然而，简单的目标{% mathjax %}L_\text{simple}{% endmathjax %}不依赖于{% mathjax %}\boldsymbol{\sum}_{\theta}{% endmathjax %}为了增加依赖性，他们构建了一个混合目标{% mathjax %}L_\text{hybrid} = L_\text{simple} + \lambda L_\text{VLB}{% endmathjax %}在这里{% mathjax %}\lambda= 0.001{% endmathjax %}很小，并且停止梯度{% mathjax %}\boldsymbol{\mu}_\theta{% endmathjax %}在里面{% mathjax %}L_\text{VLB}{% endmathjax %}术语{% mathjax %}L_\text{VLB}{% endmathjax %}仅指导学习{% mathjax %}\boldsymbol{\sum}_{\theta}{% endmathjax %}。他们通过实证研究观察到{% mathjax %}L_\text{VLB}{% endmathjax %}由于梯度噪声的存在，优化起来相当困难，因此他们建议使用时间平均平滑版本的{% mathjax %}L_\text{VLB}{% endmathjax %}具有重要性抽样。
+{% asset_img dm_6.png "改进的DDPM与其他基于似然的生成模型的负对数似然比较。NLL以位/维为单位" %}
+
+#### 条件生成
+
+在使用条件信息的图像（例如`ImageNet`数据集）训练生成模型时，通常会生成以类标签或一段描述性文本为条件的样本。
+##### 分类器引导扩散
+
+为了将类别信息明确地纳入传播过程，[`Dhariwal & Nichol,2021`](https://arxiv.org/abs/2105.05233)训练了一个分类器{% mathjax %}f_\phi(y \vert \mathbf{x}_t, t){% endmathjax %}在嘈杂的图像上{% mathjax %}\mathbf{x}_t{% endmathjax %}并使用渐变{% mathjax %}\nabla_\mathbf{x} \log f_\phi(y \vert \mathbf{x}_t){% endmathjax %}引导扩散采样过程朝向调节信息{% mathjax %}y{% endmathjax %}（例如目标类别标签）通过改变噪声预测来实现。 回想一下{% mathjax %}\nabla_{\mathbf{x}_t} \log q(\mathbf{x}_t) = - \frac{1}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t){% endmathjax %}我们可以写出联合分布的得分函数{% mathjax %}q(\mathbf{x}_t,y){% endmathjax %}如下：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+\nabla_{\mathbf{x}_t} \log q(\mathbf{x}_t, y)
+&= \nabla_{\mathbf{x}_t} \log q(\mathbf{x}_t) + \nabla_{\mathbf{x}_t} \log q(y \vert \mathbf{x}_t) \\
+&\approx - \frac{1}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) + \nabla_{\mathbf{x}_t} \log f_\phi(y \vert \mathbf{x}_t) \\
+&= - \frac{1}{\sqrt{1 - \bar{\alpha}_t}} (\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) - \sqrt{1 - \bar{\alpha}_t} \nabla_{\mathbf{x}_t} \log f_\phi(y \vert \mathbf{x}_t))
+\end{aligned}
+{% endmathjax %}
+因此，一个新的分类器引导预测器{% mathjax %}\bar{\boldsymbol{\epsilon}}_\theta{% endmathjax %}将采用以下形式：
+{% mathjax '{"conversion":{"em":14}}' %}
+\bar{\boldsymbol{\epsilon}}_\theta(\mathbf{x}_t, t) = \boldsymbol{\epsilon}_\theta(x_t, t) - \sqrt{1 - \bar{\alpha}_t} \nabla_{\mathbf{x}_t} \log f_\phi(y \vert \mathbf{x}_t)
+{% endmathjax %}
+为了控制分类器指导的强度，我们可以添加一个权重{% mathjax %}w{% endmathjax %}对于`delta`部分：
+{% mathjax '{"conversion":{"em":14}}' %}
+\bar{\boldsymbol{\epsilon}}_\theta(\mathbf{x}_t, t) = \boldsymbol{\epsilon}_\theta(x_t, t) - \sqrt{1 - \bar{\alpha}_t} \; w \nabla_{\mathbf{x}_t} \log f_\phi(y \vert \mathbf{x}_t)
+{% endmathjax %}
+由此产生的消融扩散模型(`ADM`)和具有附加分类器指导的模型(`ADM-G`)能够取得比`SOTA`生成模型（例如`BigGAN`）更好的结果。
+{% asset_img dm_7.png "算法使用分类器的指导，使用DDPM和DDIM运行条件生成" %}
+
+此外，[`Dhariwal & Nichol,2021`](https://arxiv.org/abs/2105.05233)对`U-Net`架构进行了一些修改，其性能优于采用扩散模型的`GAN`。架构修改包括更大的模型深度/宽度、更多的注意力头、多分辨率注意力、用于上/下采样的`BigGAN`残差块、残差连接重新缩放{% mathjax %}1/\sqrt{2}{% endmathjax %}和自适应组规范化(`AdaGN`)。
+##### 无分类器引导
+
+没有独立的分类器{% mathjax %} {% endmathjax %}，仍然可以通过合并条件和非条件扩散模型的分数来运行条件扩散步骤([`Ho & Salimans, 2021`](https://openreview.net/forum?id=qw8AKxfYbI))。让无条件去噪扩散模型{% mathjax %}p_{\theta}(\mathbf{x}){% endmathjax %}通过分数估计器进行参数化{% mathjax %}\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t){% endmathjax %}和条件模型{% mathjax %}p_{\theta}(\mathbf{x}|y){% endmathjax %}通过参数化{% mathjax %}\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, y){% endmathjax %}。这两个模型可以通过单个神经网络进行学习。确切地说，条件扩散模型{% mathjax %}p_{\theta}(\mathbf{x}|y){% endmathjax %}使用配对数据进行训练{% mathjax %}(\mathbf{x},y){% endmathjax %}，其中条件信息{% mathjax %}y{% endmathjax %}定期随机丢弃，以便模型知道如何无条件地生成图像，即{% mathjax %}\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) = \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, y=\varnothing){% endmathjax %}。隐式分类器的梯度可以用条件和非条件分数估计器来表示。一旦插入分类器引导的修改分数，该分数就不依赖于单独的分类器。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+\nabla_{\mathbf{x}_t} \log p(y \vert \mathbf{x}_t)
+&= \nabla_{\mathbf{x}_t} \log p(\mathbf{x}_t \vert y) - \nabla_{\mathbf{x}_t} \log p(\mathbf{x}_t) \\
+&= - \frac{1}{\sqrt{1 - \bar{\alpha}_t}}\Big( \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, y) - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \Big) \\
+\bar{\boldsymbol{\epsilon}}_\theta(\mathbf{x}_t, t, y)
+&= \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, y) - \sqrt{1 - \bar{\alpha}_t} \; w \nabla_{\mathbf{x}_t} \log p(y \vert \mathbf{x}_t) \\
+&= \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, y) + w \big(\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, y) - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \big) \\
+&= (w+1) \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, y) - w \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)
+\end{aligned}
+{% endmathjax %}
+他们的实验表明，无分类器指导可以在`FID`（区分合成图像和生成图像）和`IS`（质量和多样性）之间实现良好的平衡。**引导扩散模型GLIDE**（[`Nichol、Dhariwal 和 Ramesh`等人，`2022`年](https://arxiv.org/abs/2112.10741)）探索了两种引导策略，即`CLIP`引导和无分类器引导，并发现后者更受欢迎。他们假设这是因为`CLIP`引导利用对抗性示例对`CLIP`模型进行攻击，而不是优化更匹配的图像生成。
+
+#### 加速扩散模型
+
+通过遵循逆向扩散过程的马尔可夫链从`DDPM`生成样本非常慢，因为{% mathjax %}T{% endmathjax %}最多可以达到一到几千步。[`Song`等人,`2020`年](https://arxiv.org/abs/2010.02502)：“例如，从`DDPM`中采样`50k`张`32 × 32`大小的图像大约需要`20`个小时，但从`Nvidia 2080 Ti GPU`上的`GAN`中采样只需不到一分钟。”
+##### 减少采样步骤和蒸馏
+
+一种简单的方法是运行跨步采样计划([`Nichol & Dhariwal，2021`](https://arxiv.org/abs/2102.09672))，每隔一段时间进行一次采样更新{% mathjax %}\lceil T/S \rceil{% endmathjax %}减少流程的步骤{% mathjax %}T{% endmathjax %}到{% mathjax %}S{% endmathjax %}步骤。新的采样计划是{% mathjax %}\{\tau_1, \dots, \tau_S\}{% endmathjax %}在这里{% mathjax %}\tau_1 < \tau_2 < \dots <\tau_S \in [1, T]{% endmathjax %}和{% mathjax %}S < T{% endmathjax %}。对于另一种方法，让我们重写{% mathjax %}q_\sigma(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0){% endmathjax %}通过所需的标准偏差进行参数化{% mathjax %}\sigma_t{% endmathjax %}。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+\mathbf{x}_{t-1} 
+&= \sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_0 +  \sqrt{1 - \bar{\alpha}_{t-1}}\boldsymbol{\epsilon}_{t-1} & \\
+&= \sqrt{\bar{\alpha}_{t-1}}\mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_{t-1} - \sigma_t^2} \boldsymbol{\epsilon}_t + \sigma_t\boldsymbol{\epsilon} & \\
+&= \sqrt{\bar{\alpha}_{t-1}} \Big( \frac{\mathbf{x}_t - \sqrt{1 - \bar{\alpha}_t} \epsilon^{(t)}_\theta(\mathbf{x}_t)}{\sqrt{\bar{\alpha}_t}} \Big) + \sqrt{1 - \bar{\alpha}_{t-1} - \sigma_t^2} \epsilon^{(t)}_\theta(\mathbf{x}_t) + \sigma_t\boldsymbol{\epsilon} \\
+q_\sigma(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0)
+&= \mathcal{N}(\mathbf{x}_{t-1}; \sqrt{\bar{\alpha}_{t-1}} \Big( \frac{\mathbf{x}_t - \sqrt{1 - \bar{\alpha}_t} \epsilon^{(t)}_\theta(\mathbf{x}_t)}{\sqrt{\bar{\alpha}_t}} \Big) + \sqrt{1 - \bar{\alpha}_{t-1} - \sigma_t^2} \epsilon^{(t)}_\theta(\mathbf{x}_t), \sigma_t^2 \mathbf{I})
+\end{aligned}
+{% endmathjax %}
