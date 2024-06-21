@@ -354,8 +354,8 @@ f_\theta(\mathbf{x}, t) = c_\text{skip}(t)\mathbf{x} + c_\text{out}(t) F_\theta(
 - 截断条件增强会在步骤早期停止扩散过程{% mathjax %}t > 0{% endmathjax %}低分辨率。
 - 非截断条件增强会运行完整的低分辨率逆过程，直到步骤`0`，但随后会通过{% mathjax %}\mathbf{z}_t \sim q(\mathbf{x}_t \vert \mathbf{x}_0){% endmathjax %}然后喂养s损坏的{% mathjax %}\mathbf{z}_t{% endmathjax %}进入超分辨率模型。
 
-两阶段扩散模型`unCLIP`([Ramesh等人，2022](https://arxiv.org/abs/2204.06125))年大量利用`CLIP`文本编码器来生成高质量的文本引导图像。给定一个预训练的`CLIP`模型{% mathjax %}\amthbf{c}{% endmathjax %}以及扩散模型的配对训练数据，{% mathjax %}(\mathbf{x},y){% endmathjax %}，在这里{% mathjax %}x{% endmathjax %}是一张图片，{% mathjax %}y{% endmathjax %}是相应的标题，我们可以计算`CLIP`文本和图像嵌入，{% mathjax %}\mathbf{c}^t(y){% endmathjax %}和{% mathjax %}\mathbf{c}^i(\mathbf{x}){% endmathjax %}`unCLIP`并行学习两个模型：
-- 先前模型{% mathjax %}P(\mathbf{c}^i \vert y){% endmathjax %}：输出CLIP图像嵌入{% mathjax %}\mathbf{c}^i{% endmathjax %}鉴于文本{% mathjax %}y{% endmathjax %}。
+两阶段扩散模型`unCLIP`([Ramesh等人，2022](https://arxiv.org/abs/2204.06125))年大量利用`CLIP`文本编码器来生成高质量的文本引导图像。给定一个预训练的`CLIP`模型{% mathjax %}\mathbf{c}{% endmathjax %}以及扩散模型的配对训练数据，{% mathjax %}(\mathbf{x},y){% endmathjax %}，在这里{% mathjax %}x{% endmathjax %}是一张图片，{% mathjax %}y{% endmathjax %}是相应的标题，我们可以计算`CLIP`文本和图像嵌入，{% mathjax %}\mathbf{c}^t(y){% endmathjax %}和{% mathjax %}\mathbf{c}^i(\mathbf{x}){% endmathjax %}`unCLIP`并行学习两个模型：
+- 先前模型{% mathjax %}P(\mathbf{c}^i \vert y){% endmathjax %}：输出`CLIP`图像嵌入{% mathjax %}\mathbf{c}^i{% endmathjax %}鉴于文本{% mathjax %}y{% endmathjax %}。
 - 解码器{% mathjax %}P(\mathbf{x} \vert \mathbf{c}^i, [y]){% endmathjax %}：生成图像{% mathjax %}\mathbf{x}{% endmathjax %}给定`CLIP`图像嵌入{% mathjax %}\mathbf{c}^i{% endmathjax %}以及可选的原始文本{% mathjax %}y{% endmathjax %}。
 
 这两个模型可以实现条件生成，因为：
