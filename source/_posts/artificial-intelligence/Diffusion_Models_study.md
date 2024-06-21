@@ -365,3 +365,42 @@ f_\theta(\mathbf{x}, t) = c_\text{skip}(t)\mathbf{x} + c_\text{out}(t) F_\theta(
 {% asset_img dm_16.png "unCLIP 的架构" %}
 
 `unCLIP`遵循两阶段图像生成过程：
+- 给定文本首先使用`CLIP`模型生成文本嵌入。使用`CLIP`潜在空间可以通过文本进行零样本图像处理。
+- 扩散或自回归先验{% mathjax %}P(\mathbf{c}^i \vert y){% endmathjax %}处理此`CLIP`文本嵌入以构建图像先验，然后构建扩散解码器{% mathjax %}P(\mathbf{x} \vert \mathbf{c}^i, [y]){% endmathjax %}根据先前条件生成图像。该解码器还可以根据图像输入生成图像变化，同时保留其风格和语义。
+
+Imagen([`Saharia`等人，2`022`年](https://arxiv.org/abs/2205.11487))不使用`CLIP`模型，而是使用预先训练的`LLM`（即冻结的`T5-XXL`文本编码器）对文本进行编码以生成图像。普遍趋势是，更大的模型尺寸可以带来更好的图像质量和文本-图像对齐。他们发现`T5-XXL`和`CLIP`文本编码器在`MS-COCO`上实现了类似的性能，但人类评估更喜欢`DrawBench`（涵盖`11`个类别的提示集合）上的`T5-XXL`。当应用无分类器引导时，增加{% mathjax %}w{% endmathjax %}可能会导致更好的图像文本对齐，但更差的图像保真度。他们发现，这是由于训练测试不匹配造成的，也就是说，因为训练数据{% mathjax %}\mathbf{x}{% endmathjax %}保持在范围内{% mathjax %}[-1,1]{% endmathjax %}，测试数据也应该如此。引入两种阈值策略：
+- 静态阈值：剪辑{% mathjax %} \mathbf{x}{% endmathjax %}预测{% mathjax %}[]-1,1{% endmathjax %}。
+- 动态阈值：在每个采样步骤中，计算{% mathjax %}s{% endmathjax %}作为某个百分位绝对像素值；如果{% mathjax %}s > 1{% endmathjax %}，将预测剪辑到{% mathjax %}[-s,s]{% endmathjax %}并除以{% mathjax %}s{% endmathjax %}。
+
+他们发现噪声条件增强、动态阈值和高效`U-Net`对于图像质量至关重要，但缩放文本编码器大小比`U-Net`大小更重要。
+
+#### 模型架构
+
+扩散模型有两​​种常见的主干架构选择：`U-Net`和`Transformer`。`U-Net`([`Ronneberger`等人，`2015`年](https://arxiv.org/abs/1505.04597))由下采样堆栈和上采样堆栈组成。
+- 下采样：每个步骤包括重复应用两个`3x3`卷积（无填充卷积），每个卷积后跟一个`ReLU`和一个步幅为`2`的`2x2`最大池化。在每个下采样步骤中，特征通道的数量都会加倍。
+- 上采样：每个步骤包括对特征图进行上采样，然后进行`2x2`卷积，并且每次将特征通道数量减半。
+- 快捷方式：快捷方式连接导致与下采样堆栈的相应层连接，并为上采样过程提供必要的高分辨率特性。
+{% asset_img dm_17.png "U-net 架构。每个蓝色方块都是一个特征图，顶部标有通道数，左下角标有高度 x 宽度尺寸。灰色箭头标记快捷连接" %}
+
+为了实现以附加图像为条件的图像生成，以获取`Canny`边缘、`Hough`线、用户涂鸦、人体骨骼、分割图、深度和法线等构图信息，`ControlNet`([`Zhang`等人，`2023`年]())通过在`U-Net`的每个编码器层中添加可训练的原始模型权重副本的“夹层”零卷积层来引入架构变化。确切地说，给定一个神经网络块{% mathjax %}\mathcal{F}_{\theta}(\cdot){% endmathjax %}，`ControlNet`执行以下操作：
+- 首先冻结原始参数{% mathjax %}\theta{% endmathjax %}原始区块。
+- 将其克隆为具有可训练参数的副本{% mathjax %}\theta_c{% endmathjax %}以及附加条件向量{% mathjax %}\mathbf{c}{% endmathjax %}。
+- 使用两个零卷积层，表示为{% mathjax %}\mathcal{Z}_{\theta_{z1}}(.;.){% endmathjax %}和{% mathjax %}\mathcal{Z}_{\theta_{z2}}(.;.){% endmathjax %}，它是`1x1`卷积层，权重和偏差都初始化为零，用于连接这两个块。零卷积通过在初始训练步骤中消除梯度作为随机噪声来保护这个主干。
+- 最终输出为：{% mathjax %}\mathbf{y}_c = \mathcal{F}_\theta(\mathbf{x}) + \mathcal{Z}_{\theta_{z2}}(\mathcal{F}_{\theta_c}(\mathbf{x} + \mathcal{Z}_{\theta_{z1}}(\mathbf{c}))){% endmathjax %}。
+{% asset_img dm_18.png "ControlNet 架构" %}
+
+用于扩散建模的扩散变换器([`DiT；Peebles & Xie，2023`](https://arxiv.org/abs/2212.09748))对潜在斑块进行操作，使用与`LDM`（潜在扩散模型）相同的设计空间。`DiT`具有以下设置：
+- 获取输入的潜在表示作为`DiT`的输入。
+- “修补”尺寸噪声潜伏期{% mathjax %}I\times I\times C{% endmathjax %}分成大小{% mathjax %}p{% endmathjax %}并将其转换为大小为{% mathjax %}(I/P)^2{% endmathjax %}。
+- 然后，这个`token`序列会经过`Transformer`块。他们正在探索三种不同的设计，以根据时间步长等上下文信息进行生成{% mathjax %}t{% endmathjax %}或类别标签{% mathjax %}c{% endmathjax %}。在三种设计中，`adaLN`（自适应层范数）`-Zero`效果最好，优于上下文条件和交叉注意块。尺度和移位参数，{% mathjax %}\gamma{% endmathjax %}和{% mathjax %}\beta{% endmathjax %}，是从嵌入向量的总和回归而来的{% mathjax %}t{% endmathjax %}和{% mathjax %}c{% endmathjax %}。维度缩放参数{% mathjax %}\alpha{% endmathjax %}也会回归并立即应用于`DiT`块内的任何残差连接之前。
+- `Transformer`解码器输出噪声预测和输出对角协方差预测。
+
+{% asset_img dm_19.png "扩散Tranformer(DiT)架构" %}
+
+`Transformer`架构可以轻松扩展，这一点众所周知。这是`DiT`的最大优势之一，因为其性能会随着计算量的增加而提升，而且实验表明，更大的`DiT`模型具有更高的计算效率。
+
+#### 结论
+
+- **优点**：可处理性和灵活性是生成模型中两个相互冲突的目标。可处理模型可以通过分析评估并廉价地拟合数据（例如通过高斯或拉普拉斯），但它们无法轻松描述丰富数据集中的结构。灵活的模型可以拟合数据中的任意结构，但评估、训练或从这些模型中采样通常成本高昂。扩散模型既具有分析可处理性，又具有灵活性。
+- **缺点**：扩散模型依赖于较长的马尔可夫链扩散步骤来生成样本，因此在时间和计算方面可能非常昂贵。虽然已经提出了新方法来加快该过程，但采样速度仍然比`GAN`慢。
+
