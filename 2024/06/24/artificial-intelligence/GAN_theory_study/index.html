@@ -159,7 +159,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">基本原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">什么是生成模型？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A6%82%E7%8E%87%E5%BB%BA%E6%A8%A1"><span class="nav-number">3.</span> <span class="nav-text">概率建模</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GAN%E7%BB%93%E6%9E%84%E6%A6%82%E8%BF%B0"><span class="nav-number">4.</span> <span class="nav-text">GAN结构概述</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E5%99%A8"><span class="nav-number">4.1.</span> <span class="nav-text">生成器</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E8%BE%93%E5%85%A5"><span class="nav-number">4.1.1.</span> <span class="nav-text">随机输入</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%89%B4%E5%88%AB%E5%99%A8"><span class="nav-number">4.2.</span> <span class="nav-text">鉴别器</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">基本原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">什么是生成模型？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A6%82%E7%8E%87%E5%BB%BA%E6%A8%A1"><span class="nav-number">3.</span> <span class="nav-text">概率建模</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GAN%E7%BB%93%E6%9E%84%E6%A6%82%E8%BF%B0"><span class="nav-number">4.</span> <span class="nav-text">GAN结构概述</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E5%99%A8"><span class="nav-number">4.1.</span> <span class="nav-text">生成器</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E8%BE%93%E5%85%A5"><span class="nav-number">4.1.1.</span> <span class="nav-text">随机输入</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%89%B4%E5%88%AB%E5%99%A8"><span class="nav-number">4.2.</span> <span class="nav-text">鉴别器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#GAN%E8%AE%AD%E7%BB%83"><span class="nav-number">4.3.</span> <span class="nav-text">GAN训练</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BA%A4%E6%9B%BF%E8%AE%AD%E7%BB%83"><span class="nav-number">4.3.1.</span> <span class="nav-text">交替训练</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%94%B6%E6%95%9B"><span class="nav-number">4.3.2.</span> <span class="nav-text">收敛</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-number">4.4.</span> <span class="nav-text">损失函数</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -307,14 +307,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.3k</span>
+      <span>3.7k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>8 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
@@ -385,7 +385,16 @@
 <li>真实数据实例，例如真实的人物图片。判别器在训练期间使用这些实例作为正例。</li>
 <li>生成器创建的虚假数据实例。鉴别器在训练期间使用这些实例作为反面示例。</li>
 </ul>
-<p>在上图中，两个“样本”框代表输入判别器的两个数据源。在判别器训练期间，生成器不会进行训练。生成器的权重保持不变，同时为判别器生成训练样本。</p>
+<p>在上图中，两个“样本”框代表输入判别器的两个数据源。在判别器训练期间，生成器不会进行训练。生成器的权重保持不变，同时为判别器生成训练样本。鉴别器连接到两个损失函数。在鉴别器训练期间，鉴别器忽略生成器损失，仅使用鉴别器损失。我们在生成器训练期间使用生成器损失。在鉴别器训练期间：鉴别器对来自生成器的真实数据和虚假数据进行分类；鉴别器损失惩罚鉴别器将真实实例错误地分类为假实例或将假实例错误地分类为真实实例；鉴别器通过鉴别器网络的鉴别器损失反向传播来更新其权重。</p>
+<h5 id="GAN训练"><a href="#GAN训练" class="headerlink" title="GAN训练"></a>GAN训练</h5><p>由于<code>GAN</code>包含两个单独训练的网络，因此其训练算法必须解决两个复杂问题：<code>GAN</code>必须兼顾两种不同的训练（生成器和鉴别器）；<code>GAN</code>收敛性很难识别。</p>
+<h6 id="交替训练"><a href="#交替训练" class="headerlink" title="交替训练"></a>交替训练</h6><p>生成器和鉴别器的训练过程是不同的。那么我们如何训练整个<code>GAN</code>？<code>GAN</code>训练按交替周期进行：1.鉴别器训练一个或多个周期；2.生成器训练一个或多个周期；重复步骤1和2，继续训练生成器和鉴别器网络。在判别器训练阶段，我们让生成器保持不变。当判别器训练试图找出如何区分真实数据和虚假数据时，它必须学会如何识别生成器的缺陷。对于经过全面训练的生成器来说，这是一个与产生随机输出的未经训练的生成器不同的问题。类似地，我们在生成器训练阶段保持鉴别器不变。否则，生成器将试图击中<strong>移动目标</strong>，并且可能永远不会收敛。正是这种来回反复的过程让<code>GAN</code>能够解决原本难以解决的生成问题。我们从一个简单得多的分类问题开始，从而在困难的生成问题中获得立足点。相反，如果您无法训练分类器来区分真实数据和生成的数据，即使是初始随机生成器输出，您也无法开始<code>GAN</code>训练。</p>
+<h6 id="收敛"><a href="#收敛" class="headerlink" title="收敛"></a>收敛</h6><p>随着生成器的训练不断改进，鉴别器的性能会越来越差，因为鉴别器无法轻易区分真假。如果生成器很完美，那么鉴别器的准确率只有<code>50%</code>。实际上，鉴别器通过抛硬币来做出预测。这种进展给整个<code>GAN</code>的收敛带来了问题：随着时间的推移，鉴别器反馈的意义越来越小。如果<code>GAN</code>在鉴别器给出完全随机反馈之后继续训练，那么生成器就会开始在垃圾反馈上进行训练，其自身的质量可能会下降。对于<code>GAN</code>来说，收敛往往是一种短暂的状态，而不是稳定的状态。</p>
+<h5 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h5><p><code>GAN</code>试图复制概率分布。因此，它们应该使用反映<code>GAN</code>生成的数据分布与真实数据分布之间距离的损失函数。如何捕捉<code>GAN</code>损失函数中两个分布之间的差异？这个问题是一个活跃的研究领域，已经提出了许多方法。我们将在这里讨论两个常见的<code>GAN</code>损失函数，它们都已实现：</p>
+<ul>
+<li><strong>极小极大损失</strong>：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1406.2661"><code>Goodfellow</code>等人</a>在介绍<code>GAN</code>的论文中所使用的损失函数。</li>
+<li><strong>Wasserstein损失</strong>：<code>TF-GAN</code>估算器的默认损失函数。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1506.05439"><code>Frogner</code>等人,<code>2015</code></a>中首次描述了该函数。</li>
+</ul>
+<p><code>GAN</code>可以有两个损失函数：一个用于生成器训练，一个用于鉴别器训练。两个损失函数如何协同工作以反映概率分布之间的距离度量？在我们这里要介绍的损失方案中，生成器和鉴别器损失源自概率分布之间的单一距离度量。然而，在这两种方案中，生成器只能影响距离度量中的一个项：反映虚假数据分布的项。因此，在生成器训练期间，我们会删除另一个反映真实数据分布的项。尽管生成器和鉴别器的损失源自同一个公式，但它们最终看起来是不同的。</p>
 
     </div>
 
@@ -458,14 +467,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">887k</span>
+    <span title="站点总字数">2.4m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">49:18</span>
+    <span title="站点阅读时长">33:35</span>
   </span>
 </div>
 <div class="busuanzi-count">
