@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">195</span>
+          <span class="site-state-item-count">196</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -231,6 +231,141 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/06/24/%E3%80%90Rust%E3%80%91%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/06/24/%E3%80%90Rust%E3%80%91%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">【Rust】错误处理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-06-24 17:17:46" itemprop="dateCreated datePublished" datetime="2022-06-24T17:17:46+08:00">2022-06-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><code>Rust</code> 的错误处理方法非常不同寻常，本节介绍了 Rust 中两种不同类型的错误处理：<code>panic</code> 和 <code>Result</code>。</p>
+<h3 id="Panic"><a href="#Panic" class="headerlink" title="Panic"></a><code>Panic</code></h3><p>当程序遇到,数组越界，除<code>0</code>，这样很严重的<code>bug</code>时就会<code>panic</code>，在 <code>Result</code> 上调用 <code>.expect()</code> 遇到错误以及断言失败都会发生<code>panic</code>。还有宏 <code>panic!()</code>，用于在代码发现它出错是，想要直接退出。<code>panic!()</code> 接受可选的 <code>println!()</code> 样式参数，用于构建错误消息。</p>
+<p>这些都是程序员的错，但我们都会犯错，当这些不该发生的错误发生时，<code>Rust</code> 可以终止进程。来看一个除<code>0</code>的示例：</p>
+<div class="note danger"><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="title function_ invoke__">pirate_share</span>(<span class="number">100</span>, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">pirate_share</span>(total: <span class="type">u64</span>, crew_size: <span class="type">usize</span>) <span class="punctuation">-&gt;</span> <span class="type">u64</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">half</span> = total / <span class="number">2</span>;</span><br><span class="line">    half / crew_size <span class="keyword">as</span> <span class="type">u64</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行这段代码，程序会奔溃的并且打印出调用栈，还提示我们可以设置 <code>RUST_BACKTRACE=full</code> 获得更多的信息：</p>
+<pre><code>/Users/fudenglong/.cargo/bin/cargo run --color=always --package mandelbrot --bin mandelbrot
+    Finished dev [unoptimized + debuginfo] target(s) in 0.00s
+    Running `target/debug/mandelbrot`
+thread &#39;main&#39; panicked at &#39;attempt to divide by zero&#39;, src/main.rs:7:5
+stack backtrace:
+0: rust_begin_unwind
+            at /rustc/4ca19e09d302a4cbde14f9cb1bc109179dc824cd/library/std/src/panicking.rs:584:5
+1: core::panicking::panic_fmt
+            at /rustc/4ca19e09d302a4cbde14f9cb1bc109179dc824cd/library/core/src/panicking.rs:142:14
+2: core::panicking::panic
+            at /rustc/4ca19e09d302a4cbde14f9cb1bc109179dc824cd/library/core/src/panicking.rs:48:5
+3: mandelbrot::pirate_share
+            at ./src/main.rs:7:5
+4: mandelbrot::main
+            at ./src/main.rs:2:5
+5: core::ops::function::FnOnce::call_once
+            at /rustc/4ca19e09d302a4cbde14f9cb1bc109179dc824cd/library/core/src/ops/function.rs:248:5
+note: Some details are omitted, run with `RUST_BACKTRACE=full` for a verbose backtrace.
+
+Process finished with exit code 101
+</code></pre>
+</div>
+
+<p>线程之间的 <code>panic</code> 是相互独立的，也可以调用 <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/panic/fn.catch_unwind.html"><code>std::panic::catch_unwind()</code></a> 捕获异常，并且让程序执行。默认发生 <code>panic</code> 时会展开调用栈，此外有两种情况 <code>Rust</code> 不会尝试展开调用栈： </p>
+<ul>
+<li><p>如果 <code>.drop()</code> 方法触发了第二次恐慌，而 <code>Rust</code> 在第一次之后仍在尝试清理，这被认为是致命的，<code>Rust</code> 停止展开并中止整个进程； </p>
+</li>
+<li><p><code>Rust</code> 的恐慌行为是可定制的。如果使用 <code>-C panic=abort</code> 编译，程序中的第一个 <code>panic</code> 会立即中止进程。（使用这个选项，<code>Rust</code> 不需要知道如何展开调用栈，因此这可以减少编译代码的大小。）</p>
+</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/24/%E3%80%90Rust%E3%80%91%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1221,110 +1356,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/05/02/Design-Patterns/OOP/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/05/02/Design-Patterns/OOP/" class="post-title-link" itemprop="url">面向对象</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-05-02 12:34:32" itemprop="dateCreated datePublished" datetime="2022-05-02T12:34:32+08:00">2022-05-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/" itemprop="url" rel="index"><span itemprop="name">设计原则</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>9.3k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>31 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>几年前在面试的时候，还经常被面试官问 <code>OOP</code> 的四个特征是什么以及他们背后代表的意思，几年过去了，除了不支持面向对象的语言之外，面向对象编程思想已经深入到了每个开发者的灵魂，只是做的好与不好罢了。</p>
-<p>面向对象编程中有两个非常基础的概念，类和对象，面向对象编程是一种编程范式或者说编程风格，它以类或者对象作为组织代码的基本单元，并将封装，继承，抽象，多态作为代码设计和实现的基石，不像面向过程编程语言，以函数为程序中的基本单元。</p>
-<p>面向对象编程只是一种编程思想，可以用不同的语言进行实现，即使我们用面向对象语言，也完全可以写出面向过程风格的代码。至于什么是面向对象编程语言，并没有严格的定义，只要它能实现 <code>OOP</code> 的四大特性，那它就是面向对象编程语言，例如：<code>Rust</code>，<code>C++</code>，<code>GO</code>，<code>Java</code>，<code>Python</code> 以及 <code>PHP</code> 等，</p>
-<p>面向对象编程的前提是面向对象分析（<code>OOA</code>）和面向对象设计（<code>OOD</code>），这样才能进行面向对象编程（<code>OOP</code>），具备完整的面向对象编程的思维。面向对象分析和设计两个阶段的产物应该是类的设计，包括应用程序应该被分为哪些类，每个类该有哪些属性和方法，类与类之间如何交互等等，它们比较贴近代码，非常具体，容易落地实现。</p>
-<p>在 <code>OOA</code> 和 <code>OOD</code> 的过程中，我们会经常用到 <code>UML（Unified Model Language）</code> 工具辅助我们进行工作。<code>UML</code> 是一种比较复杂的工具，除了包括我们常见的类图，还有用例图，顺序图，活动图，状态图，组件图等，即使是类图，类之间的关系就有泛化，实现，关联，聚合，组合以及依赖等，熟练掌握难度比较大，即便你掌握了，你同事不一定掌握，沟通成本依然很高，大多时候，我们会用草图实现我们的设计过程。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/05/02/Design-Patterns/OOP/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/17/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><span class="page-number current">18</span><a class="page-number" href="/page/19/">19</a><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/19/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1351,14 +1382,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">885k</span>
+    <span title="站点总字数">887k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">49:10</span>
+    <span title="站点阅读时长">49:18</span>
   </span>
 </div>
 <div class="busuanzi-count">
