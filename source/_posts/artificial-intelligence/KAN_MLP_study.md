@@ -71,7 +71,7 @@ y = ax^3+ bx^2 + cx + d
 \end{aligned}
 {% endmathjax %}
 
-我们有一个公式来计算B曲线的方程，而无需进行递归计算，我们一系列的点{% mathjax %}p_0,p1,\ldots,p_n{% endmathjax %},我们可以用这个公式来计算这些点之间的差值。
+我们有一个公式来计算B样条曲线的方程，而无需进行递归计算，我们一系列的点{% mathjax %}p_0,p1,\ldots,p_n{% endmathjax %},我们可以用这个公式来计算这些点之间的差值。
 {% mathjax '{"conversion":{"em":14}}' %}
 \mathbf{B}(t) = \sum_{i=0}^n 
 \left(
@@ -105,3 +105,8 @@ N_{i,1}(t) =
 N_{i,k}(t) = \frac{t - t_i}{t_{i+k-1} - t_i} N_{i,k-1}(t) + \frac{t_{i+k} - t}{t_{i+k} - t_{i+1}} N_{i+1,k-1}(t)
 {% endmathjax %}
 即{% mathjax %}k>1{% endmathjax %}。
+
+在实分析和近似理论中，**柯尔莫哥洛夫-阿诺德表示定理（或叠加定理）**指出，每个多元连续函数{% mathjax %}{\displaystyle f\colon [0,1]^{n}\to \mathbb {R}}{% endmathjax %}可以表示为一个变量的连续函数的二元加法的叠加。它解决了希尔伯特第十三问题的一个更受约束的形式，因此原始的希尔伯特第十三问题是一个推论。如果{% mathjax %}\displaystyle f{% endmathjax %}是多元连续函数，则{% mathjax %}\displaystyle f{% endmathjax %}可以写成由一个单变量连续函数和二元加法运算组成的有限复合函数。更具体地说
+{% mathjax '{"conversion":{"em":14}}' %}
+{\displaystyle f(\mathbf {x} )=f(x_{1},\ldots ,x_{n})=\sum _{q=0}^{2n}\Phi _{q}\!\left(\sum _{p=1}^{n}\phi _{q,p}(x_{p})\right)}。
+{% endmathjax %}
