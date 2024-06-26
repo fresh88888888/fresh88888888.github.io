@@ -14,7 +14,7 @@ mathjax:
 
 #### 多层感知器(MLP)
 
-多层感知器(`MLP`)是如何工作的？多层感知器(`MLP`)是由多个神经元层组成的神经网路，每个神经元层以前馈方式组织，这意味着一层的输出称为下一层的输入，通常在每一层，我们会放置一些非线性激活函数，例如`RelU`，在这种情况下，会形成一个非常简单的网络，如下图所示：
+多层感知器(`MLP`)是如何工作的？多层感知器(`MLP`)是由多个神经元层组成的神经网路，每个神经元层以前馈方式组织，这意味着一层的输出作为下一层的输入，通常在每一层，我们会放置一些非线性激活函数，例如`RelU`，在这种情况下，会形成一个非常简单的网络，如下图所示：
 {% asset_img km_1.png %}
 <!-- more -->
 
@@ -33,7 +33,7 @@ mathjax:
 - 实现决策边界：非线性激活函数使得神经网络能够学习非线性决策边界，这对于解决复杂的分类问题至关重要。
 - 映射到特定范围：某些激活函数（如`Sigmoid`和`Tanh`）可以将输入映射到特定的范围，这对于某些任务（如概率预测）非常有用。
 - 促进反向传播：非线性激活函数的可微性质使得反向传播算法能够有效地调整网络权重。
-- 增加网络深度的意义：使用非线性激活函数使得增加网络深度变得有意义，因为每一层都可以学习更复杂的特征表示。
+- 增加网络深度能力：使用非线性激活函数使得增加网络深度变得有意义，因为每一层都可以学习更复杂的特征表示。
 
 总之，非线性激活函数是使神经网络能够学习复杂模式和关系的关键组成部分，它们使得神经网络成为强大的通用函数逼近器，能够解决各种复杂的机器学习任务。
 ##### 数据拟合
@@ -54,13 +54,13 @@ y = ax^3+ bx^2 + cx + d
 {% asset_img km_4.png %}
 
 如果现在我们有数百个点并且我们想生成一条穿过它们的平滑曲线，我们可以这样做。但是会存在两个问题：1.我们需要求解非常复杂的方程组，随着点数的增加，这条多项式曲线会以越来越奇怪的方式呈现，我们需要一种方法来控制这条曲线的平滑度，并且不让它在极端情况下变得如此疯狂，在这里需要研究`B`曲线，看看它是如何工作的。
-###### B曲线
+###### B样条曲线
 
-B曲线是一条参数化的曲线，因为该差值曲线上的点坐标取决于一个称为{% mathjax %}T{% endmathjax %}的自变量，在这种情况下，你可以将其视为从{% mathjax %}[0,1]{% endmathjax %}的时间，例如，我们只有两个点，两个点只能画一条直线，假设你想在{% mathjax %}p_0{% endmathjax %}和{% mathjax %}p_1{% endmathjax %}之间画一条线。我们{% mathjax %}p_0{% endmathjax %}开始，走向{% mathjax %}p_1{% endmathjax %}，这是我们的差值线，正如你所看到的，随着时间的移动，该点越来越接近{% mathjax %}p_1{% endmathjax %}而远离{% mathjax %}p_0{% endmathjax %}，因此，你可以将变量{% mathjax %}t{% endmathjax %}视为时间变量，方程如下：
+`B`样条曲线是一条参数化的曲线，因为该差值曲线上的点坐标取决于一个称为{% mathjax %}T{% endmathjax %}的自变量，在这种情况下，你可以将其视为从{% mathjax %}[0,1]{% endmathjax %}的时间，例如，我们只有两个点，两个点只能画一条直线，假设你想在{% mathjax %}p_0{% endmathjax %}和{% mathjax %}p_1{% endmathjax %}之间画一条线。我们{% mathjax %}p_0{% endmathjax %}开始，走向{% mathjax %}p_1{% endmathjax %}，这是我们的差值线，正如你所看到的，随着时间的移动，该点越来越接近{% mathjax %}p_1{% endmathjax %}而远离{% mathjax %}p_0{% endmathjax %}，因此，你可以将变量{% mathjax %}t{% endmathjax %}视为时间变量，方程如下：
 {% mathjax '{"conversion":{"em":14}}' %}
 \mathbf{B}(t) = \mathbf{P}_0 + t(\mathbf{p}_1 - \mathbf{P}_0) = (1 - t) + t\mathbf{P}_1
 {% endmathjax %}
-现在这条曲线是参数化，这也是你所看到的{% mathjax %}B{% endmathjax %}是粗体，而{% mathjax %}t{% endmathjax %}不是粗体的原因，因为它可以是一个向量，意味着这个点位于{% mathjax %}X{% endmathjax %}和{% mathjax %}Y{% endmathjax %}坐标中，所有这些坐标都取决于{% mathjax %}t{% endmathjax %}变量，因此在每个时间步，它都会告诉我们相对于时间的位置。当然我们可以将其扩展到3个点，我们可以绘制一条平滑的曲线，对它们进行差值，在B曲线的情况下，它仅从第一个点和最后一个点穿过，并在中间点之间进行差值。因此它不会接触中间点，而是接近中间点。如何计算这条差值曲线的方程呢？（即红色曲线），在这种情况下我们要做的就是进行递归计算。首先在{% mathjax %}p_0{% endmathjax %}和{% mathjax %}p_1{% endmathjax %}之间进行线性差值，你可以使用这个方程{% mathjax %}(1 - t) + t\mathbf{P}_1{% endmathjax %}，{% mathjax %}p_0{% endmathjax %}和{% mathjax %}p_1{% endmathjax %}差值计算的点为{% mathjax %}q_0{% endmathjax %},随着时间的移动，我们从{% mathjax %}p_0{% endmathjax %}移动到{% mathjax %}p_1{% endmathjax %}；然后我们在{% mathjax %}p_1{% endmathjax %}和{% mathjax %}p_2{% endmathjax %}之间进行线性差值，从而产生一个新的点{% mathjax %}q_1{% endmathjax %}，随着时间的推移，该点将从{% mathjax %}p_1{% endmathjax %}移动到{% mathjax %}p_2{% endmathjax %}，接下来我们在{% mathjax %}q_0{% endmathjax %}和{% mathjax %}q_1{% endmathjax %}之间创建另一个线性插值。这将为我们提供差值3个点的曲线的差值点的坐标。这将为我们提供三个点差值的最终曲线的方程，得到：
+现在这条曲线是参数化，这也是你所看到的{% mathjax %}B{% endmathjax %}是粗体，而{% mathjax %}t{% endmathjax %}不是粗体的原因，因为它可以是一个向量，意味着这个点位于{% mathjax %}X{% endmathjax %}和{% mathjax %}Y{% endmathjax %}坐标中，所有这些坐标都取决于{% mathjax %}t{% endmathjax %}变量，因此在每个时间步，它都会告诉我们相对于时间的位置。当然我们可以将其扩展到3个点，我们可以绘制一条平滑的曲线，对它们进行差值，在B曲线的情况下，它仅从第一个点和最后一个点穿过，并在中间点之间进行差值。因此它不会接触中间点，而是接近中间点。如何计算这条差值曲线的方程呢？（即红色曲线），在这种情况下我们要做的就是进行递归计算。首先在{% mathjax %}p_0{% endmathjax %}和{% mathjax %}p_1{% endmathjax %}之间进行线性差值，你可以使用这个方程{% mathjax %}(1 - t) + t\mathbf{P}_1{% endmathjax %}，{% mathjax %}p_0{% endmathjax %}和{% mathjax %}p_1{% endmathjax %}差值计算的点为{% mathjax %}q_0{% endmathjax %},随着时间的移动，我们从{% mathjax %}p_0{% endmathjax %}移动到{% mathjax %}p_1{% endmathjax %}；然后我们在{% mathjax %}p_1{% endmathjax %}和{% mathjax %}p_2{% endmathjax %}之间进行线性差值，从而产生一个新的点{% mathjax %}q_1{% endmathjax %}，随着时间的推移，该点将从{% mathjax %}p_1{% endmathjax %}移动到{% mathjax %}p_2{% endmathjax %}，接下来我们在{% mathjax %}q_0{% endmathjax %}和{% mathjax %}q_1{% endmathjax %}之间创建另一个线性插值。这将为我们提供差值3个点的曲线的差值点的坐标和最终曲线方程。公式如下：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{aligned}
 \mathbf{Q}_0(t) & = (1-t)\mathbf{P}_0 + t\mathbf{P}_1 \\
@@ -71,3 +71,37 @@ B曲线是一条参数化的曲线，因为该差值曲线上的点坐标取决�
 \end{aligned}
 {% endmathjax %}
 
+我们有一个公式来计算B曲线的方程，而无需进行递归计算，我们一系列的点{% mathjax %}p_0,p1,\ldots,p_n{% endmathjax %},我们可以用这个公式来计算这些点之间的差值。
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{B}(t) = \sum_{i=0}^n 
+\left(
+    \begin{array}{ccc}
+        n \\
+        i 
+    \end{array} 
+\right)
+(1-t)^{n-i}t^i\mathbf{P}_i = \sum_{i=0}^n b_{i,n} (t)\mathbf{P}_i
+{% endmathjax %}
+{% asset_img km_5.png %}
+
+`B`样条曲线是通过控制点{% mathjax %}p_i{% endmathjax %}和B样条曲线基函数{% mathjax %}N_{i,k}(t){% endmathjax %}的线性组合定义的，如下所示：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{r}(t) = \sum_{i=0}^n \mathbf{p}_i N_{i,k}(t),\;\;n\geq k - 1,\;\; t\in [t_{k-1},t_{n+1}]
+{% endmathjax %}
+在这，控制点被称为`de Boor`点，基函数{% mathjax %}N_{i,k}(t){% endmathjax %}被定义在节点向量上。
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{T} = (t_0,t_1,\ldots,t_{k-1},t_{k},t_{k+1},\ldots, t_{n-1},t_n,t_{n+1},\ldots,t_{n+k})
+{% endmathjax %}
+其中有{% mathjax %}n+k+1{% endmathjax %}个元素，即控制点的数量({% mathjax %}n+1{% endmathjax %})加上曲线的阶数{% mathjax %}k{% endmathjax %}，每个节点跨度被映射到两个连续关节点{% mathjax %}t_i\leq t\leq t_{i+1}{% endmathjax %}之间的多项式曲线{% mathjax %}r(t_i){% endmathjax %}和{% mathjax %}r(t_{i+1}){% endmathjax %}上。对节点向量进行归一化，使其在区间{% mathjax %}[0,1]{% endmathjax %}之间，这样有助于提高浮点数计算的数值精度，因为该区间{% mathjax %}[133,300]{% endmathjax %}浮点数密度较高。给定一个节点向量{% mathjax %}\mathbf{T}{% endmathjax %}，B样条基函数{% mathjax %}N_{i,k}(t){% endmathjax %}定义为：
+{% mathjax '{"conversion":{"em":14}}' %}
+N_{i,1}(t) = 
+\begin{cases}
+    1 \text{ for }t_i\leq t < t_{i+1} \\
+    0 \text{ otherwise }
+\end{cases}
+{% endmathjax %}
+即{% mathjax %}k = 1{% endmathjax %}，并且：
+{% mathjax '{"conversion":{"em":14}}' %}
+N_{i,k}(t) = \frac{t - t_i}{t_{i+k-1} - t_i} N_{i,k-1}(t) + \frac{t_{i+k} - t}{t_{i+k} - t_{i+1}} N_{i+1,k-1}(t)
+{% endmathjax %}
+即{% mathjax %}k>1{% endmathjax %}。
