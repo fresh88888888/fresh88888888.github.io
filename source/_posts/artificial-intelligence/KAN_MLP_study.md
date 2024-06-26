@@ -139,7 +139,7 @@ N_{i,k}(t) = \frac{t - t_i}{t_{i+k-1} - t_i} N_{i,k-1}(t) + \frac{t_{i+k} - t}{t
 
 #### KAN代码实现
 
-先安装必要的KAN库，如下：
+先安装必要的`KAN`库，如下：
 ```bash
 pip install pykan
 ```
