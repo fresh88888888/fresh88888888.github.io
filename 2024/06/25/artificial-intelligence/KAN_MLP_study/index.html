@@ -178,7 +178,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">197</span>
+          <span class="site-state-item-count">198</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -311,14 +311,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>5.3k</span>
+      <span>7.9k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>18 分钟</span>
+      <span>7 分钟</span>
     </span>
 </div>
 
@@ -391,7 +391,7 @@
 <h5 id="KAN可解释性"><a href="#KAN可解释性" class="headerlink" title="KAN可解释性"></a>KAN可解释性</h5><p>上面我们提出了多种<code>KAN</code>简化技术。我们可以将这些简化选项视为可以点击的按钮。与这些按钮交互的用户可以决定接下来最有可能点击哪个按钮以使<code>KAN</code>更具可解释性。我们使用下面的示例来展示用户如何与<code>KAN</code>交互以获得最大程度可解释性的结果。</p>
 <img data-src="/2024/06/25/artificial-intelligence/KAN_MLP_study/km_11.png" class="" title="如何使用KAN进行符号回归的示例">
 
-<h4 id="KAN代码实现"><a href="#KAN代码实现" class="headerlink" title="KAN代码实现"></a>KAN代码实现</h4><p>先安装必要的KAN库，如下：</p>
+<h4 id="KAN代码实现"><a href="#KAN代码实现" class="headerlink" title="KAN代码实现"></a>KAN代码实现</h4><p>先安装必要的<code>KAN</code>库，如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install pykan</span><br></pre></td></tr></table></figure>
 <p>现在库已安装，让我们导入并定义模型：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> make_moons</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> kan <span class="keyword">import</span> KAN</span><br><span class="line"></span><br><span class="line">dataset = &#123;&#125;</span><br><span class="line">train_input, train_label = make_moons(n_samples=<span class="number">1000</span>, shuffle=<span class="literal">True</span>, noise=<span class="number">0.1</span>, random_state=<span class="literal">None</span>)</span><br><span class="line">test_input, test_label = make_moons(n_samples=<span class="number">1000</span>, shuffle=<span class="literal">True</span>, noise=<span class="number">0.1</span>, random_state=<span class="literal">None</span>)</span><br><span class="line"></span><br><span class="line">dataset[<span class="string">&#x27;train_input&#x27;</span>] = torch.from_numpy(train_input)</span><br><span class="line">dataset[<span class="string">&#x27;test_input&#x27;</span>] = torch.from_numpy(test_input)</span><br><span class="line">dataset[<span class="string">&#x27;train_label&#x27;</span>] = torch.from_numpy(train_label)</span><br><span class="line">dataset[<span class="string">&#x27;test_label&#x27;</span>] = torch.from_numpy(test_label)</span><br><span class="line"></span><br><span class="line">model = KAN(width=[<span class="number">2</span>,<span class="number">2</span>], grid=<span class="number">3</span>, k=<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train_acc</span>():</span><br><span class="line">    <span class="keyword">return</span> torch.mean((torch.argmax(model(dataset[<span class="string">&#x27;train_input&#x27;</span>]),dim=<span class="number">1</span>) == dataset[<span class="string">&#x27;train_label&#x27;</span>]).<span class="built_in">float</span>())</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test_acc</span>():</span><br><span class="line">    <span class="keyword">return</span> torch.mean((torch.argmax(model(dataset[<span class="string">&#x27;test_input&#x27;</span>]),dim=<span class="number">1</span>) == dataset[<span class="string">&#x27;test_label&#x27;</span>]).<span class="built_in">float</span>())</span><br><span class="line"></span><br><span class="line">results = model.train(dataset, opt=<span class="string">&quot;LBFGS&quot;</span>, steps=<span class="number">20</span>, metrics=(train_acc, test_acc), loss_fn=torch.nn.CrossEntropyLoss())</span><br></pre></td></tr></table></figure>
@@ -453,6 +453,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2024/06/26/artificial-intelligence/DPO_theory_study/" rel="next" title="直接偏好优化(DPO)：Bradley-Terry模型 & 对数概率（深度学习）">
+                  直接偏好优化(DPO)：Bradley-Terry模型 & 对数概率（深度学习） <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
@@ -487,14 +490,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">896k</span>
+    <span title="站点总字数">2.4m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">49:48</span>
+    <span title="站点阅读时长">33:44</span>
   </span>
 </div>
 <div class="busuanzi-count">
