@@ -129,7 +129,7 @@ N_{i,k}(t) = \frac{t - t_i}{t_{i+k-1} - t_i} N_{i,k-1}(t) + \frac{t_{i+k} - t}{t
 {% asset_img km_9.png "KAN网络实现细节" %}
 
 ##### KAN参数数量
-假设深度为{% mathjax %}L{% endmathjax %}，这些层的宽度为{% mathjax %}n_0 = n_1 = \ldots = n_L= N{% endmathjax %}，在{% mathjax %}G{% endmathjax %}的节点向量区间上每个样条的阶数为{% mathjax %}k{% endmathjax %}（通常{% mathjax %}k=3{% endmathjax %}）。则参数时间复杂度{% mathjax %}\mathcal{O}(N^2 L(G+k))\sim\mathcal{O}(N^2 LG){% endmathjax %}，相比之下，深度为{% mathjax %}L{% endmathjax %}且宽度为{% mathjax %}N{% endmathjax %}的参数时间复杂度为{% mathjax %}\mathcal{O}(N^2 L){% endmathjax %}，这似乎比`KAN`更有效，幸运的是，KAN通常比MLP需要更小的{% mathjax %}N{% endmathjax %}不仅仅节省了参数，而且还实现了更好的泛化并提高了可解释性。我们注意到，对于一维问题，我们可以取{% mathjax %}N = L = 1{% endmathjax %}，而我们实现中的`KAN`网络只不过是一个样条近似。
+假设深度为{% mathjax %}L{% endmathjax %}，这些层的宽度为{% mathjax %}n_0 = n_1 = \ldots = n_L= N{% endmathjax %}，在{% mathjax %}G{% endmathjax %}的节点向量区间上每个样条的阶数为{% mathjax %}k{% endmathjax %}（通常{% mathjax %}k=3{% endmathjax %}）。则参数时间复杂度{% mathjax %}\mathcal{O}(N^2 L(G+k))\sim\mathcal{O}(N^2 LG){% endmathjax %}，相比之下，深度为{% mathjax %}L{% endmathjax %}且宽度为{% mathjax %}N{% endmathjax %}的参数时间复杂度为{% mathjax %}\mathcal{O}(N^2 L){% endmathjax %}，这似乎比`KAN`更有效，幸运的是，`KAN`通常比`MLP`需要更小的{% mathjax %}N{% endmathjax %}不仅仅节省了参数，而且还实现了更好的泛化并提高了可解释性。我们注意到，对于一维问题，我们可以取{% mathjax %}N = L = 1{% endmathjax %}，而我们实现中的`KAN`网络只不过是一个样条近似。
 
 ##### KAN可解释性
 
