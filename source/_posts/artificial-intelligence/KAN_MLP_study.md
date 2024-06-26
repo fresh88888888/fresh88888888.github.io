@@ -106,7 +106,21 @@ N_{i,k}(t) = \frac{t - t_i}{t_{i+k-1} - t_i} N_{i,k-1}(t) + \frac{t_{i+k} - t}{t
 {% endmathjax %}
 即{% mathjax %}k>1{% endmathjax %}。
 
+##### 柯尔莫哥洛夫-阿诺德表示定理
 在实分析和近似理论中，**柯尔莫哥洛夫-阿诺德表示定理（或叠加定理）**指出，每个多元连续函数{% mathjax %}{\displaystyle f\colon [0,1]^{n}\to \mathbb {R}}{% endmathjax %}可以表示为一个变量的连续函数的二元加法的叠加。它解决了希尔伯特第十三问题的一个更受约束的形式，因此原始的希尔伯特第十三问题是一个推论。如果{% mathjax %}\displaystyle f{% endmathjax %}是多元连续函数，则{% mathjax %}\displaystyle f{% endmathjax %}可以写成由一个单变量连续函数和二元加法运算组成的有限复合函数。更具体地说
 {% mathjax '{"conversion":{"em":14}}' %}
 {\displaystyle f(\mathbf {x} )=f(x_{1},\ldots ,x_{n})=\sum _{q=0}^{2n}\Phi _{q}\!\left(\sum _{p=1}^{n}\phi _{q,p}(x_{p})\right)}。
 {% endmathjax %}
+在这里，{% mathjax %}{\displaystyle \phi _{q,p}\colon [0,1]\to \mathbb {R} }{% endmathjax %}和{% mathjax %}{\displaystyle \Phi _{q}\colon \mathbb {R} \to \mathbb {R} }{% endmathjax %}。
+##### 柯尔莫哥洛夫-阿诺德网络
+
+假设有一个多元连续函数{% mathjax %}y=f(x_1,x_2){% endmathjax %}，它可以表达为一个有着`2`个输入（{% mathjax %}x_1{% endmathjax %}和{% mathjax %}x_2{% endmathjax %}）、一个输出({% mathjax %}y{% endmathjax %})、以及`5`个隐藏层神经元的`Kolmogorov Network`。隐藏层神经元数量为{% mathjax %}2n+1=5{% endmathjax %}，这里的{% mathjax %}n{% endmathjax %}指的是输入变量的个数。
+{% asset_img km_6.png %}
+
+对于第一个神经元，它接收到两个`branch`的信号，分别是{% mathjax %}\Phi_{1,1}(x_1){% endmathjax %}和{% mathjax %}\Phi_{1,2}(x_2){% endmathjax %}，这里的{% mathjax %}\Phi(x_i){% endmathjax %}是{% mathjax %}x_i{% endmathjax %}的一元函数。把{% mathjax %}\Phi_{1,1}(x_1){% endmathjax %}和{% mathjax %}\Phi_{1,2}(x_2){% endmathjax %}简单相加，就得到第一个神经元的取值。以此类推，第`2-5`个神经元也是如此，这是第一层神经元取值的计算方法。为了计算第二层神经元的结果，我们需要对第一层中的每个神经元构造一元函数（{% mathjax %}\Phi_1{% endmathjax %}到{% mathjax %}\Phi_5{% endmathjax %}），然后相加。这里无论是第一层的函数还是第二层的函数，都是一元函数，所以用曲线将其可视化的表达出来。
+##### MLP vs KAN
+
+{% asset_img km_7.png %}
+
+##### 多层KAN
+
