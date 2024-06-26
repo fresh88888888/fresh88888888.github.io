@@ -54,7 +54,7 @@ y = ax^3+ bx^2 + cx + d
 {% asset_img km_4.png %}
 
 如果现在我们有数百个点并且我们想生成一条穿过它们的平滑曲线，我们可以这样做。但是会存在两个问题：1.我们需要求解非常复杂的方程组，随着点数的增加，这条多项式曲线会以越来越奇怪的方式呈现，我们需要一种方法来控制这条曲线的平滑度，并且不让它在极端情况下变得如此疯狂，在这里需要研究`B`曲线，看看它是如何工作的。
-###### B样条曲线
+##### B样条曲线
 
 `B`样条曲线是一条参数化的曲线，因为该差值曲线上的点坐标取决于一个称为{% mathjax %}T{% endmathjax %}的自变量，在这种情况下，你可以将其视为从{% mathjax %}[0,1]{% endmathjax %}的时间，例如，我们只有两个点，两个点只能画一条直线，假设你想在{% mathjax %}p_0{% endmathjax %}和{% mathjax %}p_1{% endmathjax %}之间画一条线。我们{% mathjax %}p_0{% endmathjax %}开始，走向{% mathjax %}p_1{% endmathjax %}，这是我们的差值线，正如你所看到的，随着时间的移动，该点越来越接近{% mathjax %}p_1{% endmathjax %}而远离{% mathjax %}p_0{% endmathjax %}，因此，你可以将变量{% mathjax %}t{% endmathjax %}视为时间变量，方程如下：
 {% mathjax '{"conversion":{"em":14}}' %}
