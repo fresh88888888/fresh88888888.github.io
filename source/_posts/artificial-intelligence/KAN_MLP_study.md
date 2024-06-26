@@ -106,6 +106,8 @@ N_{i,k}(t) = \frac{t - t_i}{t_{i+k-1} - t_i} N_{i,k-1}(t) + \frac{t_{i+k} - t}{t
 {% endmathjax %}
 即{% mathjax %}k>1{% endmathjax %}。
 
+### KAN 
+
 ##### 柯尔莫哥洛夫-阿诺德表示定理
 在实分析和近似理论中，**柯尔莫哥洛夫-阿诺德表示定理（或叠加定理）**指出，每个多元连续函数{% mathjax %}{\displaystyle f\colon [0,1]^{n}\to \mathbb {R}}{% endmathjax %}可以表示为一个变量的连续函数的二元加法的叠加。它解决了希尔伯特第十三问题的一个更受约束的形式，因此原始的希尔伯特第十三问题是一个推论。如果{% mathjax %}\displaystyle f{% endmathjax %}是多元连续函数，则{% mathjax %}\displaystyle f{% endmathjax %}可以写成由一个单变量连续函数和二元加法运算组成的有限复合函数。更具体地说
 {% mathjax '{"conversion":{"em":14}}' %}
