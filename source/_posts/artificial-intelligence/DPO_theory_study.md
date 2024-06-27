@@ -80,7 +80,7 @@ J_{\text{RLHF}} = \underset{\pi_{\theta}}{\max} \mathbb{E}_{x\sim D, y\sim \pi_{
 
 最大化一个函数的意思是找到一个或多个变量的所有值，使得该函数取得最大值。这同样适用于最小值问题。例如，如果我们有一个非常简单的函数，如下所示：{% mathjax %}f(x) = -(x - 3)^2 + 4{% endmathjax %}，最大化它意味着找到变量{% mathjax %}x{% endmathjax %}的值，使得该函数最大化。一种方法是计算函数相对于变量{% mathjax %}x{% endmathjax %}的导数并将其设置为零。在我们的例子中，导数是{% mathjax %}f'(x) = -2x + 6{% endmathjax %}。如果我们将其设置为零并求解{% mathjax %}x{% endmathjax %}，我们会发现{% mathjax %}x^* = 3{% endmathjax %}是使函数最大化的值。
 {% mathjax '{"conversion":{"em":14}}' %}
-x^* = \underset{x}{\argmax} - (x - 3)^2 + 4
+x^* = \underset{x}{\text{argmax}} - (x - 3)^2 + 4
 {% endmathjax %}
 简单的抛物线问题是一个无约束优化问题。在`RLHF`的情况下，我们有一个**约束优化问题**，这意味着我们希望最大化奖励，但同时我们希望`KL`散度很小。
 {% mathjax '{"conversion":{"em":14}}' %}
