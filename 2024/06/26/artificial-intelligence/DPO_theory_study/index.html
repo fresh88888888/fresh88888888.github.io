@@ -34,6 +34,7 @@
 <meta property="og:description" content="直接偏好优化(Direct Preference Optimization,DPO)是一种用于微调大型语言模型(LLMs)以符合人类偏好的新方法。DPO旨在通过人类偏好数据来优化语言模型的输出,使其更符合人类期望,而无需使用强化学习或显式的奖励模型。DPO利用了奖励函数和最优策略之间的映射关系；它直接在策略(语言模型)上优化,而不是先学习奖励模型再优化策略；DPO将问题转化为一个简单的分类任务,在">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/06/26/artificial-intelligence/DPO_theory_study/d_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/06/26/artificial-intelligence/DPO_theory_study/d_2.png">
 <meta property="article:published_time" content="2024-06-26T10:20:11.000Z">
 <meta property="article:modified_time" content="2024-06-26T10:20:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -140,7 +141,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -153,6 +154,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#AI%E5%AF%B9%E9%BD%90"><span class="nav-number">1.</span> <span class="nav-text">AI对齐</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.</span> <span class="nav-text">强化学习</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -300,14 +302,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>282</span>
+      <span>685</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
@@ -323,7 +325,11 @@
 <p>在实践中为单词序列分配概率，例如：<code>“Shanghai is a city in”</code>，如下图所示：</p>
 <img data-src="/2024/06/26/artificial-intelligence/DPO_theory_study/d_1.png" class="">
 
-<p>这里简化为：一个<code>token</code>是一个单词，在大多数语言模型中实际上并不是这样的，但用于解释它很有帮助。给定特定提示的情况下，下一个<code>token</code>是<code>china</code>、<code>Beijing</code>、<code>Cat</code>、<code>Pizza</code>的概率是<code>85%、10%、2.5%、...</code>，语言模型给了我们这些概率。我们如何使用语言模型来生成文本呢？</p>
+<p>这里简化为：一个<code>token</code>是一个单词，在大多数语言模型中实际上并不是这样的，但用于解释它很有帮助。给定特定提示的情况下，下一个<code>token</code>是<code>china</code>、<code>Beijing</code>、<code>Cat</code>、<code>Pizza</code>的概率是<code>85%、10%、2.5%、...</code>，语言模型给了我们这些概率。我们如何使用语言模型来生成文本呢？首先我们会给出一个提示，如：<code>“Where is Shanghai?”</code>，我们把它提交给语言模型，语言模型会给出下一个单词或<code>token</code>的概率列表，假设我们选择概率分数最高的<code>token</code>，假设它是<code>“Shanghai”</code>，然后我们将其(<code>token</code>)放回到提示中：<code>“Where is Shanghai? Shanghai”</code>，再次交给语言模型，然后语言模型再次给出一个单词或<code>token</code>的概率列表，我们选择相关性最重要的一个。然后将其放回到提示后边，然后再次提交给语言模型等，直到完成了句子标记的结尾。这种情况下，这是一个特殊的<code>token</code>。</p>
+<img data-src="/2024/06/26/artificial-intelligence/DPO_theory_study/d_2.png" class="">
+
+<h4 id="AI对齐"><a href="#AI对齐" class="headerlink" title="AI对齐"></a>AI对齐</h4><p>预训练模型不会教授语言模型：回复时要有礼貌、不使用任何攻击性语言、不使用任何种族主义式的表达等。因为语言模型只会根据其拥有的数据去执行，如果你提供了互联网上的数据，实际上语言模型会表现得非常糟糕。所以我们需要将语言模型与期望的动作保持一致。不希望语言模型使用任何攻击性的语言。这也是<code>AI</code>对齐的目标。</p>
+<h4 id="强化学习"><a href="#强化学习" class="headerlink" title="强化学习"></a>强化学习</h4><p>强化学习(<code>Reinforcement Learning, RL</code>)是机器学习的一个重要分支,主要关注如何让智能体(<code>agent</code>)在与环境的交互中学习最优策略。智能体通过试错的方式,在环境中采取行动,获得奖励或惩罚,从而学习如何最大化长期累积奖励。</p>
 
     </div>
 
@@ -403,7 +409,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">49:49</span>
+    <span title="站点阅读时长">49:51</span>
   </span>
 </div>
 <div class="busuanzi-count">
