@@ -52,7 +52,7 @@ mathjax:
 {% mathjax '{"conversion":{"em":14}}' %}
 P(y_w > y_l) = frac{e^{r^{\varphi}()x,y_w}}{e^{r^{\varphi}()x,y_w} + e^{r^{\varphi}()x,y_l}} \\
  \\
-\frac{e^A}{e^A + e^B} \Rightarrow \sigma(A - B)
+\frac{e^A}{e^A + e^B} \Rightarrow \sigma(A - B) \\
  \\
 \frac{e^A}{e^A + e^B} = \frac{\frac{e^A}{e^A}}{\frac{e^A + e^B}{e^A}} = \frac{1}{\frac{e^A + e^B}{e^A} + 1 -1} = \frac{1}{1+ (\frac{e^A + e^B}{e^A} - 1)} = \frac{1}{1 + \frac{e^A + e^B - e^A}{e^A}} = \frac{1}{1 + (\frac{e^B}{e^A})} = \frac{1}{1 + e^{B-A}} = \frac{1}{1 + e^{-(A - B)}} = \sigma(A - B)
 {% endmathjax %}
