@@ -115,3 +115,29 @@ P(y_w > y_l) & = \sigma(\beta\log\frac{\pi^*(y_w|x)}{\pi_{\text{ref}}(y_w|x)} + 
 L_{\text{DPO}}(\pi_{\theta};\pi_{\text{ref}}) = -\mathbb{E}_{(x,y_w,y_l)\sim D}[\log\sigma(\beta\log\frac{\pi_{\theta}(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta\log\frac{\pi_{\theta}(y_l|x)}{\pi_{\text{ref}}(y_l|x)})]
 {% endmathjax %}
 因此，我们不是优化奖励函数，而是优化最优策略（该策略取决于上面公式中的最优奖励函数）。
+
+#### 对数概率
+
+为了评估损失，我们需要计算表达式中的对数概率。我们如何计算对数概率？
+{% mathjax '{"conversion":{"em":14}}' %}
+L_{\text{DPO}}(\pi_{\theta};\pi_{\text{ref}}) = -\mathbb{E}_{(x,y_w,y_l)\sim D}[\log\sigma(\beta\log\frac{\pi_{\theta}(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta\log\frac{\pi_{\theta}(y_l|x)}{\pi_{\text{ref}}(y_l|x)})]
+{% endmathjax %}
+例如，{% mathjax %}\pi_{\theta}(y_w|x){% endmathjax %}是当模型被输入{% mathjax %}x{% endmathjax %}时生成响应{% mathjax %}y_w{% endmathjax %}的概率。我们如何计算这个概率？
+```python
+dpo_trainer = DPOTrainer(
+    model,
+    model_ref,
+    args = training_args,
+    beta = 0.1
+    train_dataset = train_dataset,
+    tokenizer = tokenizer
+)
+
+dpo_trainer.train()
+```
+假设我们的语言模型针对给定的问题生成了以下答案：
+{% asset_img d_7.png %}
+
+计算对数概率实现：
+{% asset_img d_8.png %}
+
