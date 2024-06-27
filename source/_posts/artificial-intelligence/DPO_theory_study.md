@@ -51,9 +51,9 @@ mathjax:
 我们来推导一下奖励模型的损失函数，就是`DPO`论文中的公式。
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{aligned}
-P(y_w > y_l) = \frac{e^{r^{\varphi}()x,y_w}}{e^{r^{\varphi}(x,y_w)} + e^{r^{\varphi}(x,y_l)}} \\
+P(y_w > y_l) & = \frac{e^{r^{\varphi}()x,y_w}}{e^{r^{\varphi}(x,y_w)} + e^{r^{\varphi}(x,y_l)}} \\
  \\
-\frac{e^A}{e^A + e^B} \Rightarrow \sigma(A - B) \\
+\frac{e^A}{e^A + e^B} & \Rightarrow \sigma(A - B) \\
  \\
 \end{aligned}
 {% endmathjax %}
