@@ -107,7 +107,7 @@ r(x,y) & = \beta\log\frac{\pi^*(y|x)}{\pi_{\text{ref}}(y|x)} + \beta\log Z(x)
 \begin{aligned}
 r(x,y) & = \beta\log\frac{\pi^*(y|x)}{\pi_{\text{ref}}(y|x)} + \beta\log Z(x) \\
  \\
-P(y_w > y_l) = \sigma(\beta\log\frac{\pi^*(y_w|x)}{\pi_{\text{ref}}(y_w|x)} + {\definecolor{alizarin}{rgb}{0.82, 0.1, 0.26} \beta\log Z(x)} - \beta\log\frac{\pi^*(y_l|x)}{\pi_{\text{ref}}(y_l|x)} - {\definecolor{alizarin}{rgb}{0.82, 0.1, 0.26} \beta\log Z(x)})
+P(y_w > y_l) & = \sigma(\beta\log\frac{\pi^*(y_w|x)}{\pi_{\text{ref}}(y_w|x)} + {\color{red} \beta\log Z(x)} - \beta\log\frac{\pi^*(y_l|x)}{\pi_{\text{ref}}(y_l|x)} - {\color{red} \beta\log Z(x)})
 \end{aligned}
 {% endmathjax %}
 要学习最大化选择{% mathjax %}y{% endmathjax %}而不是{% mathjax %}y{% endmathjax %}的概率的`Bradley-Terry`模型，我们只需要最大化上面的表达式或最小化下面的负表达式：
