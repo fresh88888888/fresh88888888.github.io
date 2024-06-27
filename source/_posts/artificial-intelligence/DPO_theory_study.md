@@ -135,7 +135,7 @@ dpo_trainer = DPOTrainer(
 
 dpo_trainer.train()
 ```
-假设我们的语言模型针对给定的问题生成了以下答案：
+每个隐藏状态编码器仅包含有关先前`token`的信息，因为我们在自注意力期间应用了因果掩码，将线性投影应用于所有隐藏状态，为所有位置生成`logits`。接下来使用{% mathjax %}\text{log_softmax}(x){% endmathjax %}函数生成对数概率：{% mathjax %}\text{log_softmax}(x) = \log(\text{softmax}(x)){% endmathjax %}。最后选择下一个`token`对应的对数概率。
 {% asset_img d_7.png %}
 
 计算对数概率实现：
