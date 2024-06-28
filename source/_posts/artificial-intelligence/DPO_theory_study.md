@@ -1,6 +1,6 @@
 ---
 title: 直接偏好优化(DPO)：Bradley-Terry模型 & 对数概率（深度学习）
-date: 2024-06-26 18:20:11
+date: 2024-06-28 12:20:11
 tags:
   - AI
 categories:
