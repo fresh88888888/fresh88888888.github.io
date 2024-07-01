@@ -47,7 +47,7 @@ mathjax:
 - 首先让我们重写我们的兔子种群模型：{% mathjax %}b'(t) = \lambda b(t){% endmathjax %}。
 - 函数的导数是函数的变化率，即，{% mathjax %}\lim_{\Delta\rightarrow 0}\frac{b(t + \Delta) -b(t)}{\Delta} = b'(t){% endmathjax %}，一次通过选择较小的步长{% mathjax %}\Delta{% endmathjax %}，我们可以摆脱这个极限：{% mathjax %}\frac{b(t + \Delta) -b(t)}{\Delta} \cong b'(t){% endmathjax %}通过与{% mathjax %}\Delta{% endmathjax %}相乘并且移动项，我们可以写出：{% mathjax %}b(t + \Delta) \cong b'(t)\Delta + b(t){% endmathjax %}。
 - 然后，我们可以将兔子种群模型带入到上面的公式中，得到：{% mathjax %}b(t + \Delta) \cong \lambda b(t)\Delta + b(t){% endmathjax %}。
-- 得到了一个循环公式。
+- 最后得到了一个循环公式。
 
 让我们使用递归公式来近似兔子种群随时间的状态变化：{% mathjax %}b(t + \Delta) \cong \lambda b(t)\Delta + b(t){% endmathjax %}，条件假设{% mathjax %}\lambda = 2, \Delta = 1{% endmathjax %}。例如，如果我们在时间{% mathjax %}t = 0{% endmathjax %}时从{% mathjax %}5{% endmathjax %}只兔子开始，我们可以按如下方式计算种群的演变：
 - 知道时间{% mathjax %}t = 0{% endmathjax %}时的数量，我们可以计算时间{% mathjax %}t = 1{% endmathjax %}时的数量：{% mathjax %}b(1) = \Delta\lambda b(0) + b(0) = 1\times 2\times 5 + 5 = 15{% endmathjax %}。
