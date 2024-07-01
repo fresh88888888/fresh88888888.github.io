@@ -35,10 +35,10 @@ mathjax:
 #### 状态空间模型
 
 **状态空间模型**(`State Space Model, SSM`)是一种用于描述动态系统的数学模型,广泛应用于控制理论和信号处理等领域。**状态空间模型**通过一组一阶微分方程来描述系统的动态行为。它由以下两个基本方程组成。
-- 状态方程: {% mathjax %}h(t) = A(t)h(t) + B(t)x(t){% endmathjax %}。
-- 输出方程: {% mathjax %}y(t) = C(t)h(t) + D(t)x(t){% endmathjax %}。
+- 状态方程: {% mathjax %}h(t) = \mathbf{A}(t)h(t) + \mathbf{B}(t)x(t){% endmathjax %}。
+- 输出方程: {% mathjax %}y(t) = \mathbf{C}(t)h(t) + \mathbf{D}(t)x(t){% endmathjax %}。
 
-其中{% mathjax %}h(t){% endmathjax %}是状态向量，{% mathjax %}x(t){% endmathjax %}是输入向量，{% mathjax %}y(t){% endmathjax %}是输出向量，{% mathjax %}A(t){% endmathjax %}是状态矩阵，{% mathjax %}B(t){% endmathjax %}是输入矩阵，{% mathjax %}C(t){% endmathjax %}是输出矩阵，{% mathjax %}D(t){% endmathjax %}是直接传递矩阵。该状态空间模型是线性的和时间不变的。线性是因为上述表达式中的关系是线性的，时间不变是因为参数矩阵`A、B、C、D`不依赖于时间（它们是固定的）。为了找到时间{% mathjax %}t{% endmathjax %}时的输出信号{% mathjax %}y(t){% endmathjax %}，我们首先需要找到一个函数{% mathjax %}h(t){% endmathjax %}，该函数描述系统在所有时间步骤的状态。但这很难通过分析解决。通常我们从不使用连续信号，而总是使用离散信号（因为我们对其进行采样），那么我们如何为离散信号产生输出{% mathjax %}y(t){% endmathjax %}呢？我们首先需要将系统离散化！
+其中{% mathjax %}h(t){% endmathjax %}是状态向量，{% mathjax %}x(t){% endmathjax %}是输入向量，{% mathjax %}y(t){% endmathjax %}是输出向量，{% mathjax %}\mathbf{A}(t){% endmathjax %}是状态矩阵，{% mathjax %}\mathbf{B}(t){% endmathjax %}是输入矩阵，{% mathjax %}\mathbf{C}(t){% endmathjax %}是输出矩阵，{% mathjax %}\mathbf{D}(t){% endmathjax %}是直接传递矩阵。该状态空间模型是线性的和时间不变的。线性是因为上述表达式中的关系是线性的，时间不变是因为参数矩阵`A、B、C、D`不依赖于时间（它们是固定的）。为了找到时间{% mathjax %}t{% endmathjax %}时的输出信号{% mathjax %}y(t){% endmathjax %}，我们首先需要找到一个函数{% mathjax %}h(t){% endmathjax %}，该函数描述系统在所有时间步骤的状态。但这很难通过分析解决。通常我们从不使用连续信号，而总是使用离散信号（因为我们对其进行采样），那么我们如何为离散信号产生输出{% mathjax %}y(t){% endmathjax %}呢？我们首先需要将系统离散化！
 在实际应用中,通常需要将连续时间状态空间模型离散化,以便于数字计算机处理。离散化是状态空间模型中非常重要的一步,它使得模型可以从连续视角转换为递归视角和卷积视角。
 
 #### 离散化
