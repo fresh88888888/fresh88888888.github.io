@@ -31,3 +31,47 @@ mathjax:
 \frac{db}{dt} = \lambda b(t)
 {% endmathjax %}
 {% mathjax %}\frac{db}{dt}{% endmathjax %}表示兔子数量随时间的变化率。{% mathjax %}b(t){% endmathjax %}表示在时间{% mathjax %}t{% endmathjax %}时我们有多少只兔子。已知{% mathjax %}t = 0{% endmathjax %}时兔子的数量为`5`只，那么如何求出`t = 100`时的兔子数量？我们需要找到描述兔子数量随时间变化的{% mathjax %}b(t){% endmathjax %}。求解微分方程：就是找到一个函数{% mathjax %}b(t){% endmathjax %}，使上述公式对所有{% mathjax %}t{% endmathjax %}值都成立。我们可以验证解为{% mathjax %}b(t) = ke^{\lambda t}{% endmathjax %}，其中{% mathjax %}k = b(0) = 5{% endmathjax %}，即兔子的初始数量。通常，我们通过省略变量{% mathjax %}t{% endmathjax %}来简化微分方程，如下所示：{% mathjax %}\dot{b} = \lambda b{% endmathjax %}。我们通常使用微分方程来模拟系统随时间的变化状态，目的是找到一个函数，给定时间为`0`时系统的初始状态，给出任意时间步的系统状态。
+
+#### 状态空间模型
+
+**状态空间模型**(`State Space Model, SSM`)是一种用于描述动态系统的数学模型,广泛应用于控制理论和信号处理等领域。**状态空间模型**通过一组一阶微分方程来描述系统的动态行为。它由以下两个基本方程组成。
+- 状态方程: {% mathjax %}h(t) = A(t)h(t) + B(t)x(t){% endmathjax %}。
+- 输出方程: {% mathjax %}y(t) = C(t)h(t) + D(t)x(t){% endmathjax %}。
+
+其中{% mathjax %}h(t){% endmathjax %}是状态向量，{% mathjax %}x(t){% endmathjax %}是输入向量，{% mathjax %}y(t){% endmathjax %}是输出向量，{% mathjax %}A(t){% endmathjax %}是状态矩阵，{% mathjax %}B(t){% endmathjax %}是输入矩阵，{% mathjax %}C(t){% endmathjax %}是输出矩阵，{% mathjax %}D(t){% endmathjax %}是直接传递矩阵。该状态空间模型是线性的和时间不变的。线性是因为上述表达式中的关系是线性的，时间不变是因为参数矩阵`A、B、C、D`不依赖于时间（它们是固定的）。为了找到时间{% mathjax %}t{% endmathjax %}时的输出信号{% mathjax %}y(t){% endmathjax %}，我们首先需要找到一个函数{% mathjax %}h(t){% endmathjax %}，该函数描述系统在所有时间步骤的状态。但这很难通过分析解决。通常我们从不使用连续信号，而总是使用离散信号（因为我们对其进行采样），那么我们如何为离散信号产生输出{% mathjax %}y(t){% endmathjax %}呢？我们首先需要将系统离散化！
+在实际应用中,通常需要将连续时间状态空间模型离散化,以便于数字计算机处理。离散化是状态空间模型中非常重要的一步,它使得模型可以从连续视角转换为递归视角和卷积视角。
+
+#### 离散化
+
+**离散化**是一种将连续数据或模型转换为离散形式的过程，目的是简化计算和分析,同时尽可能保持准确性。要解微分方程，我们需要找到使方程两边相等的函数{% mathjax %}h(t){% endmathjax %}，但大多数时候很难找到微分方程的解析解，这就是为什么我们可以近似解微分方程。找到微分方程的近似解意味着找到{% mathjax %}h(0)、h(1)、h(2)、h(3){% endmathjax %}等序列，描述我们的系统随时间的变化。因此，我们不是要找到{% mathjax %}h(t){% endmathjax %}，而是要找到{% mathjax %}h(t_k) = h(k\Delta){% endmathjax %}，其中{% mathjax %}\Delta{% endmathjax %}是我们的步长。还记得兔子问题吗？让我们尝试使用**欧拉方法**找到近似解。
+- 首先让我们重写我们的兔子种群模型：{% mathjax %}b'(t) = \lambda b(t){% endmathjax %}。
+- 函数的导数是函数的变化率，即，{% mathjax %}\lim_{\Delta\rghtarrow 0}\frac{b(t + \Delta) -b(t)}{\Delta} = b'(t){% endmathjax %}，一次通过选择较小的步长{% mathjax %}\Delta{% endmathjax %}，我们可以摆脱这个极限：{% mathjax %}\frac{b(t + \Delta) -b(t)}{\Delta} \cong b'(t){% endmathjax %}通过与{% mathjax %}\Delta{% endmathjax %}相乘并且移动项，我们可以写出：{% mathjax %}b(t + \Delta) \cong b'(t)\Delta + b(t){% endmathjax %}。
+- 然后，我们可以将兔子种群模型带入到上面的公式中，得到：{% mathjax %}b(t + \Delta) \cong \lambda b(t)\Delta + b(t){% endmathjax %}。
+- 得到了一个循环公式。
+
+让我们使用递归公式来近似兔子种群随时间的状态变化：{% mathjax %}b(t + \Delta) \cong \lambda b(t)\Delta + b(t){% endmathjax %}，条件假设{% mathjax %}\lambda = 2, \Delta = 1{% endmathjax %}。例如，如果我们在时间{% mathjax %}t = 0{% endmathjax %}时从{% mathjax %}5{% endmathjax %}只兔子开始，我们可以按如下方式计算种群的演变：
+- 知道时间{% mathjax %}t = 0{% endmathjax %}时的数量，我们可以计算时间{% mathjax %}t = 1{% endmathjax %}时的数量：{% mathjax %}b(1) = \Delta\lambda b(0) + b(0) = 1\times 2\times 5 + 5 = 15{% endmathjax %}。
+- 知道时间{% mathjax %}t = 1{% endmathjax %}时的数量，我们可以计算时间{% mathjax %}t = 2{% endmathjax %}时的数量：{% mathjax %}b(2) = \Delta\lambda b(1) + b(1) = 1\times 2\times 15 + 15 = 45{% endmathjax %}。
+- 知道时间{% mathjax %}t = 2{% endmathjax %}时的数量，我们可以计算时间{% mathjax %}t = 3{% endmathjax %}时的数量：{% mathjax %}b(3) = \Delta\lambda b(2) + b(2) = 1\times 2\times 45 + 45 = 135{% endmathjax %}。
+
+步长{% mathjax %}\Delta{% endmathjax %}的值越小，相对于解析解{% mathjax %}b(t) = 5e^{\lambda t}{% endmathjax %}的近似值越好。通过使用与兔子场景类似的推理，我们也可以离散化我们的状态空间模型，以便我们可以使用递归公式计算状态。
+- 利用导数的定义，知道：{% mathjax %}h(t + \Delta) \cong \Delta h'(t) + h(t){% endmathjax %}。
+- 这是（连续）状态空间模型：{% mathjax %}h'(t) = Ah(t) + Bx(t){% endmathjax %}。
+- 我们可以将状态空间模型代入第一个表达式，得到以下：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+h(t + \Delta) & \cong \Delta(\mathbf{A}h(t) \mathbf{B}x(t)) + h(t) \\
+& = \Delta\mathbf{A}h(t) + \Delta\mathbf{B}x(t) + h(t) \\
+& = (1 + \Delta\mathbf{A})h(t) + \Delta\mathbf{B}x(t) \\
+& = \bar{\mathbf{A}}h(t) + \bar{\mathbf{B}}x(t)
+\end{aligned}
+{% endmathjax %}
+有了一个递归公式，在知道前一个时间步的状态的情况下一步一步地迭代计算系统的状态。矩阵{% mathjax %}\mathbf{A}{% endmathjax %}和{% mathjax %}\mathbf{B}{% endmathjax %}是模型的离散参数。这还允许我们计算离散时间步长的输出{% mathjax %}y(t){% endmathjax %}。
+{% asset_img ms_2.png %}
+
+在论文中，他们没有使用欧拉方法，而是使用`Zero-Order Hold`(`ZOH`)规则来离散系统的。
+{% asset_img ms_3.png %}
+
+{% note warning%}
+注意：在实践中，我们不选择对{% mathjax %}\Delta{% endmathjax %}离散化，而是将其作为模型的参数，以便可以通过梯度下降进行学习。
+{% endnote %}
