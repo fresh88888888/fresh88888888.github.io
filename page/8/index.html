@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">199</span>
+          <span class="site-state-item-count">200</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -240,7 +240,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/28/artificial-intelligence/jax_study/">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/29/artificial-intelligence/jax_prng_study/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/avatar.jpeg">
@@ -258,7 +258,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/03/28/artificial-intelligence/jax_study/" class="post-title-link" itemprop="url">JAX（DeviceArray）</a>
+          <a href="/2024/03/29/artificial-intelligence/jax_prng_study/" class="post-title-link" itemprop="url">JAX（PRNG）</a>
         </h2>
 
         <div class="post-meta-container">
@@ -269,7 +269,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2024-03-28 10:10:32" itemprop="dateCreated datePublished" datetime="2024-03-28T10:10:32+08:00">2024-03-28</time>
+      <time title="创建时间：2024-03-29 10:10:32" itemprop="dateCreated datePublished" datetime="2024-03-29T10:10:32+08:00">2024-03-29</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -288,14 +288,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.5k</span>
+      <span>13k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>8 分钟</span>
+      <span>11 分钟</span>
     </span>
 </div>
 
@@ -306,10 +306,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p><code>JAX</code>是一个<strong>高性能机器学习库</strong>。<code>JAX</code>在加速器（例如<code>GPU</code>和<code>TPU</code>）上编译并运行<code>NumPy</code>代码。您可以使用<code>JAX</code>（以及为<code>JAX</code>构建的神经网络库<code>FLAX</code>）来构建和训练深度学习模型。</p>
+          <h4 id="什么是PRNG？"><a href="#什么是PRNG？" class="headerlink" title="什么是PRNG？"></a>什么是PRNG？</h4><p>如果我们按照定义，那么<strong>伪随机数生成</strong>是通过算法生成随机数序列的过程，使得生成的随机数的属性近似于从分布中采样的随机数序列的属性。当我们说随机时，意味着预测这个序列的概率并不比随机猜测更好。尽管我们担心这里的随机性，但伪随机数生成并不是真正的随机过程。为什么？因为序列是由提供给算法的初始值或初始状态决定的。用于生成这些随机数序列的算法称为<strong>伪随机数生成器</strong>（<code>Pseudo Random Number Generator</code>）。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2024/03/28/artificial-intelligence/jax_study/#more" rel="contents">
+              <a class="btn" href="/2024/03/29/artificial-intelligence/jax_prng_study/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -388,14 +388,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.1k</span>
+      <span>7.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
+      <span>6 分钟</span>
     </span>
 </div>
 
@@ -415,6 +415,106 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2024/03/28/artificial-intelligence/jax_pure_function_study/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/28/artificial-intelligence/jax_study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/03/28/artificial-intelligence/jax_study/" class="post-title-link" itemprop="url">JAX（DeviceArray）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-03-28 10:10:32" itemprop="dateCreated datePublished" datetime="2024-03-28T10:10:32+08:00">2024-03-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><code>JAX</code>是一个<strong>高性能机器学习库</strong>。<code>JAX</code>在加速器（例如<code>GPU</code>和<code>TPU</code>）上编译并运行<code>NumPy</code>代码。您可以使用<code>JAX</code>（以及为<code>JAX</code>构建的神经网络库<code>FLAX</code>）来构建和训练深度学习模型。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/03/28/artificial-intelligence/jax_study/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -493,14 +593,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>5.6k</span>
+      <span>26k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>19 分钟</span>
+      <span>22 分钟</span>
     </span>
 </div>
 
@@ -593,14 +693,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>7.2k</span>
+      <span>25k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>24 分钟</span>
+      <span>21 分钟</span>
     </span>
 </div>
 
@@ -694,14 +794,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>6.9k</span>
+      <span>19k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>23 分钟</span>
+      <span>16 分钟</span>
     </span>
 </div>
 
@@ -794,14 +894,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.2k</span>
+      <span>4.9k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
+      <span>4 分钟</span>
     </span>
 </div>
 
@@ -894,14 +994,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>3.4k</span>
+      <span>21k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>11 分钟</span>
+      <span>17 分钟</span>
     </span>
 </div>
 
@@ -994,14 +1094,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>3.7k</span>
+      <span>27k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>12 分钟</span>
+      <span>23 分钟</span>
     </span>
 </div>
 
@@ -1094,14 +1194,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>8.2k</span>
+      <span>28k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>27 分钟</span>
+      <span>23 分钟</span>
     </span>
 </div>
 
@@ -1121,111 +1221,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2024/03/21/artificial-intelligence/Computer_Vision_study/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/03/19/artificial-intelligence/time_series_study/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/03/19/artificial-intelligence/time_series_study/" class="post-title-link" itemprop="url">时间序列（Python）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-03-19 16:20:32" itemprop="dateCreated datePublished" datetime="2024-03-19T16:20:32+08:00">2024-03-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>13k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>44 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>预测可能是机器学习在现实世界中最常见的应用。企业预测产品需求，政府预测经济和人口增长，气象学家预测天气。对未来事物的理解是科学、政府和工业界的迫切需求，这些领域的从业者越来越多地应用机器学习来满足这一需求。时间序列预测是一个广阔的领域，有着悠久的历史。 </p>
-<ul>
-<li>工程师对主要时间序列组成部分（趋势、季节和周期）进行建模。</li>
-<li>使用多种时间序列图可视化时间序列。</li>
-<li>创建结合互补模型优势​​的预测混合体。</li>
-<li>使机器学习方法适应各种预测任务。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/03/19/artificial-intelligence/time_series_study/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1274,14 +1269,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">905k</span>
+    <span title="站点总字数">2.4m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">50:16</span>
+    <span title="站点阅读时长">33:57</span>
   </span>
 </div>
 <div class="busuanzi-count">
