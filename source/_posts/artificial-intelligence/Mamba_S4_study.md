@@ -45,7 +45,7 @@ mathjax:
 
 **离散化**是一种将连续数据或模型转换为离散形式的过程，目的是简化计算和分析,同时尽可能保持准确性。要解微分方程，我们需要找到使方程两边相等的函数{% mathjax %}h(t){% endmathjax %}，但大多数时候很难找到微分方程的解析解，这就是为什么我们可以近似解微分方程。找到微分方程的近似解意味着找到{% mathjax %}h(0)、h(1)、h(2)、h(3){% endmathjax %}等序列，描述我们的系统随时间的变化。因此，我们不是要找到{% mathjax %}h(t){% endmathjax %}，而是要找到{% mathjax %}h(t_k) = h(k\Delta){% endmathjax %}，其中{% mathjax %}\Delta{% endmathjax %}是我们的步长。还记得兔子问题吗？让我们尝试使用**欧拉方法**找到近似解。
 - 首先让我们重写我们的兔子种群模型：{% mathjax %}b'(t) = \lambda b(t){% endmathjax %}。
-- 函数的导数是函数的变化率，即，{% mathjax %}\lim_{\Delta\rghtarrow 0}\frac{b(t + \Delta) -b(t)}{\Delta} = b'(t){% endmathjax %}，一次通过选择较小的步长{% mathjax %}\Delta{% endmathjax %}，我们可以摆脱这个极限：{% mathjax %}\frac{b(t + \Delta) -b(t)}{\Delta} \cong b'(t){% endmathjax %}通过与{% mathjax %}\Delta{% endmathjax %}相乘并且移动项，我们可以写出：{% mathjax %}b(t + \Delta) \cong b'(t)\Delta + b(t){% endmathjax %}。
+- 函数的导数是函数的变化率，即，{% mathjax %}\lim_{\Delta\rightarrow 0}\frac{b(t + \Delta) -b(t)}{\Delta} = b'(t){% endmathjax %}，一次通过选择较小的步长{% mathjax %}\Delta{% endmathjax %}，我们可以摆脱这个极限：{% mathjax %}\frac{b(t + \Delta) -b(t)}{\Delta} \cong b'(t){% endmathjax %}通过与{% mathjax %}\Delta{% endmathjax %}相乘并且移动项，我们可以写出：{% mathjax %}b(t + \Delta) \cong b'(t)\Delta + b(t){% endmathjax %}。
 - 然后，我们可以将兔子种群模型带入到上面的公式中，得到：{% mathjax %}b(t + \Delta) \cong \lambda b(t)\Delta + b(t){% endmathjax %}。
 - 得到了一个循环公式。
 
@@ -72,6 +72,5 @@ h(t + \Delta) & \cong \Delta(\mathbf{A}h(t) \mathbf{B}x(t)) + h(t) \\
 在论文中，他们没有使用欧拉方法，而是使用`Zero-Order Hold`(`ZOH`)规则来离散系统的。
 {% asset_img ms_3.png %}
 
-{% note warning%}
 注意：在实践中，我们不选择对{% mathjax %}\Delta{% endmathjax %}离散化，而是将其作为模型的参数，以便可以通过梯度下降进行学习。
-{% endnote %}
+
