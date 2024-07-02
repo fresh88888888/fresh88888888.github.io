@@ -95,13 +95,13 @@ h_t = \bar{\mathbf{A}}h_{t-1} + \bar{\mathbf{B}}x_t,\;\; y_t = \mathbf{C}h_t
 h_0 & = \bar{\mathbf{B}}x_0 \\
 y_0 & = \mathbf{C}h_0 = \mathbf{C}\bar{\mathbf{B}}x_0 \\
 \\
-h_1 & = \bar{\mathbf{A}}h_0 + \bar{\matbf{B}}x_1 = \bar{\mathbf{A}}\bar{\mathbf{B}}x_0 + \bar{\matbf{B}}x_1 \\
-y_1 & = \mathbf{C}h_1 = \mathbf{C}(\bar{\mathbf{A}}\bar{\mathbf{B}}x_0 + \bar{\matbf{B}}x_1) = \mathbf{C}\bar{\mathbf{A}}\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\matbf{B}}x_1 \\
+h_1 & = \bar{\mathbf{A}}h_0 + \bar{\mathbf{B}}x_1 = \bar{\mathbf{A}}\bar{\mathbf{B}}x_0 + \bar{\mathbf{B}}x_1 \\
+y_1 & = \mathbf{C}h_1 = \mathbf{C}(\bar{\mathbf{A}}\bar{\mathbf{B}}x_0 + \bar{\mathbf{B}}x_1) = \mathbf{C}\bar{\mathbf{A}}\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\mathbf{B}}x_1 \\
 \\
-h_2 & = \bar{\mathbf{A}}h_1 + \bar{\matbf{B}}x_2 = \bar{\mathbf{A}}(\bar{\mathbf{A}}\bar{\mathbf{B}}x_0 + \bar{\matbf{B}}x_1 ) + \bar{\mathbf{B}}x_2 = \bar{\mathbf{A}}^2\bar{\mathbf{B}}x_0 + \bar{\mathbf{A}}\bar{\matbf{B}}x_1 + \bar{\mathbf{B}}x_2 \\
-y_2 & = \mathbf{C}h_2 = \mathbf{C}(\bar{\mathbf{A}}^2\bar{\mathbf{B}}x_0 + \bar{\mathbf{A}}\bar{\matbf{B}}x_1 + \bar{\mathbf{B}}x_2) = \mathbf{C}\bar{\mathbf{A}}^2\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\mathbf{A}}\bar{\matbf{B}}x_1 + \mathbf{C}\bar{\mathbf{B}}x_2 \\
+h_2 & = \bar{\mathbf{A}}h_1 + \bar{\mathbf{B}}x_2 = \bar{\mathbf{A}}(\bar{\mathbf{A}}\bar{\mathbf{B}}x_0 + \bar{\mathbf{B}}x_1 ) + \bar{\mathbf{B}}x_2 = \bar{\mathbf{A}}^2\bar{\mathbf{B}}x_0 + \bar{\mathbf{A}}\bar{\mathbf{B}}x_1 + \bar{\mathbf{B}}x_2 \\
+y_2 & = \mathbf{C}h_2 = \mathbf{C}(\bar{\mathbf{A}}^2\bar{\mathbf{B}}x_0 + \bar{\mathbf{A}}\bar{\mathbf{B}}x_1 + \bar{\mathbf{B}}x_2) = \mathbf{C}\bar{\mathbf{A}}^2\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\mathbf{A}}\bar{\mathbf{B}}x_1 + \mathbf{C}\bar{\mathbf{B}}x_2 \\
 \\
-y_k & = \mathbf{C}\bar{\mathbf{A}}^k\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\mathbf{A}}^{k-1}\bar{\mathbf{B}}x_1 + \ldots + \mathbf{C}\bar{\mathbf{A}}\bar{\matbf{B}}x_{k-1} + \mathbf{C}\bar{\mathbf{B}}x_k
+y_k & = \mathbf{C}\bar{\mathbf{A}}^k\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\mathbf{A}}^{k-1}\bar{\mathbf{B}}x_1 + \ldots + \mathbf{C}\bar{\mathbf{A}}\bar{\mathbf{B}}x_{k-1} + \mathbf{C}\bar{\mathbf{B}}x_k
 \end{aligned}
 {% endmathjax %}
 通过使用我们推导出的公式，我们注意到一些有趣的事情：系统的输出可以通过内核{% mathjax %}\bar{K}{% endmathjax %}与输入{% mathjax %}x(t){% endmathjax %}的卷积来计算。
@@ -112,10 +112,10 @@ y_k & = \mathbf{C}\bar{\mathbf{A}}^k\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\mathbf
 第一步：{% mathjax %}\mathbf{C}\bar{\mathbf{B}}x_0{% endmathjax %}
 {% asset_img ms_6.png %}
 
-第二步：{% mathjax %}\mathbf{C}\bar{\mathbf{A}}\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\matbf{B}}x_1{% endmathjax %}
+第二步：{% mathjax %}\mathbf{C}\bar{\mathbf{A}}\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\mathbf{B}}x_1{% endmathjax %}
 {% asset_img ms_7.png %}
 
-第三步：{% mathjax %}\mathbf{C}\bar{\mathbf{A}}^2\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\mathbf{A}}\bar{\matbf{B}}x_1 + \mathbf{C}\bar{\mathbf{B}}x_2{% endmathjax %}
+第三步：{% mathjax %}\mathbf{C}\bar{\mathbf{A}}^2\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\mathbf{A}}\bar{\mathbf{B}}x_1 + \mathbf{C}\bar{\mathbf{B}}x_2{% endmathjax %}
 {% asset_img ms_8.png %}
 
 第四步：{% mathjax %}\mathbf{C}\bar{\mathbf{A}}^3\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\mathbf{A}}^2\bar{\mathbf{B}}x_1 + \mathbf{C}\bar{\mathbf{A}}\bar{\mathbf{B}}x_2 + \mathbf{C}\bar{\mathbf{B}}x_3{% endmathjax %}
