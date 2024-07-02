@@ -56,7 +56,7 @@ mathjax:
 
 步长{% mathjax %}\Delta{% endmathjax %}的值越小，相对于解析解{% mathjax %}b(t) = 5e^{\lambda t}{% endmathjax %}的近似值越好。通过使用与兔子场景类似的推理，我们也可以离散化我们的状态空间模型，以便我们可以使用递归公式计算状态。
 - 利用导数的定义，知道：{% mathjax %}h(t + \Delta) \cong \Delta h'(t) + h(t){% endmathjax %}。
-- 这是（连续）状态空间模型：{% mathjax %}h'(t) = Ah(t) + Bx(t){% endmathjax %}。
+- 这是（连续）状态空间模型：{% mathjax %}h'(t) = \mathbf{A}h(t) + \mathbf{B}x(t){% endmathjax %}。
 - 我们可以将状态空间模型代入第一个表达式，得到以下：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{aligned}
@@ -73,4 +73,55 @@ h(t + \Delta) & \cong \Delta(\mathbf{A}h(t) \mathbf{B}x(t)) + h(t) \\
 {% asset_img ms_3.png %}
 
 注意：在实践中，我们不选择对{% mathjax %}\Delta{% endmathjax %}离散化，而是将其作为模型的参数，以便可以通过梯度下降进行学习。
+
+#### 递归计算
+
+现在我们有了递归公式，那么如何使用它来计算系统在不同时间步长的输出呢？为简单起见，假设系统的初始状态为`0`。
+{% mathjax '{"conversion":{"em":14}}' %}
+h_t = \bar{\mathbf{A}}h_{t-1} + \bar{\mathbf{B}}x_t,\;\; y_t = \mathbf{C}h_t
+{% endmathjax %}
+{% asset_img ms_4.png %}
+
+递归计算存在的问题：递归公式非常适合推理，因为我们可以在恒定的内存/计算下一个`token`。这使得它适合在大型语言模型中进行推理，在这种模型中，我们希望根据提示词和之前生成的`token`生成下一个`token`。但是，递归公式并不适合训练，因为在训练期间我们已经拥有了输入和目标的所有token，所以我们希望使用并行化计算，就像`Transformer`一样。值得庆幸的是，**状态空间模型**也提供了卷积模式。
+
+#### 卷积计算
+
+让我们扩展之前为每个时间步构建的输出。
+{% mathjax '{"conversion":{"em":14}}' %}
+h_t = \bar{\mathbf{A}}h_{t-1} + \bar{\mathbf{B}}x_t,\;\; y_t = \mathbf{C}h_t
+{% endmathjax %}
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+h_0 & = \bar{\mathbf{B}}x_0 \\
+y_0 & = \mathbf{C}h_0 = \mathbf{C}\bar{\mathbf{B}}x_0 \\
+\\
+h_1 & = \bar{\mathbf{A}}h_0 + \bar{\matbf{B}}x_1 = \bar{\mathbf{A}}\bar{\mathbf{B}}x_0 + \bar{\matbf{B}}x_1 \\
+y_1 & = \mathbf{C}h_1 = \mathbf{C}(\bar{\mathbf{A}}\bar{\mathbf{B}}x_0 + \bar{\matbf{B}}x_1) = \mathbf{C}\bar{\mathbf{A}}\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\matbf{B}}x_1 \\
+\\
+h_2 & = \bar{\mathbf{A}}h_1 + \bar{\matbf{B}}x_2 = \bar{\mathbf{A}}(\bar{\mathbf{A}}\bar{\mathbf{B}}x_0 + \bar{\matbf{B}}x_1 ) + \bar{\mathbf{B}}x_2 = \bar{\mathbf{A}}^2\bar{\mathbf{B}}x_0 + \bar{\mathbf{A}}\bar{\matbf{B}}x_1 + \bar{\mathbf{B}}x_2 \\
+y_2 & = \mathbf{C}h_2 = \mathbf{C}(\bar{\mathbf{A}}^2\bar{\mathbf{B}}x_0 + \bar{\mathbf{A}}\bar{\matbf{B}}x_1 + \bar{\mathbf{B}}x_2) = \mathbf{C}\bar{\mathbf{A}}^2\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\mathbf{A}}\bar{\matbf{B}}x_1 + \mathbf{C}\bar{\mathbf{B}}x_2 \\
+\\
+y_k & = \mathbf{C}\bar{\mathbf{A}}^k\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\mathbf{A}}^{k-1}\bar{\mathbf{B}}x_1 + \ldots + \mathbf{C}\bar{\mathbf{A}}\bar{\matbf{B}}x_{k-1} + \mathbf{C}\bar{\mathbf{B}}x_k
+\end{aligned}
+{% endmathjax %}
+通过使用我们推导出的公式，我们注意到一些有趣的事情：系统的输出可以通过内核{% mathjax %}\bar{K}{% endmathjax %}与输入{% mathjax %}x(t){% endmathjax %}的卷积来计算。
+{% asset_img ms_5.png %}
+
+#### 卷积公式
+
+第一步：{% mathjax %}\mathbf{C}\bar{\mathbf{B}}x_0{% endmathjax %}
+{% asset_img ms_6.png %}
+
+第二步：{% mathjax %}\mathbf{C}\bar{\mathbf{A}}\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\matbf{B}}x_1{% endmathjax %}
+{% asset_img ms_7.png %}
+
+第三步：{% mathjax %}\mathbf{C}\bar{\mathbf{A}}^2\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\mathbf{A}}\bar{\matbf{B}}x_1 + \mathbf{C}\bar{\mathbf{B}}x_2{% endmathjax %}
+{% asset_img ms_8.png %}
+
+第四步：{% mathjax %}\mathbf{C}\bar{\mathbf{A}}^3\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\mathbf{A}}^2\bar{\mathbf{B}}x_1 + \mathbf{C}\bar{\mathbf{A}}\bar{\mathbf{B}}x_2 + \mathbf{C}\bar{\mathbf{B}}x_3{% endmathjax %}
+{% asset_img ms_9.png %}
+
+卷积计算的最大优点是它可以并行化，因为输出{% mathjax %}y_k{% endmathjax %}不依赖于{% mathjax %}y_{k-1}{% endmathjax %}，而只依赖于内核和输入。但是，从内存的角度来看，实现（构建）内核的计算成本可能很高。
+- 我们可以使用卷积计算进行训练，因为我们已经拥有所有输入的`token`序列，并且可以轻松并行化。
+- 我们可以使用循环公式进行推理，一次一个`token`，每个`token`使用恒定量的计算和内存。
 
