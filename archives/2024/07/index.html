@@ -26,33 +26,26 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="Mixtral是由Mistral AI公司开发的一种先进的大型语言模型。Mixtral采用混合专家(Mixture of Experts, MoE)架构，总参数量为46.7B，但每次推理只使用约12.9B参数，稀疏混合专家网络架构，每层包含8个专家(前馈神经网络块)，对每个token,路由器选择2个专家处理，32K tokens的上下文窗口，支持英语、法语、意大利语、德语和西班牙语，在代码生成方面">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Mistral &#x2F; Mixtral：滑动窗口注意力 &amp; 稀疏专家混合 &amp; 滚动缓冲区">
-<meta property="og:url" content="https://fresh88888888.github.io/2024/06/29/artificial-intelligence/Mixtral_theory_study/index.html">
+    <meta name="description" content="没事就多看看书">
+<meta property="og:type" content="website">
+<meta property="og:title" content="UMBRELLA">
+<meta property="og:url" content="https://fresh88888888.github.io/archives/2024/07/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="Mixtral是由Mistral AI公司开发的一种先进的大型语言模型。Mixtral采用混合专家(Mixture of Experts, MoE)架构，总参数量为46.7B，但每次推理只使用约12.9B参数，稀疏混合专家网络架构，每层包含8个专家(前馈神经网络块)，对每个token,路由器选择2个专家处理，32K tokens的上下文窗口，支持英语、法语、意大利语、德语和西班牙语，在代码生成方面">
+<meta property="og:description" content="没事就多看看书">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://fresh88888888.github.io/2024/06/29/artificial-intelligence/Mixtral_theory_study/m_1.png">
-<meta property="og:image" content="https://fresh88888888.github.io/2024/06/29/artificial-intelligence/Mixtral_theory_study/m_2.png">
-<meta property="og:image" content="https://fresh88888888.github.io/2024/06/29/artificial-intelligence/Mixtral_theory_study/m_3.png">
-<meta property="og:image" content="https://fresh88888888.github.io/2024/06/29/artificial-intelligence/Mixtral_theory_study/m_4.png">
-<meta property="article:published_time" content="2024-06-29T02:00:11.000Z">
-<meta property="article:modified_time" content="2024-06-29T02:00:11.000Z">
 <meta property="article:author" content="umbrella">
-<meta property="article:tag" content="AI">
+<meta property="article:tag" content="umbrella">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://fresh88888888.github.io/2024/06/29/artificial-intelligence/Mixtral_theory_study/m_1.png">
 
 
-<link rel="canonical" href="https://fresh88888888.github.io/2024/06/29/artificial-intelligence/Mixtral_theory_study/">
+<link rel="canonical" href="https://fresh88888888.github.io/archives/2024/07/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://fresh88888888.github.io/2024/06/29/artificial-intelligence/Mixtral_theory_study/","path":"2024/06/29/artificial-intelligence/Mixtral_theory_study/","title":"Mistral / Mixtral：滑动窗口注意力 & 稀疏专家混合 & 滚动缓冲区"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"archives/2024/07/index.html","title":""}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Mistral / Mixtral：滑动窗口注意力 & 稀疏专家混合 & 滚动缓冲区 | UMBRELLA</title>
+<title>归档 | UMBRELLA</title>
   
 
 
@@ -89,7 +82,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <p class="site-title">UMBRELLA</p>
+      <h1 class="site-title">UMBRELLA</h1>
       <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">未雨绸缪，举重若轻</p>
@@ -143,7 +136,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -156,7 +149,6 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Transformer-vs-Mistral"><span class="nav-number">1.</span> <span class="nav-text">Transformer vs Mistral</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6"><span class="nav-number">2.</span> <span class="nav-text">自注意力机制</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -238,154 +230,51 @@
 
     </div>
 
-    <div class="main-inner post posts-expand">
+    <div class="main-inner archive posts-collapse">
 
 
   
-
-
-<div class="post-block">
   
   
+  <div class="post-block">
+    <div class="post-content">
+      <div class="collection-title">
+        
+        <span class="collection-header">非常好! 目前共计 201 篇日志。 继续努力。</span>
+      </div>
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2024/06/29/artificial-intelligence/Mixtral_theory_study/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Mistral / Mixtral：滑动窗口注意力 & 稀疏专家混合 & 滚动缓冲区 | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Mistral / Mixtral：滑动窗口注意力 & 稀疏专家混合 & 滚动缓冲区
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-06-29 10:00:11" itemprop="dateCreated datePublished" datetime="2024-06-29T10:00:11+08:00">2024-06-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">人工智能</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span id="busuanzi_value_page_pv"></span>
-    </span>
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>265</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody"><p><code>Mixtral</code>是由<code>Mistral AI</code>公司开发的一种先进的大型语言模型。<code>Mixtral</code>采用混合专家(<code>Mixture of Experts, MoE</code>)架构，总参数量为<code>46.7B</code>，但每次推理只使用约<code>12.9B</code>参数，稀疏混合专家网络架构，每层包含<code>8</code>个专家(前馈神经网络块)，对每个<code>token</code>,路由器选择<code>2</code>个专家处理，<code>32K tokens</code>的上下文窗口，支持英语、法语、意大利语、德语和西班牙语，在代码生成方面表现出色。在多项基准测试中表现优异，超越了许多更大规模的模型，推理速度快，效率高；在多数基准测试中优于<code>Llama 2 70B</code>和<code>GPT-3.5</code>，推理速度是<code>Llama 2 70B</code>的<code>6</code>倍。</p>
-<span id="more"></span>
-
-<h4 id="Transformer-vs-Mistral"><a href="#Transformer-vs-Mistral" class="headerlink" title="Transformer vs Mistral"></a>Transformer vs Mistral</h4><img data-src="/2024/06/29/artificial-intelligence/Mixtral_theory_study/m_1.png" class="">
-
-<img data-src="/2024/06/29/artificial-intelligence/Mixtral_theory_study/m_2.png" class="">
-
-<h4 id="自注意力机制"><a href="#自注意力机制" class="headerlink" title="自注意力机制"></a>自注意力机制</h4><p>自注意力机制允许模型将单词相互关联。假设我们有以下句子：<code>“The cat is on a chair”</code>。</p>
-<img data-src="/2024/06/29/artificial-intelligence/Mixtral_theory_study/m_3.png" class="">
-
-<p>这里我展示了在应用<code>softmax</code>之前<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.439ex;" xmlns="http://www.w3.org/2000/svg" width="1.79ex" height="2.032ex" role="img" focusable="false" viewBox="0 -704 791 898" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-15-TEX-I-1D444" d="M399 -80Q399 -47 400 -30T402 -11V-7L387 -11Q341 -22 303 -22Q208 -22 138 35T51 201Q50 209 50 244Q50 346 98 438T227 601Q351 704 476 704Q514 704 524 703Q621 689 680 617T740 435Q740 255 592 107Q529 47 461 16L444 8V3Q444 2 449 -24T470 -66T516 -82Q551 -82 583 -60T625 -3Q631 11 638 11Q647 11 649 2Q649 -6 639 -34T611 -100T557 -165T481 -194Q399 -194 399 -87V-80ZM636 468Q636 523 621 564T580 625T530 655T477 665Q429 665 379 640Q277 591 215 464T153 216Q153 110 207 59Q231 38 236 38V46Q236 86 269 120T347 155Q372 155 390 144T417 114T429 82T435 55L448 64Q512 108 557 185T619 334T636 468ZM314 18Q362 18 404 39L403 49Q399 104 366 115Q354 117 347 117Q344 117 341 117T337 118Q317 118 296 98T274 52Q274 18 314 18Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D444" xlink:href="#MJX-15-TEX-I-1D444"></use></g></g></g></svg></mjx-container>和<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0;" xmlns="http://www.w3.org/2000/svg" width="2.011ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 889 683" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-14-TEX-I-1D43E" d="M285 628Q285 635 228 637Q205 637 198 638T191 647Q191 649 193 661Q199 681 203 682Q205 683 214 683H219Q260 681 355 681Q389 681 418 681T463 682T483 682Q500 682 500 674Q500 669 497 660Q496 658 496 654T495 648T493 644T490 641T486 639T479 638T470 637T456 637Q416 636 405 634T387 623L306 305Q307 305 490 449T678 597Q692 611 692 620Q692 635 667 637Q651 637 651 648Q651 650 654 662T659 677Q662 682 676 682Q680 682 711 681T791 680Q814 680 839 681T869 682Q889 682 889 672Q889 650 881 642Q878 637 862 637Q787 632 726 586Q710 576 656 534T556 455L509 418L518 396Q527 374 546 329T581 244Q656 67 661 61Q663 59 666 57Q680 47 717 46H738Q744 38 744 37T741 19Q737 6 731 0H720Q680 3 625 3Q503 3 488 0H478Q472 6 472 9T474 27Q478 40 480 43T491 46H494Q544 46 544 71Q544 75 517 141T485 216L427 354L359 301L291 248L268 155Q245 63 245 58Q245 51 253 49T303 46H334Q340 37 340 35Q340 19 333 5Q328 0 317 0Q314 0 280 1T180 2Q118 2 85 2T49 1Q31 1 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q147 65 216 339T285 628Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D43E" xlink:href="#MJX-14-TEX-I-1D43E"></use></g></g></g></svg></mjx-container>矩阵的乘积。</p>
-<img data-src="/2024/06/29/artificial-intelligence/Mixtral_theory_study/m_4.png" class="">
-
+      
+    <div class="collection-year">
+      <span class="collection-header">2024</span>
     </div>
 
-    
-    
-    
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <div class="post-meta-container">
+        <time itemprop="dateCreated"
+              datetime="2024-07-02T18:00:11+08:00"
+              content="2024-07-02">
+          07-02
+        </time>
+      </div>
 
-    <footer class="post-footer">
-          
+      <div class="post-title">
+          <a class="post-title-link" href="/2024/07/02/artificial-intelligence/Mixtral_theory_study/" itemprop="url">
+            <span itemprop="name">Mistral / Mixtral：滑动窗口注意力 & 稀疏专家混合 & 滚动缓冲区</span>
+          </a>
+      </div>
 
-<div class="post-copyright">
-<ul>
-  <li class="post-copyright-author">
-      <strong>本文作者： </strong>umbrella
-  </li>
-  <li class="post-copyright-link">
-      <strong>本文链接：</strong>
-      <a href="https://fresh88888888.github.io/2024/06/29/artificial-intelligence/Mixtral_theory_study/" title="Mistral &#x2F; Mixtral：滑动窗口注意力 &amp; 稀疏专家混合 &amp; 滚动缓冲区">https://fresh88888888.github.io/2024/06/29/artificial-intelligence/Mixtral_theory_study/</a>
-  </li>
-  <li class="post-copyright-license">
-      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
-  </li>
-</ul>
-</div>
-
-          <div class="post-tags">
-              <a href="/tags/AI/" rel="tag"># AI</a>
-          </div>
-
-        
-
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2024/06/28/artificial-intelligence/RLHF_theory_study/" rel="prev" title="基于人类反馈的强化学习(RLHF) — 推导（深度学习）">
-                  <i class="fa fa-chevron-left"></i> 基于人类反馈的强化学习(RLHF) — 推导（深度学习）
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2024/06/29/artificial-intelligence/Mamba_S4_study/" rel="next" title="序列化建模：Mamba / S4（深度学习）">
-                  序列化建模：Mamba / S4（深度学习） <i class="fa fa-chevron-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
+      
+    </header>
   </article>
-</div>
 
 
+    </div>
+  </div>
+  
+  
+  
 
-
-
-
-    <div class="comments utterances-container"></div>
 </div>
   </main>
 
@@ -486,7 +375,7 @@
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quicklink/2.3.0/quicklink.umd.js" integrity="sha256-yvJQOINiH9fWemHn0vCA5lsHWJaHs6/ZmO+1Ft04SvM=" crossorigin="anonymous"></script>
-  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/2024/06/29/artificial-intelligence/Mixtral_theory_study/"}</script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":5000,"priority":true,"url":"https://fresh88888888.github.io/archives/2024/07/"}</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/quicklink.min.js"></script>
 <script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"fresh88888888.github.io","issue_term":"title","theme":"github-light"}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/third-party/comments/utterances.min.js"></script>
