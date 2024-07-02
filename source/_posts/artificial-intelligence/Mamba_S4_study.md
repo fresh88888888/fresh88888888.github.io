@@ -144,7 +144,7 @@ y_k & = \mathbf{C}\bar{\mathbf{A}}^k\bar{\mathbf{B}}x_0 + \mathbf{C}\bar{\mathbf
 {% asset_img ms_13.png %}
 
 例如，通过“少量”提示词，我们可以“教”`LLM`新任务如何执行。使用基于`Transformer`的模型，可以“轻松”完成此任务，因为基于`Transformer`的模型可以在生成当前`token`时关注先前的`token`，因此它们可以“回忆以前的历史”。时间不变的`SSM`无法执行此任务，因为它们无法“选择”从其历史中回忆先前的`token`。
-##### Mamba：选择性SSM
+##### 选择性SSM
 
 {% asset_img ms_14.png %}
 
