@@ -453,11 +453,11 @@
 <p>我们仍然有一些时间步长，其中并非所有<code>GPU</code>都在工作（称为“<strong>气泡</strong>”）。为了避免气泡，我们可以增加批次的大小。</p>
 <h4 id="多提示词优化推理"><a href="#多提示词优化推理" class="headerlink" title="多提示词优化推理"></a>多提示词优化推理</h4><p>假设您正在经营一家提供<code>LLM</code>推理服务的<code>AI</code>公司：您有许多客户发送的提示词并希望在您的模型上运行推理。每个提示词的长度可能不同。为简单起见，假设每个单词都是一个<code>token</code>。请考虑以下提示词：</p>
 <ul>
-<li>提示词一： “Write a poem” (3 tokens)。</li>
-<li>提示词二： “Write a historical novel” (4 tokens)。</li>
-<li>提示词三： “Tell me a funny joke” (5 tokens)。</li>
+<li>提示词一： <code>“Write a poem” (3 tokens)</code>。</li>
+<li>提示词二： <code>“Write a historical novel” (4 tokens)</code>。</li>
+<li>提示词三： <code>“Tell me a funny joke” (5 tokens)</code>。</li>
 </ul>
-<p>如果我们想充分利用我们的<code>GPU</code>，我们应该将所有提示词放在一个批次中，但由于它们的长度不同，我们必须用[PAD]<code>token</code>填充它们，并且当模型产生输出时，我们应该只查看对应于最后一个非填充<code>token</code>的输出，丢弃任何未来的<code>token</code>。</p>
+<p>如果我们想充分利用我们的<code>GPU</code>，我们应该将所有提示词放在一个批次中，但由于它们的长度不同，我们必须用<code>[PAD]token</code>填充它们，并且当模型产生输出时，我们应该只查看对应于最后一个非填充<code>token</code>的输出，丢弃任何未来的<code>token</code>。</p>
 <img data-src="/2024/07/02/artificial-intelligence/Mixtral_theory_study/m_25.png" class="">
 
 <p>为了选择要生成的下一个<code>token</code>，我们将检查与最后一个非填充<code>token</code>相对应的嵌入，这些嵌入在上面的输出中突出显示。因为我们的模型是<code>LLM</code>，所以我们将使用因果掩码。此掩码适用于所有序列。我们不能对每个提示使用不同的掩码，因为所有提示的长度都相同，所以每个提示词的掩码必须是<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex;" xmlns="http://www.w3.org/2000/svg" width="5.028ex" height="1.557ex" role="img" focusable="false" viewBox="0 -666 2222.4 688" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-11-TEX-N-35" d="M164 157Q164 133 148 117T109 101H102Q148 22 224 22Q294 22 326 82Q345 115 345 210Q345 313 318 349Q292 382 260 382H254Q176 382 136 314Q132 307 129 306T114 304Q97 304 95 310Q93 314 93 485V614Q93 664 98 664Q100 666 102 666Q103 666 123 658T178 642T253 634Q324 634 389 662Q397 666 402 666Q410 666 410 648V635Q328 538 205 538Q174 538 149 544L139 546V374Q158 388 169 396T205 412T256 420Q337 420 393 355T449 201Q449 109 385 44T229 -22Q148 -22 99 32T50 154Q50 178 61 192T84 210T107 214Q132 214 148 197T164 157Z"></path><path id="MJX-11-TEX-N-D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mn"><use data-c="35" xlink:href="#MJX-11-TEX-N-35"></use></g><g data-mml-node="mo" transform="translate(722.2,0)"><use data-c="D7" xlink:href="#MJX-11-TEX-N-D7"></use></g><g data-mml-node="mn" transform="translate(1722.4,0)"><use data-c="35" xlink:href="#MJX-11-TEX-N-35"></use></g></g></g></svg></mjx-container>。所有无用的点积都以红色突出显示。</p>
