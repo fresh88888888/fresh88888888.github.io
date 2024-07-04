@@ -57,3 +57,40 @@ mathjax:
 - **对称量化**：它允许将一系列在{% mathjax %}[-\alpha, \alpha]{% endmathjax %}范围内的浮点数映射到{% mathjax %}[−(2^{n − 1} − 1), 2^{n − 1} − 1]{% endmathjax %}范围内的另一个浮点数。例如，通过使用`8`位，我们可以表示{% mathjax %}[-127,127]{% endmathjax %}范围内的浮点数。
 {% asset_img q_9.png %}
 
+我们如何对`Y`进行**反量化**？`Y`是操作的结果，既然我们从未计算过`scale(s)`和`zero(z)`参数，我们如何对其进行**反量化**？我们使用一些输入对模型进行推理，并“观察”输出以计算`scale(s)`和`zero(z)`。这个过程称为校准。
+{% asset_img q_10.png %}
+
+低精度矩阵乘法：当我们在线性层中计算乘积{% mathjax %}\mathbf{XW} + \mathbf{B}{% endmathjax %}时，这将产生矩阵{% mathjax %}\mathbf{X}{% endmathjax %}的每一行与矩阵 {% mathjax %}\mathbf{W}{% endmathjax %}的每一列的点积列表，并与偏差向量{% mathjax %}\mathbf{B}{% endmathjax %}的相应元素相加。`GPU`可以使用乘法累加`(MAC)`块来加速此操作，该块是`GPU`中的物理单元，其工作原理如下：
+{% asset_img q_11.png %}
+
+`GPU`将使用许多乘法累积`(MAC)`块对初始矩阵的每一行和列并行执行此操作。对于低精度矩阵乘法背后的数学完整推导，谷歌的[`GEMM`](https://github.com/google/gemmlowp/blob/master/doc/quantization.md)库提供了一个更好的的解释。
+##### 量化范围
+
+如何选择{% mathjax %}[\beta, \alpha]{% endmathjax %}？
+`Min-Max`: 为了覆盖整个值范围，我们可以设置：
+- {% mathjax %}\alpha = \max(V){% endmathjax %}。
+- {% mathjax %}\beta = \min(V){% endmathjax %}。
+- 对异常值敏感。
+
+百分位数(`Percentile`)：将范围设置为`V`分布的百分位数，以降低对异常值的敏感度。
+{% asset_img q_12.png %}
+
+如果向量`V`表示要量化的张量，我们可以按照以下策略选择{% mathjax %}[\alpha,\beta]{% endmathjax %}范围：
+- 均方误差：选择{% mathjax %}\alpha,\beta{% endmathjax %}，使得原始值和量化值之间的`MSE`误差最小化。通常使用**网格搜索**(`Grid-Search`)来解决。
+- 交叉熵：当量化的张量中的值并不同等重要。例如，这种情况发生在大型语言模型中的`Softmax`层中。由于大多数推理策略是贪婪、`Top-P`或`Beam`搜索，因此在量化后保留最大值的顺序非常重要。{% mathjax %}\underset{\alpha,\beta}{\text{argmin CrossEntropy}(\text{softmax}(V),\text{softmax}(V))}{% endmathjax %}。
+
+#### 量化粒度
+
+{% asset_img q_13.png %}
+
+#### 训练后量化(PTQ)
+
+{% asset_img q_16.png %}
+
+#### 量化感知训练(QAT)
+
+我们在模型的计算图中插入一些假模块来模拟训练过程中量化的影响。这样，损失函数就会被用来更新不断受到量化影响的权重，并且通常会产生更鲁棒的模型。
+{% asset_img q_14.png %}
+
+在反向传播过程中，模型需要评估损失函数相对于每个权重和输入的梯度。这时就会出现一个问题：我们之前定义的量化操作的导数是什么？一个典型的解决方案是使用`STE`（直通估计器）来近似梯度。如果量化的值在{% mathjax %}[\alpha,\beta]{% endmathjax %}范围内，则`STE`近似结果为`1`，否则为`0`。`QAT`为什么有效？插入假量化操作有什么效果？
+{% asset_img q_15.png %}
