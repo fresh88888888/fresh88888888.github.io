@@ -52,6 +52,8 @@
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/04/artificial-intelligence/Distributed_Training_study/dt_17.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/04/artificial-intelligence/Distributed_Training_study/dt_18.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/04/artificial-intelligence/Distributed_Training_study/dt_19.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/04/artificial-intelligence/Distributed_Training_study/dt_20.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/04/artificial-intelligence/Distributed_Training_study/dt_21.png">
 <meta property="article:published_time" content="2024-07-04T06:30:11.000Z">
 <meta property="article:modified_time" content="2024-07-04T06:30:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -171,7 +173,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9B%9E%E9%A1%BE"><span class="nav-number">1.</span> <span class="nav-text">神经网络回顾</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%9B%BE"><span class="nav-number">1.1.</span> <span class="nav-text">计算图</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9B%9E%E9%A1%BE"><span class="nav-number">1.</span> <span class="nav-text">神经网络回顾</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%9B%BE"><span class="nav-number">1.1.</span> <span class="nav-text">计算图</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%B9%B6%E8%A1%8C%E8%AE%AD%E7%BB%83"><span class="nav-number">2.</span> <span class="nav-text">分布式数据并行训练</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -319,14 +321,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.4k</span>
+      <span>1.7k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
+      <span>6 分钟</span>
     </span>
 </div>
 
@@ -457,6 +459,19 @@
 <p>梯度下降（带累积）：通过梯度积累，我们只需积累一批梯度后即可更新模型的参数。</p>
 <img data-src="/2024/07/04/artificial-intelligence/Distributed_Training_study/dt_19.png" class="">
 
+<h4 id="分布式数据并行训练"><a href="#分布式数据并行训练" class="headerlink" title="分布式数据并行训练"></a>分布式数据并行训练</h4><p>假设您有一个在单台计算机&#x2F;<code>GPU</code>上运行的训练脚本，但运行速度非常慢，因为：数据集很大，您不能使用大批量训练，因为这会导致<code>CUDA</code>出现内存不足错误。分布式数据并行是这种情况的解决方案。它适用于以下场景：</p>
+<img data-src="/2024/07/04/artificial-intelligence/Distributed_Training_study/dt_20.png" class="">
+
+<p>从现在开始，我将交替使用“节点”和<code>“GPU”</code>这两个术语。如果一个集群由<code>2</code>台服务器组成，每台服务器有<code>2</code>个<code>GPU</code>，那么我们总共有<code>4</code>个节点。分布式数据并行的工作方式如下：</p>
+<ul>
+<li>在训练开始时，模型的权重在一个节点上初始化，并发送到所有其他节点（广播）。</li>
+<li>每个节点在数据集的子集上训练相同的模型（具有相同的初始权重）。</li>
+<li>每隔几个批次，每个节点的梯度都会在一个节点上累积（总结），然后发送回所有其他节点（<code>All-Reduce</code>）。</li>
+<li>每个节点使用自己的优化器用收到的梯度更新其本地模型的参数。</li>
+<li>返回步骤<code>2</code>。</li>
+</ul>
+<img data-src="/2024/07/04/artificial-intelligence/Distributed_Training_study/dt_21.png" class="">
+
 
     </div>
 
@@ -536,7 +551,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">50:56</span>
+    <span title="站点阅读时长">50:57</span>
   </span>
 </div>
 <div class="busuanzi-count">
