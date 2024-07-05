@@ -44,4 +44,14 @@ y_{\text{pred}} = x_1w_1 + x_2w_2 + b
 {% endmathjax %}
 ##### 计算图
 
-`PyTorch`会将我们的神经网络转换为计算图。
+`PyTorch`会将我们的神经网络转换为计算图。让我们使用计算图一次可视化一个项目的训练过程：
+|`Step`|`Description`|`Computational graph`|
+|:---|:---|:---|
+|`1:forward`|使用输入{% mathjax %}x_1 = 6{% endmathjax %}、{% mathjax %}x_2 = 2{% endmathjax %}和{% mathjax %}y_{\text{target}} = 15{% endmathjax %}运行前向步骤，并初始化权重。|{% asset_img dt_4.png %}<br>现在调用`loss.backward()`方法来计算损失函数相对于每个参数的梯度。|
+|`1:loss.backward`||{% asset_img dt_5.png %}|
+|`1:optimizer.step`|假设学习率为{% mathjax %}a = 10^{-3}{% endmathjax %}。每个参数更新如下：<br>{% mathjax %}\text{param}_{\text{new}}=\text{param}_{\text{old}} - a\times \text{grad}{% endmathjax %}<br>{% mathjax %}y_{\text{pred}} = x_1w_1 + x_2w_2 + b{% endmathjax %}|{% asset_img dt_6.png %}|
+|`1:optimizer.zero`|将所有参数的梯度重置为`0`|{% asset_img dt_7.png %}|
+|`2:forward`|使用输入{% mathjax %}x_1 = 5、x_2 = 2{% endmathjax %}和{% mathjax %}y_{\text{target}} = 12{% endmathjax %}运行前向传播|{% asset_img dt_8.png %}|
+|`2:loss.backward`||{% asset_img dt_9.png %}|
+|`2:optimizer.step`||{% asset_img dt_10.png %}|
+|`2:optimizer.zero`||{% asset_img dt_11.png %}|
