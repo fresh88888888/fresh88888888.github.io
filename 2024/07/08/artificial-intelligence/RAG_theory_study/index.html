@@ -303,14 +303,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.1k</span>
+      <span>1.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
+      <span>1 分钟</span>
     </span>
 </div>
 
@@ -326,7 +326,7 @@
 
 <p>我们如何训练和推理语言模型？</p>
 <ul>
-<li><strong>训练</strong>：语言模型是在文本语料库（即大量文档）上进行训练的。通常，语言模型是在整个维基百科和数百万个网页上进行训练的。这使语言模型能够获取尽可能多的知识。我们通常训练基于 Transformer 的神经网络作为语言模型。</li>
+<li><strong>训练</strong>：语言模型是在文本语料库（即大量文档）上进行训练的。通常，语言模型是在整个维基百科和数百万个网页上进行训练的。这使语言模型能够获取尽可能多的知识。我们通常训练基于<code>Transformer</code>的神经网络作为语言模型。</li>
 <li><strong>推理</strong>：为了语言模型实现推理，我们构建一个<strong>提示词</strong>，并让语言模型通过迭代添加<code>token</code>来生成剩余的部分。</li>
 </ul>
 <p>语言模型只能输出经过训练的文本和信息。这意味着，如果我们只用英语内容训练语言模型，它可能无法输出中文。为了教授新的概念，我们需要对模型进行微调。它可能代价高昂。模型的参数数量可能不足以捕获我们想要教给它的所有知识。这就是为什么引入了<code>7B、13B</code>和<code>70B</code>个参数的<code>LLaMA</code>。微调不是附加的。它可能用新知识取代模型的现有知识。例如，一个用英语训练的语言模型，如果用中文进行（大量）微调，可能会“忘记”英语。</p>
@@ -423,14 +423,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">921k</span>
+    <span title="站点总字数">2.5m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">51:09</span>
+    <span title="站点阅读时长">34:16</span>
   </span>
 </div>
 <div class="busuanzi-count">
