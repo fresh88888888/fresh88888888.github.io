@@ -42,9 +42,84 @@ y_{\text{pred}} = x_1w_1 + x_2w_2 + b
 {% mathjax '{"conversion":{"em":14}}' %}
 \underset{w_1,w_2,b}{\text{argmin}}(y_{\text{pred}} - y_{\text{target}})^2
 {% endmathjax %}
+```python
+# Data format:
+# [x1, x2] --> [y]
+# [NUM_ROOMS, NUM_BATHS] --> [PRICE]
+training_data = [
+    [torch.tensor([6, 2], dtype=torch.float), torch.tensor([15], dtype=torch.float)],
+    [torch.tensor([5, 2], dtype=torch.float), torch.tensor([12], dtype=torch.float)],
+    [torch.tensor([5, 1], dtype=torch.float), torch.tensor([10], dtype=torch.float)],
+    [torch.tensor([3, 1], dtype=torch.float), torch.tensor([7], dtype=torch.float)],
+    [torch.tensor([2, 1], dtype=torch.float), torch.tensor([4.5], dtype=torch.float)],
+    [torch.tensor([2, 0], dtype=torch.float), torch.tensor([4], dtype=torch.float)],
+    [torch.tensor([1, 0], dtype=torch.float), torch.tensor([2], dtype=torch.float)],
+]
+
+# Define the model parameters
+class ModelParameters:
+    def __init__(self):
+        self.w1 = torch.tensor(0.773, dtype=torch.float, requires_grad=True)
+        self.w2 = torch.tensor(0.321, dtype=torch.float, requires_grad=True)
+        self.b = torch.tensor(0.067, dtype=torch.float, requires_grad=True)
+
+# 我们将使用两个训练循环：第一个没有梯度累积，第二个有梯度累积。
+params_no_accumulate = ModelParameters()
+params_accumulate = ModelParameters()
+```
 ##### 计算图
 
-`PyTorch`会将我们的神经网络转换为计算图。让我们使用计算图一次可视化一个项目的训练过程：
+`PyTorch`会将我们的神经网络转换为计算图。使用计算图一次可视化一个项目的训练过程。我们一次使用一个数据项运行梯度下降，计算损失函数与参数的梯度，并在每次迭代时使用梯度更新参数。
+```python
+def train_no_accumulate(params: ModelParameters, num_epochs: int = 10, learning_rate: float = 1e-3):
+    print(f'Initial parameters: w1: {params.w1.item():.3f}, w2: {params.w2.item():.3f}, b: {params.b.item():.3f}')
+    for epoch in range(1, num_epochs+1):
+        for (x1, x2), y_target in training_data:
+            # Calculate the output of the model
+            z1 = x1 * params.w1
+            z1.retain_grad()
+            z2 = x2 * params.w2
+            z2.retain_grad()
+            y_pred = z1 + z2 + params.b
+            y_pred.retain_grad()
+            loss = (y_pred - y_target) ** 2
+
+            # Calculate the gradients of the loss w.r.t. the parameters
+            loss.backward()
+
+            # Update the parameters (at each iteration)
+            with torch.no_grad():
+                # Equivalent to calling optimizer.step()
+                params.w1 -= learning_rate * params.w1.grad
+                params.w2 -= learning_rate * params.w2.grad
+                params.b -= learning_rate * params.b.grad
+
+                # Reset the gradients to zero
+                # Equivalent to calling optimizer.zero_grad()
+                params.w1.grad.zero_()
+                params.w2.grad.zero_()
+                params.b.grad.zero_()
+        print(f"Epoch {epoch:>3} - Loss: {np.round(loss.item(),4):>10}")
+    print(f'Final parameters: w1: {params.w1.item():.3f}, w2: {params.w2.item():.3f}, b: {params.b.item():.3f}')
+        
+train_no_accumulate(params_no_accumulate)
+```
+结果输出为：
+```bash
+Initial parameters: w1: 0.773, w2: 0.321, b: 0.067
+Epoch   1 - Loss:     0.7001
+Epoch   2 - Loss:     0.3374
+Epoch   3 - Loss:     0.1454
+Epoch   4 - Loss:      0.051
+Epoch   5 - Loss:      0.011
+Epoch   6 - Loss:     0.0001
+Epoch   7 - Loss:     0.0039
+Epoch   8 - Loss:     0.0142
+Epoch   9 - Loss:     0.0265
+Epoch  10 - Loss:     0.0387
+Final parameters: w1: 1.897, w2: 0.692, b: 0.299
+```
+
 |`Step`|`Description`|`Computational graph(without accumulation)`|
 |:---|:---|:---|
 |`1:forward`|使用输入{% mathjax %}x_1 = 6{% endmathjax %}、{% mathjax %}x_2 = 2{% endmathjax %}和{% mathjax %}y_{\text{target}} = 15{% endmathjax %}运行前向传播，并初始化权重。|{% asset_img dt_4.png %}<br>现在调用`loss.backward()`方法来计算损失函数相对于每个参数的梯度。|
@@ -56,7 +131,63 @@ y_{\text{pred}} = x_1w_1 + x_2w_2 + b
 |`2:optimizer.step`||{% asset_img dt_10.png %}|
 |`2:optimizer.zero`||{% asset_img dt_11.png %}|
 
-梯度下降（不带累积）：没有梯度积累，在每一步（每个数据项）更新模型的参数。
+梯度下降（不带累积）：没有梯度累积，在每一步（每个数据项）更新模型的参数。
+```python
+def train_accumulate(params: ModelParameters, num_epochs: int = 10, learning_rate: float = 1e-3, batch_size: int = 2):
+    print(f'Initial parameters: w1: {params.w1.item():.3f}, w2: {params.w2.item():.3f}, b: {params.b.item():.3f}')
+    for epoch in range(1, num_epochs+1):
+        for index, ((x1, x2), y_target) in enumerate(training_data):
+            # Calculate the output of the model
+            z1 = x1 * params.w1
+            z1.retain_grad()
+            z2 = x2 * params.w2
+            z2.retain_grad()
+            y_pred = z1 + z2 + params.b
+            y_pred.retain_grad()
+            loss = (y_pred - y_target) ** 2
+
+            # We can also divide the loss by the batch size (equivalent to using nn.MSE loss with the paraemter reduction='mean')
+            # If we don't divide by the batch size, then it is equivalent to using nn.MSE loss with the parameter reduction='sum'
+
+            # Calculate the gradients of the loss w.r.t. the parameters
+            # If we didn't call zero_() on the gradients on the previous iteration, then the gradients will accumulate (add up) over each iteration
+            loss.backward()
+
+            # Everytime we reach the batch size or the end of the dataset, update the parameters
+            if (index + 1) % batch_size == 0 or index == len(training_data) - 1:
+                with torch.no_grad():
+                    # Equivalent to calling optimizer.step()
+                    params.w1 -= learning_rate * params.w1.grad
+                    params.w2 -= learning_rate * params.w2.grad
+                    params.b -= learning_rate * params.b.grad
+
+                    # Reset the gradients to zero
+                    # Equivalent to calling optimizer.zero_grad()
+                    params.w1.grad.zero_()
+                    params.w2.grad.zero_()
+                    params.b.grad.zero_()
+
+        print(f"Epoch {epoch:>3} - Loss: {np.round(loss.item(),4):>10}")
+    print(f'Final parameters: w1: {params.w1.item():.3f}, w2: {params.w2.item():.3f}, b: {params.b.item():.3f}')
+
+
+train_accumulate(params_accumulate)
+```
+结果输出为：
+```bash
+Initial parameters: w1: 0.773, w2: 0.321, b: 0.067
+Epoch   1 - Loss:     0.6857
+Epoch   2 - Loss:     0.3218
+Epoch   3 - Loss:     0.1335
+Epoch   4 - Loss:     0.0438
+Epoch   5 - Loss:     0.0078
+Epoch   6 - Loss:        0.0
+Epoch   7 - Loss:     0.0059
+Epoch   8 - Loss:     0.0174
+Epoch   9 - Loss:     0.0303
+Epoch  10 - Loss:     0.0427
+Final parameters: w1: 1.905, w2: 0.698, b: 0.300
+```
 {% asset_img dt_12.png %}
 
 |`Step`|`Description`|`Computational graph(with accumulation)`|
@@ -68,7 +199,7 @@ y_{\text{pred}} = x_1w_1 + x_2w_2 + b
 |`2:optimizer.step`||{% asset_img dt_17.png %}|
 |`2:optimizer.zero`||{% asset_img dt_18.png %}|
 
-梯度下降（带累积）：通过梯度积累，我们只需积累一批梯度后即可更新模型的参数。
+梯度下降（带累积）：通过梯度积累，我们一次使用一个数据项运行梯度下降，但在更新参数之前我们会通过固定次数的迭代（批量大小）累积梯度。
 {% asset_img dt_19.png %}
 
 #### 分布式—数据并行训练
