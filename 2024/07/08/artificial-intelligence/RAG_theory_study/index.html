@@ -166,7 +166,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%88RAG%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">检索增强生成（RAG）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B5%8C%E5%85%A5%E5%90%91%E9%87%8F"><span class="nav-number">2.</span> <span class="nav-text">嵌入向量</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Sentence-BERT-%E6%9E%B6%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">Sentence BERT(架构)</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HNSW"><span class="nav-number">3.</span> <span class="nav-text">HNSW</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">3.1.</span> <span class="nav-text">向量数据库</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HNSW-1"><span class="nav-number">3.2.</span> <span class="nav-text">HNSW</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90%EF%BC%88RAG%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">检索增强生成（RAG）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B5%8C%E5%85%A5%E5%90%91%E9%87%8F"><span class="nav-number">2.</span> <span class="nav-text">嵌入向量</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Sentence-BERT-%E6%9E%B6%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">Sentence BERT(架构)</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HNSW"><span class="nav-number">3.</span> <span class="nav-text">HNSW</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">3.1.</span> <span class="nav-text">向量数据库</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HNSW%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.2.</span> <span class="nav-text">HNSW介绍</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -314,14 +314,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.7k</span>
+      <span>3.3k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>9 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
@@ -382,7 +382,7 @@
 
 <p>假设我们想要在数据库中搜索查询：一个简单的方法是将查询与所有向量进行比较，按距离对它们进行排序，并保留前<code>K</code>个。</p>
 <img data-src="/2024/07/08/artificial-intelligence/RAG_theory_study/r_8.png" class="">
-<h5 id="HNSW-1"><a href="#HNSW-1" class="headerlink" title="HNSW"></a>HNSW</h5><p><code>HNSW(Hierarchical Navigable Small World)</code>是一种高效的<strong>近似最近邻搜索算法</strong>，主要用于高维向量数据的相似度搜索。<strong>分层结构</strong>：<code>HNSW</code>由多层图组成，形成一个分层结构；每一层都是一个<code>NSW</code>(<code>Navigable Small World</code>)图；上层连接较长，节点较少；下层连接较短，节点较多。<strong>搜索过程</strong>：从最顶层开始搜索，逐层向下进行；在每一层中使用贪婪搜索找到最近的节点；将找到的节点作为下一层搜索的起始点。图构建：节点被随机分配到不同层级，概率呈指数衰减；使用启发式方法选择邻居节点，优化图的连接性。<strong>关键参数</strong>：<code>M</code>和<code>Mmax</code>：控制每个节点的最大连接数；<code>efConstruction</code>：影响图构建过程的精确度。<strong>优势</strong>：搜索时间复杂度为对数级别，比<code>NSW</code>更高效；在高维数据上表现良好；能在保持高查询速度的同时提供高质量的近似结果。<code>HNSW</code>通过其独特的分层结构和图构建方法，在保证搜索质量的同时大大提高了搜索效率，特别适合处理大规模高维数据的近似最近邻搜索问题。</p>
+<h5 id="HNSW介绍"><a href="#HNSW介绍" class="headerlink" title="HNSW介绍"></a>HNSW介绍</h5><p><code>HNSW(Hierarchical Navigable Small World)</code>是一种高效的<strong>近似最近邻搜索算法</strong>，主要用于高维向量数据的相似度搜索。<strong>分层结构</strong>：<code>HNSW</code>由多层图组成，形成一个分层结构；每一层都是一个<code>NSW</code>(<code>Navigable Small World</code>)图；上层连接较长，节点较少；下层连接较短，节点较多。<strong>搜索过程</strong>：从最顶层开始搜索，逐层向下进行；在每一层中使用贪婪搜索找到最近的节点；将找到的节点作为下一层搜索的起始点。图构建：节点被随机分配到不同层级，概率呈指数衰减；使用启发式方法选择邻居节点，优化图的连接性。<strong>关键参数</strong>：<code>M</code>和<code>Mmax</code>：控制每个节点的最大连接数；<code>efConstruction</code>：影响图构建过程的精确度。<strong>优势</strong>：搜索时间复杂度为对数级别，比<code>NSW</code>更高效；在高维数据上表现良好；能在保持高查询速度的同时提供高质量的近似结果。<code>HNSW</code>通过其独特的分层结构和图构建方法，在保证搜索质量的同时大大提高了搜索效率，特别适合处理大规模高维数据的近似最近邻搜索问题。</p>
 <p><strong>相似性搜索：用精度换取速度</strong>，我们之前使用的简单方法总是会产生准确的结果，因为它将查询与所有存储的向量进行比较，但如果我们减少比较的次数，但仍然以高概率获得准确的结果会怎样？在相似性搜索中我们通常关心的指标是<strong>召回率</strong>。</p>
 <p><code>HNSW</code>是近似最近邻的<strong>可导航小世界算法</strong>的演变，该算法基于<strong>六度分离</strong>的概念。米尔格拉姆的实验旨在测试美国人之间的社会联系。最初位于内布拉斯加州和堪萨斯州的参与者被要求将一封信寄给波士顿的某个人。但是，他们不能直接把信寄给收信人。相反，他们被要求把信寄给他们认识的人，他们认为这个人更有可能认识目标人。在米尔格拉姆的小世界实验结束时，米尔格拉姆发现大多数信件需要五到六个步骤才能到达最终收件人，这创造了一个概念，即全世界的人都是通过六度分离联系在一起的。<code>Facebook</code>在<code>2016</code>年发现，其<code>15.9</code>亿活跃用户之间的联系平均有<code>3.5</code>个分离度：<a target="_blank" rel="noopener" href="https://research.facebook.com/blog/2016/02/three-and-a-half-degrees-of-separation/">参考文章</a>。这意味着您和马克·扎克伯格仅相隔<code>3.5</code>个连接！</p>
 <p><code>NSW</code>算法构建了一个图谱，就像<code>Facebook</code>好友一样，将距离较近的向量相互连接，但保持连接总数较少。例如，每个向量最多可以连接到<code>6</code>个其他向量（在模拟六度分离）。</p>
@@ -471,14 +471,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">922k</span>
+    <span title="站点总字数">2.5m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">51:15</span>
+    <span title="站点阅读时长">34:17</span>
   </span>
 </div>
 <div class="busuanzi-count">
