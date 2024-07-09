@@ -56,7 +56,7 @@ mathjax:
 
 我们如何比较句子嵌入来查看两个句子是否具有相似的“含义”？这里可以使用余弦相似度，它测量两个向量之间角度的余弦。角度越小，余弦相似度得分越高。
 {% mathjax '{"conversion":{"em":14}}' %}
-\text{cosine similarity} = S_C(A,B):=\cos(\theta) = \frac{\mathbf{A}\cdot\mathbf{B}}{\|\mathbf{A}\|\|\mathbf{B}\|} = \frac{\sum_{i=1}^n A_iB_i}{\sqrt{\sum_{i=1}^n A^2_i}\codt \sqrt{\sum_{i=1}^n B^2_i}}
+\text{cosine similarity} = S_C(A,B):=\cos(\theta) = \frac{\mathbf{A}\cdot\mathbf{B}}{\|\mathbf{A}\|\|\mathbf{B}\|} = \frac{\sum_{i=1}^n A_iB_i}{\sqrt{\sum_{i=1}^n A^2_i}\cdot \sqrt{\sum_{i=1}^n B^2_i}}
 {% endmathjax %}
 但有一个问题：没有人告诉 BERT，它生成的嵌入应该与余弦相似度相当，也就是说，两个相似的句子应该用指向空间中相同方向的向量来表示。我们如何教授`BERT`生成可以与我们选择的相似度函数进行比较的嵌入？
 ##### Sentence BERT(架构)
