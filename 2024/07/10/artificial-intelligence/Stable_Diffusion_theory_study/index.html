@@ -388,16 +388,16 @@
 </ul>
 <h4 id="图像转图像-架构"><a href="#图像转图像-架构" class="headerlink" title="图像转图像-架构"></a>图像转图像-架构</h4><p><code>Image-to-Image</code>模型是一种将输入图像转换为目标图像的深度学习模型。<code>Image-to-Image</code>模型通常由两个主要部分组成：</p>
 <ul>
-<li>编码器(<code>Encoder</code>)：将输入图像编码为潜在表示(<code>latent representation</code>)；通常使用卷积神经网络(<code>CNN</code>)来提取图像特征。</li>
-<li>解码器(<code>Decoder</code>)：将潜在表示解码为目标图像；常用的解码器包括转置卷积(<code>transposed convolution</code>)或上采样(<code>upsampling</code>)层。</li>
+<li><strong>编码器</strong>(<code>Encoder</code>)：将输入图像编码为潜在表示(<code>latent representation</code>)；通常使用卷积神经网络(<code>CNN</code>)来提取图像特征。</li>
+<li><strong>解码器</strong>(<code>Decoder</code>)：将潜在表示解码为目标图像；常用的解码器包括转置卷积(<code>transposed convolution</code>)或上采样(<code>upsampling</code>)层。</li>
 </ul>
 <img data-src="/2024/07/10/artificial-intelligence/Stable_Diffusion_theory_study/sd_10.png" class="">
 
 <h4 id="图像修复-架构"><a href="#图像修复-架构" class="headerlink" title="图像修复-架构"></a>图像修复-架构</h4><p><code>In-Painting</code>（图像修复）是一种图像处理技术，旨在填补图像中缺失或损坏的部分。<code>In-Painting</code>模型通常由以下部分组成：</p>
 <ul>
-<li>编码器(<code>Encoder</code>)：将输入的不完整图像编码为特征表示；通常使用卷积神经网络(<code>CNN</code>)来提取图像特征。</li>
-<li>解码器(<code>Decoder</code>)：将特征表示解码为完整的修复图像；常用上采样或转置卷积层来生成修复区域。</li>
-<li>注意力机制(<code>Attention Mechanism</code>)：用于关注需要修复的区域和周围的上下文信息。</li>
+<li><strong>编码器</strong>(<code>Encoder</code>)：将输入的不完整图像编码为特征表示；通常使用卷积神经网络(<code>CNN</code>)来提取图像特征。</li>
+<li><strong>解码器</strong>(<code>Decoder</code>)：将特征表示解码为完整的修复图像；常用上采样或转置卷积层来生成修复区域。</li>
+<li><strong>注意力机制</strong>(<code>Attention Mechanism</code>)：用于关注需要修复的区域和周围的上下文信息。</li>
 </ul>
 <img data-src="/2024/07/10/artificial-intelligence/Stable_Diffusion_theory_study/sd_11.png" class="">
 
