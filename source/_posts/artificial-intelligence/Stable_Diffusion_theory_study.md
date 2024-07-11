@@ -79,17 +79,17 @@ mathjax:
 #### 图像转图像-架构
 
 `Image-to-Image`模型是一种将输入图像转换为目标图像的深度学习模型。`Image-to-Image`模型通常由两个主要部分组成：
-- 编码器(`Encoder`)：将输入图像编码为潜在表示(`latent representation`)；通常使用卷积神经网络(`CNN`)来提取图像特征。
-- 解码器(`Decoder`)：将潜在表示解码为目标图像；常用的解码器包括转置卷积(`transposed convolution`)或上采样(`upsampling`)层。
+- **编码器**(`Encoder`)：将输入图像编码为潜在表示(`latent representation`)；通常使用卷积神经网络(`CNN`)来提取图像特征。
+- **解码器**(`Decoder`)：将潜在表示解码为目标图像；常用的解码器包括转置卷积(`transposed convolution`)或上采样(`upsampling`)层。
 
 {% asset_img sd_10.png %}
 
 #### 图像修复-架构
 
 `In-Painting`（图像修复）是一种图像处理技术，旨在填补图像中缺失或损坏的部分。`In-Painting`模型通常由以下部分组成：
-- 编码器(`Encoder`)：将输入的不完整图像编码为特征表示；通常使用卷积神经网络(`CNN`)来提取图像特征。
-- 解码器(`Decoder`)：将特征表示解码为完整的修复图像；常用上采样或转置卷积层来生成修复区域。
-- 注意力机制(`Attention Mechanism`)：用于关注需要修复的区域和周围的上下文信息。
+- **编码器**(`Encoder`)：将输入的不完整图像编码为特征表示；通常使用卷积神经网络(`CNN`)来提取图像特征。
+- **解码器**(`Decoder`)：将特征表示解码为完整的修复图像；常用上采样或转置卷积层来生成修复区域。
+- **注意力机制**(`Attention Mechanism`)：用于关注需要修复的区域和周围的上下文信息。
 
 {% asset_img sd_11.png %}
 
