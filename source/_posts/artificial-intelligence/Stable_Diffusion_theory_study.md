@@ -95,7 +95,7 @@ mathjax:
 
 #### 层归一化
 
-**Layer Normalization**是一种用于深度神经网络的**归一化**技术,主要用于改善网络训练的稳定性和收敛速度。`Layer Normalization`的核心思想是对每个样本的特征进行独立的归一化,而不是像`Batch Normalization`那样对整个批次的数据进行归一化。
+`Layer Normalization`是一种用于深度神经网络的**归一化**技术,主要用于改善网络训练的稳定性和收敛速度。`Layer Normalization`的核心思想是对每个样本的特征进行独立的归一化,而不是像`Batch Normalization`那样对整个批次的数据进行归一化。
 {% mathjax '{"conversion":{"em":14}}' %}
 y = \frac{x - E[x]}{\sqrt{\text{Var}[x] + \epsilon}}\ast \gamma + \beta
 {% endmathjax %}
