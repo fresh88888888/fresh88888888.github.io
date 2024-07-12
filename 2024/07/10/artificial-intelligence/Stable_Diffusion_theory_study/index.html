@@ -344,8 +344,8 @@
 
 <h4 id="U-Net"><a href="#U-Net" class="headerlink" title="U-Net"></a>U-Net</h4><p><code>U-Net</code>是一种用于图像分割的卷积神经网络架构,最初由弗赖堡大学的研究人员在<code>2015</code>年提出,主要用于生物医学图像分割。<code>U-Net</code>的结构呈<code>U</code>形,由两个主要部分组成:</p>
 <ul>
-<li>**下采样路径(编码器)**：由多个卷积层和池化层组成；逐步减小特征图的空间维度,增加通道数；提取图像的高级特征。</li>
-<li>**上采样路径(解码器)**：由转置卷积(反卷积)层组成；逐步恢复特征图的空间维度；结合下采样路径的特征,实现精确定位。</li>
+<li><strong>下采样路径</strong>(编码器)：由多个卷积层和池化层组成；逐步减小特征图的空间维度,增加通道数；提取图像的高级特征。</li>
+<li><strong>上采样路径</strong>(解码器)：由转置卷积(反卷积)层组成；逐步恢复特征图的空间维度；结合下采样路径的特征,实现精确定位。</li>
 </ul>
 <p>主要优势：高精度分割:<code>U-Net</code>能够产生精确的分割结果,特别适用于医学图像；少量样本训练:相比其他网络,<code>U-Net</code>可以使用较少的训练样本达到良好效果；快速处理:在现代<code>GPU</code>上,<code>U-Net</code>可以在<code>1</code>秒内完成<code>512×512</code>图像的分割；灵活性:<code>U-Net</code>结构简单,易于修改和扩展,适应不同任务需求。</p>
 <img data-src="/2024/07/10/artificial-intelligence/Stable_Diffusion_theory_study/sd_4.png" class="">
