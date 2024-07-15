@@ -34,6 +34,10 @@
 <meta property="og:description" content="LLaMA 2是Meta AI(原Facebook AI)在2023年7月发布的大型语言模型系列,是LLaMA模型的第二代版本。模型规模：包含70亿、130亿和700亿参数三种规模的模型。比LLaMA 1增加了一个700亿参数的大型模型。训练数据：使用2万亿个tokens进行预训练,比LLaMA 1增加了40%；完全使用公开可用的数据集,不依赖专有数据。性能改进：在多数基准测试中,性能超过了同等规">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/12/artificial-intelligence/LLaMA2_theory_study/ll_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/12/artificial-intelligence/LLaMA2_theory_study/ll_2.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/12/artificial-intelligence/LLaMA2_theory_study/ll_3.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/12/artificial-intelligence/LLaMA2_theory_study/ll_4.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/12/artificial-intelligence/LLaMA2_theory_study/ll_5.png">
 <meta property="article:published_time" content="2024-07-12T07:00:11.000Z">
 <meta property="article:modified_time" content="2024-07-12T07:00:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -140,7 +144,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -153,6 +157,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#RMSNorm"><span class="nav-number">1.</span> <span class="nav-text">RMSNorm</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%8B%E8%BD%AC%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81-RoPE"><span class="nav-number">2.</span> <span class="nav-text">旋转位置编码 (RoPE)</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -300,14 +305,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>504</span>
+      <span>1.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>5 分钟</span>
     </span>
 </div>
 
@@ -331,6 +336,23 @@
 </ul>
 <img data-src="/2024/07/12/artificial-intelligence/LLaMA2_theory_study/ll_1.png" class="">
 
+<img data-src="/2024/07/12/artificial-intelligence/LLaMA2_theory_study/ll_2.png" class="">
+
+<h4 id="RMSNorm"><a href="#RMSNorm" class="headerlink" title="RMSNorm"></a>RMSNorm</h4><p><code>Llama 2</code>系列模型。标记计数仅指预训练数据。所有模型均使用<code>4M</code>标记的全局批处理大小进行训练。更大的模型（<code>34B</code>和<code>70B</code>）使用<strong>分组查询注意力</strong>(<code>GQA</code>)来提高推理可扩展性。</p>
+<p>什么是<strong>归一化</strong>？<strong>归一化</strong>(<code>Normalization</code>)是一种数据处理技术，主要用于调整不同尺度的数据到一个共同的尺度。<strong>定义</strong>：将数据按照一定的规则转换到特定的范围内，通常是<code>[0,1]</code>或<code>[-1,1]</code>。<strong>主要目的</strong>：使不同量纲的数据可比较；消除数据的单位影响；改善数据的稳定性和可解释性。<strong>常见的归一化方法</strong>：最小-最大归一化(<code>Min-Max Normalization</code>)、<code>Z-score</code>归一化、小数定标归一化。</p>
+<p><code>Root Mean Square Normalization(RMSNorm)</code>是一种数据归一化技术，主要用于信号处理、统计学和机器学习等领域。<strong>定义</strong>：<code>RMS Normalization</code>将数据缩放，使得数据的均方根值等于<code>1</code>。它是通过将每个值除以所有值平方的平均值的平方根来计算的。</p>
+<img data-src="/2024/07/12/artificial-intelligence/LLaMA2_theory_study/ll_3.png" class="">
+
+<p>就像层规范化一样，我们也有一个可学习的参数<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.489ex;" xmlns="http://www.w3.org/2000/svg" width="1.229ex" height="1.486ex" role="img" focusable="false" viewBox="0 -441 543 657" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-14-TEX-I-1D6FE" d="M31 249Q11 249 11 258Q11 275 26 304T66 365T129 418T206 441Q233 441 239 440Q287 429 318 386T371 255Q385 195 385 170Q385 166 386 166L398 193Q418 244 443 300T486 391T508 430Q510 431 524 431H537Q543 425 543 422Q543 418 522 378T463 251T391 71Q385 55 378 6T357 -100Q341 -165 330 -190T303 -216Q286 -216 286 -188Q286 -138 340 32L346 51L347 69Q348 79 348 100Q348 257 291 317Q251 355 196 355Q148 355 108 329T51 260Q49 251 47 251Q45 249 31 249Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D6FE" xlink:href="#MJX-14-TEX-I-1D6FE"></use></g></g></g></svg></mjx-container>（左边公式中的<code>g</code>），它乘以归一化的值。RMSNorm的好处：与层归一化相比，需要的计算量更少；在实践中效果更好。</p>
+<h4 id="旋转位置编码-RoPE"><a href="#旋转位置编码-RoPE" class="headerlink" title="旋转位置编码 (RoPE)"></a>旋转位置编码 (RoPE)</h4><p><strong>旋转位置编码</strong>(<code>Rotary Positional Encoding, RoPE</code>) 是一种用于<code>Transformer</code>模型的位置编码技术。原理：通过将绝对位置信息编码到<strong>查询</strong>(<code>query</code>)和<strong>键</strong>(<code>key</code>)向量中,实现相对位置编码的效果；使用复数旋转的方式来编码位置信息。</p>
+<p>什么是<strong>旋转矩阵</strong>？<strong>旋转矩阵</strong>可以定义为对向量进行操作并产生旋转向量的变换矩阵，使得坐标轴始终保持固定。这些矩阵将向量沿逆时针方向旋转角度<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.023ex;" xmlns="http://www.w3.org/2000/svg" width="1.061ex" height="1.618ex" role="img" focusable="false" viewBox="0 -705 469 715" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-13-TEX-I-1D703" d="M35 200Q35 302 74 415T180 610T319 704Q320 704 327 704T339 705Q393 701 423 656Q462 596 462 495Q462 380 417 261T302 66T168 -10H161Q125 -10 99 10T60 63T41 130T35 200ZM383 566Q383 668 330 668Q294 668 260 623T204 521T170 421T157 371Q206 370 254 370L351 371Q352 372 359 404T375 484T383 566ZM113 132Q113 26 166 26Q181 26 198 36T239 74T287 161T335 307L340 324H145Q145 321 136 286T120 208T113 132Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D703" xlink:href="#MJX-13-TEX-I-1D703"></use></g></g></g></svg></mjx-container>。旋转矩阵始终是具有实数的方阵。这意味着它始终具有相同数量的行和列。</p>
+<img data-src="/2024/07/12/artificial-intelligence/LLaMA2_theory_study/ll_4.png" class="">
+
+<p>我们看到<strong>旋转矩阵</strong>保留了原始向量的大小（或长度），如上图中<code>“r”</code>所示，唯一改变的是与<code>x</code>轴的角度。这里旋转位置编码中使用的旋转矩阵是二维旋转矩阵的多个块。如下图所示：</p>
+<img data-src="/2024/07/12/artificial-intelligence/LLaMA2_theory_study/ll_5.png" class="">
+
+<p><strong>绝对位置编码</strong>是固定向量，它们被添加到<code>token</code>的嵌入中以表示其在句子中的绝对位置。因此，它一次处理一个<code>token</code>。您可以将其视为地图上的一对（纬度，经度）：地球上的每个点都有一对唯一的<code>token</code>。绝对位置编码的缺点：它没有考虑句子中的相对位置信息。</p>
+<p><strong>相对位置编码</strong>一次处理两个<code>token</code>，并且在我们计算注意力时会涉及它：由于注意力机制捕获了两个单词相互关联的“强度”，相对位置编码会告诉注意力机制其中涉及的两个单词之间的距离。因此，给定两个<code>token</code>，我们创建一个表示它们距离的向量。相对位置编码的缺点：是计算效率低下，导致成本高，不适合推理（因为每个<code>token</code>的嵌入会随着每个新的时间步长而改变）。</p>
 
     </div>
 
@@ -410,7 +432,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">51:35</span>
+    <span title="站点阅读时长">51:38</span>
   </span>
 </div>
 <div class="busuanzi-count">
