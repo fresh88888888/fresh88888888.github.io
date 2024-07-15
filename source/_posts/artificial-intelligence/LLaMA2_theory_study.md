@@ -90,14 +90,14 @@ mathjax:
 其中{% mathjax %}\sigma(x){% endmathjax %}是Sigmoid函数，{% mathjax %}W{% endmathjax %}和{% mathjax %}b{% endmathjax %}是可学习的**权重**和**偏置**。`SwiGLU`特点：非线性：`SwiGLU`引入了非线性变换，能够捕捉复杂的特征；平滑性：`Swish`函数的平滑特性使得梯度流动更加稳定，有助于深层神经网络的训练；门控机制：`GLU`引入了门控机制，能够动态调整输入信号的通过量，提高模型的表达能力。**优点**：提高模型性能：`SwiGLU`在一些深度学习任务中表现出色，能够提高模型的准确性和泛化能力；稳定梯度：相比于`ReLU`等传统激活函数，`SwiGLU`能够更好地保持梯度的稳定性，减少梯度消失问题；灵活性：结合了`Swish`和`GLU`的优点，`SwiGLU`能够在不同任务和模型架构中灵活应用。
 {% asset_img ll_13.png %}
 
-推理策略：`Greedy、Beam Search、Temperature、Random Sampling、Top K、Top P`。
-
 #### Logits
 
 在神经网络中，`logits`是指模型最后一层的输出，即在应用激活函数（如`softmax`或`sigmoid`）之前的原始、未归一化的预测值。代表了模型在最终决策之前的原始输出，尚未转换为概率。
 {% asset_img ll_14.png %}
 
 #### 推理策略
+
+推理策略：`Greedy、Beam Search、Temperature、Random Sampling、Top K、Top P`。
 
 |`Inference strategies`|`Description`|
 |:---|:---|
