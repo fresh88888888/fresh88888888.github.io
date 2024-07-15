@@ -84,6 +84,7 @@ mathjax:
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{aligned}
 \text{Swish}(x) & = x\cdot \sigma(x),\;\;\; \text{GLU}(x) = x\cdot \sigma(Wx + b) \\
+\\
 \text{SwiGLU}(x) & = \text{Swish}(x)\cdot \text{GLU}(x)
 \end{aligned}
 {% endmathjax %}
