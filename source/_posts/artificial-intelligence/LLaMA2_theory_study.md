@@ -75,7 +75,7 @@ mathjax:
 |`Item`|`Features`|`Architecture`|
 |:---|:---|:---|
 |`Multi-Head Attention`|高质量，计算速度慢|{% asset_img ll_10.png %}|
-|`Grouped Multi-Query Attention`|质量和速度之间有很好的平衡|{% asset_img ll_12.png %}|
+|`Grouped Multi-Query Attention`|质量和速度之间有很好的平衡|{% asset_img ll_11.png %}|
 |`Multi-Query Attention`|质量有损失，计算速度快|{% asset_img ll_12.png %}|
 
 #### SwiGLU
