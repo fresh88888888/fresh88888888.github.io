@@ -33,13 +33,15 @@
 <meta property="og:site_name" content="UMBRELLA">
 <meta property="og:description" content="什么是图像分割？图像分割是将数字图像划分为多个区域（或段）的过程，使得属于同一区域（或段）的像素共享一些（语义）特征。应用领域：医学成像（定位肿瘤）；物体检测（行人检测、卫星图像中的物体检测）；基于内容的图像检索（查找所有包含猫&#x2F;狗&#x2F;披萨的图像）。面临的挑战：标记数据集困难且成本高昂（操作员需要创建像素完美的区域）；模型通常是特定于应用程序的（例如，仅针对特定类型的医疗应用进行">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_2.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_3.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_1.png">
 <meta property="article:published_time" content="2024-07-16T03:00:11.000Z">
 <meta property="article:modified_time" content="2024-07-16T03:00:11.000Z">
 <meta property="article:author" content="umbrella">
 <meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_1.png">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_2.png">
 
 
 <link rel="canonical" href="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/">
@@ -153,7 +155,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#SAM%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">SAM模型</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Vision-Transformer-ViT"><span class="nav-number">1.</span> <span class="nav-text">Vision Transformer(ViT)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MAE%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">MAE模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SAM%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">SAM模型</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -301,14 +303,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>966</span>
+      <span>1.5k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
+      <span>5 分钟</span>
     </span>
 </div>
 
@@ -320,6 +322,19 @@
     
     <div class="post-body" itemprop="articleBody"><p>什么是图像分割？<strong>图像分割</strong>是将数字图像划分为多个区域（或段）的过程，使得属于同一区域（或段）的像素共享一些（语义）特征。应用领域：医学成像（定位肿瘤）；物体检测（行人检测、卫星图像中的物体检测）；基于内容的图像检索（查找所有包含猫&#x2F;狗&#x2F;披萨的图像）。面临的挑战：标记数据集困难且成本高昂（操作员需要创建像素完美的区域）；模型通常是特定于应用程序的（例如，仅针对特定类型的医疗应用进行训练，而不能应用于行人检测等其他领域）；以前的模型通常不可提示，也就是说，我们无法告诉模型只分割人、汽车或狗。</p>
 <span id="more"></span>
+
+<h4 id="Vision-Transformer-ViT"><a href="#Vision-Transformer-ViT" class="headerlink" title="Vision Transformer(ViT)"></a>Vision Transformer(ViT)</h4><p><code>Vision Transformer(ViT)</code>是一种将<code>Transformer</code>架构应用于计算机视觉任务的模型。我们将图像分割成固定大小的<strong>块</strong>，线性的嵌入每个块，添加位置嵌入，并将得到的向量序列发送到标准 <code>Transformer</code>编码器。为了执行分类，我们使用标准方法，即在序列中添加一个额外的可学习“分类标记”。</p>
+<img data-src="/2024/07/16/artificial-intelligence/Segment_theory_study/s_2.png" class="">
+
+<h4 id="MAE模型"><a href="#MAE模型" class="headerlink" title="MAE模型"></a>MAE模型</h4><p><code>Masked Autoencoder Vision Transformer(MAE)</code>是一种自监督学习方法,用于预训练<code>Vision Transformer</code>模型。<code>MAE</code>架构在预训练期间，会屏蔽掉一大批随机图像块子集（例如<code>75%</code>）。编码器应用于可见图像块的小子集。在编码器之后引入掩码<code>token</code>，全套编码图像块和掩码<code>token</code>由小型解码器处理，解码器会以像素为单位重建原始图像。预训练后，解码器被丢弃，编码器应用于未损坏的图像（全套图像块）以执行识别任务。特点：</p>
+<ul>
+<li><strong>非对称编码器-解码器架构</strong>：编码器只处理未被遮蔽的图像<code>patches</code>,不包含<code>mask tokens</code>；解码器较轻量级,用于从潜在表示和<code>mask tokens</code>重建原始图像。</li>
+<li><strong>高比例遮蔽</strong>：随机遮蔽输入图像的大部分区域(约<code>75%</code>的<code>patches</code>)；这创造了一个非平凡且有意义的自监督任务。</li>
+<li><strong>预训练目标</strong>：模型需要重建被遮蔽的像素值；这迫使模型学习图像的语义和结构信息。</li>
+<li><strong>训练效率</strong>：高比例遮蔽和非对称架构使大型模型的训练更加高效；加速训练(<code>3</code>倍或更多)并提高准确性。</li>
+<li><strong>迁移学习</strong>：预训练后,丢弃解码器,仅保留编码器用于下游任务微调；在下游任务中表现优于有监督预训练,并展现出良好的可扩展性。</li>
+</ul>
+<img data-src="/2024/07/16/artificial-intelligence/Segment_theory_study/s_3.png" class="">
 
 <h4 id="SAM模型"><a href="#SAM模型" class="headerlink" title="SAM模型"></a>SAM模型</h4><p><code>Segment Anything Model(SAM)</code>是由<code>Meta AI</code>开发的一种先进的<strong>图像分割模型</strong>。 <code>SAM</code>是一个能够对任何图像中的任何对象进行分割的<code>AI</code>模型。它使用多种输入提示（如点击、框选或文本描述）来生成高质量的<strong>对象掩码</strong>。<code>SAM</code>由以下三个主要组件组成：</p>
 <ul>
@@ -349,6 +364,7 @@
 </ul>
 <p>可提示分割任务，允许查找给定的掩码：点（例如用户通过鼠标单击选择的点）；框（用户定义的矩形）文本提示（例如“找到此图像中的所有狗”）上述内容的组合（例如框和背景点）。快速编码器-解码器模型（在网络浏览器中需要<code>50</code>毫秒才能根据提示生成掩码）；歧义感知：例如，给定一个点，它可能对应多个掩码，模型应该返回最有可能的三个（部分、子部分和整体）。<code>Segment Anything</code>引擎收集了<code>11</code>亿个分割掩码；所有掩码均已自动生成（无需人工监督）。总的来说，<code>Segment Anything Model(SAM)</code>是一个强大、灵活且高效的图像分割工具，能够适应广泛的应用场景，为计算机视觉领域带来了显著的进步。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> segment_anything <span class="keyword">import</span> SamPredictor, sam_model_registry</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载预训练模型</span></span><br><span class="line">sam = sam_model_registry[<span class="string">&quot;vit_h&quot;</span>](checkpoint=<span class="string">&quot;$&#123;path&#125;/to/checkpoint.pth&quot;</span>)</span><br><span class="line">predictor = SamPredictor(sam)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载图像并进行分割</span></span><br><span class="line">image = ...  <span class="comment"># 读取图像</span></span><br><span class="line">predictor.set_image(image)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用提示进行分割</span></span><br><span class="line">masks, _, _ = predictor.predict(point_coords=[[x, y]], point_labels=[<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<p><code>SAM</code>：提示编码器。这里考虑两组提示：<strong>稀疏提示</strong>（点、框、文本）和<strong>密集提示</strong>（掩码）。我们用<strong>位置编码</strong>表示点和框，并与每个提示类型的学习嵌入和文本相加，使用<code>CLIP</code>的文本编码器。密集提示使用<strong>卷积嵌入</strong>，并与图像嵌入的每个元素相加。</p>
 
     </div>
 
@@ -421,14 +437,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">932k</span>
+    <span title="站点总字数">933k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">51:47</span>
+    <span title="站点阅读时长">51:49</span>
   </span>
 </div>
 <div class="busuanzi-count">
