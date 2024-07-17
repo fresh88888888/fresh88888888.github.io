@@ -36,6 +36,12 @@
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_2.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_3.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_6.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_4.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_5.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_7.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_8.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_9.png">
 <meta property="article:published_time" content="2024-07-16T03:00:11.000Z">
 <meta property="article:modified_time" content="2024-07-16T03:00:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -303,14 +309,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.5k</span>
+      <span>2.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
+      <span>7 分钟</span>
     </span>
 </div>
 
@@ -364,7 +370,25 @@
 </ul>
 <p>可提示分割任务，允许查找给定的掩码：点（例如用户通过鼠标单击选择的点）；框（用户定义的矩形）文本提示（例如“找到此图像中的所有狗”）上述内容的组合（例如框和背景点）。快速编码器-解码器模型（在网络浏览器中需要<code>50</code>毫秒才能根据提示生成掩码）；歧义感知：例如，给定一个点，它可能对应多个掩码，模型应该返回最有可能的三个（部分、子部分和整体）。<code>Segment Anything</code>引擎收集了<code>11</code>亿个分割掩码；所有掩码均已自动生成（无需人工监督）。总的来说，<code>Segment Anything Model(SAM)</code>是一个强大、灵活且高效的图像分割工具，能够适应广泛的应用场景，为计算机视觉领域带来了显著的进步。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> segment_anything <span class="keyword">import</span> SamPredictor, sam_model_registry</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载预训练模型</span></span><br><span class="line">sam = sam_model_registry[<span class="string">&quot;vit_h&quot;</span>](checkpoint=<span class="string">&quot;$&#123;path&#125;/to/checkpoint.pth&quot;</span>)</span><br><span class="line">predictor = SamPredictor(sam)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载图像并进行分割</span></span><br><span class="line">image = ...  <span class="comment"># 读取图像</span></span><br><span class="line">predictor.set_image(image)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用提示进行分割</span></span><br><span class="line">masks, _, _ = predictor.predict(point_coords=[[x, y]], point_labels=[<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
-<p><code>SAM</code>：提示编码器。这里考虑两组提示：<strong>稀疏提示</strong>（点、框、文本）和<strong>密集提示</strong>（掩码）。我们用<strong>位置编码</strong>表示点和框，并与每个提示类型的学习嵌入和文本相加，使用<code>CLIP</code>的文本编码器。密集提示使用<strong>卷积嵌入</strong>，并与图像嵌入的每个元素相加。</p>
+<p><strong>稀疏提示</strong>被映射到<code>256</code>维向量嵌入，如下所示。一个点表示为该点位置的位置编码 与两个学习到的嵌入的总和，这两个嵌入代表该点在前景还是背景。一个框由一个嵌入对表示：(<code>1</code>)其左上角的位置编码与表示“左上角”的学习到的嵌入相加，(<code>2</code>)表示“右下角”的学习到的嵌入。最后，为了表示文本，我们使用<code>CLIP</code>中的<strong>文本编码器</strong>（一般来说，任何文本编码器都是可以的）。</p>
+<img data-src="/2024/07/16/artificial-intelligence/Segment_theory_study/s_6.png" class="">
+
+<p><code>SAM</code>：<strong>提示编码器</strong>。这里考虑两组提示：<strong>稀疏提示</strong>（点、框、文本）和<strong>密集提示</strong>（掩码）。我们用<strong>位置编码</strong>表示点和框，并与每个提示类型的学习嵌入和文本相加，使用<code>CLIP</code>的文本编码器。密集提示使用<strong>卷积嵌入</strong>，并与图像嵌入的每个元素相加。</p>
+<img data-src="/2024/07/16/artificial-intelligence/Segment_theory_study/s_4.png" class="">
+
+<p><code>SAM</code>：<strong>掩码卷积</strong>。<code>Dense</code>提示（即掩码）与图​​像具有空间对应性。我们输入的掩码比输入图像的分辨率低了<code>4</code>倍，然后使用两个<code>2×2</code>、步长为<code>2</code>的卷积（输出通道分别为<code>4</code>和<code>16</code>）将其再缩小<code>4</code>倍。最后的 <code>1×1</code>卷积将通道维度映射到<code>256</code>。每层由<code>GELU</code>激活和层归一化分隔。然后每个元素添加掩码和图像嵌入。如果没有掩码提示，则将“无掩码”的学习嵌入添加到每个图像的嵌入位置。</p>
+<img data-src="/2024/07/16/artificial-intelligence/Segment_theory_study/s_5.png" class="">
+
+<p><code>SAM</code>：<strong>掩码解码器</strong>。<strong>掩码解码器</strong>有效地将图像嵌入、提示嵌入和输出<code>token</code>映射到<strong>掩码</strong>。这里采用了<code>Transformer</code>解码器块的修改，然后是<strong>动态掩码预测头</strong>。修改后的解码器块在两个方向使用<strong>提示自注意力</strong>和<strong>交叉注意力</strong>来更新所有的嵌入。执行这两个块之后，我们对图像嵌入进行了上采样，<code>MLP</code>将输出<code>token</code>映射到<strong>动态线性分类器</strong>，然后计算每个图像位置掩码的<strong>前景概率</strong>。</p>
+<img data-src="/2024/07/16/artificial-intelligence/Segment_theory_study/s_7.png" class="">
+
+<p><code>SAM</code>：输出<code>token</code>。</p>
+<img data-src="/2024/07/16/artificial-intelligence/Segment_theory_study/s_8.png" class="">
+
+<p><code>SAM</code>：输出<code>Transformer</code>。为了确保解码器能够访问关键的几何信息，只要位置编码进入注意力层，就会将其添加到图像嵌入中。此外，只要更新的<code>token</code>进入注意力层，就会将整个原始提示<code>token</code>（包括其位置编码）重新添加到更新的<code>token</code>中。这使得对提示<code>token</code>的几何位置和类型的依赖性很强。</p>
+<img data-src="/2024/07/16/artificial-intelligence/Segment_theory_study/s_9.png" class="">
+
+<p><code>SAM</code>：输出。</p>
 
     </div>
 
@@ -444,7 +468,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">51:49</span>
+    <span title="站点阅读时长">51:51</span>
   </span>
 </div>
 <div class="busuanzi-count">
