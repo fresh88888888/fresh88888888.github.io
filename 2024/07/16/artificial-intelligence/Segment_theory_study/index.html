@@ -42,6 +42,8 @@
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_7.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_8.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_9.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_10.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/16/artificial-intelligence/Segment_theory_study/s_11.png">
 <meta property="article:published_time" content="2024-07-16T03:00:11.000Z">
 <meta property="article:modified_time" content="2024-07-16T03:00:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -309,14 +311,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.1k</span>
+      <span>4.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
+      <span>15 分钟</span>
     </span>
 </div>
 
@@ -388,8 +390,21 @@
 <p><code>SAM</code>：输出<code>Transformer</code>。为了确保解码器能够访问关键的几何信息，只要位置编码进入注意力层，就会将其添加到图像嵌入中。此外，只要更新的<code>token</code>进入注意力层，就会将整个原始提示<code>token</code>（包括其位置编码）重新添加到更新的<code>token</code>中。这使得对提示<code>token</code>的几何位置和类型的依赖性很强。</p>
 <img data-src="/2024/07/16/artificial-intelligence/Segment_theory_study/s_9.png" class="">
 
-<p><code>SAM</code>：输出。</p>
+<p><code>IoU(Intersection over Union)</code>是计算机视觉领域中用于评估目标检测和图像分割算法性能的重要指标。<code>IoU</code>是预测边界框(或分割掩码)与真实边界框(或分割掩码)之间<strong>重叠程度</strong>的度量。它计算两个区域的相交面积除以它们的合并面积。计算公式：<code>IoU =</code> (预测区域 <code>∩</code> 真实区域) <code>/</code>(预测区域 <code>∪</code> 真实区域)，<code>IoU</code>的值在<code>[0,1]</code>之间。<code>1</code>表示完美匹配,<code>0</code>表示没有重叠。应用：<strong>目标检测</strong>:评估预测边界框与真实边界框的匹配程度；<strong>图像分割</strong>:评估预测分割掩码与真实分割掩码的匹配程度。通常设置一个<code>IoU</code>阈值(如<code>0.5</code>)来判断检测是否正确。高于阈值视为正确检测。</p>
+<p><code>SAM</code>：<code>Loss</code>。我们以<code>focal</code>损失和<code>dice</code>损失的线性组合监督掩码预测，<code>focal</code>损失和<code>dice</code>损失的比例为<code>20:1</code>，我们观察到每个解码器层之后的辅助深度监督是无用的。<code>IoU</code>预测头使用<code>IoU</code>预测和预测掩码的<code>IoU</code>与实际掩码之间的均方误差损失进行训练。它以恒定比例因子<code>1.0</code>添加到掩码损失中。</p>
+<p><code>SAM</code>：<code>focal</code>损失。在物体检测中非常常用，它类似于交叉熵，但针对类别不平衡进行了调整。也就是说，它允许模型将更多的注意力放在困难的例子上，而不是容易的例子上。为什么会出现类别不平衡？因为我们的大多数像素都是非掩码的，只有一小部分是掩码的。</p>
+<p><code>SAM</code>：<code>Dice</code>损失。<code>Dice</code>分数，也称为<code>Sørensen-Dice</code>系数，是衡量两组数据之间相似度的指标。在图像分割中，<code>Dice</code>分数可用于评估预测分割掩码与实际分割掩码之间的<strong>相似度</strong>。<code>Dice</code>分数的范围从[0,1]，<code>0</code>表示无重叠、<code>1</code>表示完全重叠。它等价于<code>F1</code>分值。</p>
+<img data-src="/2024/07/16/artificial-intelligence/Segment_theory_study/s_10.png" class="">
 
+<p><code>SAM</code>：交互式训练。我们在训练期间模拟了一个交互式分割设置。首先，以相等的概率为目标掩码随机选择一个前景点或边界框。从地面实框掩码中均匀采样点。将框作为地面实框掩码的边界框，在每个坐标中添加随机噪声，标准偏差等于框边长的<code>10%</code>，最大为<code>20</code>像素。这种噪声分布是实例分割等应用（在目标对象周围产生紧密的框）和交互式分割（用户可能绘制一个松散的框）之间的合理折衷。从第一个提示进行预测后，从前一个掩码预测和地面实框掩码之间的误差区域中均匀选择后续点。如果误差区域分别为假阴性或假阳性，则每个新点分别为前景或背景。我们还将上一次迭代的掩码预测作为模型的附加提示来提供。为了向下一次迭代提供更多信息，我们提供未阈值化的掩码逻辑，而不是二值化掩码。当返回多个掩码时，传递给下一次迭代并用于对下一个点进行采样的掩码是具有最高预测<code>IoU</code>的掩码。我们发现在<code>8</code>个迭代采样点之后收益递减（我们最多测试了<code>16</code>个）。此外，为了鼓励模型从提供的掩码中受益，我们还使用了另外两次迭代，其中没有采样额外的点。其中一个迭代随机插入<code>8</code>个迭代采样点中，另一个迭代始终位于末尾。这总共提供了<code>11</code>次迭代：一个采样的初始输入提示<code>8</code>个迭代采样点和两次迭代，其中没有向模型提供新的外部信息，因此它可以学习改进自己的掩码预测。我们注意到，使用相对较多的迭代是可行的，因为<strong>轻量级掩码解码器</strong>需要的图像编码器计算量不到<code>1%</code>，因此每次迭代只会增加很小的开销。这与以前的交互式方法不同，以前的交互式方法每次优化器更新只执行一个或几个交互式步骤。</p>
+<p><code>SAM</code>：<strong>数据引擎</strong>。由于互联网上分割掩码并不是很多，我们构建了一个数据引擎来收集<code>1.1B</code>掩码数据集<code>SA-1B</code>。数据引擎有三个阶段：(<code>1</code>)模型辅助手动注释阶段。(<code>2</code>)半自动阶段，混合了自动预测掩码和模型辅助注释。(<code>3</code>)全自动阶段，其中模型无需对输入注释即可生成掩码。</p>
+<ul>
+<li><strong>模型辅助手动注释阶段</strong>：在第一阶段，类似于经典的交互式分割，专业注释团队使用由<code>SAM</code>提供的基于浏览器的交互式分割工具，通过单击前景&#x2F;背景对象点来<code>token</code>蒙版。可以使用像素精确的“画笔”和“橡皮擦”工具来细化蒙版。我们的<strong>模型辅助注释</strong>直接在浏览器内实时运行（使用预先计算的图像嵌入），从而实现真正的交互式体验。我们没有对<code>token</code>对象施加语义约束，注释者可以自由标记“东西”和“事物”。建议注释者可以标记命名或描述的对象，但没有收集这些名称或描述。注释者被要求按顺序标记对象，并被鼓励在蒙版注释时间超过<code>30</code>秒后继续处理下一张图像。在此阶段开始时，使用常见的公共分割数据集训练<code>SAM</code>。在进行足够的数据注释后，仅使用新注释的蒙版对<code>SAM</code>进行重新训练。随着收集到更多的蒙版，图像编码器从<code>ViT-B</code>扩展到<code>ViT-H</code>；我们总共重新训练了模型 <code>6</code>次。随着模型的改进，每个蒙版的平均注释时间从<code>34</code>秒减少到<code>14</code>秒。我们注意到<code>14</code>秒比<code>COCO</code>的蒙版注释快<code>6.5</code>倍，仅比使用极值点的边界框标记慢<code>2</code>倍。随着<code>SAM</code>的改进，每幅图像的平均蒙版数量从<code>20</code>个增加到<code>44</code>个。总体而言，我们在此阶段从<code>120k</code>张图像中收集了<code>4.3M</code>个蒙版。</li>
+<li><strong>半自动阶段</strong>：在此阶段，我们旨在增加掩码的多样性，以提高我们的模型分割任何事物的能力。为了让注释者专注于不太突出的物体，我们首先自动检测了可信掩码。然后，我们向注释者展示了预先填充了这些掩码的图像，并要求他们注释任何其他未注释的物体。为了检测<strong>可信掩码</strong>，我们使用通用的“物体”类别在所有第一阶段的掩码上训练了一个<strong>边界框检测器</strong>。在此阶段，我们在<code>18</code>万张图像中收集了额外的<code>590</code>万个掩码（总共<code>1020</code>万个掩码）。与第一阶段一样，我们定期在新收集的数据上重新训练我们的模型（<code>5</code>次）。每个掩码的平均注释时间回升至<code>34</code>秒（不包括自动掩码），因为这些物体更难标记。每张图像的平均掩码数量从<code>44</code>个增加到<code>72</code>个（包括自动掩码）。</li>
+<li><strong>全自动阶段</strong>：在最后阶段，注释是全自动的。因为我们对模型进行了两项重大改进。首先，在这个阶段开始时，我们已经收集了足够的掩码来大大改进了模型，包括来自上一阶段的各种掩码。其次，到这个阶段，已经开发了<strong>模糊感知模型</strong>，即使在模糊情况下也能预测有效的掩码。具体来说，我们用一个<code>32×32</code>的规则点网格提示模型，并为每个点预测一组可能对应于有效对象的掩码。使用模糊感知模型，如果一个点位于某个部分或子部分上，我们的模型将返回子部分、部分和整个对象。我们模型的<code>IoU</code>预测模块用于选择<strong>可信掩码</strong>；此外，我们仅识别和选择稳定的掩码（如果在<code>0.5 − δ</code> 和<code>0.5 + δ</code>处对概率图进行阈值处理导致相似的掩码，则我们认为该掩码是稳定的）。最后，在选择了可信且稳定的蒙版后，我们应用<strong>非最大抑制</strong> (<code>NMS</code>) 来过滤重复项。为了进一步提高较小蒙版的质量，我们还处理了多个重叠的放大图像裁剪。我们对数据集中的<code>1100</code>万张图片应用了全自动蒙版生成，共生成了<code>11</code>亿张高质量蒙版。</li>
+</ul>
+<p><code>NMS</code>(<code>Non-Maximum Suppression</code>, 非极大值抑制)是一种在目标检测等计算机视觉任务中广泛使用的后处理技术。<code>NMS</code>用于消除重复的检测结果,只保留最相关的边界框,从而减少假阳性检测。<strong>输入</strong>：边界框列表及其置信度分数参数：<code>IoU</code>阈值。<strong>原理</strong>：首先,根据置信度得分对所有预测的边界框进行排序；选择得分最高的边界框,将其添加到最终结果列表中；计算该边界框与所有剩余边界框的<code>IoU</code>(交并比)；移除与选中边界框<code>IoU</code>大于某个阈值(通常为<code>0.5</code>)的其他边界框；重复上述步骤,直到处理完所有边界框。输出：在此过程中保留的边界框列表。</p>
+<img data-src="/2024/07/16/artificial-intelligence/Segment_theory_study/s_11.png" class="">
     </div>
 
     
@@ -461,14 +476,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">933k</span>
+    <span title="站点总字数">936k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">51:51</span>
+    <span title="站点阅读时长">51:59</span>
   </span>
 </div>
 <div class="busuanzi-count">
