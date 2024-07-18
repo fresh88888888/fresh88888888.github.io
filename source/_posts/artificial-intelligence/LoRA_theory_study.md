@@ -20,7 +20,7 @@ mathjax:
 
 预训练模型的{% mathjax %}W{% endmathjax %}矩阵包含许多参数，这些参数传递的信息与其他参数相同（因此它们可以通过组合其他权重获得）；意味着我们可以在不降低模型性能的情况下摆脱它们。这种矩阵称为秩不足（它们没有满秩）。
 
-**奇异值分解**：生成秩亏矩阵{% mathjax %}W{% endmathjax %}。
+**奇异值分解**(`SVD`)：是一种重要的矩阵分解方法，接下来生成秩亏矩阵{% mathjax %}W{% endmathjax %}。
 ```python
 import torch
 import numpy as np
