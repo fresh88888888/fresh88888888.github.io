@@ -90,24 +90,8 @@ w_seq = [w0 * alpha**i for i in range(k)]
 # Generate the r_seq as a geometric progression
 r_seq = [r0 * alpha**i for i in range(k)]
 
-colors = [
-    "#FFFFFF",
-    "#1F77B4",
-    "#FF7F0E",
-    "#2CA02C",
-    "#D62728",
-    "#9467BD",
-    "#8C564B",
-    "#E377C2",
-    "#7F7F7F",
-    "#BCBD22",
-    "#17BECF",
-    '#000080',
-    '#2F4F4F',
-    '#8B4513',
-    '#FFD700',
-    '#FF0000',
-]
+colors = ["#FFFFFF","#1F77B4","#FF7F0E","#2CA02C","#D62728","#9467BD","#8C564B","#E377C2","#7F7F7F",
+        "#BCBD22","#17BECF",'#000080','#2F4F4F','#8B4513','#FFD700','#FF0000',]
 
 assert w_seq[-1] == N, f"The last element of w_seq must be N, but it is {w_seq[-1]}"
 
