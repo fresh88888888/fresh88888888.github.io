@@ -196,7 +196,7 @@ if VERIFY_MAX_DISTANCE:
     print(f"Max distance from node {START_NODE} to any other node: {max_distance}")
     print(f'Log(N) = {np.log(N)}')
 ```
-输出结果为：
+结果输出为：
 ```bash
 All nodes are reachable from the node 5
 Path from 5 to 0: [4, 0]
