@@ -12,7 +12,7 @@ mathjax:
     exFactor: 0.03
 ---
 
-`LongNet`是微软研究院提出的一种创新的`Transformer`变体模型,其主要特点是能够处理极长序列,最多可达`10`亿个`token`。原理和特点：
+`LongNet`是微软研究院提出的一种创新的`Transformer`变体模型,其主要特点是能够处理极长序列,最多可达`10`亿个`token`。引用：[`LONGNET: Scaling Transformers to 1,000,000,000 Tokens`](https://arxiv.org/pdf/2307.02486)，原理和特点：
 <!-- more -->
 - **扩张注意力**(`Dilated Attention`)：`LongNet`通过扩张注意力将`Transformer`的二次计算复杂度({% mathjax %}\mathcal{O}(N^2){% endmathjax %})降低到了线性复杂度({% mathjax %}\mathcal{O}(N){% endmathjax %})。这是通过在`token`之间设置不同的**步长**(`dilation`)来实现的,使得注意力矩阵变得**稀疏**,大大降低了计算复杂度。
 - **分段处理**：`LongNet`将长序列分割成多个段,对每个段进行并行计算,然后将结果合并。这种方法允许模型有效地处理超长序列。
