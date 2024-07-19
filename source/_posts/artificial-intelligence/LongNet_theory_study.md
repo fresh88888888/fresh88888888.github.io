@@ -60,3 +60,7 @@ mathjax:
 - **计算交叉注意力**：使用本地查询和全局键与值计算`Cross Attention`：{% mathjax %}\tilde{O}_1= \text{softmax}(\tilde{Q}_1,\tilde{K}^{\mathsf{T}})\tilde{V},\tilde{O}_2= \text{softmax}(\tilde{Q}_2,\tilde{K}^{\mathsf{T}})\tilde{V}{% endmathjax %}
 - **最终输出**：最终的"**注意力**"输出是不同设备`Kanes`输出的合并结果，如下式所示：{% mathjax %}\tilde{O} = [\tilde{O}_1,\tilde{O}_2]{% endmathjax %}。
 
+语言建模实验：采用的架构是`MAGNETO[WMH+22]`，使用`XPOS[SDP+22]`的相对位置编码。它用`Dilated Attention`取代了标准的`Attention`。`LongNet`、`Vanilla Transfomer`和 `Sparse Transfomer`进行了比较。在将这些模型的序列长度从`2K`增加到`32K`的过程中，似乎对批次大小进行了调整，以保持每个批次的`token`数不变。此外，由于作者计算环境的限制，他们只对最多`32K`的`token`进行了实验。以下是每个语言模型的易错性结果。
+{% asset_img ln_8.png %}
+
+结果证明，在训练过程中增加序列长度可以获得良好的语言模型；在所有情况下，`LongNet`的表现都优于其他模型，并显示出其有效性。
