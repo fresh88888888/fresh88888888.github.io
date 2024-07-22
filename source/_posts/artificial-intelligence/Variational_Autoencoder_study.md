@@ -163,7 +163,7 @@ print(cost().numpy())  # 输出优化后的损失值
 {% mathjax '{"conversion":{"em":14}}' %}
 \mathfrak{D}_\text{KL}[p_1\mid\mid p_2] =
 \frac{1}{2}\left[\log\frac{|\Sigma_2|}{|\Sigma_1|} - n + \text{tr} \{ \Sigma_2^{-1}\Sigma_1 \} + (\mu_2 - \mu_1)^T \Sigma_2^{-1}(\mu_2 - \mu_1)\right]
-{% endmathjax %}。其中{% mathjax %}p_1 = \mathcal{N}(\mu_1,\Sigma_1){% endmathjax %}和{% mathjax %}p_2 = \mathcal{N}(\mu_2,\Sigma_2){% endmathjax %}。在 `VAE`中{% mathjax %}p_1 = q(z|x){% endmathjax %}和{% mathjax %}p_2=p(z){% endmathjax %}，所以，{% mathjax %}\mu_1=\mu, \Sigma_1 = \Sigma, \mu_2=\vec{0}, \Sigma_2=I{% endmathjax %}，因此，
+{% endmathjax %}。其中{% mathjax %}p_1 = \mathcal{N}(\mu_1,\Sigma_1){% endmathjax %}和{% mathjax %}p_2 = \mathcal{N}(\mu_2,\Sigma_2){% endmathjax %}。在 VAE中{% mathjax %}p_1 = q(z|x){% endmathjax %}和{% mathjax %}p_2=p(z){% endmathjax %}，所以，{% mathjax %}\mu_1=\mu, \Sigma_1 = \Sigma, \mu_2=\vec{0}, \Sigma_2=I{% endmathjax %}，因此，
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
 \mathfrak{D}_\text{KL}[q(z|x)\mid\mid p(z)] 
