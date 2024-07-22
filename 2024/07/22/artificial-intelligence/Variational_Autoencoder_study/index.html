@@ -26,12 +26,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="Autoencoder是一种用于无监督学习的神经网络模型，旨在通过压缩和重建数据来学习数据的有效表示。Autoencoder由两个主要部分组成：编码器(Encoder)和解码器(Decoder)。  编码器(Encoder)：将输入数据压缩到一个低维的潜在空间表示。编码器的输出维度通常比输入维度小，这个压缩过程可以去除输入数据中的噪声并保留关键特征。 解码器(Decoder)：从潜在空间表示重建原">
+    <meta name="description" content="Autoencoder是一种用于无监督学习的神经网络模型，旨在通过压缩和重建数据来学习数据的有效表示。Autoencoder由两个主要部分组成：编码器(Encoder)和解码器(Decoder)。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="变分自动编码器(VAE)—探析（深度学习）">
 <meta property="og:url" content="https://fresh88888888.github.io/2024/07/22/artificial-intelligence/Variational_Autoencoder_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="Autoencoder是一种用于无监督学习的神经网络模型，旨在通过压缩和重建数据来学习数据的有效表示。Autoencoder由两个主要部分组成：编码器(Encoder)和解码器(Decoder)。  编码器(Encoder)：将输入数据压缩到一个低维的潜在空间表示。编码器的输出维度通常比输入维度小，这个压缩过程可以去除输入数据中的噪声并保留关键特征。 解码器(Decoder)：从潜在空间表示重建原">
+<meta property="og:description" content="Autoencoder是一种用于无监督学习的神经网络模型，旨在通过压缩和重建数据来学习数据的有效表示。Autoencoder由两个主要部分组成：编码器(Encoder)和解码器(Decoder)。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/22/artificial-intelligence/Variational_Autoencoder_study/va_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/22/artificial-intelligence/Variational_Autoencoder_study/va_2.png">
@@ -319,9 +319,10 @@
     
     
     <div class="post-body" itemprop="articleBody"><p><code>Autoencoder</code>是一种用于<strong>无监督学习</strong>的神经网络模型，旨在通过<strong>压缩和重建数据</strong>来学习数据的有效表示。<code>Autoencoder</code>由两个主要部分组成：<strong>编码器</strong>(<code>Encoder</code>)和<strong>解码器</strong>(<code>Decoder</code>)。</p>
+<span id="more"></span>
 <ul>
 <li><strong>编码器</strong>(<code>Encoder</code>)：将输入数据压缩到一个低维的潜在空间表示。编码器的输出维度通常比输入维度小，这个压缩过程可以去除输入数据中的噪声并保留关键特征。</li>
-<li><strong>解码器</strong>(<code>Decoder</code>)：从潜在空间表示重建原始输入数据。解码器的结构通常是编码器的镜像，尝试尽可能准确地重建原始输入数据。<span id="more"></span></li>
+<li><strong>解码器</strong>(<code>Decoder</code>)：从潜在空间表示重建原始输入数据。解码器的结构通常是编码器的镜像，尝试尽可能准确地重建原始输入数据。</li>
 </ul>
 <p><strong>工作机制</strong>：</p>
 <ul>
