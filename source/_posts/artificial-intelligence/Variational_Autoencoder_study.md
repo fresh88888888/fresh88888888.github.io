@@ -156,7 +156,7 @@ print(cost().numpy())  # 输出优化后的损失值
 
 {% asset_img va_15.png %}
 
-如何推导损失函数？
+如何推导出损失函数？
 {% asset_img va_15.png %}
 
 编码器分布为：{% mathjax %}q(z|x)=\mathcal{N}(z|\mu(x),\Sigma(x)){% endmathjax %}，其中，{% mathjax %}\Sigma=\text{diag}(\sigma_1^2,\ldots,\sigma^2_n){% endmathjax %}。潜在先验由下式给出{% mathjax %}p(z)=\mathcal{N}(0,I){% endmathjax %}。两者都是维度为{% mathjax %}n{% endmathjax %}的多元高斯，`KL`散度为：
