@@ -97,13 +97,20 @@ mathjax:
 ##### 掩蔽多头注意力机制(Masked Multi-Head Attention)
 
 **掩蔽多头注意力机制**(`Masked Multi-Head Attention`)是`Transformer`模型中的一种注意力机制，主要用于解码器部分，确保生成序列的顺序处理，并防止未来信息泄露。在解码过程中，**掩蔽多头注意力机制**(`Masked Multi-Head Attention`)通过掩码机制确保每个生成的`token`只能依赖于当前及之前的`token`，而不能看到未来的`token`。这种机制对于保持生成序列的顺序和一致性非常重要。**掩蔽多头注意力机制**(`Masked Multi-Head Attention`)的工作原理可以分为以下几个步骤：
-- 输入嵌入：
-- 线性投影：
-- 计算注意力得分：
-- 生成掩码：
-- 应用掩码：
-- 计算注意力权重：
-- 加权求和：
+- 输入嵌入：解码器接收整个目标序列的输入嵌入。
+- 线性投影：对于每个注意力头，将输入嵌入投影到查询(`Query`)、键(`Key`)和值(`Value`)向量上：{% mathjax %}\mathbf{Q} = \mathbf{XW}_Q{% endmathjax %}，{% mathjax %}\mathbf{K} = \mathbf{XW}_K{% endmathjax %}，{% mathjax %}\mathbf{V} = \mathbf{XW}_V{% endmathjax %}。
+- 计算注意力得分：使用查询向量和键向量的缩放点积计算注意力得分：{% mathjax %}\text{Attention Score} = \frac{\boldsymbol{Q}\boldsymbol{K}^{\top}}{\sqrt{d_k}}{% endmathjax %}。
+- 生成掩码：生成一个上三角矩阵掩码，将未来的标记位置设置为负无穷大{% mathjax %}(-\infty){% endmathjax %}，以确保这些位置在`softmax`计算中权重为零：
+{% mathjax '{"conversion":{"em":14}}' %}
+\text{Mask}[i,j] = 
+\begin{cases}
+      0 & \text{ if } & i\geq j \\
+      -\infty & \text{ if } & i< j
+    \end{cases}
+{% endmathjax %}
+- 应用掩码：将掩码添加到注意力得分中：{% mathjax %}\text{Masked Score} = \text{Attention Score} + \text{Mask}{% endmathjax %}
+- 计算注意力权重：使用`softmax`函数对掩码后的注意力得分进行归一化，得到注意力权重：{% mathjax %}\text{Attention Weights} = \text{softmax}(\text{Masked Score}){% endmathjax %}。
+- 加权求和：使用注意力权重对值向量进行加权求和，得到最终的输出：{% mathjax %}\text{Output} = \sum (\text{Attention Weights}\cdot \boldsymbol{V}){% endmathjax %}。
 
 **优点**：
 - **防止信息泄露**：通过掩码机制，确保每个生成的标记只能依赖于当前及之前的标记，防止未来信息泄露。
