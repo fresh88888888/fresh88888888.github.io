@@ -31,7 +31,7 @@ mathjax:
 - **编码器-解码器模型**（或Seq2Seq 模型）：适用于需要基于输入的生成式任务，例如翻译、摘要。
 
 `Transformer`模型本质上都是预训练语言模型，大都采用自监督学习(`Self-supervised learning`)的方式在大量生语料上进行训练，也就是说，训练这些`Transformer`模型完全不需要人工标注数据。
-{% asset_img tp_1.png %}
+{% asset_img tp_1.png 'Transformer架构原理图' %}
 
 #### 编码器(Encoder)
 
