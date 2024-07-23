@@ -351,7 +351,7 @@
 <li><strong>编码器-解码器模型</strong>（或Seq2Seq 模型）：适用于需要基于输入的生成式任务，例如翻译、摘要。</li>
 </ul>
 <p><code>Transformer</code>模型本质上都是预训练语言模型，大都采用自监督学习(<code>Self-supervised learning</code>)的方式在大量生语料上进行训练，也就是说，训练这些<code>Transformer</code>模型完全不需要人工标注数据。</p>
-<img data-src="/2024/07/23/artificial-intelligence/Transformer_plus_study/tp_1.png" class="">
+<img data-src="/2024/07/23/artificial-intelligence/Transformer_plus_study/tp_1.png" class="" title="Transformer架构原理图">
 
 <h4 id="编码器-Encoder"><a href="#编码器-Encoder" class="headerlink" title="编码器(Encoder)"></a>编码器(Encoder)</h4><h5 id="输入嵌入-input-embeding"><a href="#输入嵌入-input-embeding" class="headerlink" title="输入嵌入(input embeding)"></a>输入嵌入(input embeding)</h5><p>这里的<strong>编码器</strong>(<code>encoder</code>)，从<strong>输入嵌入</strong>(<code>input embeding</code>)开始，什么是输入嵌入？首先让我们从”<code>You CAT is a Lovely CAT.</code>“句子开始。我们有<code>6</code>个单词组成的句子，目标就是将其转化为<code>token</code>。在这里我们将句子分割成单个单词（为了简单起见），每个单词表示为一个<code>token</code>，下一步我们将要使这些单词映射为数字。这些数字代表的含义是在词汇表的位置。假设有一个包含了所有单词的词汇表在训练集中，每个单词在词汇表中拥有一个位置，例如，”<code>You</code>“单词占据词汇表的位置是”<code>105</code>“，”<code>CAT</code>“单词占据词汇表的位置是”<code>6587</code>“等等，我们将这些数字（称为输入<code>ID</code>）映射到大小为<code>512</code>的向量中。这个向量是由<code>512</code>个数值组成。我们将相同单词映射到相同的嵌入，然而这个数值不是固定的。输入<code>ID</code>不会变化，因为词汇量是固定的，但嵌入会改变，随着模型的训练嵌入值会随着损失函数的需要而发生变化，因此输入嵌入基本上将单个单词映射到大小为<code>512</code>的嵌入。</p>
 <img data-src="/2024/07/23/artificial-intelligence/Transformer_plus_study/tp_2.png" class="">
