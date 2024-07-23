@@ -103,7 +103,7 @@ mathjax:
 - 生成掩码：生成一个上三角矩阵掩码，将未来的标记位置设置为负无穷大{% mathjax %}(-\infty){% endmathjax %}，以确保这些位置在`softmax`计算中权重为零：
 {% mathjax '{"conversion":{"em":14}}' %}
 \text{Mask}[i,j] = 
-\begin{cases}
+    \begin{cases}
       0 & \text{ if } & i\geq j \\
       -\infty & \text{ if } & i< j
     \end{cases}
