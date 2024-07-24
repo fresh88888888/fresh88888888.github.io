@@ -160,4 +160,7 @@ mathjax:
 |残差连接(`Residual Connection`)|{% asset_img tp_22.png %}|
 |编码块(`Encoder Block`)|{% asset_img tp_23.png %}|
 |编码器模块(`Encoder`)|{% asset_img tp_24.png %}|
-
+|解码器块(`Decoder Block`)|{% asset_img tp_25.png %}|
+|解码器模块(`Decoder`)|{% asset_img tp_26.png %}|
+|`Project`层(`Projection Layer`)|{% asset_img tp_27.png %}|
+|`Transfrmer`模块(`Transfrmer`)|{% asset_img tp_28.png %}|
