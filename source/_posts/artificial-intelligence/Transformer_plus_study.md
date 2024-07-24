@@ -129,6 +129,12 @@ mathjax:
 举例，有一个句子(英语)“`I love you very much`”翻译成意大利语("`Ti amo molto`")。
 {% asset_img tp_10.png %}
 
+有两种常见的预训练任务：
+- 基于句子的前个词来预测下一个词，因为输出依赖于过去和当前的输入，因此该任务被称为**因果语言建模**(`causal language modeling`)。
+{% asset_img tp_15.png %}
+- 基于上下文（周围的词语）来预测句子中被遮盖掉的词语(`masked word`)，因此该任务被称为**遮盖语言建模**(`masked language modeling`)。
+{% asset_img tp_16.png %}
+
 #### 推理(Inference)
 
 举例，有一个句子(英语)“`I love you very much`”翻译成意大利语("`Ti amo molto`")。
