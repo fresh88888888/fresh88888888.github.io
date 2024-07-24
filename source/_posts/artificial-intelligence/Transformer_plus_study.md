@@ -150,11 +150,14 @@ mathjax:
 
 #### 代码实现(Python)
 
-|`Layers/Blocks`|`Coding`|
+|`Layers/Blocks/Modules`|`Coding`|
 |:---|:---|
 |嵌入输出(`Input Embeding`)|{% asset_img tp_17.png %}|
 |位置编码(`Positional Encoder`)|{% asset_img tp_18.png %}|
 |层归一化(`Layer Normalization`)|{% asset_img tp_19.png %}|
 |前馈块(`Feed Forward Block`)|{% asset_img tp_20.png %}|
 |多头注意力块(`Multi Head Attention Block`)|{% asset_img tp_21.png %}|
+|残差连接(`Residual Connection`)|{% asset_img tp_22.png %}|
+|编码块(`Encoder Block`)|{% asset_img tp_23.png %}|
+|编码器(`Encoder`)|{% asset_img tp_24.png %}|
 
