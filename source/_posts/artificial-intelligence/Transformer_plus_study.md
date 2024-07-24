@@ -159,5 +159,5 @@ mathjax:
 |多头注意力块(`Multi Head Attention Block`)|{% asset_img tp_21.png %}|
 |残差连接(`Residual Connection`)|{% asset_img tp_22.png %}|
 |编码块(`Encoder Block`)|{% asset_img tp_23.png %}|
-|编码器(`Encoder`)|{% asset_img tp_24.png %}|
+|编码器模块(`Encoder`)|{% asset_img tp_24.png %}|
 
