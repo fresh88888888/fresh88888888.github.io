@@ -148,3 +148,13 @@ mathjax:
 
 **推理策略**：我们在每一步都选择具有最大`softmax`值的单词。这种策略称为**贪婪策略**，通常效果不佳。更好的策略是在每个步骤中选择前`B`个单词，并评估每个单词的所有可能的下一个单词，并在每一步中保留前`B`个最可能的序列。这是`Beam Search`策略，通常效果更好。
 
+#### 代码实现
+
+|`Layers/Blocks`|`Coding`|
+|:---|:---|
+|嵌入输出(`Input Embeding`)|{% asset_img tp_17.png %}|
+|位置编码(`Positional Encoder`)|{% asset_img tp_18.png %}|
+|层归一化(`Layer Normalization`)|{% asset_img tp_19.png %}|
+|前馈块(`Feed Forward Block`)|{% asset_img tp_20.png %}|
+|多头注意力块(`Multi Head Attention Block`)|{% asset_img tp_21.png %}|
+
