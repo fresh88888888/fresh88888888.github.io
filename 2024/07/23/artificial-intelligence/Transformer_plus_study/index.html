@@ -43,6 +43,7 @@
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/23/artificial-intelligence/Transformer_plus_study/tp_8.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/23/artificial-intelligence/Transformer_plus_study/tp_9.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/23/artificial-intelligence/Transformer_plus_study/tp_10.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/23/artificial-intelligence/Transformer_plus_study/tp_15.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/23/artificial-intelligence/Transformer_plus_study/tp_11.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/23/artificial-intelligence/Transformer_plus_study/tp_12.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/23/artificial-intelligence/Transformer_plus_study/tp_13.png">
@@ -314,7 +315,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>3.3k</span>
+      <span>3.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -348,7 +349,7 @@
 <ul>
 <li><strong>纯编码器模型</strong>：适用于只需要理解输入语义的任务，例如句子分类、命名实体识别。</li>
 <li><strong>纯解码器模型</strong>：适用于生成式任务，例如文本生成。</li>
-<li><strong>编码器-解码器模型</strong>（或Seq2Seq 模型）：适用于需要基于输入的生成式任务，例如翻译、摘要。</li>
+<li><strong>编码器-解码器模型</strong>（或<code>Seq2Seq</code>模型）：适用于需要基于输入的生成式任务，例如翻译、摘要。</li>
 </ul>
 <p><code>Transformer</code>模型本质上都是预训练语言模型，大都采用自监督学习(<code>Self-supervised learning</code>)的方式在大量生语料上进行训练，也就是说，训练这些<code>Transformer</code>模型完全不需要人工标注数据。</p>
 <img data-src="/2024/07/23/artificial-intelligence/Transformer_plus_study/tp_1.png" class="" title="Transformer架构原理图">
@@ -427,6 +428,11 @@
 <p>举例，有一个句子(英语)“<code>I love you very much</code>”翻译成意大利语(“<code>Ti amo molto</code>“)。</p>
 <img data-src="/2024/07/23/artificial-intelligence/Transformer_plus_study/tp_10.png" class="">
 
+<p>有两种常见的预训练任务：</p>
+<ul>
+<li>基于句子的前个词来预测下一个词，因为输出依赖于过去和当前的输入，因此该任务被称为<strong>因果语言建模</strong>(<code>causal language modeling</code>)。<img data-src="/2024/07/23/artificial-intelligence/Transformer_plus_study/tp_15.png" class=""></li>
+<li>基于上下文（周围的词语）来预测句子中被遮盖掉的词语(<code>masked word</code>)，因此该任务被称为<strong>遮盖语言建模</strong>(<code>masked language modeling</code>)。</li>
+</ul>
 <h4 id="推理-Inference"><a href="#推理-Inference" class="headerlink" title="推理(Inference)"></a>推理(Inference)</h4><p>举例，有一个句子(英语)“<code>I love you very much</code>”翻译成意大利语(“<code>Ti amo molto</code>“)。</p>
 <table>
 <thead>
@@ -532,7 +538,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">52:37</span>
+    <span title="站点阅读时长">52:38</span>
   </span>
 </div>
 <div class="busuanzi-count">
