@@ -164,3 +164,4 @@ mathjax:
 |解码器模块(`Decoder`)|{% asset_img tp_26.png %}|
 |`Project`层(`Projection Layer`)|{% asset_img tp_27.png %}|
 |`Transfrmer`模块(`Transfrmer`)|{% asset_img tp_28.png %}|
+|模型构建方法(`build_transformer`)|{% asset_img tp_29.png %}|
