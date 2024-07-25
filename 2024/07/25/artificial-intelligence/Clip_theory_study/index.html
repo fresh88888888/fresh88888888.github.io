@@ -301,14 +301,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>767</span>
+      <span>952</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
+      <span>1 分钟</span>
     </span>
 </div>
 
@@ -341,6 +341,7 @@
 <p>虽然<code>CLIP</code>通常能很好地识别常见物体，但它在更抽象或系统的任务（例如计算图像中的物体数量）和更复杂的任务（例如预测照片中最近的汽车有多近）上表现不佳。在这两个数据集上，零样本<code>CLIP</code>仅比随机猜测略胜一筹。与特定任务模型相比，零样本<code>CLIP</code>在非常细粒度的分类上也表现不佳，例如区分汽车型号、飞机变体或花卉种类。<code>CLIP</code>对其预训练数据集中未涵盖的图像的泛化能力仍然较差。例如，尽管<code>CLIP</code>学习了一个功能强大的<code>OCR</code>系统，但在对<code>MNIST</code>数据集中的手写数字进行评估时，零样本<code>CLIP</code>的准确率仅为<code>88%</code>，远低于人类在该数据集上的<code>99.75%</code>。最后观察到<code>CLIP</code>的零样本分类器可能对措辞或短语很敏感，有时需要反复试验的才能取得良好效果。</p>
 <img data-src="/2024/07/25/artificial-intelligence/Clip_theory_study/c_2.png" class="" title="CLIP联合训练图像编码器和文本编码器来预测一批(图像,文本)对。在测试时，学习到的文本编码器通过嵌入目标数据集类别的名称(或描述)来合成零样本线性分类器。">
 
+<p><code>CLIP</code>采用了两种不同的编码器架构：一种是<code>ResNet-50</code>最为图像编码的基础架构；另一种是<code>Vision Transformer(ViT)</code>。</p>
 
     </div>
 
@@ -413,14 +414,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">948k</span>
+    <span title="站点总字数">2.5m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">52:41</span>
+    <span title="站点阅读时长">35:01</span>
   </span>
 </div>
 <div class="busuanzi-count">
