@@ -301,14 +301,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>952</span>
+      <span>1.3k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>4 分钟</span>
     </span>
 </div>
 
@@ -341,7 +341,9 @@
 <p>虽然<code>CLIP</code>通常能很好地识别常见物体，但它在更抽象或系统的任务（例如计算图像中的物体数量）和更复杂的任务（例如预测照片中最近的汽车有多近）上表现不佳。在这两个数据集上，零样本<code>CLIP</code>仅比随机猜测略胜一筹。与特定任务模型相比，零样本<code>CLIP</code>在非常细粒度的分类上也表现不佳，例如区分汽车型号、飞机变体或花卉种类。<code>CLIP</code>对其预训练数据集中未涵盖的图像的泛化能力仍然较差。例如，尽管<code>CLIP</code>学习了一个功能强大的<code>OCR</code>系统，但在对<code>MNIST</code>数据集中的手写数字进行评估时，零样本<code>CLIP</code>的准确率仅为<code>88%</code>，远低于人类在该数据集上的<code>99.75%</code>。最后观察到<code>CLIP</code>的零样本分类器可能对措辞或短语很敏感，有时需要反复试验的才能取得良好效果。</p>
 <img data-src="/2024/07/25/artificial-intelligence/Clip_theory_study/c_2.png" class="" title="CLIP联合训练图像编码器和文本编码器来预测一批(图像,文本)对。在测试时，学习到的文本编码器通过嵌入目标数据集类别的名称(或描述)来合成零样本线性分类器。">
 
-<p><code>CLIP</code>采用了两种不同的编码器架构：一种是<code>ResNet-50</code>最为图像编码的基础架构；另一种是<code>Vision Transformer(ViT)</code>。</p>
+<p><code>CLIP</code>采用了两种不同的图像编码器架构：一种是<code>ResNet-50</code>作为图像编码的基础架构（注意力池替换了全局平均池）；另一种是<code>Vision Transformer(ViT)</code>，在位置嵌入中添加了一层（层归一化）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># image_encoder - ResNet or Vision Transformer</span></span><br><span class="line"><span class="comment"># text_encoder - CBOW or Text Transformer</span></span><br><span class="line"><span class="comment"># I[n, h, w, c] - minibatch of aligned images</span></span><br><span class="line"><span class="comment"># T[n, l] - minibatch of aligned texts</span></span><br><span class="line"><span class="comment"># W_i[d_i, d_e] - learned proj of image to embed</span></span><br><span class="line"><span class="comment"># W_t[d_t, d_e] - learned proj of text to embed</span></span><br><span class="line"><span class="comment"># t - learned temperature parameter</span></span><br><span class="line"><span class="comment"># extract feature representations of each modality</span></span><br><span class="line">I_f = image_encoder(I) <span class="comment">#[n, d_i]</span></span><br><span class="line">T_f = text_encoder(T) <span class="comment">#[n, d_t]</span></span><br><span class="line"><span class="comment"># joint multimodal embedding [n, d_e]</span></span><br><span class="line">I_e = l2_normalize(np.dot(I_f, W_i), axis=<span class="number">1</span>)</span><br><span class="line">T_e = l2_normalize(np.dot(T_f, W_t), axis=<span class="number">1</span>)</span><br><span class="line"><span class="comment"># scaled pairwise cosine similarities [n, n]</span></span><br><span class="line">logits = np.dot(I_e, T_e.T) * np.exp(t)</span><br><span class="line"><span class="comment"># symmetric loss function</span></span><br><span class="line">labels = np.arange(n)</span><br><span class="line">loss_i = cross_entropy_loss(logits, labels, axis=<span class="number">0</span>)</span><br><span class="line">loss_t = cross_entropy_loss(logits, labels, axis=<span class="number">1</span>)</span><br><span class="line">loss = (loss_i + loss_t)/<span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>文本编码器是一个<code>Transformer</code>模型（修改于<code>Radford</code>）。使用一个<code>63M</code>参数、<code>12</code>层、<code>512</code>维度的模型，带有<code>8</code>个注意力头。<code>Transformer</code>对文本用小写字节对编码(<code>BPE</code>)表示进行操作，词汇量为<code>49,152</code>。为了提高计算效率，最大序列长度上限为<code>76</code>。文本序列用了<code>[SOS]</code>和<code>[EOS]</code>两个<code>token</code>，Transformer最高层在<code>[EOS]token</code>处的激活被视为文本的特征表示，该文本进行层归一化，然后线性投影到多模态嵌入空间中。虽然之前的计算机视觉研究通常对于单独增加宽度(<code>Mahajan</code>等人，<code>2018</code>)或深度来扩展模型，但对于<code>ResNet</code>图像编码器，采用了<code>Tan &amp; Le (2019)</code>的方法，该方法发现在宽度、深度和分辨率上分配额外的计算要优于只将其分配给模型的一个维度。虽然<code>Tan &amp; Le (2019)</code>调整了分配给其<code>EfficientNet</code>架构的每个维度的计算比例，但平等地分配额外的计算以增加模型的宽度、深度和分辨率。对于文本编码器，将模型的宽度缩放为与<code>ResNet</code>宽度的计算增加成比例，并且根本不缩放深度，发现<code>CLIP</code>的性能对文本编码器的容量不太敏感。</p>
 
     </div>
 
@@ -414,14 +416,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">2.5m</span>
+    <span title="站点总字数">949k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">35:01</span>
+    <span title="站点阅读时长">52:42</span>
   </span>
 </div>
 <div class="busuanzi-count">
