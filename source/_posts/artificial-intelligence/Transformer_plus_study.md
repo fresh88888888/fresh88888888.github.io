@@ -165,3 +165,5 @@ mathjax:
 |投影层(`Projection Layer`)|{% asset_img tp_27.png %}|
 |`Transfrmer`模块(`Transfrmer`)|{% asset_img tp_28.png %}|
 |模型构建方法(`build_transformer`)|{% asset_img tp_29.png %}|
+|构建分词器模块(`Tokenizer`)|{% asset_img tp_30.png %}|
+|加载数据集(`train & val dataset`)|{% asset_img tp_31.png %}|
