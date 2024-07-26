@@ -253,7 +253,7 @@ class AttentionPool2d(nn.Module):
         )
         return x.squeeze(0)
 
-
+# 修改后的ResNet模型类
 class ModifiedResNet(nn.Module):
     """
     A ResNet class that is similar to torchvision's but contains the following changes:
