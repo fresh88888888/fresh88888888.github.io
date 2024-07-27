@@ -332,7 +332,7 @@
 <h4 id="训练模型"><a href="#训练模型" class="headerlink" title="训练模型"></a>训练模型</h4><p>和以前一样，我们使用<code>Fashion-MNIST</code>来训练模型。训练<code>NiN</code>与训练<code>AlexNet、VGG</code>时相似。</p>
 <img data-src="/2024/05/16/artificial-intelligence/NiN_theory_study/nin_2.png" class="">
 
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p><code>NiN</code>块使用由一个卷积层和多个<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0;" xmlns="http://www.w3.org/2000/svg" width="5.028ex" height="1.507ex" role="img" focusable="false" viewBox="0 -666 2222.4 666" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-15-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-15-TEX-N-D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mn"><use data-c="31" xlink:href="#MJX-15-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(722.2,0)"><use data-c="D7" xlink:href="#MJX-15-TEX-N-D7"></use></g><g data-mml-node="mn" transform="translate(1722.4,0)"><use data-c="31" xlink:href="#MJX-15-TEX-N-31"></use></g></g></g></svg></mjx-container>卷积层组成的块。该块可以在卷积神经网络中使用，以允许更多的每像素非线性。<code>NiN</code>去除了容易造成过拟合的全连接层，将它们替换为全局平均汇聚层（即在所有位置上进行求和）。该汇聚层通道数量为所需的输出数量（例如，<code>Fashion-MNIST</code>的输出为<code>10</code>）。移除全连接层可减少过拟合，同时显著减少<code>NiN</code>的参数。<code>NiN</code>的设计影响了许多后续卷积神经网络的设计。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p><code>NiN</code>块使用由一个卷积层和多个<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0;" xmlns="http://www.w3.org/2000/svg" width="5.028ex" height="1.507ex" role="img" focusable="false" viewBox="0 -666 2222.4 666" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-16-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-16-TEX-N-D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mn"><use data-c="31" xlink:href="#MJX-16-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(722.2,0)"><use data-c="D7" xlink:href="#MJX-16-TEX-N-D7"></use></g><g data-mml-node="mn" transform="translate(1722.4,0)"><use data-c="31" xlink:href="#MJX-16-TEX-N-31"></use></g></g></g></svg></mjx-container>卷积层组成的块。该块可以在卷积神经网络中使用，以允许更多的每像素非线性。<code>NiN</code>去除了容易造成过拟合的全连接层，将它们替换为全局平均汇聚层（即在所有位置上进行求和）。该汇聚层通道数量为所需的输出数量（例如，<code>Fashion-MNIST</code>的输出为<code>10</code>）。移除全连接层可减少过拟合，同时显著减少<code>NiN</code>的参数。<code>NiN</code>的设计影响了许多后续卷积神经网络的设计。</p>
 
     </div>
 
@@ -408,14 +408,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">956k</span>
+    <span title="站点总字数">957k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">53:06</span>
+    <span title="站点阅读时长">53:10</span>
   </span>
 </div>
 <div class="busuanzi-count">
