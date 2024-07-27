@@ -92,7 +92,7 @@ mathjax:
 
 假设我们有一个非常简单的神经网络，它使用房屋的卧室数量{% mathjax %}x_1{% endmathjax %}和浴室数量{% mathjax %}x_2{% endmathjax %}来计算房屋的价格。隐藏层中的每个神经元{% mathjax %}j{% endmathjax %}将计算以下内容：{% mathjax %}(\sum_1^2 x_i w_{ji}) + b_j{% endmathjax %}让我们可视化该神经网络的计算图。
 {% asset_img mI_1.png  %}
-
+- - -
 {% asset_img mI_2.png  %}
 
 ##### 反向传播(Backpropagation)
