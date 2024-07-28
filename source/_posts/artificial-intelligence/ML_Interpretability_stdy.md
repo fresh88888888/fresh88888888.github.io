@@ -112,7 +112,7 @@ mathjax:
 
 计算出相对于每个权重的损失梯度后，我们可以更新权重，使其沿梯度方向移动，使用通常的更新规则如下：
 {% mathjax '{"conversion":{"em":14}}' %}
-{w_{11}}_{\text{NEW}} = {w_{11}}_{\text{OLD}} - \alpha\ast\frac{dl}{w_{11}}
+w_{11}_{\text{NEW}} = w_{11}_{\text{OLD}} - \alpha\ast\frac{dl}{w_{11}}
 {% endmathjax %}
 
 为什么我们要有**学习率**？因为我们正在运行随机梯度下降，梯度方向不是真正的梯度，而是一个近似值，所以我们不能完全信任它。
