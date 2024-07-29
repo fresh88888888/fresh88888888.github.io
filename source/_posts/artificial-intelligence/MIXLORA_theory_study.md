@@ -14,7 +14,7 @@ mathjax:
 
 #### 介绍
 
-`MixLoRA`[^1]是一种用于优化大规模语言模型(`LLMs`)微调的新方法，结合了`LoRA`(`Low-Rank Adaptation`)和专家混合(`Mixture of Experts, MoE`)技术。大规模语言模型的微调通常需要大量的计算资源和显存。`LoRA`通过引入低秩适配器，显著减少了微调时的参数数量和显存需求。然而，`LoRA`在多任务学习场景中的性能仍有提升空间。专家混合模型(`MoE`)在多任务学习中表现出色，但其资源需求对普通消费者级`GPU`来说是一个挑战。
+[`MixLoRA`][1]是一种用于优化大规模语言模型(`LLMs`)微调的新方法，结合了`LoRA`(`Low-Rank Adaptation`)和专家混合(`Mixture of Experts, MoE`)技术。大规模语言模型的微调通常需要大量的计算资源和显存。`LoRA`通过引入低秩适配器，显著减少了微调时的参数数量和显存需求。然而，`LoRA`在多任务学习场景中的性能仍有提升空间。专家混合模型(`MoE`)在多任务学习中表现出色，但其资源需求对普通消费者级`GPU`来说是一个挑战。
 <!-- more -->
 
 **主要特点**：
@@ -26,4 +26,4 @@ mathjax:
 
 #### 引用
 
-[^1]：[MIXLORA: Enhancing Large Language Models Fine-Tuning with LoRA-based Mixture of Experts](https://arxiv.org/pdf/2404.15159v2)
+[1]：[MIXLORA: Enhancing Large Language Models Fine-Tuning with LoRA-based Mixture of Experts](https://arxiv.org/pdf/2404.15159v2)
