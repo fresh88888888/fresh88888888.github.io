@@ -299,14 +299,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>791</span>
+      <span>3.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
+      <span>12 分钟</span>
     </span>
 </div>
 
@@ -336,76 +336,76 @@
 <tr>
     <td rowspan="3">通用</td>
     <td>MMLU Chat(0-shot, CoT)</td>
-    <td></td>
+    <td rowspan="2">大规模多任务语言理解(Massive Multitask Language Understanding, MMLU)是一个用于评估语言模型多任务处理能力的基准测试。由UC Berkeley的研究人员于2020年推出，MMLU测试旨在通过零样本(0-shot：模型在没有任何示例的情况下直接进行任务)和少样本(few-shot：模型在提供少量示例后进行任务)设置评估模型在预训练期间获得的知识和能力。这种测试方法使得基准测试更具挑战性，更接近于人类评估的方式。MMLU涵盖了57个任务，涉及多个领域，包括：基础数学、美国历史、计算机科学、法律、道德和伦理学。这些任务要求模型展示广泛的知识基础和卓越的问题解决能力，评估其在不同领域的表现。</td>
 </tr>
 <tr>
     <td>MMLU PRO(5-shot, CoT)</td>
-    <td></td>
 </tr>
 <tr>
     <td>IFEval</td>
-    <td></td>
+    <td>IFEval(Instruction-Following Evaluation)是一个用于评估大型语言模型(LLMs)遵循自然语言指令能力的基准测试。IFEval由Zhou等人于2023年提出，旨在通过一组“可验证的指令”来客观地评估模型的指令跟随能力。可验证指令：IFEval专注于一组可以客观验证的指令（例如，“写超过400个单词”，“至少提到3次AI关键词”）。这些指令的设计使得评估过程更加清晰和客观，避免了人工评估的主观性和基于LLM的自动评估可能存在的偏见。广泛的指令覆盖：IFEval确定了25种可验证指令，并构建了约500个提示，每个提示包含一个或多个可验证指令。这些指令涵盖了多种任务，确保评估的全面性。</td>
 </tr>
 <tr>
     <td rowspan="2">Code</td>
     <td>HumanEval(0-shot)</td>
-    <td></td>
+    <td>HumanEval(0-shot)是HumanEval基准测试的一种特定设置，用于评估大型语言模型在没有任何示例或额外上下文的情况下生成代码的能力。零样本设置：在0-shot设置中，模型仅基于问题描述和函数签名生成代码，没有任何示例或额外的上下文信息。这种设置更能测试模型的真实能力和泛化性。HumanEval(0-shot)主要使用两种评估指标：<br>pass@1：模型第一次生成的代码通过所有测试用例的概率；<br>pass@10：在10次生成中至少有一次通过所有测试用例的概率。</td>
 </tr>
 <tr>
     <td>MBPP EvalPlus(base) (0-shot)</td>
-    <td></td>
+    <td>MBPP EvalPlus(base) (0-shot)是对原始MBPP(Mostly Basic Python Problems)基准测试的扩展和改进版本,用于评估大型语言模型在零样本设置下的Python代码生成能力。MBPP EvalPlus基于原始MBPP数据集,但进行了重要的改进和扩展。原始MBPP包含约1,000个Python编程问题,而MBPP EvalPlus选取了其中经过手动验证的高质量子集。</td>
 </tr>
 
 <tr>
     <td rowspan="2">Math</td>
     <td>GSM8K(8-shot, CoT)</td>
-    <td></td>
+    <td>GSM8K(8-shot, CoT)是一种用于评估大型语言模型数学推理能力的基准测试方法。GSM8K(Grade School Math 8K)是一个包含约8,000个小学数学应用题的数据集。这些问题涵盖了基础算术、代数、几何等多个领域，难度适合小学生水平。在8-shot设置中，模型会先看到8个示例问题及其解答过程，然后再回答新的测试问题。这种少样本学习方法旨在测试模型的快速适应能力。CoT是一种提示方法，鼓励模型生成详细的推理步骤，而不仅仅是直接给出最终答案。在GSM8K任务中，CoT通常包括以下步骤：理解问题，分解问题为子步骤，逐步计算，得出最终答案。GSM8K(8-shot, CoT)主要使用准确率作为评估指标。模型需要通过正确的推理步骤得出准确的最终答案。</td>
 </tr>
 <tr>
     <td>MATH(0-sho, CoT)</td>
-    <td></td>
+    <td>MATH(0-shot, CoT)是一种用于评估大型语言模型数学推理能力的基准测试方法。<br>零样本设置(0-shot):模型在没有看到任何示例的情况下直接回答问题,测试其内在的数学推理能力。<br>思维链(Chain-of-Thought, CoT)推理:鼓励模型生成详细的推理步骤,而不仅仅是给出最终答案。通常通过在问题后添加"Let's think step by step"等提示来实现。<br>数据集:通常使用MATH数据集,这是一个包含高中和大学水平数学问题的数据集,涵盖代数、几何、微积分等多个领域。评估方法：<br>主要使用准确率作为评估指标。<br>模型需要通过正确的推理步骤得出准确的最终答案。<br>有时还会评估模型生成的推理步骤的质量和合理性。</td>
 </tr>
 
 <tr>
     <td rowspan="2">推理</td>
     <td>ARC Challenge(0-shot)</td>
-    <td></td>
+    <td>ARC Challenge(0-shot)是一种用于评估人工智能模型抽象推理能力的基准测试。主要特点：<br>零样本设置(0-shot)：模型在没有看到任何示例的情况下直接解决问题，测试其内在的抽象推理能力。<br>数据集：使用 Abstraction and Reasoning Corpus (ARC) 数据集，包含一系列抽象视觉推理任务。<br>任务类型：每个任务包含输入-输出对的训练示例和一个测试输入，模型需要推断规则并生成正确的测试输出。<br>评估方法：<br>主要使用准确率作为评估指标。<br>模型需要正确推断规则并生成与人类标注一致的测试输出。</td>
 </tr>
 <tr>
     <td>GPQA(0-shot, CoT)</td>
-    <td></td>
+    <td>GPQA(0-shot, CoT)是一种用于评估大型语言模型在高难度问答任务中的推理能力的基准测试方法。GPQA(Graduate-Level Google-Proof Q&A)是一个包含高难度问答任务的数据集，旨在评估模型在面对复杂问题时的推理和回答能力。问题涵盖多个学科领域，包括科学、技术、工程和数学（STEM）。在零样本设置中，模型在没有任何示例或额外上下文的情况下直接回答问题。这种设置测试模型的内在知识和推理能力，而不依赖于特定的训练示例。评估方法：GPQA(0-shot, CoT)主要使用准确率作为评估指标。模型需要通过正确的推理步骤得出准确的最终答案。</td>
 </tr>
 
 <tr>
-    <td rowspan="2">使用工具</td>
+    <td rowspan="2">工具使用</td>
     <td>BFCL</td>
-    <td></td>
+    <td>BFCL(Benchmark for Few-shot Compositional Learning)是一个用于评估大型语言模型在少样本学习和组合学习任务中表现的基准测试。主要特点：<br>少样本学习：BFCL 旨在测试模型在只有少量示例的情况下学习和应用新知识的能力。<br>组合学习：评估模型将已知概念组合成新概念的能力，这是人类智能的一个关键特征。<br>工具使用：BFCL包含需要模型使用外部工具或 API来解决问题的任务，测试模型的工具使用能力。<br>多样化任务：包括各种类型的任务，如自然语言处理、代码生成、数学推理等。<br>评估方法：<br>BFCL使用多种指标来评估模型性能，包括准确率、完成率等。<br>对于工具使用任务，还会评估模型正确调用和使用工具的能力。</td>
 </tr>
 <tr>
     <td>Nexus(0-shot)</td>
-    <td></td>
+    <td>Nexus(0-shot)是一个用于评估大型语言模型在零样本设置下执行复杂任务能力的基准测试。主要特点：<br>零样本设置：模型在没有任何示例或额外上下文的情况下直接回答问题，测试其内在知识和推理能力。<br>复杂任务：Nexus包含一系列需要多步推理和综合能力的复杂任务。<br>多领域覆盖：任务涵盖多个领域，可能包括科学、技术、工程、数学等多个学科。<br>评估方法：<br>Nexus(0-shot)主要使用准确率作为评估指标。模型需要通过正确的推理步骤得出准确的最终答案。</td>
 </tr>
 
 <tr>
     <td rowspan="3">长上下文</td>
     <td>ZeroSCROLLS/QuALITY</td>
-    <td></td>
+    <td>ZeroSCROLLS是一个用于评估大型语言模型在长文本理解任务中的零样本表现的基准测试。主要特点：<br>零样本设置(0-shot)：ZeroSCROLLS仅包含测试集和小规模验证集，没有训练数据。这种设置测试模型在没有示例的情况下直接处理任务的能力。<br>多任务覆盖：ZeroSCROLLS包含十个自然语言处理任务，涉及多个领域，包括摘要生成、问答、情感分类和信息重排序等。<br>长文本处理：所有任务都要求模型处理和理解长文本，这对模型的记忆和推理能力提出了更高的要求。<br>评估方法：<br>ZeroSCROLLS使用多种评估指标来衡量模型的表现，包括ROUGE分数（用于摘要任务）、F1分数（用于问答任务）和准确率（用于多项选择问答任务）。</td>
 </tr>
 <tr>
     <td>InfiniteBench/En.MC</td>
-    <td></td>
+    <td>InfiniteBench/En.MC是一个用于评估大型语言模型在多项选择问答任务中的零样本表现的基准测试。主要特点：<br>零样本设置(0-shot)：模型在没有任何示例或额外上下文的情况下直接回答问题，测试其内在知识和推理能力。<br>多项选择问答(Multiple Choice Question Answering)：任务要求模型从多个选项中选择一个正确答案，这种设置能够有效评估模型的知识覆盖和推理能力。<br>多领域覆盖：问题涵盖多个领域，包括科学、技术、工程、数学(STEM)以及人文社科等多个学科，确保评估的全面性。<br>评估方法：<br>准确率(Accuracy)：主要使用准确率作为评估指标，模型需要选择正确的答案以获得高分。<br>自动化评估：评估过程完全自动化，确保结果的客观性和一致性。</td>
 </tr>
 <tr>
     <td>NIH/Multi-needle</td>
-    <td></td>
+    <td>-</td>
 </tr>
 
 <tr>
     <td>多语言</td>
     <td>Multilingual MGSM(0-shot)</td>
-    <td></td>
+    <td>Multilingual MGSM(0-shot)是一个用于评估大型语言模型在多语言数学问题解决能力方面的基准测试。主要特点：<br>多语言设置：这个基准测试包含多种语言版本的数学问题，旨在评估模型在不同语言环境下的数学推理能力。<br>零样本设置 (0-shot)：模型在没有任何特定于任务的训练或微调的情况下直接回答问题，测试其内在的数学推理能力。<br>基于MGSM数据集：MGSM (Multilingual Grade School Math)是一个包含小学数学应用题的多语言数据集，涵盖了基础算术、代数、几何等多个领域。<br>评估方法：<br>准确率：主要使用准确率作为评估指标，模型需要给出正确的最终答案。<br>跨语言表现：评估模型在不同语言版本的相同问题上的表现一致性。</td>
 </tr>
 </table>
+
     </div>
 
     
@@ -477,14 +477,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">958k</span>
+    <span title="站点总字数">961k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">53:13</span>
+    <span title="站点阅读时长">53:22</span>
   </span>
 </div>
 <div class="busuanzi-count">
