@@ -299,14 +299,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>4k</span>
+      <span>4.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>13 分钟</span>
+      <span>14 分钟</span>
     </span>
 </div>
 
@@ -325,7 +325,11 @@
 <p>区分一个<code>LLM</code>的表现优于另一个<code>LLM</code>是纯粹出于运气还是实际技能差异非常重要。因此，坚持严格的<strong>统计完整性</strong>很重要。鉴于此，在将模型与竞争对手的性能进行基准测试时，必须明确模型是针对<strong>特定任务</strong>部署在<strong>零样本</strong>、<strong>少量样本</strong>还是<strong>微调</strong>能力下。可以使用哪些指标来比较LLM的表现？</p>
 <ul>
 <li><strong>准确性</strong>(<code>Accuracy</code>)：许多基准的基石，这只是大语言模型(<code>LLM</code>)完全正确答案的百分比。</li>
+<li><strong>召回率</strong>：也称为敏感度，量化了真实阳性（即实际正确的预测）的数量。</li>
+<li><strong>F1分数</strong>：将<strong>准确率</strong>和<strong>召回率</strong>融合为一个指标。它认为这两个指标具有同等权重，以平衡任何假阳性或假阴性。<code>F1</code>分数的范围从<code>[0,1]</code>，其中<code>1</code>示出色的召回率和准确率。</li>
+<li><strong>完全匹配</strong>：是<code>LLM</code>预测完全匹配的比例，是翻译和问答的标准。</li>
 <li><strong>BLEU分数</strong>(<code>BLEU Score</code>)：衡量<code>LLM</code>生成的文本与人工编写的参考文献的匹配程度。这对于翻译和创意写作等任务很重要。</li>
+<li><strong>ROUGE分数</strong>：以回忆为导向的摘要评估，有几种类型。例如，<code>ROUGE-N</code>对摘要进行与BLEU类似的计算，而<code>ROUGE-L</code>计算预测摘要和人工生成的摘要之间的最长公共子序列。</li>
 <li><strong>困惑度</strong>(<code>Perplexity</code>)：<code>LLM</code>面对任务时表现出的惊讶或困惑程度。困惑度越低，理解能力越好。</li>
 <li><strong>人工评估</strong>(<code>Human Evaluation</code>)：基准非常有用，但有时细微的任务需要专家对<code>LLM</code>输出的<strong>质量、相关性</strong>或<strong>连贯性</strong>进行判断。</li>
 </ul>
