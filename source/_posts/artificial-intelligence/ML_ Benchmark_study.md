@@ -30,54 +30,54 @@ mathjax:
 
 语言很复杂，这意味着需要进行各种测试才能确定大语言模型(`LLM`)的真正能力。以下是一些最常见的基准，用于评估大语言模型(`LLM`)在人工智能的普遍应用中的表现，以及它们的工作原理和用途。
 <table>
-<caption> `LLM`基准(`Benchmarks`)</caption>
-<tr><th>`Category`</th><th>`Benchmark`</th><th>`Descrption`</th></tr>
+<caption> LLM基准(Benchmarks)</caption>
+<tr><th>Category</th><th>Benchmark</th><th>Descrption</th></tr>
 <tr>
     <td rowspan="3">通用</td>
-    <td>`MMLU Chat(0-shot, CoT)`</td>
+    <td>MMLU Chat(0-shot, CoT)</td>
     <td></td>
 </tr>
 <tr>
-    <td>`MMLU PRO(5-shot, CoT)`</td>
+    <td>MMLU PRO(5-shot, CoT)</td>
     <td></td>
 </tr>
 <tr>
-    <td>`IFEval`</td>
+    <td>IFEval</td>
     <td></td>
 </tr>
 <tr>
-    <td rowspan="2">`Code`</td>
-    <td>`HumanEval(0-shot)`</td>
+    <td rowspan="2">Code</td>
+    <td>HumanEval(0-shot)</td>
     <td></td>
 </tr>
 <tr>
-    <td>`MBPP EvalPlus(base) (0-shot)`</td>
+    <td>MBPP EvalPlus(base) (0-shot)</td>
     <td></td>
 </tr>
 
 <tr>
-    <td rowspan="2">`Math`</td>
-    <td>`GSM8K(8-shot, CoT)`</td>
+    <td rowspan="2">Math</td>
+    <td>GSM8K(8-shot, CoT)</td>
     <td></td>
 </tr>
 <tr>
-    <td>`MATH(0-sho, CoT)`</td>
+    <td>MATH(0-sho, CoT)</td>
     <td></td>
 </tr>
 
 <tr>
     <td rowspan="2">推理</td>
-    <td>`ARC Challenge(0-shot)`</td>
+    <td>ARC Challenge(0-shot)</td>
     <td></td>
 </tr>
 <tr>
-    <td>`GPQA(0-shot, CoT)`</td>
+    <td>GPQA(0-shot, CoT)</td>
     <td></td>
 </tr>
 
 <tr>
     <td rowspan="2">使用工具</td>
-    <td>`BFCL`</td>
+    <td>BFCL</td>
     <td></td>
 </tr>
 <tr>
@@ -87,21 +87,21 @@ mathjax:
 
 <tr>
     <td rowspan="3">长上下文</td>
-    <td>`ZeroSCROLLS/QuALITY`</td>
+    <td>ZeroSCROLLS/QuALITY</td>
     <td></td>
 </tr>
 <tr>
-    <td>`InfiniteBench/En.MC`</td>
+    <td>InfiniteBench/En.MC</td>
     <td></td>
 </tr>
 <tr>
-    <td>`NIH/Multi-needle`</td>
+    <td>NIH/Multi-needle</td>
     <td></td>
 </tr>
 
 <tr>
     <td>多语言</td>
-    <td>`Multilingual MGSM(0-shot)`</td>
+    <td>Multilingual MGSM(0-shot)</td>
     <td></td>
 </tr>
 </table>
