@@ -30,7 +30,7 @@ mathjax:
 
 语言很复杂，这意味着需要进行各种测试才能确定大语言模型(`LLM`)的真正能力。以下是一些最常见的基准，用于评估大语言模型(`LLM`)在人工智能的普遍应用中的表现，以及它们的工作原理和用途。
 <table>
-<caption> LLM基准(Benchmarks)</caption>
+<caption>\`LLM\`基准(Benchmarks)</caption>
 <tr><th>Category</th><th>Benchmark</th><th>Descrption</th></tr>
 <tr>
     <td rowspan="3">通用</td>
