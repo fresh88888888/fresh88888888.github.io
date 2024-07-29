@@ -101,6 +101,6 @@ mathjax:
 <tr>
     <td>多语言</td>
     <td><b style="font-family: Source Code Pro;">Multilingual MGSM(0-shot)</b></td>
-    <td>Multilingual MGSM(0-shot)是一个用于评估大型语言模型在多语言数学问题解决能力方面的基准测试。主要特点：<br>多语言设置：这个基准测试包含多种语言版本的数学问题，旨在评估模型在不同语言环境下的数学推理能力。<br>零样本设置(0-shot)：模型在没有任何特定于任务的训练或微调的情况下直接回答问题，测试其内在的数学推理能力。<br>基于MGSM数据集：MGSM(Multilingual Grade School Math)是一个包含小学数学应用题的多语言数据集，涵盖了基础算术、代数、几何等多个领域。<br><b style="font-weight: bold;">评估方法</b>：<br>准确率：主要使用准确率作为评估指标，模型需要给出正确的最终答案。<br>跨语言表现：评估模型在不同语言版本的相同问题上的表现一致性。</td>
+    <td>Multilingual MGSM(0-shot)是一个用于评估大型语言模型在多语言数学问题解决能力方面的基准测试。主要特点：<br>多语言设置：这个基准测试包含多种语言版本的数学问题，旨在评估模型在不同语言环境下的数学推理能力。<br>零样本设置(0-shot)：模型在没有任何特定于任务的训练或微调的情况下直接回答问题，测试其内在的数学推理能力。<br>基于MGSM数据集：MGSM(Multilingual Grade School Math)是一个包含小学数学应用题的多语言数据集，涵盖了基础算术、代数、几何等多个领域。<br><b style="font-weight: bolder;">评估方法</b>：<br>准确率：主要使用准确率作为评估指标，模型需要给出正确的最终答案。<br>跨语言表现：评估模型在不同语言版本的相同问题上的表现一致性。</td>
 </tr>
 </table>
