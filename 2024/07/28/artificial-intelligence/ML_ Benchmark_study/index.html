@@ -299,14 +299,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>3.6k</span>
+      <span>3.9k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>12 分钟</span>
+      <span>13 分钟</span>
     </span>
 </div>
 
@@ -366,13 +366,17 @@
 </tr>
 
 <tr>
-    <td rowspan="2">推理</td>
+    <td rowspan="3">推理</td>
     <td>ARC Challenge(0-shot)</td>
     <td>ARC Challenge(0-shot)是一种用于评估人工智能模型抽象推理能力的基准测试。主要特点：<br>零样本设置(0-shot)：模型在没有看到任何示例的情况下直接解决问题，测试其内在的抽象推理能力。<br>数据集：使用Abstraction and Reasoning Corpus(ARC) 数据集，包含一系列抽象视觉推理任务。<br>任务类型：每个任务包含输入-输出对的训练示例和一个测试输入，模型需要推断规则并生成正确的测试输出。<br>评估方法：<br>主要使用准确率作为评估指标。<br>模型需要正确推断规则并生成与人类标注一致的测试输出。</td>
 </tr>
 <tr>
     <td>GPQA(0-shot, CoT)</td>
     <td>GPQA(0-shot, CoT)是一种用于评估大型语言模型在高难度问答任务中的推理能力的基准测试方法。GPQA(Graduate-Level Google-Proof Q&A)是一个包含高难度问答任务的数据集，旨在评估模型在面对复杂问题时的推理和回答能力。问题涵盖多个学科领域，包括科学、技术、工程和数学(STEM)。在零样本设置中，模型在没有任何示例或额外上下文的情况下直接回答问题。这种设置测试模型的内在知识和推理能力，而不依赖于特定的训练示例。<br><b>评估方法</b>：<br>GPQA(0-shot, CoT)主要使用准确率作为评估指标。模型需要通过正确的推理步骤得出准确的最终答案。</td>
+</tr>
+<tr>
+    <td>DROP(F1)</td>
+    <td>DROP(Discrete Reasoning Over Paragraphs)是一种用于评估自然语言处理模型在段落级别进行离散推理能力的基准测试。该任务要求模型从英文段落中提取相关信息，并对其进行离散推理，例如排序或计数，以得出正确答案。评估指标：DROP使用自定义的F1分数和精确匹配分数来评估模型的表现。F1分数衡量模型预测与正确答案之间的重合度，而精确匹配分数则评估模型预测是否与正确答案完全一致。</td>
 </tr>
 
 <tr>
@@ -403,6 +407,12 @@
     <td>多语言</td>
     <td>Multilingual MGSM(0-shot)</td>
     <td>Multilingual MGSM(0-shot)是一个用于评估大型语言模型在多语言数学问题解决能力方面的基准测试。主要特点：<br>多语言设置：这个基准测试包含多种语言版本的数学问题，旨在评估模型在不同语言环境下的数学推理能力。<br>零样本设置(0-shot)：模型在没有任何特定于任务的训练或微调的情况下直接回答问题，测试其内在的数学推理能力。<br>基于MGSM数据集：MGSM(Multilingual Grade School Math)是一个包含小学数学应用题的多语言数据集，涵盖了基础算术、代数、几何等多个领域。<br><b>评估方法</b>：<br>准确率：主要使用准确率作为评估指标，模型需要给出正确的最终答案。<br>跨语言表现：评估模型在不同语言版本的相同问题上的表现一致性。</td>
+</tr>
+
+<tr>
+    <td>特殊</td>
+    <td>Big-Bench Hard(BBH)</td>
+    <td>Big-Bench Hard (BBH)是一个从BIG-Bench评估套件中精选出来的子集,包含23个特别具有挑战性的任务。这些任务在之前的语言模型评估中未能超过平均人类评分者的表现。BBH旨在评估当前语言模型在特别困难任务上的能力,并探索如何提高模型在这些任务上的表现。<br>任务特点：<br>多数BBH任务需要多步推理。<br>涵盖了各种复杂的认知和推理能力。<br><b>评估方法</b>：<br>传统方法:使用少样本提示(Few-Shot Prompting)。<br>改进方法:应用思维链(Chain-of-Thought, CoT)提示。</td>
 </tr>
 </table>
 
@@ -484,7 +494,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">53:22</span>
+    <span title="站点阅读时长">53:24</span>
   </span>
 </div>
 <div class="busuanzi-count">
