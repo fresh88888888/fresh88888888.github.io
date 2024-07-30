@@ -42,17 +42,21 @@ mathjax:
 {% endmathjax %}
 其中，{% mathjax %}R(\mathbf{h})_i{% endmathjax %}表示路由器输出到第{% mathjax %}i{% endmathjax %}位专家，{% mathjax %}E_i(\mathbf{h}){% endmathjax %}是第{% mathjax %}i{% endmathjax %}位专家的结果。`MixLoRA`由两个主要部分构成。第一部分添加了`LoRA`的`vanilla Transformer`块构建稀疏`MoE`块。第二部分利用`top-k`路由器将来自各种任务（例如`ARC、OBQA、PIQA`等）的每个`token`分配给不同的专家模块。假设输入文本为{% mathjax %}s = (s_1, s_2, \ldots, s_n){% endmathjax %}，标签为{% mathjax %}y{% endmathjax %}。让{% mathjax %}h_i^\ell \in \mathbb{R}^{1\times d}(1\leq i\leq n, 1\leq \ell \leq L){% endmathjax %}表示第{% mathjax %}\ell{% endmathjax %}个大型语言模型(`LLM`)层的第{% mathjax %}i{% endmathjax %}个`token`的输出隐藏状态，其中{% mathjax %}L{% endmathjax %}是`LLM`层的总数，{% mathjax %}d{% endmathjax %}是隐藏维度。大型语言模型由堆叠的多头自注意力(`MSA`)和前馈神经网络(`FFN`)组成。每个块内都应用了层归一化(`LN`)和残差连接。普通`transformers`块中第{% mathjax %}\ell{% endmathjax %}个LLM层的输出{% mathjax %}h{% endmathjax %}ℓ 通过以下方式计算：
 {% mathjax '{"conversion":{"em":14}}' %}
-\begin{center}
-\mathbf{h}^0 = [s_1, s_2,\ldots, s_n] \\
+\begin{align}
+\mathbf{h}^0 = [s_1, s_2,\ldots, s_n] 
+\end{align}
+\begin{align}
 \mathbf{x}^{\ell} = \text{MSA}(\text{LN}(\mathbf{h}^{\ell - 1})) + \mathbf{h}^{\ell - 1}, \;\;\;\mathbf{h}^{\ell} = \text{FFN}(\text{LN}(\mathbf{z}^{\ell})) + \mathbf{z}^{\ell}
-\end{center}
+\end{align}
 {% endmathjax %}
 `MixLoRA Forward`。`MixLoRA`基于`LoRA`专家构建的。`MixLoRA`利用`LoRA`在微调期间存储每个专家的更新参数，而不是仅使用`LoRA`来构建每个专家。这种方法使`MixLoRA`与现有的预训练`MoE`模型更加一致。在`MixLoRA`的`MoE`块中，这些专家的基本权重由密集模型的单个**前馈网络**(`FFN`)共享，以提高训练和推理效率：
 {% mathjax '{"conversion":{"em":14}}' %}
-\begin{center}
-\mathbf{h}^{\ell} = \text{MixLoRA}(\text{LN}(\mathbf{z}^{\ell})) + \mathbf{z}^{\ell} \\
+\begin{align}
+\mathbf{h}^{\ell} = \text{MixLoRA}(\text{LN}(\mathbf{z}^{\ell})) + \mathbf{z}^{\ell}
+\end{align}
+\begin{align}
 \text{MixLoRA}(\mathbf{h}^{\ell}) = \sum_{k=1}^K R^{\ell}(\mathbf{h}^{\ell})_k E_k^{\ell}(\mathbf{h}^{\ell}),\;\;\; E_k^{\ell}(\mathbf{h}^{\ell}) = \mathbf{W}^{\ell}\cdot \mathbf{h}^{\ell} + \mathbf{B}_i^{\ell}\mathbf{A}_i^{\ell}\cdot \mathbf{h}^{\ell}
-\end{center}
+\end{align}
 {% endmathjax %}
 其中{% mathjax %}\mathbf{W}{% endmathjax %}是`FFN`层的预训练权重，由{% mathjax %}\{E_k\}_{k=1}^K{% endmathjax %}共享，{% mathjax %}R(\cdot){% endmathjax %}表示我们用不同`token`和任务选择特定`LoRA`专家的`Top-K`路由器，{% mathjax %}E_k(\cdot){% endmathjax %}表示`MixLoRA`模块中的第`k`个`LoRA`专家。`MixLoRA`的作用是取代公式中密集模型的`FFN`层，其关键概念是通过路由器为每个`token`选择不同的专家，其中每个专家由不同的`LoRA`和原始`FFN`层组成。
 
