@@ -33,11 +33,14 @@
 <meta property="og:site_name" content="UMBRELLA">
 <meta property="og:description" content="介绍MixLoRA是一种用于优化大规模语言模型(LLMs)微调的新方法，结合了LoRA(Low-Rank Adaptation)和专家混合(Mixture of Experts, MoE)技术。大规模语言模型的微调通常需要大量的计算资源和显存。LoRA通过引入低秩适配器，显著减少了微调时的参数数量和显存需求。然而，LoRA在多任务学习场景中的性能仍有提升空间。专家混合模型(MoE)在多任务学习中表">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/29/artificial-intelligence/MIXLORA_theory_study/ml_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/29/artificial-intelligence/MIXLORA_theory_study/ml_2.png">
 <meta property="article:published_time" content="2024-07-29T09:25:11.000Z">
 <meta property="article:modified_time" content="2024-07-29T09:25:11.000Z">
 <meta property="article:author" content="umbrella">
 <meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2024/07/29/artificial-intelligence/MIXLORA_theory_study/ml_1.png">
 
 
 <link rel="canonical" href="https://fresh88888888.github.io/2024/07/29/artificial-intelligence/MIXLORA_theory_study/">
@@ -299,14 +302,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>407</span>
+      <span>1.3k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>4 分钟</span>
     </span>
 </div>
 
@@ -325,7 +328,13 @@
 <li><strong>性能提升</strong>：1.<code>MixLoRA</code>在多任务学习场景下的准确率比现有的参数高效微调(<code>PEFT</code>)方法提高了约<code>9%</code>；2.通过独立的注意力层<code>LoRA</code>适配器增强模型性能。</li>
 <li><strong>资源效率</strong>：1.引入辅助负载平衡损失来解决路由器的不平衡问题；2.新的高吞吐框架在训练和推理过程中减少了<code>40%</code>的<code>GPU</code>显存消耗和<code>30%</code>的计算延迟。</li>
 </ul>
-<p><code>MixLoRA</code>通过结合<code>LoRA</code>和专家混合技术，提供了一种高效的微调大规模语言模型的方法，显著提升了多任务学习的性能，同时大幅减少了计算资源和显存的需求。</p>
+<p>大型语言模型(<code>LLM</code>)的<strong>指令微调</strong>已在自然语言处理(<code>NLP</code>)领域中取得了很好的成绩。随着参数规模的增加，<code>LLM</code>已被证明能够识别复杂的语言模式，从而实现强大的跨任务泛化能力。然而指令微调将会使其在计算资源和下游任务的性能之间做出权衡。为了减少全参数微调过程所需的计算和内存资源，引入了参数高效微调(<code>PEFT</code>)方法，其中，低秩自适应是流行的<code>PEFT</code>方法中的一种。<code>MixLoRA</code>通过结合<code>LoRA</code>和专家混合技术，提供了一种高效的微调大规模语言模型的方法，显著提升了多任务学习的性能，同时大幅减少了计算资源和显存的需求。</p>
+<img data-src="/2024/07/29/artificial-intelligence/MIXLORA_theory_study/ml_1.png" class="" title="LoRA-MoE方法发布日期的时间表，包括有关集成位置的详细模型信息、如何使用LoRA-MoE方法进行训练以及它们旨在解决的问题">
+
+<p><code>PEFT</code>，<strong>大型语言模型</strong>(<code>LLM</code>)在<code>NLP</code>任务中表现出了卓越的能力。在此之后，<strong>指令微调</strong>进一步使<code>LLM</code>能够理解人类意图并遵循指令，成为聊天系统的基础。但是，随着LLM规模的扩大，对其进行微调成为一个耗时且占用大量内存的过程。为了缓解这个问题，研究探索了不同的方法：<strong>参数高效微调</strong>(<code>PEFT</code>)、<strong>蒸馏</strong>、<strong>量化</strong>、<strong>修剪</strong>等。<code>LoRA</code>利用<strong>低秩矩阵</strong>分解线性层权重，是最流行的<code>PEFT</code>方法之一，不仅提高了模型性能，而且不会在推理过程中引入任何额外的计算开销。例如，<code>VeRA</code>结合可学习的缩放向量来调整跨层的共享冻结随机矩阵对。此外，<code>FedPara</code>专注于<strong>联邦学习</strong>场景的低秩<code>Hadamard</code>积。<code>Tied-Lora</code>实现了权重绑定以进一步减少可训练参数的数量。<code>AdaLoRA</code>使用<strong>奇异值分解</strong>(<code>SVD</code>)来<strong>分解矩阵</strong>并且修剪不太重要的奇异值以简化更新。<code>DoRA</code>将预训练权重分解为两个分量，即<strong>幅度</strong>和<strong>方向</strong>，并在微调期间利用<code>LoRA</code>进行方向更新，从而有效减少可训练参数的数量。</p>
+<p><strong>专家混合</strong>：专家混合(<code>MoE</code>)的概念可以追溯到<code>1991</code>年，它引入了一种新颖的监督学习方法，涉及多个网络（专家），每个网络专门处理一组训练示例。<code>MoE</code>的现代版本通过合并<strong>稀疏激活的专家</strong>来修改<code>Transformer</code>块内的前馈子层，从而能够在不增加计算量的情况下大幅增加<strong>模型宽度</strong>。<code>LLaVA-MoLE</code>有效地将<code>token</code>路由到<code>Transformer</code>层内的特定领域专家，从而缓解数据冲突并实现与普通<code>LoRA</code>基线一致的性能提升。对于其他基于<code>MoE</code>的架构，<code>MoRAL</code>解决了将<code>LLM</code>适应新领域&#x2F;任务的挑战。<code>LoRAMoE</code>使用路由器网络集成<code>LoRA</code>，以缓解<strong>知识遗忘</strong>。<code>PESC</code>使用<code>MoE</code>架构将密集模型转换为稀疏模型，从而降低了计算成本和<code>GPU</code>内存要求。<code>MoE-LoRA</code>提出了一种新颖的参数高效的<code>MoE</code>方法，该方法具有分层专家分配(<code>MoLA</code>)，适用于<code>Transformer</code>的模型。<code>MoCLE</code>可根据指令集群激活定制任务的模型参数。<code>MixLoRA</code>将<code>LoRA</code>作为随机专家进行集成，从而降低了计算成本，同时扩展了模型容量并增强了<code>LLM</code>的泛化能力。</p>
+<img data-src="/2024/07/29/artificial-intelligence/MIXLORA_theory_study/ml_2.png" class="" title="MixLoRA架构。MixLoRA由n位专家组成，由原始FFN子层与不同的LoRA组合而成，其中FFN子层的权重由所有专家共享">
+
 
     </div>
 
@@ -398,14 +407,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">962k</span>
+    <span title="站点总字数">963k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">53:26</span>
+    <span title="站点阅读时长">53:29</span>
   </span>
 </div>
 <div class="busuanzi-count">
