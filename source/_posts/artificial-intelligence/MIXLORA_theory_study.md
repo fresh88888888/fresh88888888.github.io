@@ -30,3 +30,9 @@ mathjax:
 **专家混合**：专家混合(`MoE`)的概念可以追溯到`1991`年，它引入了一种新颖的监督学习方法，涉及多个网络（专家），每个网络专门处理一组训练示例。`MoE`的现代版本通过合并**稀疏激活的专家**来修改`Transformer`块内的前馈子层，从而能够在不增加计算量的情况下大幅增加**模型宽度**。`LLaVA-MoLE`有效地将`token`路由到`Transformer`层内的特定领域专家，从而缓解数据冲突并实现与普通`LoRA`基线一致的性能提升。对于其他基于`MoE`的架构，`MoRAL`解决了将`LLM`适应新领域/任务的挑战。`LoRAMoE`使用路由器网络集成`LoRA`，以缓解**知识遗忘**。`PESC`使用`MoE`架构将密集模型转换为稀疏模型，从而降低了计算成本和`GPU`内存要求。`MoE-LoRA`提出了一种新颖的参数高效的`MoE`方法，该方法具有分层专家分配(`MoLA`)，适用于`Transformer`的模型。`MoCLE`可根据指令集群激活定制任务的模型参数。`MixLoRA`将`LoRA`作为随机专家进行集成，从而降低了计算成本，同时扩展了模型容量并增强了`LLM`的泛化能力。
 {% asset_img ml_2.png  "MixLoRA架构。MixLoRA由n位专家组成，由原始FFN子层与不同的LoRA组合而成，其中FFN子层的权重由所有专家共享" %}
 
+#### MixLoRA架构
+
+`LoRA`仅调整额外的自适应参数并替换原始权重更新。`LoRA`块由两个矩阵组成，{% mathjax %}\mathbf{B}\in \mathbb{R}^{d_1\times r}{% endmathjax %}和{% mathjax %}\mathbf{A}\in \mathbb{R}^{r\times d_2}{% endmathjax %}，其中{% mathjax %}d_1{% endmathjax %}和{% mathjax %}d_2{% endmathjax %}表示`LLM`预训练权重{% mathjax %}\mathbf{W}{% endmathjax %}的维度({% mathjax %}\mathbf{W}\in \mathbb{R}^{d_1\times d_2}{% endmathjax %})，参数{% mathjax %}r{% endmathjax %}表示`LoRA`的隐藏维度，其中{% mathjax %}r\ll \min(d_1, d_2){% endmathjax %}。然后，更新后的权重{% mathjax %}\mathbf{W}{% endmathjax %}，通过以下公式计算：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbf{W}' = \mathbf{W} + \mathbf{BA}
+{% endmathjax %}
