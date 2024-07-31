@@ -37,6 +37,15 @@
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_3.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_4.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_5.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_6.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_7.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_8.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_9.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_10.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_11.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_12.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_13.png">
 <meta property="article:published_time" content="2024-07-31T03:15:11.000Z">
 <meta property="article:modified_time" content="2024-07-31T03:15:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -156,7 +165,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.</span> <span class="nav-text">联邦学习</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E4%BF%9D%E6%8A%A4%E9%9A%90%E7%A7%81"><span class="nav-number">3.</span> <span class="nav-text">联邦学习保护隐私</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E7%BB%9F-%E8%AE%BE%E8%AE%A1"><span class="nav-number">3.1.</span> <span class="nav-text">联邦学习系统-设计</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.</span> <span class="nav-text">联邦学习</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E4%BF%9D%E6%8A%A4%E9%9A%90%E7%A7%81"><span class="nav-number">3.</span> <span class="nav-text">联邦学习保护隐私</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E7%BB%9F-%E8%AE%BE%E8%AE%A1"><span class="nav-number">3.1.</span> <span class="nav-text">联邦学习系统-设计</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E8%81%94%E9%82%A6%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.2.</span> <span class="nav-text">训练联邦模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E5%80%BC"><span class="nav-number">3.3.</span> <span class="nav-text">异常值</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81"><span class="nav-number">4.</span> <span class="nav-text">差分隐私</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -304,14 +313,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.8k</span>
+      <span>4.7k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>6 分钟</span>
+      <span>16 分钟</span>
     </span>
 </div>
 
@@ -360,7 +369,40 @@
 <h4 id="联邦学习保护隐私"><a href="#联邦学习保护隐私" class="headerlink" title="联邦学习保护隐私"></a>联邦学习保护隐私</h4><img data-src="/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_4.png" class="" title="十二个人定期合并他们的模型，以协作训练共享模型——无需共享他们的数据">
 
 <p>大型数据集使机器学习取得了惊人的突破。但数据往往是个人或专有的，并不适合共享，这使得隐私成为集中式数据收集和模型训练的关键问题和障碍。借助<strong>联邦学习</strong>，可以使用来自多个用户的数据协作训练模型，而无需任何原始数据离开他们的设备。通过联邦学习，这些设备（如手机、手表、汽车、相机、恒温器、太阳能电池板、望远镜等等）还可以实现新技术。想想我们的汽车如何在不泄露我们行踪的情况下为自动驾驶汽车的大规模训练做出贡献。而且这种机器学习方法也可以应用于不同的组织。医院可以利用来自世界各地护理提供者的各种干预措施带来的患者结果来设计更好的治疗计划，而无需共享高度敏感的健康数据。拥有专有药物开发数据的制药公司可以合作建立关于人体如何代谢不同化合物的知识。该框架有潜力实现对复杂系统和流程的大规模聚合和建模，例如城市交通、经济市场、能源使用和发电模式、气候变化和公共卫生问题。最终，<strong>联邦学习</strong>的目标是让人们、公司、管辖区和机构能够协作提出并回答&#x2F;决策重大问题，同时保持对个人数据的所有权。</p>
-<h5 id="联邦学习系统-设计"><a href="#联邦学习系统-设计" class="headerlink" title="联邦学习系统-设计"></a>联邦学习系统-设计</h5>
+<h5 id="联邦学习系统-设计"><a href="#联邦学习系统-设计" class="headerlink" title="联邦学习系统-设计"></a>联邦学习系统-设计</h5><p>举例：“拦截垃圾邮件”。邮聊天应用中的垃圾邮件令人讨厌且无处不在。机器学习提供了一种解决方案——我们可以开发一个模型，根据用户之前在其设备上标记为垃圾邮件的内容自动过滤掉传入的垃圾邮件。这听起来很棒，但有一个问题：大多数机器学习模型都是通过在数据中心上收集大量数据来训练的；而用户消息可能非常私密。为了保护隐私，是否有可能在不与数据中心共享任何潜在敏感信息的情况下训练垃圾邮件检测模型（或任何机器学习模型）？</p>
+<p>为了回答这个问题，我们首先仔细看看典型的集中式训练系统，下面是一个简单的垃圾邮件检测模型。用户消息被上传到数据中心，在那里它们被一次性处理以训练<code>BoW</code>模型（是一种用于自然语言处理(<code>NLP</code>)和信息检索(<code>IR</code>)的文本表示方法。它通过将文本表示为一个无序的词集合（“袋子”），来捕捉词的频率，而忽略词的顺序和语法结构。）。点击一条消息将其标记为垃圾邮件❌或不更改上传到服务器的数据和训练模型。</p>
+<img data-src="/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_5.png" class="" title="通过集中训练，每个用户的数据都会上传到数据中心进行集中训练">
+
+<p>这种模型可能在过滤垃圾邮件方面表现不错。但集中式训练有一个很大的缺点：所有消息，无论多么敏感，都需要发送到数据中心，这就要求用户信任该数据中心的所有者会保护他们的数据，不会滥用数据。如果训练是在每个用户的设备上本地进行，而不是集中收集数据，结果会怎样？智能手机的功能越来越强大，而且它们经常处于闲置状态（例如，在夜间充电时），这使得机器学习模型训练能够在不影响用户体验的情况下运行。</p>
+<img data-src="/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_6.png" class="" title="通过集中训练，每个用户在本地独立训练垃圾邮件模型——不与数据中心共享任何信息">
+
+<p>在本地训练模型对于保护隐私非常有益——数据永远不会离开用户的设备！但我们可以从这里看到，一台数据有限的设备可能无法训练出高质量的模型。如果一个涉及汽车保险的新骗局开始向所有人发送垃圾邮件，那么<code>Alice</code>的手机将无法使用仅限本地的模型过滤掉有关“您的汽车保修续订”的消息，除非她将其中几条消息标记为垃圾邮件。</p>
+<p>用户如何才能在不共享私人数据的情况下互相帮助并协作训练模型？一种想法是让用户共享本地训练的垃圾邮件检测模型而不是他们的消息。然后，服务器可以组合这些模型（例如通过均值）来生成每个人都可以用于垃圾邮件过滤的<strong>全局模型</strong>。</p>
+<img data-src="/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_7.png" class="" title="跨用户组合模型可以产生共享模型，但可能会泄露用户隐私">
+
+<p>虽然我们已经停止将每条原始消息发送到数据中心，但上传这些本地模型仍然会泄露一些信息。在这里，数据中心可以直接访问每个用户将不同单词标记为垃圾邮件的比率，并可以推断出他们正在谈论的内容。根据用户对数据中心的信任度，他们可能不愿意让数据中心看到他们的本地模型。理想情况下，数据中心应该只看到聚合结果。我们希望开发一个尽可能减少数据的系统。</p>
+<p><strong>联邦学习</strong>是一个通用框架，它利用<strong>数据最小化策略</strong>使多个实体能够协作解决机器学习问题。每个实体都将其原始数据保存在本地，并通过旨在立即聚合的重点更新来改进全局模型。在组合用户模型时限制数据暴露的第一步是不要存储单个模型 - 只存储<strong>聚合</strong>。<strong>安全聚合</strong>和<strong>安全区域</strong>可以提供更强大的保证，将许多本地模型组合成一个聚合，而不会向服务器透露任何用户的贡献。在<strong>安全聚合协议</strong>中，用户设备同意共享随机数，并保留聚合结果的方式掩盖其本地模型。数据中心不知道每个用户如何修改其模型。</p>
+<img data-src="/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_8.png" class="">
+
+<p>用户的隐藏号码永远不会共享。通过<strong>安全聚合</strong>过程交换每个本地模型的所有用户提供的数字。<code>Alice、Bob</code>和<code>Carol</code>的设备使用加密技术交换随机数 — “用户实际上不会亲自接触”。</p>
+<img data-src="/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_9.png" class="" title="联邦学习（这里展示的是安全聚合），在保护隐私的同时生成共享模型">
+
+<p>通过安全聚合，用户可以合并他们的模型，而无需向数据中心透露任何个人信息。总而言之，联邦学习可以实现协作模型训练，同时最大限度地减少数据暴露。</p>
+<h5 id="训练联邦模型"><a href="#训练联邦模型" class="headerlink" title="训练联邦模型"></a>训练联邦模型</h5><p>虽然像垃圾邮件分类器这样的模型可以通过一轮合并本地模型来学习，但更复杂的模型需要多次迭代本地训练和<strong>联合均值</strong>。让我们看看它是如何工作的。看一个简单的“热力图”二元分类模型，该模型旨在猜测网格的哪些区域可能很热或很冷。每个用户只从少数几个位置收集了温度读数：</p>
+<img data-src="/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_10.png" class="">
+
+<p>我们的目标是了解整个网格的温度分布——这样每个人都会知道哪里需要穿毛衣！——而无需任何人分享他们的位置历史。如下图所示，每个用户都在使用本地数据不断训练模型，预测网格中每个位置的温度。您可以看到，由于每个用户的模型都过度拟合了他们有限的信息，因此训练的模型差异非常大。局部训练曲线跟踪每个局部模型在地面真实数据上的准确度，表明每个局部模型学习整个网格的真实温度分布的能力。</p>
+<img data-src="/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_11.png" class="">
+
+<p>运行一轮联合训练：对用户模型进行平均，并将更新后的全局模型分发给所有用户。经过多次训练和合并模型后，生成的全局模型比仅基于本地数据训练的模型更能反映地图上的整体温度分布。您可能会注意到，经过一段相当长的局部训练后，局部热图模型会逐渐分离，而最新的全局模型的准确性可能会在合并后下降。使用相对频繁的周期性平均可以避免这种情况。虽然我们绘制了局部模型准确率，以便观察这些训练动态，但实际上，运行联合训练的服务器只能访问全局模型。服务器在训练过程中可以计算和跟踪的唯一指标是全局模型准确率。</p>
+<h5 id="异常值"><a href="#异常值" class="headerlink" title="异常值"></a>异常值</h5><p>当所有用户报告的温度体验一致时，这种方法效果很好。如果情况并非如此，会发生什么？也许我们的一些用户的温度计坏了，到处都报告寒冷的天气！单击四个异常值中的每一个，将它们从训练中排除，并注意模型的表现。我们也许能够更好地训练模型来预测大多数用户在没有异常值的情况下观察到的热图，但如果这些异常用户的传感器没有损坏，而他们的数据看起来不同怎么办？有些人可能对什么是“热”或“冷”有不同的看法；从训练中排除异常值可能会降低训练池中代表性较低的人群的准确性。虽然在本例中很容易发现异常值，但实际上联邦学习系统中的服务器无法直接看到用户训练数据，这使得联邦学习中的异常值检测变得很棘手。异常值的存在通常表明用户的模型质量较差。</p>
+<img data-src="/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_12.png" class="">
+
+<h4 id="差分隐私"><a href="#差分隐私" class="headerlink" title="差分隐私"></a>差分隐私</h4><p>全局模型会因为单个用户的存在而发生巨大变化，这也引发了隐私问题。如果一个用户的参与会显著影响模型，那么观察最终模型的人可能会确定谁参与了训练，甚至推断出他们的本地数据。异常数据尤其可能对模型训练产生更大的影响。例如，假设我们的潜在用户群中有一个以总是穿毛衣并抱怨天气寒冷而闻名的人。如果全局模型准确率低于预期，我们可以推断，这个臭名昭著的穿毛衣的用户可能参与了训练，并且通过总是报告天气寒冷而降低了准确率。即使使用安全聚合，情况也是如此——中央服务器无法直接看到哪个用户做出了什么贡献，但由此产生的全局模型仍然表明，很可能有一位认为天气总是适合穿毛衣的用户参与了训练。在联邦学习中使用差异隐私时，全局模型的整体准确性可能会下降，但在训练过程中切换包含异常值（或任何其他用户）时，结果应该保持大致相同。使用滑块调节用户报告位置的扰动程度。在较低的隐私级别下，切换包含异常值对模型的影响更大，而在较高的隐私级别下，即使包含异常值，模型质量也不会有明显差异。</p>
+<img data-src="/2024/07/31/artificial-intelligence/Federated_Learning_study/fl_13.png" class="">
+
+<p>在实践中，用户模型会被裁剪和加噪，而不是原始数据，或者噪声会被应用于许多裁剪模型的组合。集中应用噪声往往更有利于提高模型准确性，但未加噪的模型可能需要通过可信聚合器等技术进行保护。此演示说明了隐私和准确性之间的权衡，但公式中还缺少另一个因素：数据量，包括训练示例数量和用户数量。使用更多数据的成本并非免费 — 这会增加计算量 — 但这是我们可以转动的另一个旋钮，以便在所有这些维度上达到可接受的操作点。</p>
+
     </div>
 
     
@@ -432,14 +474,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">967k</span>
+    <span title="站点总字数">970k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">53:44</span>
+    <span title="站点阅读时长">53:53</span>
   </span>
 </div>
 <div class="busuanzi-count">
