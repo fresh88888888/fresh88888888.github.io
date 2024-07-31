@@ -2036,13 +2036,6 @@
 
   
   <url>
-    <loc>https://fresh88888888.github.io/tags/rustup/</loc>
-    <lastmod>2024-07-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://fresh88888888.github.io/tags/Crate/</loc>
     <lastmod>2024-07-31</lastmod>
     <changefreq>weekly</changefreq>
@@ -2058,6 +2051,13 @@
   
   <url>
     <loc>https://fresh88888888.github.io/tags/%E3%80%8ARust-%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E3%80%8B/</loc>
+    <lastmod>2024-07-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://fresh88888888.github.io/tags/rustup/</loc>
     <lastmod>2024-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2155,13 +2155,6 @@
   </url>
   
   <url>
-    <loc>https://fresh88888888.github.io/tags/%E5%AE%8F/</loc>
-    <lastmod>2024-07-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://fresh88888888.github.io/tags/String-%E5%92%8C%E6%96%87%E6%9C%AC/</loc>
     <lastmod>2024-07-31</lastmod>
     <changefreq>weekly</changefreq>
@@ -2169,7 +2162,7 @@
   </url>
   
   <url>
-    <loc>https://fresh88888888.github.io/tags/rust%E5%9F%BA%E7%A1%80/</loc>
+    <loc>https://fresh88888888.github.io/tags/%E5%AE%8F/</loc>
     <lastmod>2024-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2184,13 +2177,6 @@
   
   <url>
     <loc>https://fresh88888888.github.io/tags/%E5%B9%B6%E5%8F%91/</loc>
-    <lastmod>2024-07-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://fresh88888888.github.io/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/</loc>
     <lastmod>2024-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2219,6 +2205,20 @@
   
   <url>
     <loc>https://fresh88888888.github.io/tags/%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/</loc>
+    <lastmod>2024-07-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://fresh88888888.github.io/tags/rust%E5%9F%BA%E7%A1%80/</loc>
+    <lastmod>2024-07-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://fresh88888888.github.io/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/</loc>
     <lastmod>2024-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2379,14 +2379,14 @@
   </url>
   
   <url>
-    <loc>https://fresh88888888.github.io/tags/business-driven-design/</loc>
+    <loc>https://fresh88888888.github.io/tags/%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/</loc>
     <lastmod>2024-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://fresh88888888.github.io/tags/%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/</loc>
+    <loc>https://fresh88888888.github.io/tags/business-driven-design/</loc>
     <lastmod>2024-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2414,14 +2414,7 @@
   </url>
   
   <url>
-    <loc>https://fresh88888888.github.io/tags/Quantitative-Trading/</loc>
-    <lastmod>2024-07-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://fresh88888888.github.io/tags/%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93/</loc>
+    <loc>https://fresh88888888.github.io/tags/SysML/</loc>
     <lastmod>2024-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2435,13 +2428,6 @@
   </url>
   
   <url>
-    <loc>https://fresh88888888.github.io/tags/SysML/</loc>
-    <lastmod>2024-07-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://fresh88888888.github.io/tags/network-security/</loc>
     <lastmod>2024-07-31</lastmod>
     <changefreq>weekly</changefreq>
@@ -2449,14 +2435,14 @@
   </url>
   
   <url>
-    <loc>https://fresh88888888.github.io/tags/multipass/</loc>
+    <loc>https://fresh88888888.github.io/tags/git/</loc>
     <lastmod>2024-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://fresh88888888.github.io/tags/git/</loc>
+    <loc>https://fresh88888888.github.io/tags/multipass/</loc>
     <lastmod>2024-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2471,6 +2457,20 @@
   
   <url>
     <loc>https://fresh88888888.github.io/tags/S3/</loc>
+    <lastmod>2024-07-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://fresh88888888.github.io/tags/Quantitative-Trading/</loc>
+    <lastmod>2024-07-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://fresh88888888.github.io/tags/%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93/</loc>
     <lastmod>2024-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -2598,13 +2598,6 @@
   </url>
   
   <url>
-    <loc>https://fresh88888888.github.io/categories/Quantitative-Trading/</loc>
-    <lastmod>2024-07-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://fresh88888888.github.io/categories/other/</loc>
     <lastmod>2024-07-31</lastmod>
     <changefreq>weekly</changefreq>
@@ -2627,6 +2620,13 @@
   
   <url>
     <loc>https://fresh88888888.github.io/categories/linux/</loc>
+    <lastmod>2024-07-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://fresh88888888.github.io/categories/Quantitative-Trading/</loc>
     <lastmod>2024-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
