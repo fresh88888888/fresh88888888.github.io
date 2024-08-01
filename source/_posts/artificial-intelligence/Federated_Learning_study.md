@@ -106,3 +106,242 @@ mathjax:
 {% asset_img fl_13.png %}
 
 在实践中，用户模型会被裁剪和加噪，而不是原始数据，或者噪声会被应用于许多裁剪模型的组合。集中应用噪声往往更有利于提高模型准确性，但未加噪的模型可能需要通过可信聚合器等技术进行保护。此演示说明了隐私和准确性之间的权衡，但公式中还缺少另一个因素：数据量，包括训练示例数量和用户数量。使用更多数据的成本并非免费 — 这会增加计算量 — 但这是我们可以转动的另一个旋钮，以便在所有这些维度上达到可接受的操作点。
+
+#### 示例
+
+用`datasets.MNIST`加载`MNIST`数据集，此示例，将训练数据集拆分为三个数据集。设置三个不同的数据集，排除一些数字，如下所示：
+- `part_1`排除数字`1、3`和`7`。
+- `part_2`排除数字`2、4`和`6`。
+- `part_3`排除数字`4、6`和`9`。
+
+这模拟了现实世界中可能存在的不同数据集（具有缺失数据、额外数据等的数据集）。
+```python
+import torch
+import torch.nn as nn
+import torch.utils
+from torch.utils.data import Subset, DataLoader, random_split
+import torch.optim as optim
+import torch.utils.data
+from torchvision import transforms, datasets
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+
+transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, ), (0.5, ))])
+
+def include_digits(dataset, included_digits):
+    including_indices = [idx for idx in range(len(dataset)) if dataset[idx][1] in included_digits]
+
+    return torch.utils.data.Subset(dataset, including_indices)
+
+def exclude_digits(dataset, excluded_digits):
+    including_indices = [idx for idx in range(len(dataset)) if dataset[idx][1] not in excluded_digits]
+    return torch.utils.data.Subset(dataset, including_indices)
+
+def plot_distribution(dataset, title):
+    labels = [data[1] for data in dataset]
+    unique_labels, label_counts = torch.unique(torch.tensor(labels), return_counts=True)
+    plt.figure(figsize=(4, 2))
+
+    counts_dict = {label.item(): count.item() for label, count in zip(unique_labels, label_counts)}
+
+    all_labels = np.arange(10)
+    all_label_counts = [counts_dict.get(label, 0) for label in all_labels]
+
+    plt.bar(all_labels, all_label_counts)
+    plt.title(title)
+    plt.xlabel("Digit")
+    plt.ylabel("Count")
+    plt.xticks(all_labels)
+    plt.show()
+
+def compute_confusion_matrix(model, test_set):
+    # Initialize lists to store true labels and predicted labels
+    true_labels = []
+    predicted_labels = []
+
+    # Iterate over the test set to get predictions
+    for Image, label in test_set:
+        # Forward pass through the model to get predictions
+        output = model(Image.unsqueeze(0))
+        _, predicted = torch.max(output, 1)
+
+        # Append true and predicted labels to lists
+        true_labels.append(label)
+        predicted_labels.append(predicted.item())
+
+    # Convert lists to numpy arrays
+    true_labels = np.array(true_labels)
+    predicted_labels = np.array(predicted_labels)
+
+    # Compute confusion matrix
+    cm = confusion_matrix(true_labels, predicted_labels)
+
+    return cm
+
+train_set = datasets.MNIST("./MNIST_data/", download=True, train=True, transform=transform)
+total_length = len(train_set)
+split_size = total_length // 3
+torch.manual_seed(42)
+part_1, part_2, part_3 = random_split(train_set, [split_size] * 3)
+
+part_1 = exclude_digits(part_1, excluded_digits=[1, 3, 7])
+part_2 = exclude_digits(part_2, excluded_digits=[2, 4, 6])
+part_3 = exclude_digits(part_3, excluded_digits=[4, 6, 9])
+
+plot_distribution(part_1, 'Part 1')
+plot_distribution(part_2, 'Part 2')
+plot_distribution(part_3, 'Part 3')
+```
+{% asset_img fl_14.png %}
+
+**训练模型**：定义`SimpleModel`模型，并初始化化三个模型实例。
+```python
+# 训练模型
+def train_model(model, train_set):
+    batch_size = 64
+    num_epochs = 10
+    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+
+    model.train()
+    for epoch in range(num_epochs):
+        running_loss = 0.01
+        for inputs, labels in train_loader:
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            running_loss += loss.item()
+
+        print(f"Epoch {epoch + 1}: Loss = {running_loss / len(train_loader)}")
+
+    print("Training complete")
+
+class SimpleModel(nn.Module):
+    def __init__(self):
+        super(SimpleModel, self).__init__()
+        self.fc = nn.Linear(784, 128)
+        self.relu = nn.ReLU()
+        self.out = nn.Linear(128, 10)
+
+    def forward(self, x):
+        x = torch.flatten(1, x)
+        x = self.fc(x)
+        x = self.relu(x)
+        x = self.out(x)
+
+        return x
+
+model1 = SimpleModel()
+train_model(model1, part1)
+
+model2 = SimpleModel()
+train_model(model2, part2)
+
+model3 = SimpleModel()
+train_model(model3, part3)
+```
+结果输出为：
+```bash
+Epoch 1: Loss = 0.5065847117637479
+Epoch 2: Loss = 0.24505144885390304
+Epoch 3: Loss = 0.19136880657977834
+Epoch 4: Loss = 0.15813053476533223
+Epoch 5: Loss = 0.13172560036286365
+Epoch 6: Loss = 0.11020874739403641
+Epoch 7: Loss = 0.09594884521843389
+Epoch 8: Loss = 0.08343400360990401
+Epoch 9: Loss = 0.07082434464783169
+Epoch 10: Loss = 0.06130250348965096
+Training complete
+Epoch 1: Loss = 0.5141205594174938
+Epoch 2: Loss = 0.24732008437859956
+Epoch 3: Loss = 0.20709553339778014
+Epoch 4: Loss = 0.16869308433031927
+Epoch 5: Loss = 0.14205218129574435
+Epoch 6: Loss = 0.12770977104397396
+Epoch 7: Loss = 0.11071020946195816
+Epoch 8: Loss = 0.10024585863294666
+Epoch 9: Loss = 0.08707036653882291
+Epoch 10: Loss = 0.07732414840035923
+Training complete
+Epoch 1: Loss = 0.5017504044776564
+Epoch 2: Loss = 0.2650307032734424
+Epoch 3: Loss = 0.20769038726886113
+Epoch 4: Loss = 0.1649025677050556
+Epoch 5: Loss = 0.1395505760965852
+Epoch 6: Loss = 0.12056233629114455
+Epoch 7: Loss = 0.10090371655182795
+Epoch 8: Loss = 0.09096335670969506
+Epoch 9: Loss = 0.07602779161671662
+Epoch 10: Loss = 0.07067198011923481
+Training complete
+```
+**评估模型**：调用`valuate_model`函数在整个测试数据集和测试数据集的特定子集上评估上面定义的每个模型(`model1、model2、model3`)。
+```python
+# 评估模型
+def evaluate_model(model, test_set):
+    model.eval()  # Set model to evaluation mode
+    correct = 0
+    total = 0
+    total_loss = 0
+
+    test_loader = DataLoader(test_set, batch_size=64, shuffle=False)
+    criterion = nn.CrossEntropyLoss()
+
+    with torch.no_grad():
+        for inputs, labels in test_loader:
+            outputs = model(inputs)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+            loss = criterion(outputs, labels)
+            total_loss += loss.item()
+
+    accuracy = correct / total
+    average_loss = total_loss / len(test_loader)
+
+    return average_loss, accuracy
+
+testset = datasets.MNIST(
+    "./MNIST_data/", download=True, train=False, transform=transform
+)
+
+testset_137 = include_digits(testset, included_digits=[1, 3, 7])
+testset_246 = include_digits(testset, included_digits=[2, 4, 6])
+testset_469 = include_digits(testset, included_digits=[4, 6, 9])
+
+_, accuracy1 = evaluate_model(model1, testset)
+_, accuracy1_on_137 = evaluate_model(model1, testset_137)
+print(f"Model 1-> Test Accuracy on all digits: {accuracy1:.4f}, "f"Test Accuracy on [1,3,7]: {accuracy1_on_137:.4f}")
+
+_, accuracy2 = evaluate_model(model2, testset)
+_, accuracy2_on_246 = evaluate_model(model2, testset_246)
+print(f"Model 2-> Test Accuracy on all digits: {accuracy2:.4f}, "f"Test Accuracy on [2,4,6]: {accuracy2_on_246:.4f}")
+
+_, accuracy3 = evaluate_model(model3, testset)
+_, accuracy3_on_469 = evaluate_model(model3, testset_469)
+print(f"Model 3-> Test Accuracy on all digits: {accuracy3:.4f}, "f"Test Accuracy on [4,6,9]: {accuracy3_on_469:.4f}")
+```
+结果输出为：
+```bash
+Model 1-> Test Accuracy on all digits: 0.6571, Test Accuracy on [1,3,7]: 0.0000
+Model 2-> Test Accuracy on all digits: 0.6748, Test Accuracy on [2,4,6]: 0.0000
+Model 3-> Test Accuracy on all digits: 0.6845, Test Accuracy on [4,6,9]: 0.0000
+```
+使用`compute_confusion_matrix`方法，查看刚刚训练的三个模型的“**混淆矩阵**”来分析：
+```python
+def plot_confusion_matrix(cm, title):
+    plt.figure(figsize=(6, 4))
+    sns.heatmap(cm, annot=True, cmap="Blues", fmt='d', linewidths=.5)
+    plt.title(title)
+    plt.xlabel('Predicted Label')
+    plt.ylabel('True Label')
+    plt.show()
+```
+{% asset_img fl_15.png %}
