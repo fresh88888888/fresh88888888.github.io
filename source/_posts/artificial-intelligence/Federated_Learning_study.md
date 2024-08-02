@@ -353,3 +353,100 @@ def plot_confusion_matrix(cm, title):
 - **客户端训练&更新模型**：每一个参与的客户端—— 在本地数据集上客户端训练接收到的模型；本地更新的模型通过客户端发送到数据中心。
 - **模型聚合**：数据中心聚合利用**聚合算法**从所有客户端收到的更新模型。
 - **收敛检查**：如果满足收敛标准，则进行FL处理；如果不满足，则进行下一个通信轮次。
+
+```python
+from flwr.common.logger import console_handler, log
+from flwr.common import Metrics, NDArrays, Scalar
+from flwr.client import Client, ClientApp, NumPyClient
+from flwr.common import ndarrays_to_parameters, Context
+from flwr.server import ServerApp, ServerConfig
+from flwr.server import ServerAppComponents
+from flwr.server.strategy import FedAvg
+from flwr.simulation import run_simulation
+from collections import OrderedDict
+from typing import List, Tuple, Dict, Optional
+
+# Sets the parameters of the model
+def set_weights(net, parameters):
+    params_dict = zip(net.state_dict().keys(), parameters)
+    state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
+    net.load_state_dict(state_dict, strict=True)
+
+
+# Retrieves the parameters from the model
+def get_weights(net):
+    ndarrays = [val.cpu().numpy() for _, val in net.state_dict().items()]
+
+    return ndarrays
+
+
+class FlowerClient(NumPyClient):
+    def __init__(self, net, trainset, testset):
+        super().__init__()
+        self.net = net
+        self.trainset = trainset
+        self.testset = testset
+
+    # Train the model
+    def fit(self, parameters, config):
+        set_weights(self.net, parameters)
+        train_model(self.net, self.trainset)
+        return get_weights(self.net), len(self.trainset), {}
+
+    # Test the model
+    def evaluate(self, parameters: NDArrays, config: Dict[str, Scalar]):
+        set_weights(self.net, parameters)
+        loss, accuracy = evaluate_model(self.net, self.testset)
+        return loss, len(self.testset), {"accuracy": accuracy}
+
+
+def client(context: Context) -> Client:
+    net = SimpleModel()
+    partition_id = int(context.node_config['partition-id'])
+    client_train = train_set[int(partition_id)]
+    client_test = testset
+
+    return FlowerClient(net=net, trainset=client_train, testset=client_test).to_client()
+
+
+# Create an instance of the ClientApp.
+client = ClientApp(client_fn=client)
+
+
+def evaluate(server_round, parameters, config):
+    net = SimpleModel()
+    set_weights(net, parameters)
+
+    _, accuracy = evaluate_model(net, testset)
+    _, accuracy_137 = evaluate_model(net, testset_137)
+    _, accuracy_246 = evaluate_model(net, testset_246)
+    _, accuracy_469 = evaluate_model(net, testset_469)
+
+    log(INFO, "test accuracy on all digitss: %.4f", accuracy)
+    log(INFO, "test accuracy on [1,3,7]: %.4f", accuracy_137)
+    log(INFO, "test accuracy on [2,4,6]: %.4f", accuracy_246)
+    log(INFO, "test accuracy on [4,6,9] %.4f", accuracy_469)
+
+    if server_round == 3:
+        cm = compute_confusion_matrix(net, testset)
+        plot_confusion_matrix(cm, "Final Global Model")
+
+
+# 策略：联邦平均
+net = SimpleModel()
+params = ndarrays_to_parameters(get_weights(net))
+
+
+def server(context: Context):
+    strategy = FedAvg(fraction_fit=1.0, fraction_evaluate=0.0, initial_parameters=params, evaluate_fn=evaluate)
+    config = ServerConfig(num_rounds=3)
+
+    return ServerAppComponents(strategy=strategy, config=config)
+
+
+# 创建SreverApp的实例
+server = ServerApp(server_fn=server)
+
+# 开始训练
+run_simulation(server_app=server, client_app=client, num_supernodes=3, backend_config=backend_setup)
+```
