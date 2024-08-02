@@ -33,11 +33,14 @@
 <meta property="og:site_name" content="UMBRELLA">
 <meta property="og:description" content="SAM2(Segment Anything Model 2)是Meta AI最新发布的图像和视频分割模型,是Segment Anything Model(SAM)的下一代模型。SAM2是一个统一的模型,可以同时处理图像和视频的分割任务。这种统一的架构简化了部署,并在不同媒体类型中实现了一致的性能。SAM2采用了提示式视觉分割(Promptable Visual Segmentation, PVS)">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/08/02/artificial-intelligence/sam2_theory_study/s_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/08/02/artificial-intelligence/sam2_theory_study/s_2.png">
 <meta property="article:published_time" content="2024-08-02T07:44:11.000Z">
 <meta property="article:modified_time" content="2024-08-02T07:44:11.000Z">
 <meta property="article:author" content="umbrella">
 <meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fresh88888888.github.io/2024/08/02/artificial-intelligence/sam2_theory_study/s_1.png">
 
 
 <link rel="canonical" href="https://fresh88888888.github.io/2024/08/02/artificial-intelligence/sam2_theory_study/">
@@ -298,14 +301,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>467</span>
+      <span>1.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>5 分钟</span>
     </span>
 </div>
 
@@ -319,9 +322,19 @@
 <span id="more"></span>
 
 <p><code>SAM2</code>还可以分割任何视频或图像中的任何对象（通常称为<strong>零样本泛化</strong>），这意味着它可以应用于以前从未见过的视觉内容，而无需进行自定义调整。</p>
-
+<img data-src="/2024/08/02/artificial-intelligence/sam2_theory_study/s_1.png" class="" title="SAM2模型在SA-V的数据集上进行训练，主要解决基于提示的视觉分割任务">
 
 <p><strong>图像分割</strong>：<code>Segment Anything</code>（<code>Kirillov</code>等人，<code>2023</code>年）引入了一种可以提示的图像分割任务，其目标是在给定输入提示（例如边界框或指向感兴趣对象的点）的情况下输出有效的分割掩码。在<code>SA-1B</code>数据集上训练的<code>SAM</code>允许使用灵活提示进行零样本分割，从而使其能够应用于广泛的下游应用。最近的工作通过提高其质量扩展了<code>SAM</code>。例如，<code>HQ-SAM</code>（<code>Ke</code>等人，<code>2024</code>年）通过引入高质量输出<code>token</code>并在细粒度掩码上训练模型来增强<code>SAM</code>。另一项工作重点是提高<code>SAM</code>的效率，使其在现实世界和移动应用中得到更广泛的应用，例如<code>EfficientSAM</code>（<code>Xiong</code>等人，<code>2023</code>年）、<code>MobileSAM</code>（<code>Zhang</code>等人，<code>2023</code>年）和<code>FastSAM</code>（<code>Zhao</code>等人，<code>2023</code>年）。</p>
+<p><strong>交互式视频对象分割</strong>(<code>iVOS</code>)：交互式视频对象分割已成为一项关键任务，可在用户指导下有效获得视频中的对象分割(<code>masklets</code>)，通常以涂鸦、点击或边界框的形式出现。一些早期方法 (<code>Wang</code>等人，<code>2005</code>年；<code>Bai &amp; Sapiro</code>，<code>2007</code>年；<code>Fan</code>等人，<code>2015</code>年) 部署基于图的优化来指导分割注释过程。较新的方法 (<code>Heo</code>等人，<code>2020</code>年；<code>Cheng</code>等人，<code>2021</code>年；<code>Delatolas</code>等人，<code>2024</code>年) 通常采用模块化设计，将用户输入转换为单个帧上的掩码表示，然后将其传播到其他帧。在视频中分割对象并实现良好的交互体验，并且我们建立了一个强大的模型和一个庞大而多样化的数据集来实现这一目标。具体来说，<code>DAVIS</code>交互式基准 (<code>Caelles</code>等人，<code>2018</code>年) 允许通过多帧上的涂鸦输入以交互方式分割对象。然而，这些方法有局限性：跟踪器可能无法适用于所有对象，<code>SAM</code>可能无法很好地处理视频中的图像帧，并且除了使用<code>SAM</code>从头开始​​对错误帧进行重新注释并从那里重新启动跟踪之外，没有其他机制可以交互地改进模型的错误。</p>
+<p><strong>半监督视频对象分割</strong>(<code>VOS</code>)。半监督<code>VOS</code>通常以第一帧中的对象掩码作为输入开始，必须在整个视频中准确跟踪该掩码(<code>Pont-Tuset</code>等，<code>2017</code>)。之所以被称为“半监督”，是因为<strong>输入掩码</strong>看作是仅适用于第一帧的对象轮廓的监督信号。这项任务因其与各种应用的相关性而引起了广泛关注，包括视频编辑、机器人技术和自动背景去除。半监督<code>VOS</code>可以看作是<strong>可提示视觉分割</strong>(<code>PVS</code>)任务的一个特例，因为它相当于仅在第一个视频帧中提供掩码提示。然而，在第一帧中注释高质量的对象掩码实际上具有挑战性且耗时。</p>
+<p><strong>视频分割数据集</strong>：已经提出了许多数据集来支持<code>VOS</code>任务。然而当前的视频分割数据集缺乏足够的覆盖范围来实现“分割视频中的所有内容”的能力。它们的注释通常覆盖整个对象（而不是部分），数据集通常以特定对象类别为中心，例如人、车辆和动物。与这些数据集相比，当前发布的<code>SA-V</code>数据集不仅关注整个对象，还广泛覆盖对象的子部分，并包含超过一个数量级的掩码。</p>
+<img data-src="/2024/08/02/artificial-intelligence/sam2_theory_study/s_2.png" class="">
+
+<p>使用<code>SAM2</code>进行交互式分割：</p>
+<ul>
+<li>步骤1（选择）：我们在第<code>1</code>帧中提示<code>SAM2</code>获取目标对象（舌头）的片段。绿点&#x2F;红点分别表示正&#x2F;负提示。<code>SAM2</code>自动将片段传播到后续帧（蓝色箭头）以形成<code>masklet</code>。如果<code>SAM2</code>丢失了对象（第2帧之后），我们可以通过在新帧（红色箭头）中提供额外提示来更正<code>masklet</code>。</li>
+<li>步骤2（细化）：在第<code>3</code>帧中单击一次就足以恢复对象并传播它以获得正确的<code>masklet</code>。分离的<code>SAM</code>+ 视频跟踪器方法需要在第<code>3</code>帧（如第<code>1</code>帧）中单击几次才能在从头开始重新开始正确地分割并重新注释对象。借助<code>SAM2</code>的内存，单击一次即可恢复舌头。</li>
+</ul>
 
     </div>
 
@@ -394,14 +407,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">972k</span>
+    <span title="站点总字数">973k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">54:01</span>
+    <span title="站点阅读时长">54:03</span>
   </span>
 </div>
 <div class="busuanzi-count">
