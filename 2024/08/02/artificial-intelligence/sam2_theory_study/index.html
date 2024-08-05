@@ -36,6 +36,11 @@
 <meta property="og:image" content="https://fresh88888888.github.io/2024/08/02/artificial-intelligence/sam2_theory_study/s_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/08/02/artificial-intelligence/sam2_theory_study/s_2.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/08/02/artificial-intelligence/sam2_theory_study/s_3.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/08/02/artificial-intelligence/sam2_theory_study/s_4.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/08/02/artificial-intelligence/sam2_theory_study/s_5.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/08/02/artificial-intelligence/sam2_theory_study/s_6.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/08/02/artificial-intelligence/sam2_theory_study/s_7.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/08/02/artificial-intelligence/sam2_theory_study/s_8.png">
 <meta property="article:published_time" content="2024-08-02T07:44:11.000Z">
 <meta property="article:modified_time" content="2024-08-02T07:44:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -155,7 +160,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA%E8%A7%86%E8%A7%89%E5%88%86%E5%89%B2-PVS-%E4%BB%BB%E5%8A%A1"><span class="nav-number">2.</span> <span class="nav-text">提示视觉分割(PVS)任务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">模型</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA%E8%A7%86%E8%A7%89%E5%88%86%E5%89%B2-PVS-%E4%BB%BB%E5%8A%A1"><span class="nav-number">2.</span> <span class="nav-text">提示视觉分割(PVS)任务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SAM2%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">SAM2模型</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">3.1.</span> <span class="nav-text">数据集</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%8E%E5%8D%8A%E7%9B%91%E7%9D%A3VOS%E6%AF%94%E8%BE%83"><span class="nav-number">3.2.</span> <span class="nav-text">与半监督VOS比较</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#PVS%E4%BB%BB%E5%8A%A1"><span class="nav-number">3.3.</span> <span class="nav-text">PVS任务</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SAM2"><span class="nav-number">3.4.</span> <span class="nav-text">SAM2</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -303,14 +308,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>3.1k</span>
+      <span>5.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>10 分钟</span>
+      <span>4 分钟</span>
     </span>
 </div>
 
@@ -338,7 +343,7 @@
 <li>步骤2（细化）：在第<code>3</code>帧中单击一次就足以恢复对象并传播它以获得正确的<code>masklet</code>。分离的<code>SAM</code>+ 视频跟踪器方法需要在第<code>3</code>帧（如第<code>1</code>帧）中单击几次才能在从头开始重新开始正确地分割并重新注释对象。借助<code>SAM2</code>的内存，单击一次即可恢复舌头。</li>
 </ul>
 <h4 id="提示视觉分割-PVS-任务"><a href="#提示视觉分割-PVS-任务" class="headerlink" title="提示视觉分割(PVS)任务"></a>提示视觉分割(PVS)任务</h4><p><code>PVS</code>任务允许在视频的任何帧上向模型提供提示。提示可以是正&#x2F;负点击、边界框或蒙版，用于定义要分割的对象或细化模型预测的对象。为了提供交互式体验，在收到特定帧上的提示后，模型应立即响应该帧上对象的有效分割蒙版。在收到初始（一个或多个）提示（在同一帧或不同帧上）后，模型应传播这些提示以获取整个视频中对象的蒙版，其中包含每个视频帧上目标对象的分割蒙版。可以在任何帧上向模型提供其他提示，以细化整个视频中的片段。</p>
-<h4 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h4><p><code>SAM2</code>支持在单个帧上提示(点、框和掩码)，以定义视频中要分割的对象的空间范围。对于图像输入，该模型的行为类似于<code>SAM</code>。提示的掩码解码器接受当前帧上的帧嵌入和提示（如果有），并输出该帧的分割掩码。可以在帧上迭代添加提示以细化掩码。与<code>SAM</code>不同，<code>SAM2</code>解码器使用的帧嵌入，以过去预测和提示帧的记忆为条件。提示帧也可能来自相对于当前帧的“未来”。帧的记忆由<strong>记忆编码器</strong>根据当前的预测创建，并放置在记忆库中以供后续帧使用。<strong>记忆注意力</strong>操作从图像编码器获取每帧嵌入，并在记忆库上对其进行调节以生成嵌入，然后将其传递给<strong>掩码解码器</strong>。</p>
+<h4 id="SAM2模型"><a href="#SAM2模型" class="headerlink" title="SAM2模型"></a>SAM2模型</h4><p><code>SAM2</code>支持在单个帧上提示(点、框和掩码)，以定义视频中要分割的对象的空间范围。对于图像输入，该模型的行为类似于<code>SAM</code>。提示的掩码解码器接受当前帧上的帧嵌入和提示（如果有），并输出该帧的分割掩码。可以在帧上迭代添加提示以细化掩码。与<code>SAM</code>不同，<code>SAM2</code>解码器使用的帧嵌入，以过去预测和提示帧的记忆为条件。提示帧也可能来自相对于当前帧的“未来”。帧的记忆由<strong>记忆编码器</strong>根据当前的预测创建，并放置在记忆库中以供后续帧使用。<strong>记忆注意力</strong>操作从图像编码器获取每帧嵌入，并在记忆库上对其进行调节以生成嵌入，然后将其传递给<strong>掩码解码器</strong>。</p>
 <img data-src="/2024/08/02/artificial-intelligence/sam2_theory_study/s_3.png" class="">
 
 
@@ -351,6 +356,24 @@
 <li><strong>记忆库(Memory Bank)<strong>：</strong>记忆库</strong>通过维护最多<code>N</code>个最近帧记忆的(<code>FIFO</code>)队列来保留有关视频中<strong>目标对象</strong>的过去预测的信息，并将来自提示的信息存储在最多<code>M</code>个<strong>提示帧</strong>的(<code>FIFO</code>)队列中。例如，在初始掩码是唯一提示的<code>VOS</code>任务中，<strong>记忆库</strong>始终保留第一帧的记忆以及最多<code>N</code>个最近（未提示）帧的记忆。这两组记忆都存储为<strong>空间特征图</strong>。除了<strong>空间记忆</strong>之外，我们还根据每帧的<strong>掩码解码器</strong>输出<code>token</code>将<strong>对象指针列表</strong>存储为向量，用于要分割对象的<strong>高级语义信息</strong>（<code>Meinhardt</code>等人，<code>2022</code>年）。我们的<strong>记忆注意力交叉</strong>关注<strong>空间记忆特征</strong>和<strong>对象指针</strong>。我们将<strong>时间位置信息</strong>嵌入到<code>N</code>个最近帧的记忆中，允许模型表示短期物体运动，但不能嵌入到<strong>提示帧</strong>的记忆中，因为来自提示帧的训练信号更稀疏，并且更难以推广到推理设置，其中提示帧可能与训练期间看到的时间范围有所不同。</li>
 <li><strong>训练</strong>：该模型在<strong>图像</strong>和<strong>视频</strong>数据上进行<strong>联合训练</strong>。与之前的工作（<code>Kirillov</code>等人，<code>2023</code>；<code>Sofiiuk</code>等人，<code>2022</code>）类似，这里模拟了模型的<strong>交互式提示</strong>。采样<code>8</code>帧序列并随机最多选择<code>2</code>帧提示，并概率性地接收使用<code>masklet</code>和<strong>模型预测</strong>在训练期间采样的<strong>校正点击</strong>。</li>
 </ul>
+<h5 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h5><p><code>SA-V</code>数据集包含<code>50.9K</code>个视频和<code>642.6K</code>个掩码片(<code>masklet</code>)。这里将<code>SA-V</code>与<code>VOS</code>数据集在视频、<code>masklet</code>和<code>mask</code>数量方面进行了比较。值得注意的是，带注释的<code>mask</code>数量比现有<code>VOS</code>数据集大<code>53</code>倍（不带<code>auto</code>为<code>15</code>倍）。<strong>视频</strong>收集了一组由众包工作者拍摄的<code>50.9K</code>个新视频。视频包含<code>54%</code>的室内场景和<code>46%</code>的室外场景，平均时长为<code>14</code>秒。视频以“野外”多样化环境为特色，并涵盖各种日常场景。数据集比现有<code>VOS</code>数据集包含更多视频，视频涵盖<code>47</code>个国家&#x2F;地区，由不同的参与者拍摄。</p>
+<img data-src="/2024/08/02/artificial-intelligence/sam2_theory_study/s_4.png" class="" title="SA-V与VOS数据集进行比较(在视频数量、持续时间、掩码数量、掩码、帧数和消失率方面)">
+
+<img data-src="/2024/08/02/artificial-intelligence/sam2_theory_study/s_5.png" class="" title="数据集分布：(a)masklet大小分布（按视频分辨率）、(b)视频的地理多样性、(c)录制视频的众包工作者自我报告的人口统计数据。">
+
+<h5 id="与半监督VOS比较"><a href="#与半监督VOS比较" class="headerlink" title="与半监督VOS比较"></a>与半监督VOS比较</h5><img data-src="/2024/08/02/artificial-intelligence/sam2_theory_study/s_6.png" class="" title="VOS与之前工作的比较。SAM2在首帧真实掩码提示的视频分割在准确度和速度(FPS)方面表现良好。">
+
+<h5 id="PVS任务"><a href="#PVS任务" class="headerlink" title="PVS任务"></a>PVS任务</h5><p><strong>提示式视觉分割</strong>(<code>PVS</code>)任务可以看作是分割静态图像到视频的扩展。在<code>PVS</code>设置中，给定一个输入视频，模型可以对视频中的任何帧进行不同类型的输入（包括点击、框或蒙版）的交互提示，目的是分割（和跟踪）整个视频中的有效对象。与视频交互时，模型会对提示的帧提供即时响应（类似于<code>SAM</code>在图像上的交互式体验），并且实时地返回整个视频中对象的分割。</p>
+<img data-src="/2024/08/02/artificial-intelligence/sam2_theory_study/s_7.png" class="" title="提示式视觉分割任务(PVS)的图示。例如“分割任何事物”(SA)和半监督视频对象分割(VOS)，可以看作是PVS任务的特殊案例。">
+
+<p><code>PVS</code>与静态图像和视频领域的多项任务相关。在图像上，<code>SA</code>任务可以被视为<code>PVS</code>的一个子集，视频被缩减为<strong>单帧</strong>。同样，传统的<strong>半监督</strong>和交互式<code>VOS</code>任务是<code>PVS</code>的特殊案例，仅在第一帧上提供的掩码提示和在多个帧上涂鸦在整个视频中分割对象。在<code>PVS</code>中，提示可以是点击、掩码或框，重点是增强交互式体验，从而能够以最少的交互轻松细化对象的分割。</p>
+<div class="note warning"><p><strong>限制</strong>：<code>SAM2</code>在静态图像和视频领域都表现出色，但在某些情况下会遇到困难。该模型可能无法在镜头变化中分割物体，并且可能会在拥挤的场景、长时间遮挡后或延长的视频中丢失或混淆物体。为了缓解这个问题，我们设计了在所有帧中提示<code>SAM2</code>的功能：如果模型丢失物体或出错，在大多数情况下，对其他帧进行细化点击可以快速恢复正确的预测。<code>SAM2</code>还难以准确跟踪细节非常细小或精细的物体，尤其是在它们快速移动时。另一个具有挑战性的情况是，附近有外观相似的物体。将更明确的运动建模纳入<code>SAM2</code>可以减轻这种情况下的错误。虽然<code>SAM2</code>可以同时跟踪视频中的多个对象，但<code>SAM2</code>分别处理每个对象，仅使用共享的每帧嵌入，而没有对象间通信。虽然这种方法很简单，但结合共享的对象级上下文信息可以帮助提高效率。</p>
+</div>
+
+<h5 id="SAM2"><a href="#SAM2" class="headerlink" title="SAM2"></a>SAM2</h5><p><strong>图像编码器</strong>：使用<strong>特征金字塔网络</strong>(<code>Lin et al., 2017</code>)融合了<code>Hiera</code>图像编码器的第<code>3</code>阶段和第<code>4</code>阶段的步长<code>16</code>和<code>32</code>个特征，生成每个帧的图像嵌入。此外，第<code>1</code>阶段和第<code>2</code>阶段的步长<code>4</code>和<code>8</code>个特征未使用<strong>记忆注意力</strong>，而是在掩码解码器中添加了<strong>上采样层</strong>，这有助于生成高分辨率分割细节。在<code>Hiera</code>图像编码器中使用<strong>窗口绝对位置嵌入</strong>。<code>RPB</code>提供了跨主干中窗口的位置信息，取而代之的是，<code>SAM2</code>采用了一种更简单的方法来插值<strong>全局位置嵌入</strong>，而不是跨窗口。不使用任何<strong>相对位置编码</strong>。</p>
+<p><strong>记忆注意力</strong>：除了正弦绝对位置嵌入之外，还在自注意力和交叉注意力层中使用<strong>二维空间旋转位置嵌入</strong>(<code>RoPE</code>)(<code>Su</code>等人，<code>2021；Heo</code>等人，<code>2024</code>)。对象指针<code>token</code>被排除在<code>RoPE</code>之外，因为它们没有具体的<strong>空间对应关系</strong>。默认情况下，记忆注意力使用<code>L = 4</code>层。</p>
+<img data-src="/2024/08/02/artificial-intelligence/sam2_theory_study/s_8.png" class="" title="掩码解码器架构：该设计主要遵循SAM，在上采样期间包含来自图像编码器的步幅4和步幅8特征。还使用与输出掩码相对应的掩码token作为对象指针，并生成遮挡分值，该分值指示感兴趣的对象在当前帧中是否可见。">
+
 
     </div>
 
@@ -423,14 +446,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">974k</span>
+    <span title="站点总字数">2.6m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">54:08</span>
+    <span title="站点阅读时长">35:51</span>
   </span>
 </div>
 <div class="busuanzi-count">
