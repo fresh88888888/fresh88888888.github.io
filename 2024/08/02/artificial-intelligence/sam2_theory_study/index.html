@@ -376,9 +376,9 @@
 
 <p><strong>提示编码器和掩码解码器</strong>：提示编码器设计遵循<code>SAM</code>，使用与输出掩码对应的掩码<code>token</code>作为帧的对象指针<code>token</code>，该<code>token</code>放置在存储库中。还引入了<strong>遮罩预测头</strong>。这是通过在掩码和<code>IoU</code>输出<code>token</code>中包含一个附加<code>token</code>来实现的。将附加<code>MLP</code>头应用于新<code>token</code>产生一个分值，该分值表示感兴趣的对象在当前帧中可见的概率。当面对图像中被分割对象的歧义时，<code>SAM</code>引入了输出多个有效掩码的能力。例如，当一个人点击自行车的轮胎时，模型可以将此点击解释为仅指轮胎或整个自行车并输出多个预测。在视频中，这种歧义可以扩展到<strong>视频帧</strong>。例如，如果在一帧中只有轮胎可见，则点击轮胎可能只与轮胎有关，或者随着自行车的更多部分在后续帧中变得可见，这次点击可能是针对整个自行车的。为了处理这种歧义，<code>SAM2</code>在视频的每个步骤中预测多个掩码。如果进一步的提示不能解决歧义，模型将选择当前帧中预测<code>IoU</code>最高的掩码，以便在视频中进一步传播。</p>
 <p><strong>记忆编码器和记忆库</strong>：<strong>记忆编码器</strong>不使用额外的<strong>图像编码器</strong>，而是重用<code>Hiera</code>编码器生成的图像嵌入，并将其与预测的掩码信息融合生成<strong>记忆特征</strong>。这种设计允许记忆特征受益于<strong>图像编码器</strong>生成的强表示（尤其是当我们将图像编码器缩放到更大尺寸时）。此外，我们将<strong>记忆库</strong>中的<strong>记忆特征</strong>投影到<code>64</code>维，并将<code>256</code>维对象指针拆分为<code>4</code>个<code>64</code>维<code>tokens</code>，以便交叉<strong>注意力记忆库</strong>。</p>
-<h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h4><p>基于三个关键方面展示了<code>Segment Anything</code>在视频领域的自然演进：</p>
+<h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h4><p>基于三个关键方面展示了<code>“Segment Anything”</code>在视频领域的自然演进：</p>
 <ul>
-<li>1.将<strong>提示式分割任务</strong>扩展到视频，</li>
+<li>1.将<strong>提示式分割任务</strong>扩展到视频。</li>
 <li>2.使<code>SAM</code>架构能够在应用于视频时使用了内存。</li>
 <li>3.用于<strong>训练</strong>和<strong>基准测试</strong>视频分割的多样化<code>SA-V</code>数据集。</li>
 </ul>
