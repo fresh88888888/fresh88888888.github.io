@@ -308,14 +308,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>5.2k</span>
+      <span>4.9k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
+      <span>16 分钟</span>
     </span>
 </div>
 
@@ -374,6 +374,8 @@
 <p><strong>记忆注意力</strong>：除了正弦绝对位置嵌入之外，还在自注意力和交叉注意力层中使用<strong>二维空间旋转位置嵌入</strong>(<code>RoPE</code>)(<code>Su</code>等人，<code>2021；Heo</code>等人，<code>2024</code>)。对象指针<code>token</code>被排除在<code>RoPE</code>之外，因为它们没有具体的<strong>空间对应关系</strong>。默认情况下，记忆注意力使用<code>L = 4</code>层。</p>
 <img data-src="/2024/08/02/artificial-intelligence/sam2_theory_study/s_8.png" class="" title="掩码解码器架构：该设计主要遵循SAM，在上采样期间包含来自图像编码器的步幅4和步幅8特征。还使用与输出掩码相对应的掩码token作为对象指针，并生成遮挡分值，该分值指示感兴趣的对象在当前帧中是否可见。">
 
+<p><strong>提示编码器和掩码解码器</strong>：提示编码器设计遵循<code>SAM</code>，使用与输出掩码对应的掩码<code>token</code>作为帧的对象指针<code>token</code>，该<code>token</code>放置在存储库中。还引入了<strong>遮罩预测头</strong>。这是通过在掩码和<code>IoU</code>输出<code>token</code>中包含一个附加<code>token</code>来实现的。将附加<code>MLP</code>头应用于新<code>token</code>产生一个分值，该分值表示感兴趣的对象在当前帧中可见的概率。当面对图像中被分割对象的歧义时，<code>SAM</code>引入了输出多个有效掩码的能力。例如，当一个人点击自行车的轮胎时，模型可以将此点击解释为仅指轮胎或整个自行车并输出多个预测。在视频中，这种歧义可以扩展到<strong>视频帧</strong>。例如，如果在一帧中只有轮胎可见，则点击轮胎可能只与轮胎有关，或者随着自行车的更多部分在后续帧中变得可见，这次点击可能是针对整个自行车的。为了处理这种歧义，<code>SAM2</code>在视频的每个步骤中预测多个掩码。如果进一步的提示不能解决歧义，模型将选择当前帧中预测<code>IoU</code>最高的掩码，以便在视频中进一步传播。</p>
+<p><strong>记忆编码器和记忆库</strong>：<strong>记忆编码器</strong>不使用额外的<strong>图像编码器</strong>，而是重用<code>Hiera</code>编码器生成的图像嵌入，并将其与预测的掩码信息融合生成<strong>记忆特征</strong>。这种设计允许记忆特征受益于<strong>图像编码器</strong>生成的强表示（尤其是当我们将图像编码器缩放到更大尺寸时）。此外，我们将<strong>记忆库</strong>中的<strong>记忆特征</strong>投影到<code>64</code>维，并将<code>256</code>维对象指针拆分为<code>4</code>个<code>64</code>维<code>tokens</code>，以便交叉<strong>注意力记忆库</strong>。</p>
 
     </div>
 
@@ -446,14 +448,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">2.6m</span>
+    <span title="站点总字数">976k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">35:51</span>
+    <span title="站点阅读时长">54:14</span>
   </span>
 </div>
 <div class="busuanzi-count">
