@@ -303,14 +303,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.2k</span>
+      <span>3.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
+      <span>10 分钟</span>
     </span>
 </div>
 
@@ -342,10 +342,14 @@
 <img data-src="/2024/08/02/artificial-intelligence/sam2_theory_study/s_3.png" class="">
 
 
-<p>SAM2的架构。对于给定帧，分割预测取决于当前提示<code>and / or</code>先前观察到的记忆。视频以流式方式处理，图像编码器一次消耗一个帧，并与先前帧中的目标对象的记忆交叉关注。掩码解码器（也可以选择接受输入提示）预测该帧的分割掩码。最后，记忆编码器变换预测和图像编码器嵌入以用于未来的帧。</p>
+<p><code>SAM2</code>的架构。对于给定帧，分割预测取决于当前提示<code>and / or</code>先前观察到的记忆。视频以流式方式处理，图像编码器一次消耗一个帧，并与先前帧中的目标对象的记忆交叉关注。掩码解码器（也可以选择接受输入提示）预测该帧的分割掩码。最后，记忆编码器变换预测和图像编码器嵌入以用于未来的帧。</p>
 <ul>
 <li><strong>图像编码器</strong>：对于任意长视频的实时处理，我们采用流式传输方式，在视频帧可用时使用。图像编码器在整个交互过程中仅运行一次，其作用是提供代表每个帧的无约束<code>tokens</code>（特征嵌入）。我们使用<code>MAE</code>（<code>He</code>等人，<code>2022</code>年）预训练的<code>Hiera</code>（<code>Ryali</code>等人，<code>2023</code>年；<code>Bolya</code>等人，<code>2023</code>年）图像编码器，它是分层的，允许我们在解码过程中使用多尺度特征。</li>
 <li><strong>记忆注意力</strong>(<code>Memory Attention</code>)。记忆注意力的作用是根据过去帧的特征和预测以及新的提示来调节当前帧的特征。这里堆叠<code>L</code>个转换器块，第一个将当前帧的图像编码作为输入。每个块执行自注意力操作，然后对存储在内存中的（提示&#x2F;未提示）帧和对象指针的记忆进行交叉注意，然后是<code>MLP</code>。我们使用原始的注意力操作进行自我注意力和交叉注意力，这样能够从高效注意力内核的最新发展中受益（<code>Dao，2023</code>年）。</li>
+<li><strong>提示编码器</strong>和<strong>掩码解码器</strong>：<code>SAM2</code>的提示编码器与<code>SAM</code>的相同，可以通过点击、边界框或掩码来提示，以定义给定帧中对象的范围。<strong>稀疏提示</strong>由<strong>位置编码</strong>表示，并与每个提示类型的学习嵌入相加，而<strong>掩码</strong>则使用<strong>卷积嵌入</strong>并与<strong>帧嵌入</strong>相加。解码器的设计在很大程度上遵循了<code>SAM</code>的设计。堆叠“双向”<code>Transformer</code>块来更新<strong>提示</strong>和<strong>帧嵌入</strong>。与<code>SAM</code>一样，对于可能存在多个兼容目标掩码的<strong>模糊提示</strong>（即单击），我们会预测多个掩码。这种设计对于确保模型输出有效掩码非常重要。在视频中，<strong>模糊性</strong>可以扩展到<strong>视频帧</strong>，模型会在每个帧上预测多个掩码。如果没有后续提示解决模糊性，则模型仅传播当前帧具有最高预测<code>IoU</code>的掩码。与<code>SAM</code>不同的是，在<code>SAM</code>中，只要给出积极的提示，就总会有一个有效的对象可供分割，而在<code>PVS</code>任务中，某些帧上可能不存在有效对象（例如由于遮挡）。为了解释这种新的输出模式，我们添加了一个额外的<strong>注意力头</strong>，用于预测当前帧上是否存在感兴趣的对象。与<code>SAM</code>的另一个不同之处在于，我们使用来自<strong>分层图像编码器</strong>的跳过连接（绕过<strong>记忆注意力</strong>）来整合高分辨率信息以进行<strong>掩码解码</strong>。</li>
+<li><strong>记忆编码器</strong>：<strong>记忆编码器</strong>通过使用<strong>卷积模块</strong>对输出掩码进行下<strong>采样</strong>，并将其与<strong>图像编码器</strong>的<strong>无条件帧嵌入</strong>逐个元素相加，然后使用<strong>轻量级卷积层</strong>融合信息，从而生成<strong>记忆</strong>。</li>
+<li><strong>记忆库(Memory Bank)<strong>：</strong>记忆库</strong>通过维护最多<code>N</code>个最近帧记忆的(<code>FIFO</code>)队列来保留有关视频中<strong>目标对象</strong>的过去预测的信息，并将来自提示的信息存储在最多<code>M</code>个<strong>提示帧</strong>的(<code>FIFO</code>)队列中。例如，在初始掩码是唯一提示的<code>VOS</code>任务中，<strong>记忆库</strong>始终保留第一帧的记忆以及最多<code>N</code>个最近（未提示）帧的记忆。这两组记忆都存储为<strong>空间特征图</strong>。除了<strong>空间记忆</strong>之外，我们还根据每帧的<strong>掩码解码器</strong>输出<code>token</code>将<strong>对象指针列表</strong>存储为向量，用于要分割对象的<strong>高级语义信息</strong>（<code>Meinhardt</code>等人，<code>2022</code>年）。我们的<strong>记忆注意力交叉</strong>关注<strong>空间记忆特征</strong>和<strong>对象指针</strong>。我们将<strong>时间位置信息</strong>嵌入到<code>N</code>个最近帧的记忆中，允许模型表示短期物体运动，但不能嵌入到<strong>提示帧</strong>的记忆中，因为来自提示帧的训练信号更稀疏，并且更难以推广到推理设置，其中提示帧可能与训练期间看到的时间范围有所不同。</li>
+<li><strong>训练</strong>：该模型在<strong>图像</strong>和<strong>视频</strong>数据上进行<strong>联合训练</strong>。与之前的工作（<code>Kirillov</code>等人，<code>2023</code>；<code>Sofiiuk</code>等人，<code>2022</code>）类似，这里模拟了模型的<strong>交互式提示</strong>。采样<code>8</code>帧序列并随机最多选择<code>2</code>帧提示，并概率性地接收使用<code>masklet</code>和<strong>模型预测</strong>在训练期间采样的<strong>校正点击</strong>。</li>
 </ul>
 
     </div>
@@ -426,7 +430,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">54:05</span>
+    <span title="站点阅读时长">54:08</span>
   </span>
 </div>
 <div class="busuanzi-count">
