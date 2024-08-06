@@ -35,6 +35,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/08/05/artificial-intelligence/VLM_theory_study/v_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/08/05/artificial-intelligence/VLM_theory_study/v_2.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/08/05/artificial-intelligence/VLM_theory_study/v_3.png">
 <meta property="article:published_time" content="2024-08-05T10:44:11.000Z">
 <meta property="article:modified_time" content="2024-08-05T10:44:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -154,7 +155,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SpatialVLM"><span class="nav-number">2.</span> <span class="nav-text">SpatialVLM</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SpatialVLM"><span class="nav-number">2.</span> <span class="nav-text">SpatialVLM</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">3.</span> <span class="nav-text">结论</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -302,14 +303,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.8k</span>
+      <span>3.9k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>9 分钟</span>
+      <span>13 分钟</span>
     </span>
 </div>
 
@@ -342,10 +343,26 @@
 <p>近年来，<strong>视觉语言模型</strong>(<code>VLM</code>)在各种任务中取得了重大进展，包括<strong>图像字幕</strong>、<strong>视觉问答</strong>(<code>VQA</code>)、<strong>具身规划</strong>、<strong>动作识别</strong>等。虽然<code>VLM</code>是适用于各种任务的强大通用模型，但大多数最先进的<code>VLM</code>仍然难以进行空间推理，即需要理解物体在<code>3D</code>空间中的位置或空间关系的任务。<strong>空间推理能力</strong>本身很有用，但也适用于机器人或<code>AR</code>等下游应用。例如，具有<strong>空间推理能力</strong>的<code>VLM</code>可以用作更好的通用<strong>奖励注释器</strong>和<strong>成功检测器</strong>。对<code>VLM</code>基础模型的探索往往受到人类能力的启发。人类通过具体体验和进化发展，拥有天生的<strong>空间推理能力</strong>。我们毫不费力地确定<strong>空间关系</strong>，例如物体相对于彼此的定位或估算距离和大小，而无需复杂的思路或心理计算。这种直接空间推理任务的自然能力与<code>VLM</code>当前的局限性形成了鲜明对比，从而阻止了它们完成需要<strong>多步空间推理</strong>的现实世界任务。因此，我们假设，当前<code>VLM</code>的空间推理能力有限并不是由于其架构的根本限制，而是由于训练此类模型的规模上可用的通用数据集的限制。例如，许多<code>VLM</code>是在互联网规模的数据集上进行训练的，这些数据集以”图像-标题对” 为特征，其中只包含有限的空间信息（难以获得丰富的空间信息数据或用于<code>3D</code>感知查询的高质量人工标注）。</p>
 <p><strong>自动数据生成</strong>和<strong>增强技术</strong>是解决数据限制问题的方法之一。然而，大多数以前的数据生成工作都侧重于渲染具有地面真实语义注释的照片级图像，但忽略了对象和<code>3D</code>关系的丰富性。相比之下，直接从现实世界数据中提取空间信息，以捕捉真实<code>3D</code>世界的多样性和复杂性。现成的视觉模型的最新进展可以从<code>2D</code>图像自动生成丰富的<code>3D</code>空间注释。为此，这里提出了一个名为<code>SpatialVLM</code>的系统，该系统能够生成和训练<code>VLM</code>，以增强其<strong>空间推理能力</strong>。具体来说，通过结合1.开放词汇检测、2.度量深度估计、3.语义分割、4.以对象为中心图像描述模型，我们可以大规模地对现实世界数据进行密集注释。<code>SpatialVLM</code>将视觉模型生成的数据转换为一种格式，可用于在图像描述、<code>VQA</code>和空间推理数据混合训练<code>VLM</code>。通过实验，发现经过训练的<code>VLM</code>展现出理想的能力。首先，它回答<strong>定性空间</strong>问题的能力大大增强。其次，尽管训练的数据嘈杂，它仍能可靠地进行<strong>定量估算</strong>。这种能力不仅让它掌握了关于物体大小的常识性知识，而且使它成为重新排列任务的开放<strong>词汇奖励注释器</strong>。最后，发现这种<strong>空间视觉语言模型</strong>得益于其自然语言方面的能力，当与强大的大语言模型相结合时，可以执行<strong>空间思维链</strong>来解决复杂的<strong>空间推理任务</strong>。</p>
 <ul>
-<li><strong>学习空间推理</strong>(<code>Learning Spatial Reasoning</code>)：空间距离估计是比较常见的任务之一，例如<code>SLAM</code>或<strong>深度估计</strong>。在将这些空间概念应用于推理时，先前的研究通常侧重于<strong>显式空间场景记忆</strong>或<strong>空间场景图</strong>。场景图允许基于编码的空间结构进行<strong>可解释、结构化、统计关系学习</strong>。要回答<code>VQA</code>格式的空间问题，它们必须将其作为场景图上的<strong>寻路问题</strong>来处理。另一方面，<code>VLM</code>是在来自视觉语言数据集的大量松散结构信息上进行预训练的。与场景图不同，空间理解是<strong>隐式编码</strong>的。我们可以通过辅助任务将深度和3D结构注入进权重中，从而捕获关系信息。</li>
+<li><strong>学习空间推理</strong>(<code>Learning Spatial Reasoning</code>)：空间距离估计是比较常见的任务之一，例如<code>SLAM</code>或<strong>深度估计</strong>。在将这些空间概念应用于推理时，先前的研究通常侧重于<strong>显式空间场景记忆</strong>或<strong>空间场景图</strong>。场景图允许基于编码的空间结构进行<strong>可解释、结构化、统计关系学习</strong>。要回答<code>VQA</code>格式的空间问题，它们必须将其作为场景图上的<strong>寻路问题</strong>来处理。另一方面，<code>VLM</code>是在来自视觉语言数据集的大量松散结构信息上进行预训练的。与场景图不同，空间理解是<strong>隐式编码</strong>的。我们可以通过辅助任务将深度和<code>3D</code>结构注入进权重中，从而捕获关系信息。</li>
 <li><strong>基于视觉语言模型</strong>：大型语言模型(<code>LLM</code>)在互联网规模的数据上进行训练，使其成为有效的<strong>常识推理器</strong>。然而，<code>LLM</code>（以及扩展的<code>VLM</code>）可能缺乏在<strong>社交推理</strong>、<strong>物理推理</strong>、<strong>具身任务</strong>和<strong>空间推理任务</strong>中表现良好的必要基础。虽然具有交互式的语言模型基础，但引入大型视觉模型（如<code>Flamingo</code>、<code>PaLI</code>或<code>PaLM-E</code>）已使性能飞跃。这些基于视觉的模型已用于多个下游任务，例如机器人成功检测、动作预测和奖励预测。在这项工作中，通过在生成的<code>VQA</code>数据集上微调<code>VLM</code>来解决<strong>空间推理</strong>问题。</li>
 <li><strong>视觉语言数据集中的空间信息</strong>：许多先前的研究都集中在对<code>VLM</code>进行基准测试。其他人则专注于细粒度场景理解，例如语义分割、对象检测或对象识别。该领域的真实数据可能受到人类标记者生成的数量限制，而合成数据的表达能力本质上是有边界的。在这项工作中，我们考虑如何自动生成真实数据，并关注<strong>空间关系</strong>、<strong>度量空间距离</strong>的问题。<img data-src="/2024/08/05/artificial-intelligence/VLM_theory_study/v_2.png" class="" title="数据合成管道：(a)使用CLIP过滤嘈杂的互联网图像并仅保留场景级照片。(b)在互联网规模的图像上应用预先训练的专家模型，以便获得以对象为中心的分割、深度和标题。(c)将2D 图像提升为3D点云，可以通过形状分析规则对其进行解析以提取有用的属性。(d)通过使用CLIP相似度得分对对象标题进行聚类来避免提出模棱两可的问题。(e)从对象标题和提取的属性中合成了数百万个空间问题和答案"></li>
 </ul>
+<p><strong>语义过滤</strong>：虽然互联网规模的图像描述数据集已广泛应用于<code>VLM</code>训练，但这些数据集中的许多图像不适合合成空间推理，因为它们要么由单个对象组成，要么没有场景背景（例如购物网站上的产品图片或计算机屏幕的屏幕截图）。因此，作为数据合成流程的第一步，基于<code>CLIP</code>的<strong>开放词汇分类模型</strong>对所有图像进行分类，并排除那些不适合的图像。</p>
+<p><strong>从2D图像中提取以对象为中心的上下文</strong>：为了从<code>2D</code>图像中提取以对象为中心的空间上下文，这里使用现成的专家模型，包括<strong>区域提议</strong>、<strong>区域描述</strong>和<strong>语义分割</strong>模块来提取以对象为中心的信息。通过这一步，我们获得了由<strong>像素簇</strong>组成的以对象为中心的实体以及<strong>开放词汇图像描述</strong>。</p>
+<p><strong>将2D上下文提升到3D上下文</strong>：使用对象检测和边界框定位生成的传统空间<code>VQA</code>数据集仅限于<code>2D</code>图像平面（缺乏深度或高度上下文）和像素级推理（缺乏公制尺度大小和距离上下文）。执行深度估计以将<code>2D</code>像素提升到公制尺度<code>3D</code>点云。进一步将点云的相机坐标转化为地理坐标系，这是通过水平面（例如“地板”、“桌面”）分割和帧传输完成的。</p>
+<p><strong>歧义解决</strong>：有时，一幅图像中会出现多个属于相似类别的物体，从而导致其标题标签出现歧义。例如，同一个标题标签“蛋糕”可能指代同一幅图像中的多个不同蛋糕。因此，在询问这些物体之前，我们需要确保参考表达没有歧义。这里做出了两个关键的设计选择，这些选择已通过实证验证，可有效应对这一挑战：</p>
+<ul>
+<li>我们特意选择避免使用常见的物体检测器，因为它们往往会产生固定且粗略的类别，例如“蛋糕”，并采用<code>FlexCap</code>，这是一种用户可配置的以对象为中心的字幕方法。实际上，对于每个对象，我们可以抽取一个长度在<code>1~6</code>个字之间的可变随机字幕。因此，我们的对象注释是细粒度的，例如“形状像房子的蛋糕”和“塑料容器中的纸杯蛋糕”。</li>
+<li>我们设计了一种面向语义的后处理算法，通过增强或拒绝对象字幕来进一步消除歧义。</li>
+</ul>
+<p>大规模空间推理<code>VQA</code>数据集：研究的重点是通过使用合成数据进行预训练，将“直接”的<strong>空间推理能力</strong>注入<code>VLM</code>。因此，合成了图像中最多涉及两个对象（表示为“<code>A</code>”和“<code>B</code>”）的空间推理<code>QA</code>对，并考虑以下两类问题。</p>
+<ul>
+<li><strong>定性问题</strong>：要求判断某些空间关系的问题。例如“给定两个物体A和B，哪个更靠左？”，“物体A比物体B更高吗？”和“A和B中，哪个宽度更大？”。</li>
+<li><strong>定量问题</strong>：要求更细粒度的答案，包括数字和单位。例如“物体A比物体B靠左多少？”，“物体A距离B有多远？”，“找出A相对于相机位于B后面的距离”。与上述示例类似，可以使用主问题模板合成此类问题，并且在消除歧义后可以使用对象标题填充对象名称条目。此类属性允许我们进行基于模板的生成，这是指令调整工作中常用的方法。</li>
+</ul>
+<img data-src="/2024/08/05/artificial-intelligence/VLM_theory_study/v_3.png" class="" title="来自合成数据集的示例数据条目">
+
+<h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h4><p>通过构建基于互联网规模真实世界图像的<code>3D</code>空间推理<code>VQA</code>数据自动生成框架来解决这一问题。在训练<code>VLM</code>的方法中消除了不同的设计选择，例如使用大量噪声数据进行训练和解冻<code>ViT</code>。<code>SpatialVLM</code>可以处理需要空间推理组件的更复杂的<strong>思维链推理</strong>。<code>SpatialVLM</code>也被证明可用于机器人任务，<code>3D</code>空间感知<code>VLM</code>可以用作机器人任务的<strong>奖励注释器</strong>。</p>
 
     </div>
 
@@ -418,14 +435,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">979k</span>
+    <span title="站点总字数">980k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">54:24</span>
+    <span title="站点阅读时长">54:27</span>
   </span>
 </div>
 <div class="busuanzi-count">
