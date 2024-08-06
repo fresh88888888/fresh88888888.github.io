@@ -357,8 +357,8 @@
 </ul>
 <p>大规模空间推理<code>VQA</code>数据集：研究的重点是通过使用合成数据进行预训练，将“直接”的<strong>空间推理能力</strong>注入<code>VLM</code>。因此，合成了图像中最多涉及两个对象（表示为“<code>A</code>”和“<code>B</code>”）的空间推理<code>QA</code>对，并考虑以下两类问题。</p>
 <ul>
-<li><strong>定性问题</strong>：要求判断某些空间关系的问题。例如“给定两个物体A和B，哪个更靠左？”，“物体A比物体B更高吗？”和“A和B中，哪个宽度更大？”。</li>
-<li><strong>定量问题</strong>：要求更细粒度的答案，包括数字和单位。例如“物体A比物体B靠左多少？”，“物体A距离B有多远？”，“找出A相对于相机位于B后面的距离”。与上述示例类似，可以使用主问题模板合成此类问题，并且在消除歧义后可以使用对象标题填充对象名称条目。此类属性允许我们进行基于模板的生成，这是指令调整工作中常用的方法。</li>
+<li><strong>定性问题</strong>：要求判断某些空间关系的问题。例如“给定两个物体<code>A</code>和<code>B</code>，哪个更靠左？”，“物体<code>A</code>比物体<code>B</code>更高吗？”和“<code>A</code>和<code>B</code>中，哪个宽度更大？”。</li>
+<li><strong>定量问题</strong>：要求更细粒度的答案，包括数字和单位。例如“物体<code>A</code>比物体<code>B</code>靠左多少？”，“物体<code>A</code>距离<code>B</code>有多远？”，“找出<code>A</code>相对于相机位于<code>B</code>后面的距离”。与上述示例类似，可以使用主问题模板合成此类问题，并且在消除歧义后可以使用对象标题填充对象名称条目。此类属性允许我们进行基于模板的生成，这是指令调整工作中常用的方法。</li>
 </ul>
 <img data-src="/2024/08/05/artificial-intelligence/VLM_theory_study/v_3.png" class="" title="来自合成数据集的示例数据条目">
 
