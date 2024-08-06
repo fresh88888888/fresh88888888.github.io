@@ -42,3 +42,5 @@ mathjax:
 |{% mathjax %}|v|_2{% endmathjax %}|向量的`L2-norm`|
 |{% mathjax %}T:\mathbb{R}^2 \rightarrow \mathbb{R}^3; T(v) = w{% endmathjax %}|将向量{% mathjax %}v\in \mathbb{R}^2{% endmathjax %}转化为向量{% mathjax %}w \in \mathbb{R}^3{% endmathjax %}|
 
+#### 方程组
+
