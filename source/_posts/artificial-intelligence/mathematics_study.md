@@ -55,4 +55,4 @@ mathjax:
 以此类推，你有{% mathjax %}w_nx_n{% endmathjax %}任意数量的特征。然后你添加{% mathjax %}b{% endmathjax %}，并将其全部设置为{% mathjax %}y{% endmathjax %}，如果你将方程想象为数据集中的一行，那你已经知道了{% mathjax %}x{% endmathjax %}和{% mathjax %}y{% endmathjax %}的值，你的目标是找到{% mathjax %}w{% endmathjax %}和{% mathjax %}b{% endmathjax %}的值来适合这个方程，由于数据集有很多条数据记录，所以你可以写下更多个方程。写下第一个方程中的所有{% mathjax %}x_n{% endmathjax %}和{% mathjax %}y{% endmathjax %}的上面添加一个带括号的标号`1`，则依此类推，包含{% mathjax %}m{% endmathjax %}条记录的数据集，最后一个方程的标号为{% mathjax %}m{% endmathjax %}。
 {% asset_img m_3.png  %}
 
-同事求解所有这些方程的权重{% mathjax %}w_m{% endmathjax %}和偏差值{% mathjax %}b{% endmathjax %}，而这些方程被统称为：**“线性方程组”**。
+同时求解所有这些方程的权重{% mathjax %}w_n{% endmathjax %}和偏差值{% mathjax %}b{% endmathjax %}，而这些方程被统称为：**“线性方程组”**。
