@@ -97,3 +97,4 @@ mathjax:
 让我们看一下这么两个矩阵：{% mathjax %}\begin{bmatrix} 1 & 1\\ 1 & 2 \end{bmatrix}{% endmathjax %}，{% mathjax %}\begin{bmatrix} 1 & 1\\ 2 & 2 \end{bmatrix}{% endmathjax %}，右边的矩阵，第一行乘以二获得第二行因此这些行时线性相关的，该矩阵是奇异矩阵；左边的矩阵，这些行是线性独立的，所以该矩阵是非奇异矩阵。假设矩阵的元素是`a,b,c,d`，假设存在一个常数`k`，其第一行乘以常数`k`等于第二行，则该矩阵是奇异的。则{% mathjax %}ak = c, bk = d{% endmathjax %}，则{% mathjax %}\frac{c}{a} = \frac{d}{b} = k{% endmathjax %}，去除`k`，则得出{% mathjax %}ad = bc{% endmathjax %}或{% mathjax %}ad - bc = 0{% endmathjax %}，我们将其称为矩阵的**行列式**({% mathjax %}ad - bc{% endmathjax %})。根据构造，如果矩阵是奇异矩阵，则该行列式为零；如果是非奇异矩阵，则该行列式为非零。{% mathjax %}ad{% endmathjax %}是主对角线中数字的乘积，{% mathjax %}bc{% endmathjax %}是反对角线中数字的乘积。
 {% asset_img m_10.png  %}
 
+非奇异矩阵具有非零行列式；它们是非零的，奇异矩阵的行列式为零。总而言之，元素为`a、b、c`和`d`的矩阵的行列式为{% mathjax %}ad - bc{% endmathjax %}，当矩阵为奇异矩阵时，行列式恰好为零，当矩阵为非奇异矩阵时行列式为非零。
