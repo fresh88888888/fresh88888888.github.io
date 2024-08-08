@@ -46,6 +46,8 @@
 <meta property="og:image" content="https://fresh88888888.github.io/2024/08/06/artificial-intelligence/mathematics_study/m_11.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/08/06/artificial-intelligence/mathematics_study/m_12.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/08/06/artificial-intelligence/mathematics_study/m_13.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/08/06/artificial-intelligence/mathematics_study/m_14.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/08/06/artificial-intelligence/mathematics_study/m_15.png">
 <meta property="article:published_time" content="2024-08-06T07:35:11.000Z">
 <meta property="article:modified_time" content="2024-08-06T07:35:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -313,14 +315,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>5.6k</span>
+      <span>6.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>19 分钟</span>
+      <span>21 分钟</span>
     </span>
 </div>
 
@@ -455,6 +457,12 @@
 <h5 id="行阶梯形形式"><a href="#行阶梯形形式" class="headerlink" title="行阶梯形形式"></a>行阶梯形形式</h5><p><strong>行阶梯形形式</strong>：这为您提供了有关矩阵的大量信息，并且可以通过简单的行运算获得。如下图所示，这三个矩阵的行阶梯形形式是右边的。为了计算这个矩阵的<strong>行阶梯形形式</strong>，其中矩阵包含元素<code>5、1、4</code>和<code>-3</code>，您需要执行以下操作。想法是去掉左下角的<code>4</code>。首先将每一行除以最左边的非零系数，得到包含元素<code>1、0.2、1</code>和<code>-0.75</code>的矩阵。现在，为了删除左下角的<code>4</code>，保持第一行不变，但从第二行中减去第一行，得到包含<code>0</code>和<code>-0.95</code>项的行。我们成功地让左下角得到了一个零，这正是我们想要的。现在，作为最后一步，用第二行除以最左边的非零系数，以便在右下角得到一个<code>1</code>。现在矩阵是行阶梯形形式。如果你对奇异矩阵执行此操作会怎样？如果你尝试对包含<code>5、1、10</code>和<code>2</code>项的矩阵执行此操作，让我们看看会发生什么。第一步是将每行除以最左边的系数，这样你就会得到包含<code>1、0.2、1</code>和<code>0.2</code>项的矩阵。现在，为了消除左下角的那个<code>1</code>，你可以做的是取底行，减去顶行，得到的是<code>0，0</code>。这是新的底行。现在让我们看看第二行除以最左边的非零系数时会发生什么。这是不可能的，因为你会用<code>0</code>除以<code>0</code>，这是未定义的。你要做的是让这个成为行阶梯形形式。最后，对于非奇异的矩阵元素<code>0、0、0，0</code>你能做的不多，因为你不能用最左边的系数除每一行，那些系数是零。相反，你只能说这是<strong>行阶梯形形式</strong>。总之，这是矩阵，这是行阶梯形形式。这是一个与<strong>秩</strong>非常有趣的联系。看第一个。它的对角线上有两个 <code>1</code>，它的秩是<code>2</code>。下一个在对角线上有<code>1、1</code>，它的秩是<code>1</code>。第三个在对角线上有零个<code>1</code>，它的秩是<code>0</code>。这实际上就是联系。矩阵的秩是行阶梯形形式对角线上<code>1</code>的数量。这是一种计算秩的简单方法。此外，请注意，第一个是非奇异的，第二个是奇异的，第三个是奇异的。当且仅当行阶梯形形式只有<code>1</code>而没有<code>0</code>时，矩阵才是非奇异的。</p>
 <img data-src="/2024/08/06/artificial-intelligence/mathematics_study/m_13.png" class="">
 
+<p>现在你已经了解了<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0;" xmlns="http://www.w3.org/2000/svg" width="5.028ex" height="1.507ex" role="img" focusable="false" viewBox="0 -666 2222.4 666" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-8-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path id="MJX-8-TEX-N-D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mn"><use data-c="32" xlink:href="#MJX-8-TEX-N-32"></use></g><g data-mml-node="mo" transform="translate(722.2,0)"><use data-c="D7" xlink:href="#MJX-8-TEX-N-D7"></use></g><g data-mml-node="mn" transform="translate(1722.4,0)"><use data-c="32" xlink:href="#MJX-8-TEX-N-32"></use></g></g></g></svg></mjx-container>矩阵的<strong>行阶梯形式</strong>。回想一下这个方程组，其中第一个方程有变量<code>a、b</code>和<code>c</code>，第二个方程只有变量<code>b</code>和<code>c</code>，第三个方程只有变量<code>c</code>。可以在与系统相对应的矩阵中执行完全相同的行操作，以获得右侧的矩阵，现在对角线上有<code>1</code>，对角线下方有<code>0</code>。这是矩阵的<strong>行阶梯形式</strong>。</p>
+<img data-src="/2024/08/06/artificial-intelligence/mathematics_study/m_14.png" class="">
+
+<p>这是行阶梯形式矩阵的一般形式，这里有两个不同的例子。在这里，星号代表数字，可以是零也可以是非零，这并不重要。矩阵可能有也可能没有全是零的行。但是，如果有，它们需要放在底部。此外，请注意，每个非零行都有一个最左边的非零项。这些被称为<strong>枢轴</strong>。每一行都有一个特定的<strong>主元</strong>，并且有一个关于主元的<strong>规则</strong>，即每个主元都必须严格位于上一行主元的右侧。换句话说，如果你站在一个主元处并查看上面的所有主元，它们都必须严格位于其左侧。现在，正如你之前所见，<strong>行阶梯形式</strong>对于矩阵的<strong>秩</strong>非常有用。它实际上是主元的数量。左侧矩阵的秩为<code>5</code>，右侧矩阵的秩为<code>3</code>。在左侧，你看到一个行阶梯形式矩阵。现在你可以做一些修饰，将第一行除以三，将第二行除以一，或者它们的含义相同，将第三行除以<code>-4</code>，得到一个如下图所示的矩阵。显然，星号现在是不同的值，但重要的是，枢轴现在是<code>1</code>，并且它们位于相同的位置，因为除以<code>1</code>会将零变成非零，或将非零变成零。一般来说，允许使用不同于<code>1</code>的枢轴。我们将采取额外的步骤，除以枢轴中的首项，以使枢轴为<code>1</code>。这在<strong>秩</strong>方面没有数学差异。它是相同的秩，并且与我们通过除以首项系数来求解方程组的方式更一致。</p>
+<img data-src="/2024/08/06/artificial-intelligence/mathematics_study/m_15.png" class="">
+
 
     </div>
 
@@ -534,7 +542,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">54:46</span>
+    <span title="站点阅读时长">54:48</span>
   </span>
 </div>
 <div class="busuanzi-count">
