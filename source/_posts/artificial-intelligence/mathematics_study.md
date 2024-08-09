@@ -1,5 +1,5 @@
 ---
-title: 数据科学 — 数学（机器学习）
+title: 数据科学 — 数学(一)（机器学习）
 date: 2024-08-06 15:35:11
 tags:
   - AI
@@ -196,6 +196,4 @@ mathjax:
 
 再次考虑一个{% mathjax %}n{% endmathjax %}维向量{% mathjax %}x{% endmathjax %}，让{% mathjax %}\lambda{% endmathjax %}成为标量。那么{% mathjax %}\lambda x{% endmathjax %}就是将向量{% mathjax %}x{% endmathjax %}的每个分量乘以标量{% mathjax %}\lambda{% endmathjax %}后得到的结果，如下图所示：
 {% asset_img m_47.png %}
-
-##### 点积
 
