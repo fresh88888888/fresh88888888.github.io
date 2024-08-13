@@ -158,3 +158,5 @@ mathjax:
 而当矩阵可转换时，逆矩阵的行列式就是`1`除以矩阵行列式的。根据乘积公式，我们知道乘积的行列式等于{% mathjax %}A{% endmathjax %}的行列式乘以{% mathjax %}B{% endmathjax %}的行列式。现在{% mathjax %}B{% endmathjax %}实际上是{% mathjax %}A{% endmathjax %}的逆矩阵。现在{% mathjax %}AA{% endmathjax %}的逆恰恰是单位矩阵。所以单位矩阵的行列式由{% mathjax %}A{% endmathjax %}乘以{% mathjax %}A{% endmathjax %}的逆的行列式决定。单位矩阵的行列式始终为`1`。因此，意味着{% mathjax %}A{% endmathjax %}的逆行列式恰好是{% mathjax %}A{% endmathjax %}行列式的`1`倍。为什么单位矩阵的行列式为`1`？对于一个{% mathjax %}2\times 2{% endmathjax %}矩阵，行列式是{% mathjax %}1\times 1 - 0 \times 0 = 1{% endmathjax %}。
 {% asset_img m_36.png  %}
 
+##### 线性代数—基（basis）
+
