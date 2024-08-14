@@ -109,3 +109,32 @@ mathjax:
 `2`重复了两次。现在看看当我们找到与它们相关的特征向量时会发生什么？让我们从特征值`4`开始。特征向量需要满足{% mathjax %}A(x_1,x_2,x_3) = (4x_1,4x_2,4x_3){% endmathjax %}。矩阵与向量之间的乘积可以展开为向量{% mathjax %}(2x_1,-x_1 + 4x_2 - 0.5x_3,2x_3){% endmathjax %}。
 {% asset_img m_29.png  %}
 
+{% mathjax %}2x_3{% endmathjax %}，希望它等于向量{% mathjax %}(4x_1,4x_2,4x_3){% endmathjax %}，从而得到这个方程组：{% mathjax %}-2x_1 = 0,\;-x_1 - 0.5x_3 = 0,\;-2x_3 = 0{% endmathjax %}。请注意，这里所做的只是将所有内容移到等号左侧。可以稍微简化一下，得到第一个等式{% mathjax %}x_1 = 0{% endmathjax %}。第三个等式{% mathjax %}x_3 = 0{% endmathjax %}。现在，由于{% mathjax %}x_2{% endmathjax %}根本没有出现在这些方程中，因此第二个方程是(0,4,3)，并且{% mathjax %}x_2{% endmathjax %}可以是任何数字。为了简单起见，我们可以设置为{% mathjax %}x_2 = 1{% endmathjax %}，然后将得到与特征值`4`相关的特征向量`(0,1,0)`。现在让我们对特征值`2`重复上述步骤。向量{% mathjax %}(x_1,x_2,x_3){% endmathjax %}的点积应该等于向量{% mathjax %}(2x_1,2x_2,2x_3){% endmathjax %}。点积可以与之前的表达式展开。我们再次得到一个方程组：{% mathjax %}2x_1 = 2x_1,\;-x_1 + 4x_2-0.5x_3 = 2x_2,\;2x_3 = 2x_3{% endmathjax %}。通过将所有内容移到等号左边来处理这个问题时，我们会发现第一个方程非常简单，它是{% mathjax %}0 = 0{% endmathjax %}。第二个方程是{% mathjax %}-1 + 2x_2 - 0.5x_3 = 0{% endmathjax %}。第三个方程同样很简单，它是{% mathjax %}0 = 0{% endmathjax %}。你可以将第二个方程重写为 {% mathjax %}x_1 = 2x_2 - 0.5x_3{% endmathjax %}。这个方程有无数个解，具体取决于你选择的{% mathjax %}x_2{% endmathjax %}和{% mathjax %}x_3{% endmathjax %}的值。假设你选择{% mathjax %}x_2 = 1{% endmathjax %}和{% mathjax %}x_3 = 0{% endmathjax %}。这意味着 {% mathjax %}x_1{% endmathjax %}必须为`2`才能成为特征向量，从而给出向量`(2,1,0)`。但你也可以选择{% mathjax %}x_2 = 1{% endmathjax %}而{% mathjax %}x_3 = 2{% endmathjax %}，从而给出特征向量`(1,1,2)`。这两个向量指向不同的方向。所以实际上有两个不同的特征向量。请记住，您只关心特征向量的方向，因为它的任何缩放版本仍将是同一特征值的特征向量。值得一提的是，您可以根据{% mathjax %}x_2{% endmathjax %}和{% mathjax %}x_3{% endmathjax %}的值找到不同的**特征向量对**。但重要的是，您始终可以为特征值`2`找到两个不同的方向。
+{% asset_img m_30.png  %}
+
+****
+
+{% asset_img m_31.png  %}
+
+总而言之，此矩阵{% mathjax %}A{% endmathjax %}具有以下**特征值**和**特征向量对**。第一个特征值{% mathjax %}\lambda_1 = 4{% endmathjax %}，其特征向量为`(0,1,0)`。第二个特征值{% mathjax %}\lambda_2 = 2{% endmathjax %}，其特征向量为向量`(2,1,0)`。最后，第三个特征值{% mathjax %}\lambda_3 = 2{% endmathjax %}，其特征向量为`(1,1,2)`。在这种情况下，即使特征值重复，您也可以找到三个不同的特征向量。
+{% asset_img m_32.png  %}
+
+让我们再看一个例子。只改变矩阵中的一个值，看看会发生什么。特征多项式与之前相同。再一次，我们将值`(4、2、2)`作为特征值。让我们重复之前的过程来找到特征向量并从特征值`4`开始。这里唯一改变的方程是最后一个方程，现在有{% mathjax %}4x_2 + 2x_3{% endmathjax %}。其中前两个保持不变，即{% mathjax %}-2x_1 = 0{% endmathjax %}和{% mathjax %}-1-0.5x_3 = 0{% endmathjax %}。再次，我们将它们分别命名为方程`1、2、3`。从方程`1`中，您可以得出{% mathjax %}x_1 = 0{% endmathjax %}。结合方程`3`和`1`，您可以得出{% mathjax %}x_3 = 0{% endmathjax %}。{% mathjax %}x_2{% endmathjax %}可以取任意值。和上一个矩阵一样，您可以选择向量`(0,1,0)`作为特征向量。它和上一​​个矩阵的特征向量相同。
+{% asset_img m_33.png  %}
+
+****
+
+{% asset_img m_34.png  %}
+
+对于特征值`2`，也会发生同样的事情。当您解这个方程时，您会得到{% mathjax %}2x_1 = 2x_1{% endmathjax %}。{% mathjax %}-x_1 + 4x_2  - 0.5x_3 = 2x_2{% endmathjax %}，而{% mathjax %}4x_1 + 2x_3 = 2x_3{% endmathjax %}。这会产生以下方程组，可以简化为{% mathjax %}0 = 0{% endmathjax %}，因为{% mathjax %}-x_1 + 2x_2 -0.5x_3 = 0{% endmathjax %}。最后，{% mathjax %}4x_1 = 0{% endmathjax %}。这施加了{% mathjax %}x_1 = 0{% endmathjax %}只能为`0`的限制。现在，从方程`2`和方程`3`可以得出{% mathjax %}x_3{% endmathjax %}必须等于{% mathjax %}4x_2{% endmathjax %}。现在您只有一个自由度，因为{% mathjax %}x_1{% endmathjax %}始终为`0`。一旦固定了{% mathjax %}x_2,x_3{% endmathjax %}的值也会固定。例如，您可以考虑{% mathjax %}x_1 = 0{% endmathjax %}和{% mathjax %}x_2 = 1{% endmathjax %}，这使得{% mathjax %}x_3 = 4{% endmathjax %}，给定特征向量`(0,1,4)`。例如，如果您选择{% mathjax %}x_2 = \frac{1}{2}{% endmathjax %}，会发生什么情况？给定特征向量`(0,1/2,2)`，`x_3`必须为`2`。但是，这两个向量位于同一条线上。一个只是另一个的缩放，意味着它们实际上是相同的特征向量。意味着`2`是特征值的`2`倍，但您只能找到一个与之相关的特征向量。然后，特征向量的形式为`(0,k,4k)`，但只有一个方向可以与特征值`2`配对，即使`2`作为特征值出现了`2`次。对于矩阵项`(2,0、0,-1,4,-0.5,4,0,2)`，特征值`4`与特征向量`(0、1、0)`相关联。然后特征值`2`与特征向量`(0、1、4)`相关联。同样，特征值`2`没有相关联的特征向量。意味着您无法创建`n`个特征基的三维空间，因为您缺少一个向量来跨越整个空间。
+{% asset_img m_35.png  %}
+
+****
+
+{% asset_img m_36.png  %}
+
+****
+
+{% asset_img m_37.png  %}
+
+总之，如果您有一个{% mathjax %}2\times 2{% endmathjax %}的矩阵，其特征值为{% mathjax %}\lambda_1{% endmathjax %}和{% mathjax %}\lambda_2{% endmathjax %}。如果两个特征值不同，那么您总是会得到两个不同的特征向量。但是，如果特征值相同，那么您可以有一个或两个特征向量。如果您有一个{% mathjax %}3\times 3{% endmathjax %}矩阵，特征值为{% mathjax %}\lambda_1{% endmathjax %}、{% mathjax %}\lambda_2{% endmathjax %} 和{% mathjax %}\lambda_3{% endmathjax %}，那么您将获得更多选项来探索。如果`3`个特征值都不同，那么您总是可以找到`3`个不同的特征向量。如果一个特征值重复`2`次，而另一个不同，那么您可以有两个或三个特征向量。但是，如果相同的特征值重复三次，则可以有`1~3`之间的任意数量的特征向量。
