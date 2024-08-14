@@ -101,3 +101,11 @@ mathjax:
 现在你有了特征值，让我们找到特征向量。回想一下，**特征向量**是满足方程矩阵乘以向量等于特征值乘以向量的向量。如果我们展开它，我们会得到这些方程，它们的解是{% mathjax %}x=1、y=0{% endmathjax %}或任何多重向量。这是特征值向量之一，对应于特征值`2`。我们对`3`个特征值做同样的事情，求解这些方程并得到{% mathjax %}x=1、y=0{% endmathjax %}。特征向量`(1,1)`对应于特征值`3`。
 {% asset_img m_27.png  %}
 
+##### 特征向量的数量
+
+你有一个{% mathjax %}3\times 3{% endmathjax %}的矩阵，它有`3`个不同的特征值和`3`个不同的特征向量。难道所有{% mathjax %}3\times 3{% endmathjax %}的矩阵总是有`3`个特征向量吗？事实证明情况并非总是如此。让我们看一些例子。考虑这个{% mathjax %}3\times 3{% endmathjax %}矩阵{% mathjax %}A{% endmathjax %}，特征多项式作为行列式：{% mathjax %}A - \lambda I{% endmathjax %}。使用{% mathjax %}3\times 3{% endmathjax %}矩阵的行列式公式，我们得到{% mathjax %}(2 - \lambda)^2(4 - \lambda){% endmathjax %}。由于原始矩阵中的零点，剩余项都为零。现在要找到特征值，你需要找到这个多项式的零点，这给出了特征值`(4,2,2)`。
+{% asset_img m_28.png  %}
+
+`2`重复了两次。现在看看当我们找到与它们相关的特征向量时会发生什么？让我们从特征值`4`开始。特征向量需要满足{% mathjax %}A(x_1,x_2,x_3) = (4x_1,4x_2,4x_3){% endmathjax %}。矩阵与向量之间的乘积可以展开为向量{% mathjax %}(2x_1,-x_1 + 4x_2 - 0.5x_3,2x_3){% endmathjax %}。
+{% asset_img m_29.png  %}
+
