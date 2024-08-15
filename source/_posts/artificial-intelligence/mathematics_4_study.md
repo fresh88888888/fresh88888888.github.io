@@ -74,3 +74,36 @@ mathjax:
 
 ##### 协方差矩阵
 
+您已经学习了有关**方差**和**协方差**的知识，因为您的最终目标是构建一个称为**协方差矩阵**的特殊矩阵。它是一种存储数据集中变量对之间所有关系的复杂方法。第一个例子的斜率向下，所以我说它的协方差是`-2`；第二个例子的斜率比较平缓，所以我说它的协方差是`0`；最后一个例子的斜率是正向的，所以我说它的协方差是`2`。使用这些度量，我现在将为每个数据集构建一个协方差矩阵。在对角线上，我将放置 {% mathjax %}x{% endmathjax %}和{% mathjax %}y{% endmathjax %}方差；在非对角线上，我将放置协方差。这被称为**协方差矩阵**，它只是存储每对变量的**协方差**和**方差**。
+{% asset_img m_14.png  %}
+
+让我们将这个过程更形式化一点。首先计算每个变量的方差和每个变量组合的协方差。这里只有{% mathjax %}x{% endmathjax %}的方差、{% mathjax %}y{% endmathjax %}的方差和两个变量的协方差。接下来，您将构建一个方阵，用{% mathjax %}C{% endmathjax %}来表示，其中的行和列代表数据集中的每个变量。这里只有两个，因此它们分别命名为{% mathjax %}x{% endmathjax %}和{% mathjax %}y{% endmathjax %}。在矩阵的每个位置，你都放置该行和该列变量的**协方差**。
+{% asset_img m_15.png  %}
+
+请注意，{% mathjax %}x{% endmathjax %}、{% mathjax %}y{% endmathjax %}的协方差与{% mathjax %}y{% endmathjax %}、{% mathjax %}x{% endmathjax %}的协方差相同，你可以使用之前学到的公式来验证这一点。沿着主对角线，你放置每个变量的方差，如下图所示。变量与自身的协方差实际上就是方差，这实际上只是变量之间的协方差矩阵。通常你会看到它沿着对角线写成方差，但这里的重点是，我们在这个矩阵的每个单元格上执行完全相同的计算。求该行和该列变量的协方差。用矩阵符号表示协方差矩阵是很常见的，它提供了一种从数据或观测值计算协方差矩阵的直接而有效的方法。为此，您首先需要将所有数据点存储在一个矩阵中。每一行将是变量{% mathjax %}x{% endmathjax %}和{% mathjax %}y{% endmathjax %}的观测值，每一列包含单个变量的所有观测值。我将这个矩阵称为{% mathjax %}A{% endmathjax %}，您还需要定义一个与{% mathjax %}A{% endmathjax %}形状相同的矩阵，并且每一列都取该变量的平均值。这个矩阵称为{% mathjax %}\mu{% endmathjax %}，使用这两个矩阵，您可以将协方差矩阵写为：{% mathjax %}\frac{1}{n-1}(A-\mu)^{\mathsf{T}}(A - \mu){% endmathjax %}。开始用它们的表达式替换{% mathjax %}A{% endmathjax %}和{% mathjax %}\mu{% endmathjax %}。接下来，您需要完成计算：{% mathjax %}A - \mu{% endmathjax %}，两个项逐个元素相减得到这个新表达式。接下来，您需要转置第一个矩阵，得到这个新表达式。第一个矩阵的大小为`2`，即变量数乘以`n`，即观测数。第二个矩阵的大小为`n`，乘以`2`，这意味着两个矩阵的乘积将为`2`，乘以`2`，这恰好是协方差矩阵的大小。现在，开始进行矩阵乘法。对于矩阵的第一个元素，您需要将第一个矩阵的第一行乘以第二个矩阵的第一列，即{% mathjax %}(x_1 - \mu_x)(x_1 - \mu_x) + (x_2 - \mu_x)(x_2 - \mu_x) + \ldots + (x_n - \mu_x)(x_n - \mu_x){% endmathjax %}。
+{% asset_img m_16.png  %}
+
+****
+
+{% asset_img m_17.png  %}
+
+****
+
+{% asset_img m_18.png  %}
+
+****
+
+{% asset_img m_19.png  %}
+
+****
+
+{% asset_img m_20.png  %}
+
+这实际上简化为变量{% mathjax %}x{% endmathjax %}的每个观测值与该变量的平均值之差的平方的`n`项之和。如果我们合并{% mathjax %}n -1{% endmathjax %}，那么这就是{% mathjax %}x{% endmathjax %}方差的表达式。请注意，在这个矩阵乘法中，一切都是对称的，因此如果您查看第一个矩阵的第二行和第二个矩阵的第一列的乘积，那么您将再次得到{% mathjax %}y{% endmathjax %},{% mathjax %}x{% endmathjax %}的协方差。最后，第一个矩阵的第二行和第二个矩阵的第二列的乘积给出{% mathjax %}y{% endmathjax %} 的方差。意味着您可以从更小更简单的矩阵运算中恢复协方差矩阵的原始表达式。不可否认，这有点复杂，但让我们看看这两个方程在真实数据集中实际上是什么样的。数据集在{% mathjax %}x{% endmathjax %}、{% mathjax %}y{% endmathjax %}坐标网格上绘制了`8`个观测值。考虑到数据的分布，您会希望{% mathjax %}x{% endmathjax %}和{% mathjax %}y{% endmathjax %}方差大致相同，而协方差为负。首先，将数据写在一个有两列的表格上，每个特征一列。您需要计算{% mathjax %}\mu_x{% endmathjax %}和{% mathjax %}\mu_y{% endmathjax %}，即每列的平均值。在本例中，这些列的平均值分别为`8`和`6`，现在创建矩阵{% mathjax %}A{% endmathjax %}减去{% mathjax %}\mu{% endmathjax %}，其中所有值都减去了列平均值。现在转置该矩阵并设置矩阵乘法。此表有`8`个观测值，因此在此乘积前面添加{% mathjax %}\frac{1}{n-1}{% endmathjax %}，即七分之一。现在您需要做的就是乘以结果，结果将是{% mathjax %}2\times 2{% endmathjax %}矩阵，即协方差矩阵{% mathjax %}C{% endmathjax %}，并且如预测的那样，位于对角线上的{% mathjax %}x{% endmathjax %}方差和{% mathjax %}y{% endmathjax %}方差非常相似，协方差为负。
+{% asset_img m_21.png  %}
+
+计算协方差矩阵的步骤：
+- 在每列中包含不同的特征数据。
+- 计算每列的平均值{% mathjax %}\mu{% endmathjax %}。
+- 从各自的列中减去平均值，生成矩阵{% mathjax %}A - \mu{% endmathjax %}。
+- 计算公式为：{% mathjax %}C = \frac{1}{n-1}(A - \mu)^{\mathsf{T}}(A - \mu){% endmathjax %}。
