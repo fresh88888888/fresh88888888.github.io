@@ -109,7 +109,7 @@ mathjax:
 `2`重复了两次。现在看看当我们找到与它们相关的特征向量时会发生什么？让我们从特征值`4`开始。特征向量需要满足{% mathjax %}A(x_1,x_2,x_3) = (4x_1,4x_2,4x_3){% endmathjax %}。矩阵与向量之间的乘积可以展开为向量{% mathjax %}(2x_1,-x_1 + 4x_2 - 0.5x_3,2x_3){% endmathjax %}。
 {% asset_img m_29.png  %}
 
-{% mathjax %}2x_3{% endmathjax %}，希望它等于向量{% mathjax %}(4x_1,4x_2,4x_3){% endmathjax %}，从而得到这个方程组：{% mathjax %}-2x_1 = 0,\;-x_1 - 0.5x_3 = 0,\;-2x_3 = 0{% endmathjax %}。请注意，这里所做的只是将所有内容移到等号左侧。可以稍微简化一下，得到第一个等式{% mathjax %}x_1 = 0{% endmathjax %}。第三个等式{% mathjax %}x_3 = 0{% endmathjax %}。现在，由于{% mathjax %}x_2{% endmathjax %}根本没有出现在这些方程中，因此第二个方程是(0,4,3)，并且{% mathjax %}x_2{% endmathjax %}可以是任何数字。为了简单起见，我们可以设置为{% mathjax %}x_2 = 1{% endmathjax %}，然后将得到与特征值`4`相关的特征向量`(0,1,0)`。现在让我们对特征值`2`重复上述步骤。向量{% mathjax %}(x_1,x_2,x_3){% endmathjax %}的点积应该等于向量{% mathjax %}(2x_1,2x_2,2x_3){% endmathjax %}。点积可以与之前的表达式展开。我们再次得到一个方程组：{% mathjax %}2x_1 = 2x_1,\;-x_1 + 4x_2-0.5x_3 = 2x_2,\;2x_3 = 2x_3{% endmathjax %}。通过将所有内容移到等号左边来处理这个问题时，我们会发现第一个方程非常简单，它是{% mathjax %}0 = 0{% endmathjax %}。第二个方程是{% mathjax %}-1 + 2x_2 - 0.5x_3 = 0{% endmathjax %}。第三个方程同样很简单，它是{% mathjax %}0 = 0{% endmathjax %}。你可以将第二个方程重写为 {% mathjax %}x_1 = 2x_2 - 0.5x_3{% endmathjax %}。这个方程有无数个解，具体取决于你选择的{% mathjax %}x_2{% endmathjax %}和{% mathjax %}x_3{% endmathjax %}的值。假设你选择{% mathjax %}x_2 = 1{% endmathjax %}和{% mathjax %}x_3 = 0{% endmathjax %}。这意味着 {% mathjax %}x_1{% endmathjax %}必须为`2`才能成为特征向量，从而给出向量`(2,1,0)`。但你也可以选择{% mathjax %}x_2 = 1{% endmathjax %}而{% mathjax %}x_3 = 2{% endmathjax %}，从而给出特征向量`(1,1,2)`。这两个向量指向不同的方向。所以实际上有两个不同的特征向量。请记住，您只关心特征向量的方向，因为它的任何缩放版本仍将是同一特征值的特征向量。值得一提的是，您可以根据{% mathjax %}x_2{% endmathjax %}和{% mathjax %}x_3{% endmathjax %}的值找到不同的**特征向量对**。但重要的是，您始终可以为特征值`2`找到两个不同的方向。
+希望它等于向量{% mathjax %}(4x_1,4x_2,4x_3){% endmathjax %}，从而得到这个方程组：{% mathjax %}-2x_1 = 0,\;-x_1 - 0.5x_3 = 0,\;-2x_3 = 0{% endmathjax %}。请注意，这里所做的只是将所有内容移到等号左侧。可以稍微简化一下，得到第一个等式{% mathjax %}x_1 = 0{% endmathjax %}。第三个等式{% mathjax %}x_3 = 0{% endmathjax %}。现在，由于{% mathjax %}x_2{% endmathjax %}根本没有出现在这些方程中，因此第二个方程是(0,4,3)，并且{% mathjax %}x_2{% endmathjax %}可以是任何数字。为了简单起见，我们可以设置为{% mathjax %}x_2 = 1{% endmathjax %}，然后将得到与特征值`4`相关的特征向量`(0,1,0)`。现在让我们对特征值`2`重复上述步骤。向量{% mathjax %}(x_1,x_2,x_3){% endmathjax %}的点积应该等于向量{% mathjax %}(2x_1,2x_2,2x_3){% endmathjax %}。点积可以与之前的表达式展开。我们再次得到一个方程组：{% mathjax %}2x_1 = 2x_1,\;-x_1 + 4x_2-0.5x_3 = 2x_2,\;2x_3 = 2x_3{% endmathjax %}。通过将所有内容移到等号左边来处理这个问题时，我们会发现第一个方程非常简单，它是{% mathjax %}0 = 0{% endmathjax %}。第二个方程是{% mathjax %}-1 + 2x_2 - 0.5x_3 = 0{% endmathjax %}。第三个方程同样很简单，它是{% mathjax %}0 = 0{% endmathjax %}。你可以将第二个方程重写为 {% mathjax %}x_1 = 2x_2 - 0.5x_3{% endmathjax %}。这个方程有无数个解，具体取决于你选择的{% mathjax %}x_2{% endmathjax %}和{% mathjax %}x_3{% endmathjax %}的值。假设你选择{% mathjax %}x_2 = 1{% endmathjax %}和{% mathjax %}x_3 = 0{% endmathjax %}。这意味着 {% mathjax %}x_1{% endmathjax %}必须为`2`才能成为特征向量，从而给出向量`(2,1,0)`。但你也可以选择{% mathjax %}x_2 = 1{% endmathjax %}而{% mathjax %}x_3 = 2{% endmathjax %}，从而给出特征向量`(1,1,2)`。这两个向量指向不同的方向。所以实际上有两个不同的特征向量。请记住，您只关心特征向量的方向，因为它的任何缩放版本仍将是同一特征值的特征向量。值得一提的是，您可以根据{% mathjax %}x_2{% endmathjax %}和{% mathjax %}x_3{% endmathjax %}的值找到不同的**特征向量对**。但重要的是，您始终可以为特征值`2`找到两个不同的方向。
 {% asset_img m_30.png  %}
 
 ****
@@ -138,3 +138,75 @@ mathjax:
 {% asset_img m_37.png  %}
 
 总之，如果您有一个{% mathjax %}2\times 2{% endmathjax %}的矩阵，其特征值为{% mathjax %}\lambda_1{% endmathjax %}和{% mathjax %}\lambda_2{% endmathjax %}。如果两个特征值不同，那么您总是会得到两个不同的特征向量。但是，如果特征值相同，那么您可以有一个或两个特征向量。如果您有一个{% mathjax %}3\times 3{% endmathjax %}矩阵，特征值为{% mathjax %}\lambda_1{% endmathjax %}、{% mathjax %}\lambda_2{% endmathjax %} 和{% mathjax %}\lambda_3{% endmathjax %}，那么您将获得更多选项来探索。如果`3`个特征值都不同，那么您总是可以找到`3`个不同的特征向量。如果一个特征值重复`2`次，而另一个不同，那么您可以有两个或三个特征向量。但是，如果相同的特征值重复三次，则可以有`1~3`之间的任意数量的特征向量。
+
+##### 降维与投影
+
+**主成分分析**(`PCA`)的目标是减少数据集的**维度或列数**，同时保留尽可能多的信息。简而言之，`PCA`将一个大表或数据集转换为一个较小的表或数据集。原始数据集有许多行或列或特征，用于存储每个有用的信息。`PCA`将减少表中的特征数量，同时保持相同的观察数量。换句话说，数据集将具有相同数量的行和更少的列。它将一样高，但会变得更瘦。
+{% asset_img m_38.png  %}
+
+以下是一家在线商店收集的有关其客户的示例数据集。此表有`4`个观察值和`5`个特征。客户年龄、帐户年龄（自上次登录以来的天数）、总购买量和总支出金额。希望减少数据集的维度有两个主要原因。第一个原因是：它实际上太大了，您想使用较小的数据集。您只有五个特征，但在某些机器学习环境中，您很容易拥有数百或数千个特征。能够将数据集缩小到更易于管理的大小。其次是可视化，尤其是在探索性分析中。许多常见的图表，如散点图或条形图，实际上只能帮助一次查看一两个特征时可视化数据。减少需要考虑的维度或列的数量可以更轻松地可视化数据。应该怎么做？这里有一个简单的方法。只需删除列。您可以轻松删除包含每个客户的总购买量和总支出金额的最后两列。这个数据集看起来已经很容易使用了。然而不幸的是，您也删除了很多有用的信息。数据集的维度较少，但从这两列中获得的任何信息都丢失了。`PCA`旨在解决这个问题。它允许减少数据的维度，但它也保留了删除列可能会丢失的大量信息。**降维**的理念是**将数据点移动到维度更少的向量空间中**。这称为**投影**。
+{% asset_img m_39.png  %}
+
+让我通过一个例子向您展示它们的工作原理。假设您有一张数据表，其中有变量{% mathjax %}x{% endmathjax %}和{% mathjax %}y{% endmathjax %}的四个观测值：`(1.0,1.0)、(1.2,1.6)、(-0.5,0.2)、(-1.3,-0.6)`。
+{% asset_img m_40.png  %}
+
+想象一下，您想将数据移动或投影到方程{% mathjax %}y = x{% endmathjax %}的这条线上。所有点都垂直移动到线上，除了`(1,1)`已经在线上。但这些点最终会在哪里？我将从最简单的例子开始，即根本没有移动的点`(1,1)`。之前我会将此点位置指定为`(1,1)`，但这些实际上是二维坐标。可以将这个点的位置指定为一个坐标，即它与原点的距离。通过一些基本的三角学知识，你可以知道这条线段的长度是{% mathjax %}\sqrt{2}{% endmathjax %}。仅通过这个数字，你就可以找到该点在线上的所在位置。让我们先试着得到{% mathjax %}1 + 1{% endmathjax %}。这将来自第一个点的坐标与这里以橙色显示的其他向量的点积。要选择那个橙色向量，请注意{% mathjax %}y = x{% endmathjax %}的线实际上是坐标为`(1,1)`的向量的**张成**。所以让我们使用向量`(1,1)`。现在，如果取表中第一行和橙色向量的点积，你基本上是`1`乘以点`x`坐标，取`1`乘以点`y`坐标，以找到沿线投影的新位置。但是，将两个变量相加会得到一个比预期更长的向量。这个向量的长度是`2`。但是你知道这个新向量的最终长度应该是{% mathjax %}\sqrt{2}{% endmathjax %}。换句话说，它超出了{% mathjax %}\sqrt{2}{% endmathjax %}的一个因子。所以继续除以它。现在你得到了你想要的点。请注意，`1`除以`2`的平方根实际上是`1`除以向量`(1,1)`的范数。这是投影的主要思想。**乘以向量会将点投影在该向量上，除以向量的范数可确保不会拉伸**。另一种思考方式是，你只是将向量更改为新的范数`1`。但是，如果你将其缩小到{% mathjax %}\sqrt{2}{% endmathjax %}，你就会得到你想要的点。第`3`行也同样会。你将用向量`(1,1)`相乘。就像之前一样，你会超出范围。再用{% mathjax %}\sqrt{2}{% endmathjax %}除以它，你就会得到想要的点。最后，第四次观察也遵循同样的过程。因此，该向量在将每个点投影到{% mathjax %}x = y{% endmathjax %}线上后，给出了每个点的最终坐标。因此，具有两个变量的四个点分别简化为向量`(1.4142、1.9799、-0.2121 和 -1.344)`，您可能已经注意到，现在只需要一个列向量而不是两列矩阵即可表示沿这些线的点位置。
+{% asset_img m_41.png  %}
+
+****
+
+{% asset_img m_42.png  %}
+
+****
+
+{% asset_img m_43.png  %}
+
+****
+
+{% asset_img m_44.png  %}
+
+****
+
+{% asset_img m_45.png  %}
+
+****
+
+{% asset_img m_46.png  %}
+
+****
+
+{% asset_img m_47.png  %}
+
+****
+
+{% asset_img m_48.png  %}
+
+****
+
+{% asset_img m_49.png  %}
+
+****
+
+{% asset_img m_50.png  %}
+
+****
+
+{% asset_img m_51.png  %}
+
+****
+
+{% asset_img m_52.png  %}
+
+****
+
+{% asset_img m_53.png  %}
+
+****
+
+{% asset_img m_54.png  %}
+
+通常，如果要将任何矩阵{% mathjax %}A{% endmathjax %}投影到向量{% mathjax %}v{% endmathjax %}给出的方向上，首先需要将矩阵{% mathjax %}A{% endmathjax %}乘以向量{% mathjax %}v{% endmathjax %}。但是，正如您刚才看到的，需要缩放向量{% mathjax %}v{% endmathjax %}以使其具有范数`1`。因此，将{% mathjax %}v{% endmathjax %}除以其自己的{% mathjax %}l_2{% endmathjax %}范数，这就是我们称之为{% mathjax %}\mathbf{A}_{P} = \mathbf{A}\frac{v}{\lVert v \rVert_2}{% endmathjax %}的投影矩阵。跟踪维度很重要。如果{% mathjax %}A{% endmathjax %}有 {% mathjax %}r{% endmathjax %}行和{% mathjax %}c{% endmathjax %}列，则向量{% mathjax %}v{% endmathjax %}的长度必须为{% mathjax %}c{% endmathjax %}。您也可以将其视为{% mathjax %}c\times 1{% endmathjax %}矩阵。因此投影有{% mathjax %}r{% endmathjax %}行和`1`列。
+{% asset_img m_55.png  %}
+
+您可以一次将其投影到多个向量上。投影到两个向量上与投影到这些向量所跨的平面上是一回事。在本例中，只需创建一个大小为{% mathjax %}c\times 2{% endmathjax %} 的矩阵，其中每列分别是向量{% mathjax %}v_1{% endmathjax %}和{% mathjax %}v_2{% endmathjax %}，分别除以它们的范数。我们将此矩阵称为{% mathjax %}v{% endmathjax %}。结果将是一个具有{% mathjax %}r{% endmathjax %}行和`2`列的投影，意味着您拥有相同数量的数据点，但现在只有两个变量。最后，投影可以用简单的方程{% mathjax %}\mathbf{A}_{P} = \mathbf{AV}{% endmathjax %}来表示。构建{% mathjax %}\mathbf{V}{% endmathjax %}矩阵后，您需要做的就是相乘。**投影是减少需要存储在数据集中的信息量的一种非常有用的方法**。
+{% asset_img m_56.png  %}
