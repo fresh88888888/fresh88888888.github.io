@@ -143,3 +143,15 @@ mathjax:
 
 ##### PCA—数学公式
 
+在这个例子中，将有五个变量。从一组包含五个变量{% mathjax %}x_1、x_2、x_3、x_4{% endmathjax %}和{% mathjax %}x_5{% endmathjax %}的`n`个观测值的数据集开始。您的目标是将数据从维度`5`减少到维度`2`。首先，构建一个数据矩阵。这个矩阵将有五列，每个变量(**特征**)为一列，`n`行，每个观测值一行。这是您之前用来获取协方差矩阵的相同矩阵，称为{% mathjax %}A{% endmathjax %}。我们使用{% mathjax %}X{% endmathjax %}来调用这个矩阵，因为现在所有变量都称为{% mathjax %}x_i{% endmathjax %}。接下来，计算列平均值并从每列中减去它们，得到矩阵{% mathjax %}X - \mu{% endmathjax %}。接下来，计算**协方差矩阵**。您最终会得到一个{% mathjax %}5\times 5{% endmathjax %}的矩阵，其中包含每对变量之间的**协方差**。
+
+接下来，找到协方差矩阵的**特征值**和**特征向量**。找到它们后，按特征值从大到小对它们进行**排序**。现在，您将创建一个矩阵来投影数据。由于您的目标是将数据集减少到只有两个变量，因此您将只保留第一和第二个特征值、特征向量。创建一个矩阵{% mathjax %}V{% endmathjax %}，它有两列，每列都是您选择的特征向量之一，将其按范数缩放。最后，将数据乘以投影矩阵，数据投影到您选择的向量上。产生一个新的数据集{% mathjax %}X_{PCA} = (X - \mu) V{% endmathjax %}，它只有两列数据，代表原始数据集到被选择的的两个主成分上的投影。这是执行`PCA`对数据进行降维所需的操作步骤。
+|`PCA`步骤|`Description`|`Computing Graph`|
+|:---|:---|:---|
+|`step 1`|创建`X`矩阵|{% asset_img m_32.png  %}|
+|`step 2`|生成中间矩阵数据：{% mathjax %}X - \mu{% endmathjax %}|{% asset_img m_31.png  %}|
+|`step 3`|计算协方差矩阵|{% asset_img m_33.png  %}|
+|`step 4`|计算特征向量和特征值|{% asset_img m_36.png  %}|
+|`step 5`|创建投影矩阵|{% asset_img m_34.png  %}|
+|`step 6`|{% mathjax %}X_{PCA} = (X - \mu) V{% endmathjax %}|{% asset_img m_35.png  %}|
+
