@@ -141,3 +141,5 @@ mathjax:
 
 {% asset_img m_30.png  %}
 
+##### PCA—数学公式
+
