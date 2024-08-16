@@ -163,7 +163,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">223</span>
+          <span class="site-state-item-count">224</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -231,6 +231,128 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/04/26/%E3%80%90Rust%E3%80%91%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/avatar.jpeg">
+      <meta itemprop="name" content="umbrella">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UMBRELLA">
+      <meta itemprop="description" content="没事就多看看书">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | UMBRELLA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/04/26/%E3%80%90Rust%E3%80%91%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">【Rust】异步编程</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-04-26 18:01:43" itemprop="dateCreated datePublished" datetime="2022-04-26T18:01:43+08:00">2022-04-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>23k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1:16</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>如果我们正在开发一个聊天室，并且使用线程处理每个连接，我们的代码可能看起来像下面这个样子：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::&#123;net, thread&#125;;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">listener</span> = net::TcpListener::<span class="title function_ invoke__">bind</span>(address)?;</span><br><span class="line"><span class="keyword">for</span> <span class="variable">socket_result</span> <span class="keyword">in</span> listener.<span class="title function_ invoke__">incoming</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">socket</span> = socket_result?;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">groups</span> = chat_group_table.<span class="title function_ invoke__">clone</span>();</span><br><span class="line">    thread::<span class="title function_ invoke__">spawn</span>(|| &#123;</span><br><span class="line">        <span class="title function_ invoke__">log_error</span>(<span class="title function_ invoke__">serve</span>(socket, groups));</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于每个新连接，这都会产生一个运行 <code>serve</code> 函数的新线程，该线程能够专注于管理单个连接的处理。</p>
+<p>这很好用，但是如果突然用户达到成千上万时，线程堆栈增长到 <code>100 KiB</code> 或这更多时，这可能要花费几个<code>GB</code>的内存。线程对于在多个处理器之间分配工作是非常好的一种形式，但是它们的内存需求使得我们在使用时要非常小心。</p>
+<p>不过可以使用 <code>Rust</code> 异步任务在单个线程或工作线程池上并发运行许多独立活动。异步任务类似于线程，但创建速度更快，并且内存开销比线程少一个数量级。在一个程序中同时运行数十万个异步任务是完全可行的。当然，应用程序可能仍会受到网络带宽、数据库速度、计算或工作固有内存要求等其他因素的限制，但内存开销远没有线程那么多。</p>
+<p>一般来说，异步 <code>Rust</code> 代码看起来很像普通的多线程代码，除了涉及到的 <code>I/O</code> 操作，互斥锁等阻塞操作需要稍微的不同处理。之前代码的异步版本如下所示：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> async_std::&#123;net, task&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">listener</span> = net::TcpListener::<span class="title function_ invoke__">bind</span>(address).<span class="keyword">await</span>?;</span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">new_connections</span> = listener.<span class="title function_ invoke__">incoming</span>();</span><br><span class="line"><span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Some</span>(socket_result) = new_connections.<span class="title function_ invoke__">next</span>().<span class="keyword">await</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">socket</span> = socket_result?;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">groups</span> = chat_group_table.<span class="title function_ invoke__">clone</span>();</span><br><span class="line">    task::<span class="title function_ invoke__">spawn</span>(<span class="keyword">async</span> &#123;</span><br><span class="line">        <span class="title function_ invoke__">log_error</span>(<span class="title function_ invoke__">serve</span>(socket, groups).<span class="keyword">await</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这使用 <a target="_blank" rel="noopener" href="https://crates.io/crates/async-std"><code>async_std</code></a> 的<code>net</code>和<code>task</code>模块，并在可能阻塞的调用之后添加 <code>.await</code>。但整体结构与基于线程的版本相同。</p>
+<p>本节的目标不仅是帮助编写异步代码，而且还以足够详细的方式展示它的工作原理，以便可以预测它在应用程序中的表现，并了解它最有价值的地方。</p>
+<ul>
+<li><p>为了展示异步编程的机制，我们列出了涵盖所有核心概念的最小语言特性集：<code>futures</code>、异步函数、<code>await</code> 表达式、<code>task</code> 以及 <code>block_on</code> 和 <code>spawn_local</code> <code>executor</code>；</p>
+</li>
+<li><p>然后我们介绍异步代码块和 <code>spawn executor</code>。这些对于完成实际工作至关重要，但从概念上讲，它们只是我们刚刚提到的功能的变体。在此过程中，我们会可能会遇到一些异步编程特有的问题，但是需要学习如何处理它们；</p>
+</li>
+<li><p>为了展示所有这些部分的协同工作，我们浏览了聊天服务器和客户端的完整代码，前面的代码片段是其中的一部分；</p>
+</li>
+<li><p>为了说明原始 <code>futures</code> 和 <code>executors</code> 是如何工作的，我们提供了 <code>spawn_blocking</code> 和 <code>block_on</code> 的简单但功能性的实现；</p>
+</li>
+<li><p>最后，我们解释了 <code>Pin</code> 类型，它在异步接口中不时出现，以确保安全使用异步函数和 <code>futures</code>；</p>
+</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/04/26/%E3%80%90Rust%E3%80%91%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1249,99 +1371,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://fresh88888888.github.io/2022/04/13/%E3%80%90Rust%E3%80%91mutex-multithre-share/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/avatar.jpeg">
-      <meta itemprop="name" content="umbrella">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="UMBRELLA">
-      <meta itemprop="description" content="没事就多看看书">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | UMBRELLA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/04/13/%E3%80%90Rust%E3%80%91mutex-multithre-share/" class="post-title-link" itemprop="url">【Rust】Mutex 使用示例</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-04-13 11:38:52" itemprop="dateCreated datePublished" datetime="2022-04-13T11:38:52+08:00">2022-04-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/rust/" itemprop="url" rel="index"><span itemprop="name">rust</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>183</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>使用 <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/sync/struct.Mutex.html"><code>std::sync::Mutex</code></a> 可以多线程共享可变数据，<code>Mutex</code>、<code>RwLock</code> 和原子类型，即使声明为 <code>non-mut</code>，这些类型也可以修改：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::borrow::Cow;</span><br><span class="line"><span class="keyword">use</span> std::collections::HashMap;</span><br><span class="line"><span class="keyword">use</span> std::sync::&#123;Arc, Mutex&#125;;</span><br><span class="line"><span class="keyword">use</span> std::thread;</span><br><span class="line"><span class="keyword">use</span> std::time::Duration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">// 用 Arc 来提供并发环境下的共享所有权（使用引用计数）</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">metrics</span>: Arc&lt;Mutex&lt;HashMap&lt;Cow&lt;<span class="symbol">&#x27;static</span>, <span class="type">str</span>&gt;, <span class="type">usize</span>&gt;&gt;&gt; =</span><br><span class="line">        Arc::<span class="title function_ invoke__">new</span>(Mutex::<span class="title function_ invoke__">new</span>(HashMap::<span class="title function_ invoke__">new</span>()));</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">_</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">32</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">m</span> = metrics.<span class="title function_ invoke__">clone</span>();</span><br><span class="line">        thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">g</span> = m.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 此时只有拿到 MutexGuard 的线程可以访问 HashMap</span></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">data</span> = &amp;<span class="keyword">mut</span> *g;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Cow 实现了很多数据结构的 From trait，</span></span><br><span class="line">            <span class="comment">// 所以我们可以用 &quot;hello&quot;.into() 生成 Cow</span></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">value</span> = data.<span class="title function_ invoke__">entry</span>(<span class="string">&quot;hello&quot;</span>.<span class="title function_ invoke__">into</span>()).<span class="title function_ invoke__">or_insert</span>(<span class="number">0</span>);</span><br><span class="line">            *value += <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// MutexGuard 被 Drop，锁被释放</span></span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    thread::<span class="title function_ invoke__">sleep</span>(Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">100</span>));</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;metrics: &#123;:?&#125;&quot;</span>, metrics.<span class="title function_ invoke__">lock</span>().<span class="title function_ invoke__">unwrap</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/21/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/23/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1375,7 +1404,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">56:31</span>
+    <span title="站点阅读时长">56:33</span>
   </span>
 </div>
 <div class="busuanzi-count">
