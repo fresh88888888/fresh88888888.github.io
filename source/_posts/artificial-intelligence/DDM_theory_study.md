@@ -30,7 +30,7 @@ mathjax:
 
 首先介绍一下用于分析的符号和概念。假设{% mathjax %}[n] = {1,2,\ldots,n}{% endmathjax %}，{% mathjax %}X^n{% endmathjax %}表示为一个`n`维的离散空间，每个维度有{% mathjax %}k{% endmathjax %}个类别，即{% mathjax %}X^n:= X^1\times\ldots\times X^n{% endmathjax %}，其中{% mathjax %}X^i = [k], i\in [n]{% endmathjax %}，假设训练数据集{% mathjax %}V{% endmathjax %}位于{% mathjax %}X^n{% endmathjax %}中，意味着样本是{% mathjax %}n{% endmathjax %}个元素的矢量值数据，每个元素属于{% mathjax %}k{% endmathjax %}个类别之一。假设每个列的类别一致，但分析可以使用最大类别计数来解释具有不同类别计数的数据集。
 
-**基于实例的差分隐私**：`DP`是**量化隐私泄露**的事实标准。作者针对特定的相邻数据集调整了`DP`定义，引入了基于实例的`DP`：让{% mathjax %}V_0{% endmathjax %}作为一个训练数据集，{% mathjax %}\mathbf{v}^{\ast}\in V_0{% endmathjax %}为不动点并且{% mathjax %}M{% endmathjax %}为随机机制。定义相邻数据集{% mathjax %}V_1 = V_0/\{\mathbf{v}^{\ast}}{% endmathjax %}。如果对于所有测试集{% mathjax %}O\subset \text{range}(M),\{i,j\} = \{0,1\}{% endmathjax %}，则称{% mathjax %}M{% endmathjax %}满足关于{% mathjax %}(V_0,V^{\ast}){% endmathjax %}的{% mathjax %}(\epsilon,\delta)\text{-pDP}{% endmathjax %}：
+**基于实例的差分隐私**：`DP`是**量化隐私泄露**的事实标准。作者针对特定的相邻数据集调整了`DP`定义，引入了基于实例的`DP`：让{% mathjax %}V_0{% endmathjax %}作为一个训练数据集，{% mathjax %}\mathbf{v}^{\ast}\in V_0{% endmathjax %}为不动点并且{% mathjax %}M{% endmathjax %}为随机机制。定义相邻数据集{% mathjax %}V_1 = V_0\setminus\{\mathbf{v}^{\ast}\}{% endmathjax %}。如果对于所有测试集{% mathjax %}O\subset \text{range}(M),\{i,j\} = \{0,1\}{% endmathjax %}，则称{% mathjax %}M{% endmathjax %}满足关于{% mathjax %}(V_0,V^{\ast}){% endmathjax %}的{% mathjax %}(\epsilon,\delta)\text{-pDP}{% endmathjax %}：
 {% mathjax '{"conversion":{"em":14}}' %}
 P(M(V_i)\in \mathcal{O}) \leq e^{\epsilon} P(M(V_j)\in \mathcal{O}) + \delta
 {% endmathjax %}
