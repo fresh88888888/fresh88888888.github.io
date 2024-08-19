@@ -35,3 +35,8 @@ mathjax:
 P(M(V_i)\in \mathcal{O}) \leq e^{\epsilon} P(M(V_j)\in \mathcal{O}) + \delta
 {% endmathjax %}
 需要强调的是，`pDP`是针对特定数据集-数据点对唯一的定义。
+
+**离散扩散模型**(`DDMs`)：是可以生成分类数据的扩散模型。让{% mathjax %}v_t{% endmathjax %}表示时间{% mathjax %}t{% endmathjax %}时的数据随机变量。前向处理过程涉及使用噪声马尔可夫链逐{% mathjax %}q{% endmathjax %}渐破坏数据，记录{% mathjax %}q(\mathbf{v}_{1:T}|\mathbf{v}_0) = \prod^T_{t=1}q(\mathbf{v}_t|\mathbf{v}_{t-1}){% endmathjax %}，其中{% mathjax %}\mathbf{v}_{1:T} = \mathbf{v}_1,\mathbf{v}_2,\ldots,\mathbf{v}_T{% endmathjax %}。另一方面，反向处理过程，{% mathjax %}p_{\phi}(\mathbf{v}_{0:T}) = p(\mathbf{v}_T)\prod^T_{t=1}p_{\phi}(\mathbf{v}_{t-1}|\mathbf{v}_t){% endmathjax %}，从先前的数据集{% mathjax %}p(\mathbf{v}_T){% endmathjax %}开始重建新的数据集。去噪神经网络通过优化`ELBO`学习{% mathjax %}p_{\phi}(\mathbf{v}_{t-1}|\mathbf{v}_t){% endmathjax %}，其中包括了三个损失项：重建项({% mathjax %}L_r{% endmathjax %})、前项({% mathjax %}L_p{% endmathjax %})和去噪项({% mathjax %}L_t{% endmathjax %})，如下等式表示为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\underbrace{\mathbb{E}_{q(\mathbf{v}_1|\mathbf{v}_0)}[\log p_{\phi}(\mathbf{v}_0)|\mathbf{v}_1]}_{\text{Reconstruction Term }L_r} - \underbrace{D_{KL}(q(\mathbf{v}_T|\mathbf{v}_0)\parallel p_{\phi}(\mathbf{v}_T))}_{\text{Prior Term }L_p} - \sum^T_{t=2}\underbrace{\mathbb{E}_{q(\mathbf{v}_t|\mathbf{v}_0)[D_{KL}(q(\mathbf{v}_{t-1}| \mathbf{v}_t,\mathbf{v}_0)\parallel p_{\phi}(\mathbf{v}_{t-1}|\mathbf{v}_t))]}}_{\text{Denoising Term }L_t}
+{% endmathjax %}
