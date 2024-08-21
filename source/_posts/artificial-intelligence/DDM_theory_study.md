@@ -86,8 +86,13 @@ p_{\phi}(\mathbf{v}_{t-1}|\mathbf{v}_t) = \prod_{i\in [n]} p_{\phi}(\mathbf{v}_{
 - {% mathjax %}\psi_t{% endmathjax %}的数量：如下图所示，{% mathjax %}\frac{n}{s^{\psi t}}{% endmathjax %}量化了{% mathjax %}\max_{\mathbf{v}}d^{(t)}(\mathbf{v}){% endmathjax %}，其中最大值在被移除的点{% mathjax %}\mathbf{v} = \mathbf{v}^{\ast}{% endmathjax %}。通过仔细检查发现{% mathjax %}\psi_t{% endmathjax %}依赖于{% mathjax %}\text{Sim}(\mathbf{v}^{\ast},\mathcal{V}_1){% endmathjax %}和{% mathjax %}\text{Sim}(\mathbf{v}^{\ast},\mathcal{V}_1^{i|\mathbf{v}^{\ast i}}){% endmathjax %}。根据{% mathjax %}\bar{\omega}{% endmathjax %}的定义，让{% mathjax %}\mathbf{v}^{\ast}{% endmathjax %}和{% mathjax %}\mathcal{V}_1{% endmathjax %}的剩余点进行对齐。
 - {% mathjax %}\psi_t{% endmathjax %}的变化：在生成阶段，{% mathjax %}t{% endmathjax %}从{% mathjax %}T{% endmathjax %}减少到{% mathjax %}1{% endmathjax %}，{% mathjax %}\frac{1}{s^{\psi_t}}{% endmathjax %}从{% mathjax %}\mathcal{O}_s(\frac{1}{s^2}){% endmathjax %}增长到{% mathjax %}\mathcal{O}_s(1){% endmathjax %}。随着数据生成过程从噪声演变成无噪声状态，潜在的隐私泄露风险会升级。
 
-{% asset_img d_2.png "数据相关量" %}
+{% asset_img d_2.png "数据相关量图示" %}
 
+****
+
+{% asset_img d_3.png "数据集相似度与pDP泄露之间的相关性图示" %}
+
+- {% mathjax %}\eta_t{% endmathjax %}和{% mathjax %}c_t^{\ast}{% endmathjax %}：
 
 #### 结论
 
