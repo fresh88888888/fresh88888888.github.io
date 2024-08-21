@@ -52,6 +52,19 @@ p_{\phi}(\mathbf{v}_{t-1}|\mathbf{v}_t) = \prod_{i\in [n]} p_{\phi}(\mathbf{v}_{
 {% endmathjax %}
 其他符号，给定两个样本{% mathjax %}\mathbf{v}{% endmathjax %}和{% mathjax %}\tilde{\mathbf{v}}{% endmathjax %},让{% mathjax %}\bar{\omega}(\mathbf{v},\tilde{\mathbf{v}}){% endmathjax %}表示不同实体的计数。{% mathjax %}\bar{\omega}(\mathbf{v},\tilde{\mathbf{v}}) = \#\{i|\mathbf{v}^i \neq \tilde{\mathbf{v}}^i,i\in [n]\}{% endmathjax %}，{% mathjax %}\eta\in [n]{% endmathjax %}并且{% mathjax %}\mathbf{v}\in v_1{% endmathjax %}，定义{% mathjax %}N_{\eta}(\mathbf{v}) = |\{\mathbf{v}'\in v_1 : \bar{\omega}(\mathbf{v},\mathbf{v}')\leq \eta\}|{% endmathjax %}并且{% mathjax %}v_1^{i|l} = \{\mathbf{v}\in v_1|\mathbf{v}^1 = l\}{% endmathjax %}具有固定值匀速的数据点集。我们用{% mathjax %}\mathcal{D}_{KL}(\cdot\parallel\cdot){% endmathjax %}和{% mathjax %}\parallel\cdot\parallel_{TV}{% endmathjax %}作为`KL`散度和总变化。让{% mathjax %}\mu^{+}_t = \frac{1 + (k-1)\alpha_t}{k}{% endmathjax %}和{% mathjax %}\mu_t^{-}\frac{1-\alpha_t}{k}{% endmathjax %}表示分别在时间{% mathjax %}t{% endmathjax %}对于相同和不同状态下**的一步转换概率**，{% mathjax %}\bar{\mu}^{+}_t = \frac{1 + (k-1)\bar{\alpha}_t}{k}{% endmathjax %}和{% mathjax %}\bar{\mu}^{-}_t = \frac{1 -\bar{\alpha}_t}{k}{% endmathjax %}是累积的转换概率。转换概率比定义为{% mathjax %}R_t = \frac{\mu^{+}_t}{\mu^{-}_t}{% endmathjax %}和{% mathjax %}\bar{R}_t = \frac{\bar{\mu}^{+}_t}{\bar{\mu}^{-}_t}{% endmathjax %}，表示在扩散过程中，比率越大保持相同特征类别的可能性越高，定义{% mathjax %}(\cdot)_{+} = \max\{\cdot , 0\}{% endmathjax %}。
 
+#### 主要结果
+
+##### DDMs的固有隐私保护
+
+首先，定义下面的分析机制。让{% mathjax %}\mathcal{M}_t(\mathcal{V};m){% endmathjax %}表示为机制，{% mathjax %}\mathcal{V}{% endmathjax %}作为一个输入数据集，它使用`DDM`的生成过程在时间{% mathjax %}t{% endmathjax %}时输出{% mathjax %}m{% endmathjax %}个样本。具体来说，在论文中{% mathjax %}\mathcal{M}_0(\mathcal{V};m){% endmathjax %}表示`DDM`最终生成的数据集。下面是一些假设的概述：
+- 假设一：给定数据集{% mathjax %}\mathcal{V}{% endmathjax %}，让{% mathjax %}v_0{% endmathjax %}表示时间`0`处的预测随机变量，让{% mathjax %}\phi{% endmathjax %}表示在数据集{% mathjax %}\mathcal{V}{% endmathjax %}上训练的**去噪神经网络**(`NNs`)。如果存在小的常量{% mathjax %}\gamma t > 0{% endmathjax %}使得{% mathjax %}\forall{% endmathjax %}，则假设一是成立的。
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathcal{D}_{KL}(q(\mathbf{v}_0^i|\mathbf{v}_t)\|p_{\phi}(\mathbf{v}_0^i|\mathbf{v}_t)) \leq \gamma_t, \forall i\in [n],\forall t\in [T]
+{% endmathjax %}
+- 假设二（前向和反向扩散路径之间的间隙）： 给定数据集{% mathjax %}\mathcal{V}{% endmathjax %}，让{% mathjax %}v_t{% endmathjax %}表示前向和反向处理过程在时间{% mathjax %}t{% endmathjax %}处的中间分布采样的随机变量。如果存在{% mathjax %}\tilde{\gamma}_t \ll 2{% endmathjax %}的正常数，则假设二成立。
+{% mathjax '{"conversion":{"em":14}}' %}
+\|q(\mathbf{v}_t) - p_{\phi}(\mathbf{v}_t)\|_{TV} \leq \tilde{\gamma}_t, \forall t \in [T]
+{% endmathjax %}
 
 #### 结论
 
