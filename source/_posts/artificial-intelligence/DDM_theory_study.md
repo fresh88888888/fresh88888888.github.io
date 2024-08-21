@@ -79,10 +79,11 @@ p_{\phi}(\mathbf{v}_{t-1}|\mathbf{v}_t) = \prod_{i\in [n]} p_{\phi}(\mathbf{v}_{
 并且{% mathjax %}c^{\ast}_t{% endmathjax %}满足{% mathjax %} c^{\ast}_t \in \{0,\frac{1}{\eta_t},\frac{2}{\eta_t},\ldots,\frac{n-\eta_t}{\eta_t}\}{% endmathjax %}，{% mathjax %}\eta_t \in \{1,2,\ldots,n\} {% endmathjax %}，则{% mathjax %}c^{\ast}_t{% endmathjax %}是最小的。
 其中{% mathjax %}\vartheta(\eta) = (s - N_{\eta}(\mathbf{v}^{\ast}))/N_{\eta}(\mathbf{v}^{\ast}){% endmathjax %}表示{% mathjax %}\eta{\text{-ball}}{% endmathjax %}内部和外部之间点数的比例。
 
-定理一量化了训练集{% mathjax %}\mathcal{V}_0{% endmathjax %}中特定点{% mathjax %}\mathbf{v}^{\ast}{% endmathjax %}的隐私泄露。隐私界限包括一个主要隐私项，它代表`DDMs`固有的`pDP`保护，突出了界限的数据依赖性，以及一个去噪网络训练和路径差异的误差项。这些**数据相关量**很复杂，无法对**数据集-数据点对**进行严格的测量。接下来，将进一步解释这些量。首先，由于生成过程形成**马尔可夫链**，其中转移概率{% mathjax %}p_{\phi}(\mathbf{v}^{(t-1)}|\mathbf{v}^{(t)}){% endmathjax %}是从训练中学习的，因此每个生成步骤都会从训练数据集中泄露一些信息。可以证明，大多数此类泄漏如下：
+定理一量化了训练集{% mathjax %}\mathcal{V}_0{% endmathjax %}中特定点{% mathjax %}\mathbf{v}^{\ast}{% endmathjax %}的隐私泄露。隐私界限包括一个主要隐私项，它代表`DDMs`固有的`pDP`保护，突出了界限的数据依赖性，以及一个去噪网络训练和路径差异的误差项。这些**数据相关量**很复杂，无法对**数据集-数据点对**进行严格的测量。接下来，将进一步解释这些量。首先，由于生成过程形成**马尔可夫链**，其中转移概率{% mathjax %}p_{\phi}(\mathbf{v}^{(t-1)}|\mathbf{v}^{(t)}){% endmathjax %}是从训练中学习的，因此每个生成步骤都会从训练数据集中泄露一些信息。可以证明，大多数情况泄漏如下：
 {% mathjax '{"conversion":{"em":14}}' %}
-\mathbb{E}_{\amthbf{v}\sim p_{\phi}(\mathbf{v}_{t|0} = \mathbf{v})d^{(t)}(\mathbf{v})}
+\mathbb{E}_{\mathbf{v}\sim p_{\phi}(\mathbf{v}_{t|0} = \mathbf{v})d^{(t)}(\mathbf{v})}
 {% endmathjax %}
+其中{% mathjax %}\mathbf{v}_{t|\lambda}{% endmathjax %}表示
 
 #### 结论
 
