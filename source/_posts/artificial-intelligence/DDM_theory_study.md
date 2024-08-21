@@ -92,7 +92,7 @@ p_{\phi}(\mathbf{v}_{t-1}|\mathbf{v}_t) = \prod_{i\in [n]} p_{\phi}(\mathbf{v}_{
 
 {% asset_img d_3.png "数据集相似度与pDP泄露之间的相关性图示" %}
 
-- {% mathjax %}\eta_t{% endmathjax %}和{% mathjax %}c_t^{\ast}{% endmathjax %}：
+- {% mathjax %}\eta_t{% endmathjax %}和{% mathjax %}c_t^{\ast}{% endmathjax %}：很明显，生成的中间度量{% mathjax %}p_{\phi}(\mathbf{v}_{t|0}){% endmathjax %}偏离了最敏感点({% mathjax %}\delta_{\mathbf{v} = \mathbf{v}^{\ast}}{% endmathjax %})的狄拉克测度。
 
 #### 结论
 
