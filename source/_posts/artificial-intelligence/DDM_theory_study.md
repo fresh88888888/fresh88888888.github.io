@@ -65,12 +65,14 @@ p_{\phi}(\mathbf{v}_{t-1}|\mathbf{v}_t) = \prod_{i\in [n]} p_{\phi}(\mathbf{v}_{
 {% mathjax '{"conversion":{"em":14}}' %}
 \|q(\mathbf{v}_t) - p_{\phi}(\mathbf{v}_t)\|_{TV} \leq \tilde{\gamma}_t, \forall t \in [T]
 {% endmathjax %}
-假设一指出，当使用第一个公式中的损失函数训练去噪网络时，它可以有效地从中间噪声数据分布中推断出干净的数据。给定一个好的模型，估计{% mathjax %}\gamma_t{% endmathjax %}会很小。假设二的扩散和生成路径很接近，这是一个合理的假设。然而，不能使用第三个公式直接推导隐私界限，因为变化中的接近性并没有隐含`DP`。基于上述假设，作者研究了隐私泄露沿产生过程的流动情况。作者的分析主要围绕在特定训练下的固有隐私保护由DDM生成的样本，表示为
+
+假设一指出，当使用第一个公式中的损失函数训练去噪网络时，它可以有效地从中间噪声数据分布中推断出干净的数据。给定一个好的模型，估计{% mathjax %}\gamma_t{% endmathjax %}会很小。假设二的扩散和生成路径很接近，这是一个合理的假设。然而，不能使用第三个公式直接推导隐私界限，因为变化中的接近性并没有隐含`DP`。基于上述假设，作者研究了隐私泄露沿产生过程的流动情况。作者的分析主要围绕在特定训练下的固有隐私保护由`DDM`生成的样本，表示为
 {% mathjax %}T_{rl}{% endmathjax %}。
 - 定理一（`DDMs`固有的`pDP`保护）：给定数据集{% mathjax %}\mathcal{V}_0{% endmathjax %},大小为{% mathjax %}|\mathcal{V}_0| = s + 1{% endmathjax %}和要保护的数据点{% mathjax %}v^{\ast}\in \mathcal{V}_0{% endmathjax %}，表示{% mathjax %}\mathcal{V}_1{% endmathjax %}，正如{% mathjax %}\mathcal{V}_1 = \mathcal{V}_0\setminus \{\mathbf{v}^{\ast}\}{% endmathjax %}。假设在{% mathjax %}\mathcal{V}_0{% endmathjax %}和{% mathjax %}\mathcal{V}_1{% endmathjax %}上训练的去噪网络满足于假设一和假设二。给定一个具体的时间步{% mathjax %}T_{rl}{% endmathjax %}，机制{% mathjax %}\mathcal{M}_{T_{rl}}(\cdot;m){% endmathjax %}相对于{% mathjax %}(\mathcal{V}_0,\mathbf{v}^{\ast}){% endmathjax %},给定{% mathjax %}\epsilon{% endmathjax %}满足{% mathjax %}(\epsilon,\delta)\text{-pDP}{% endmathjax %}：
 {% mathjax '{"conversion":{"em":14}}' %}
 \delta(\mathcal{V}_0,\mathbf{v}^{\ast}) \leq m[\underbrace{\sum_{t = T_{rl}}^T\min\big\{\frac{4N_{(1+c^{\ast}_t)\eta_t(\mathbf{v}^{\ast})}}{s},1 \big\}\cdot \frac{n}{s^{\psi_t}} + \frac{n(1 - \frac{1}{\bar{R}_{t-1}})}{s^2}}_{\text{Main Privacy Term}} + \underbrace{\mathcal{O}(\sqrt{\gamma t} + \tilde{\gamma}_t)}_{\text{Error Term}}]/(\epsilon(1 - e^{-\epsilon}))
 {% endmathjax %}
+
 其中{% mathjax %}\psi_t,\eta_t,c^{\ast}_t{% endmathjax %}是由{% mathjax %}\mathbf{v}^{\ast}{% endmathjax %}和{% mathjax %}\mathcal{V}_1{% endmathjax %}决定的**数据相关量**（通常用于统计学和数据分析中，指的是依赖于特定数据集的**量度**或**统计指标**）
 
 #### 结论
