@@ -92,7 +92,17 @@ p_{\phi}(\mathbf{v}_{t-1}|\mathbf{v}_t) = \prod_{i\in [n]} p_{\phi}(\mathbf{v}_{
 
 {% asset_img d_3.png "数据集相似度与pDP泄露之间的相关性图示" %}
 
-- {% mathjax %}\eta_t{% endmathjax %}和{% mathjax %}c_t^{\ast}{% endmathjax %}：很明显，生成的中间度量{% mathjax %}p_{\phi}(\mathbf{v}_{t|0}){% endmathjax %}偏离了最敏感点({% mathjax %}\delta_{\mathbf{v} = \mathbf{v}^{\ast}}{% endmathjax %})的狄拉克测度。
+- {% mathjax %}\eta_t{% endmathjax %}和{% mathjax %}c_t^{\ast}{% endmathjax %}：很明显，生成的中间度量{% mathjax %}p_{\phi}(\mathbf{v}_{t|0}){% endmathjax %}偏离了最敏感点({% mathjax %}\delta_{\mathbf{v} = \mathbf{v}^{\ast}}{% endmathjax %})的狄拉克测度。因此，以{% mathjax %}d^{(t)}(\mathbf{v}){% endmathjax %}为特征的实际隐私泄露对度量值{% mathjax %}p_{\phi}(\mathbf{v}_t|0){% endmathjax %}取均值远小于其最大值。为了提供此类的严格表征，引入两个量{% mathjax %}\eta_t{% endmathjax %}和{% mathjax %}c^{\ast}_t{% endmathjax %}来定义以脆弱点{% mathjax %}\mathbf{v}^{\ast}{% endmathjax %}为中心的局部区域{% mathjax %}\mathcal{S} = \{\mathbf{v}'\in \mathcal{X}^n:\bar{\omega}(\mathbf{v},\mathbf{v}')\leq (1 + c^{\ast}_t)\eta_t\}{% endmathjax %}。其中，隐私泄露可以被限制在{% mathjax %}p_{\phi}(\mathbf{v}_{t|0}\in \mathcal{S})\max_{\mathbf{v}\in \mathcal{S}}d^{(t)}(\mathbf{v}){% endmathjax %}与{% mathjax %}p_{\phi}(\mathbf{v}_{t|0}\in \mathcal{S}){% endmathjax %}和{% mathjax %}p_{\phi}(\mathbf{v}_{t|0}\notin \mathcal{S})\max_{\mathbf{v}\notin \mathcal{S}}d^{(t)}(\mathbf{v}){% endmathjax %}与{% mathjax %}\max_{\mathbf{v}\notin \mathcal{S}}d^{(t)}(\mathbf{v}){% endmathjax %}之和的范围内。
+
+##### DDM系数和数据集分布对隐私界限的影响
+
+- **扩散系数的影响**：隐私项在很大程度上受{% mathjax %}\mathbf{v}^{\ast}{% endmathjax %}和{% mathjax %}\mathcal{V}_1{% endmathjax %}之间**邻近性**的影响。随着时间{% mathjax %}t{% endmathjax %}的推移，这种相似性由转换比率{% mathjax %}\bar{R}_t{% endmathjax %}决定，扩散系数趋于零的速度越快，该比率就越高，从而提高了隐私保护。
+- **数据集分布的影响**：作者发现{% mathjax %}\psi_t{% endmathjax %}对隐私边界有很大影响。{% mathjax %}\psi_t{% endmathjax %}受附加点{% mathjax %}\mathbf{v}^{\ast}{% endmathjax %}与{% mathjax %}\mathcal{V}_0\setminus \{\mathbf{v}^{\ast}\}{% endmathjax %}中其余点的相似性影响，如果{% mathjax %}\mathbf{v}^{\ast}{% endmathjax %}变小（大），相应项{% mathjax %}s^{-\psi_t}{% endmathjax %}变大（小），这表明{% mathjax %}\mathbf{v}^{\ast}{% endmathjax %}的保护较弱。{% mathjax %}\text{Sim}(\mathcal{V}_0\setminus \{\mathbf{v}^{\ast}\},\mathbf{v}^{\ast},t){% endmathjax %}特别低的点可能是数据中的敏感点。
+
+##### 在简单分布下表征数据依赖量
+
+作者考虑从某些特定分布中抽样的训练数据集，进一步说明数据相关的量化。考虑一个分布，其中每一列以概率{% mathjax %}p(p\geq \frac{1}{k}){% endmathjax %}独立取值{% mathjax %}l\in [k]{% endmathjax %}，而任何其他{% mathjax %}k-1{% endmathjax %}个类别以概率{% mathjax %}\frac{1-p}{k-1}{% endmathjax %}在所有{% mathjax %}n{% endmathjax %}列上取非多数类别({% mathjax %}(\mathbf{v}^{\ast})^i\neq l{% endmathjax %})（称为非多数点，因此往往具有更高的隐私泄露），并且{% mathjax %}\mathcal{V}_0\setminus \{\mathbf{v}^{\ast}\}{% endmathjax %}中的其余点是从分布中采样的。我们有以下特征：
+
 
 #### 结论
 
