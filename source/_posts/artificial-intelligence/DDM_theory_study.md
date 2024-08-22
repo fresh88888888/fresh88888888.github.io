@@ -103,7 +103,27 @@ p_{\phi}(\mathbf{v}_{t-1}|\mathbf{v}_t) = \prod_{i\in [n]} p_{\phi}(\mathbf{v}_{
 
 作者考虑从某些特定分布中抽样的训练数据集，进一步说明数据相关的量化。考虑一个分布，其中每一列以概率{% mathjax %}p(p\geq \frac{1}{k}){% endmathjax %}独立取值{% mathjax %}l\in [k]{% endmathjax %}，而任何其他{% mathjax %}k-1{% endmathjax %}个类别以概率{% mathjax %}\frac{1-p}{k-1}{% endmathjax %}在所有{% mathjax %}n{% endmathjax %}列上取非多数类别({% mathjax %}(\mathbf{v}^{\ast})^i\neq l{% endmathjax %})（称为非多数点，因此往往具有更高的隐私泄露），并且{% mathjax %}\mathcal{V}_0\setminus \{\mathbf{v}^{\ast}\}{% endmathjax %}中的其余点是从分布中采样的。我们有以下特征：
 
+具有足够大的{% mathjax %}s{% endmathjax %}({% mathjax %}\frac{1}{s^{\psi_t}}{% endmathjax %})，则有更高的概率，{% mathjax %}\frac{1}{s^{\psi_t - 2}}\rightarrow \frac{(\bar{\alpha}_{t-1} - \bar{\alpha}_t)/(k\bar{\mu}^{+}_t)\\bar{\mu^{-}_t}}{\bar{R}^2_{t-1}\cdot \tau^{2n-1}_t\cdot \frac{1-p}{k-1}} + \tau^{2n}_t{% endmathjax %}，其中{% mathjax %}\tau_t:=\frac{1-p}{k-1} + \frac{\bar{\mu}^{-}_t}{\bar{\mu}^{+}_t}(1 - \frac{1-p}{k-1}){% endmathjax %}，在噪声区域，{% mathjax %}\tau_t\rightarrow 1,\frac{1}{s^{\psi_t}} = \mathcal{O}_s()\frac{1}{s^2}{% endmathjax %}。对于偏度较大的分布，即{% mathjax %}p{% endmathjax %}较大，{% mathjax %}\tau_t{% endmathjax %}较小，{% mathjax %}\frac{1}{s^{\psi_t}}{% endmathjax %}较大。下图与上述结论完全吻合。对于足够大的{% mathjax %}s{% endmathjax %}({% mathjax %}\eta_t,c^{\ast}_t{% endmathjax %})，{% mathjax %}\eta_t{% endmathjax %}和{% mathjax %}c^{\ast}_t{% endmathjax %}满足公式的充分条件。
+{% mathjax '{"conversion":{"em":14}}' %}
+\eta_t \geq n - \Big( \frac{n-\log(s\sqrt{\frac{\bar{\alpha}_{t-1} - \bar{\alpha_t}}{k\bar{\mu}_t^{+}\bar{\mu}_t^{-}}}/\log\frac{\bar{\mu}_t^{+}}{\bar{\mu}_t^{+}})}{2\log\frac{k-1}{1-p}/\log(\max\{\frac{1}{n\bar{\mu}_t^{-}},1 \}) + 1} \Big)_{+},\;\;\; c^{\ast} \geq \frac{\frac{n-\eta_t}{\eta_t}\log\frac{k-1}{1-p} - \log\frac{1}{2e}}{\log\frac{k-1}{1-p} + \log\frac{1}{e\bar{\mu}_t^{-}}}
+{% endmathjax %}
+在无噪声状态下{% mathjax %}(\alpha_t\rightarrow 1),\eta_t\rightarrow 0{% endmathjax %}，而在有噪声状态下{% mathjax %}(\alpha_t\rightarrow 0), \eta_t\rightarrow n{% endmathjax %}。从无噪声状态到有噪声状态，{% mathjax %}\bar{\mu}_t{% endmathjax %}增加，{% mathjax %}c^{\ast}_t\rightarrow \frac{n-\eta_t}{\eta_t}{% endmathjax %}此外，随着分布的偏度{% mathjax %}(p){% endmathjax %}的增加，`R.H.S`单调增加，导致{% mathjax %}\eta_t{% endmathjax %}和{% mathjax %}c_t^{\ast}{% endmathjax %}的值更大。下图（中间）与上述结论相符。
+{% asset_img d_4.png %}
+
+##### 在给定数据集上评估以下公式中隐私界限的算法
+
+{% mathjax '{"conversion":{"em":14}}' %}
+\delta(\mathcal{V}_0,\mathbf{v}^{\ast}) \leq m[\underbrace{\sum_{t = T_{rl}}^T\min\big\{\frac{4N_{(1+c^{\ast}_t)\eta_t(\mathbf{v}^{\ast})}}{s},1 \big\}\cdot \frac{n}{s^{\psi_t}} + \frac{n(1 - \frac{1}{\bar{R}_{t-1}})}{s^2}}_{\text{Main Privacy Term}} + \underbrace{\mathcal{O}(\sqrt{\gamma t} + \tilde{\gamma}_t)}_{\text{Error Term}}]/(\epsilon(1 - e^{-\epsilon}))
+{% endmathjax %}
+
+在实际情况下，当数据策展人发布合成数据时，评估在特定数据集上训练隐私保护措施至关重要。确保合成数据隐私和训练数据敏感信息的私密性。为此，我们引入了算法1（与算法2配对），以**计算隐私界限**，从而能够针对给定特定训练集的`DDM`生成的数据集计算每个实例的隐私泄漏。
+{% asset_img d_5.png %}
+
+****
+
+{% asset_img d_6.png %}
 
 #### 结论
 
 作者分析了`DDM`生成的**合成数据集的数据相关隐私约束**，结果显示`DDM`的隐私保护能力较弱。为了满足实际需求，可能需要结合其他隐私保护技术，例如`DP-SGD`（`Abadi`等人，`2016`年）和`PATE`（`Papernot`等人，`2016`年）。作者对合成数据集和真实数据集的观察结果非常吻合。
+
