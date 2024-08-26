@@ -28,3 +28,36 @@ mathjax:
 
 这个希腊符号{% mathjax %}\alpha{% endmathjax %}，是**学习率**。**学习率**控制更新模型参数{% mathjax %}w{% endmathjax %}和{% mathjax %}b{% endmathjax %}时采取的步长。这个{% mathjax %}\frac{\partial}{\partial w}{% endmathjax %}，是一个导数项。让我们使用一个稍微简单的例子，最小化一个参数。假设你只有一个参{% mathjax %}w{% endmathjax %}的**成本函数**{% mathjax %}\mathbf{j}{% endmathjax %}，其中{% mathjax %}w{% endmathjax %}是一个数字。**梯度下降**现在看起来像这样，{% mathjax %}w = w - \alpha\frac{\partial}{\partial w}J(w,b){% endmathjax %}。你试图通过调整参数{% mathjax %}w{% endmathjax %}来最小化成本。现在，我们来初始化梯度下降，并为{% mathjax %}w{% endmathjax %}设定一个起始值。在这个位置初始化它。你从函数{% mathjax %}\mathbf{J}{% endmathjax %}的这个点开始，梯度下降会将{% mathjax %}w{% endmathjax %}更新为{% mathjax %}w = w - \alpha\frac{\partial}{\partial w}J(w,b){% endmathjax %}。让我们看看这里的导数项是什么意思。考虑直线上这一点的导数的一种方法是画一条切线，它是一条在该点与曲线相切的直线。这条线的斜率是函数{% mathjax %}\mathbf{J}{% endmathjax %}在该点的导数。要得到斜率，你可以画一个像这样的小三角形。如果你计算这个三角形的高度除以宽度，那就是**斜率**。例如，这个斜率可能是`2/1`，当切线指向右上方时，斜率为正，这意味着这个导数是一个正数，所以大于`0`。更新后的{% mathjax %}w{% endmathjax %}将是{% mathjax %}w{% endmathjax %}减去学习率乘以某个正数。**学习率**始终是正数。如果用{% mathjax %}w{% endmathjax %}减去一个正数，最终会得到一个较小的{% mathjax %}w{% endmathjax %}新值。在图表上，向左移动，{% mathjax %}w{% endmathjax %}的值就会减小。您可能会注意到，如果您的目标是降低成本{% mathjax %}\mathbf{J}{% endmathjax %}，那么这样做是正确的，因为当我们沿着这条曲线向左移动时，成本{% mathjax %}\mathbf{J}{% endmathjax %}会减小，并且您会越来越接近{% mathjax %}\mathbf{J}{% endmathjax %}的最小值。到目前为止，梯度下降似乎做得对。现在，让我们看另一个例子。让我们采用与上面相同的{% mathjax %}w{% endmathjax %}函数{% mathjax %}\mathbf{J}{% endmathjax %}，现在假设您在不同的位置初始化梯度下降。比如说，通过选择{% mathjax %}w{% endmathjax %}的起始值，它就在左边。这就是函数{% mathjax %}\mathbf{J}{% endmathjax %}的点。导数项是{% mathjax %}\frac{\mathbf{J}(w)\partial}{\partial w}{% endmathjax %}，当我们查看此处的切线时，这条线的斜率就是{% mathjax %}\mathbf{J}{% endmathjax %}在此点的导数。但是这条切线是向右下方倾斜的。这条向右下方倾斜的线具有负斜率。换句话说，{% mathjax %}\mathbf{J}{% endmathjax %}在这一点的导数是负数。例如，如果你画一个三角形，那么像这样的高度是`-2`，宽度是`1`，斜率就是`-2/1`，也就是`-2`，这是一个负数。当你更新{% mathjax %}w{% endmathjax %}时，你会得到{% mathjax %}w{% endmathjax %}减去学习率乘以一个负数。这意味着你从{% mathjax %}w{% endmathjax %}中减去一个负数。但减去一个负数意味着增加一个正数，所以你最终会增加{% mathjax %}w{% endmathjax %}。梯度下降的这一步会导致{% mathjax %}w{% endmathjax %}增加，意味着你正在向图的右侧移动。**梯度下降算法**中的另一个关键量是**学习率**{% mathjax %}\alpha{% endmathjax %}。
 
+##### 学习率
+
+**学习率**{% mathjax %}\alpha{% endmathjax %}的选择将对**梯度下降**的效率产生巨大影响。{% mathjax %}w = w - \alpha\frac{\partial}{\partial w}J(w,b){% endmathjax %}。要了解有关学习率{% mathjax %}\alpha{% endmathjax %}的更多信息。让我们看看学习率{% mathjax %}\alpha{% endmathjax %}太小或太大会发生什么。对于学习率太小的情况。这是一张图表，其中横轴是{% mathjax %}w{% endmathjax %}，纵轴是成本{% mathjax %}\mathbf{J}{% endmathjax %}。从此处开始分级下降，如果学习率太小。这个数字非常小，比如`0.0000001`。所以你最终会迈出一小步。然后从这一点开始，你将迈出另一个微小的婴儿步。但由于学习率非常小，第二步也微不足道。这个过程的结果是，你最终会降低成本{% mathjax %}\mathbf{J}{% endmathjax %}，但速度非常慢。但你可能会注意到，你需要很多步才能达到最小值。总结一下，如果学习率太小，那么**梯度下降**会起作用，但速度会很慢。这将需要很长时间，因为它需要采取这些微小的婴儿步。而且它需要很多步才能接近最小值。如果学习率太大会发生什么？这是成本函数的另一张图。假设我们从这里的{% mathjax %}w{% endmathjax %}值开始缓慢下降。实际上，它已经非常接近最小值了。但是，如果学习率太大，那么你就会以非常大的步长更新{% mathjax %}w{% endmathjax %}。现在，成本变得更糟了。如果学习率太大，那么你又会加速迈出一大步，再次超过最小值。所以现在你到了右边的这个点，再一次进行更新。您可能会注意到，您实际上离最小值越来越远。如果学习率太大，那么创建的感觉可能会超调，并且可能永远无法达到最小值。换句话说，大交叉点可能无法收敛，甚至可能**发散**。假设有成本函数{% mathjax %}\mathbf{J}{% endmathjax %}。您在这里看到的不是平方误差成本函数，并且该成本函数有两个局部最小值，对应于您在这里看到的两个谷值。现在假设经过一些梯度下降步骤后，您的参数{% mathjax %}w{% endmathjax %}就在这里，比如等于`5`。这是{% mathjax %}w{% endmathjax %}的当前值。这意味着你现在处于成本函数{% mathjax %}\mathbf{J}{% endmathjax %}的这个点。如果你注意这个点的函数，就会发现这恰好是一个局部最小值。这条线的斜率为零。如果你已经处于局部最小值，梯度下降将使{% mathjax %}w{% endmathjax %}保持不变。因为它只是将{% mathjax %}w{% endmathjax %}的新值更新为与{% mathjax %}w{% endmathjax %}的旧值完全相同。具体来说，假设{% mathjax %}w{% endmathjax %}的当前值为`5`。一次迭代后，它仍然等于`5`。因此，如果你的参数已经将你带到了局部最小值，然后进一步的梯度下降会趋于零。它不会改变参数，这正是你想要的，因为它将解决方案保持在局部最小值。这也解释了为什么梯度下降可以达到局部最小值，即使学习率{% mathjax %}\alpha{% endmathjax %}固定。这是我们想要最小化的{% mathjax %}w{% endmathjax %}的成本函数{% mathjax %}\mathbf{J}{% endmathjax %}。让我们在这一点初始化梯度下降。如果我们采取一个更新步骤，也许它会带我们到那个点。而且因为这个导数相当大，所以梯度下降会采取一个相对较大的步骤。现在，我们处于第二个点，我们再迈出一步。你可能会注意到斜率不像第一个点那么陡峭。所以导数没有那么大。所以下一个更新步骤不会像第一步那么大。这里的第三点，导数比上一步要小。当我们接近最小值时，它会采取更小的步骤。越来越接近零。因此，当我们运行梯度下降时，最终我们会采取非常小的步长，直到最终达到局部最小值。当我们接近局部最小值时，**梯度下降**将自动采取较小的步长。这是因为当我们接近局部最小值时，**导数**会自动变小。这意味着更新步骤也会自动变小。学习率{% mathjax %} \alpha{% endmathjax %}保持在某个固定值。这就是**梯度下降算法**，你可以用它来尝试最小化任何成本函数{% mathjax %}\mathbf{J}{% endmathjax %}。不仅仅是**均方误差成本函数**。
+{% asset_img ml_2.png %}
+
+##### 线性回归的梯度下降
+
+如下图所示，这是**线性回归模型**。右边是**平方误差成本函数**。下面是**梯度下降算法**。如果您计算这些导数，您将得到这些项。关于{% mathjax %}w{% endmathjax %}的导数是{% mathjax %}1/m{% endmathjax %}，{% mathjax %}i{% endmathjax %}的范围是{% mathjax %}1,\ldots,m{% endmathjax %}`。然后是**误差项**，即预测值与实际值之间的差乘以输入特征{% mathjax %}x^{(i)}{% endmathjax %}。关于{% mathjax %} b{% endmathjax %}的导数是这里的公式，它看起来与上面的公式相同，只是最后没有那个{% mathjax %}x^{(i)}{% endmathjax %}项。如果您使用这些公式来计算这两个导数并以这种方式实现**梯度下降**，它就会起作用。现在，你可能想知道，我从哪里得到这些公式？它们是使用**微积分**推导出来的。如何计算**导数项**。让我们从第一项开始。成本函数{% mathjax %}\mathbf{J}{% endmathjax %}对{% mathjax %}w{% endmathjax %}的导数。我们首先代入成本函数{% mathjax %}\mathbf{J}{% endmathjax %}的定义{% mathjax %}\mathbf{J}(w,b) = \frac{1}{2m}\sum_{i=1}^m(f_{w,b}(x^{(i)}) - y^{(i)})^2{% endmathjax %}。我们想要做的是计算这个方程的导数，也称为{% mathjax %}w{% endmathjax %}的偏导数。带入公式推导出：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+\frac{\partial}{\partial w}\mathbf{J}(w,b) & = \frac{\partial}{\partial w}\frac{1}{2m}\sum_{i=1}^m (f_{w,b}(x^{(i)}) - y^{(i)})^2 \\
+& = \frac{\partial}{\partial w}\frac{1}{2m}\sum_{i=1}^m (wx^{(i)} + b - y^{(i)})^2 \\
+& = \frac{1}{2m}\sum_{i=1}^m (wx^{(i)} + b - y^{(i)})2x^{(i)} \\
+& = \frac{1}{m}\sum_{i=1}^m (f_{w,b}(x^{(i)}) - y^{(i)})x^{(i)}
+\end{aligned}
+{% endmathjax %}
+
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+\frac{\partial}{\partial b}\mathbf{J}(w,b) & = \frac{\partial}{\partial b}\frac{1}{2m}\sum_{i=1}^m (f_{w,b}(x^{(i)}) - y^{(i)})^2 \\
+& = \frac{\partial}{\partial b}\frac{1}{2m}\sum_{i=1}^m (wx^{(i)} + b - y^{(i)})^2 \\
+& = \frac{1}{2m}\sum_{i=1}^m (wx^{(i)} + b - y^{(i)})2 \\
+& = \frac{1}{m}\sum_{i=1}^m (f_{w,b}(x^{(i)}) - y^{(i)})
+\end{aligned}
+{% endmathjax %}
+
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{aligned}
+w & = w - \alpha\frac{1}{m}\sum_{i=1}^m (f_{w,b}(x^{(i)}) - y^{(i)})x^{(i)} \\
+b & = b - \alpha\frac{1}{m}\sum_{i=1}^m (f_{w,b}(x^{(i)}) - y^{(i)})
+\end{aligned}
+{% endmathjax %}
+根据您初始化参数{% mathjax %}w{% endmathjax %}和{% mathjax %}b{% endmathjax %}的位置，您可能会得到不同的局部最小值。当你在线性回归中使用平方误差成本函数时，成本函数永远不会有多个局部最小值。它只有一个**全局最小值**。这个成本函数是一个凸函数。通俗地说，**凸函数**是碗状函数，除了单个全局最小值外，它不能有任何局部最小值。当你在**凸函数**上实现**梯度下降**时，只要你选择适当的**学习率**，它就会一直收敛到**全局最小值**。
