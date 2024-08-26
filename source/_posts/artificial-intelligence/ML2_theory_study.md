@@ -56,8 +56,8 @@ mathjax:
 
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{aligned}
-w & = w - \alpha\frac{1}{m}\sum_{i=1}^m (f_{w,b}(x^{(i)}) - y^{(i)})x^{(i)} \\
-b & = b - \alpha\frac{1}{m}\sum_{i=1}^m (f_{w,b}(x^{(i)}) - y^{(i)})
+w & = w - \alpha\frac{\partial}{\partial w}\mathbf{J}(w,b) = w - \alpha\frac{1}{m}\sum_{i=1}^m (f_{w,b}(x^{(i)}) - y^{(i)})x^{(i)} \\
+b & = b - \alpha\frac{\partial}{\partial b}\mathbf{J}(w,b) = b - \alpha\frac{1}{m}\sum_{i=1}^m (f_{w,b}(x^{(i)}) - y^{(i)})
 \end{aligned}
 {% endmathjax %}
 根据您初始化参数{% mathjax %}w{% endmathjax %}和{% mathjax %}b{% endmathjax %}的位置，您可能会得到不同的局部最小值。当你在**线性回归**中使用**平方误差成本函数**时，成本函数永远不会有多个局部最小值。它只有一个**全局最小值**。这个成本函数是一个凸函数。通俗地说，**凸函数**是碗状函数，除了单个全局最小值外，它不能有任何局部最小值。当你在**凸函数**上实现**梯度下降**时，只要你选择适当的**学习率**，它就会一直收敛到**全局最小值**。
