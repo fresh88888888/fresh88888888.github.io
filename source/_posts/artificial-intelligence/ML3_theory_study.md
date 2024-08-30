@@ -66,3 +66,6 @@ mathjax:
 
 使用这个简化的**损失函数**，让我们回过头来写出**逻辑回归**的<span style="color:7ACFDF;">成本函数</span>。这里再次是简化的**损失函数**。回想一下，成本{% mathjax %}\mathbf{J}{% endmathjax %}只是**平均损失**，即整个训练集的{% mathjax %}m{% endmathjax %}个示例的平均值。因此，成本函数为{% mathjax %}\mathbf{J}(\vec{w},b) = \frac{1}{m}\sum_{i=1}^m[L(f_{\vec{w},b}(\vec{x}^{(i)}),y^{(i)})]{% endmathjax %}，从{% mathjax %}i = \{1,\ldots,m\}{% endmathjax %}。如果您代入上面简化损失的定义，那么它看起来就像这样，{% mathjax %}\mathbf{J}(\vec{w},b) = -\frac{1}{m}\sum_{i=1}^m[y^{(i)}\log(f_{\vec{w},b}(\vec{x}^{(i)}))+(1 - y^{(i)})\log(1 - f_{\vec{w},b}(\vec{x}^{(i)}))]{% endmathjax %}。最终会得到这样的表达式，这就是**成本函数**。几乎每个人都使用这个**成本函数**来训练**逻辑回归**。
 {% asset_img ml_12.png %}
+
+#### 逻辑回归的梯度下降
+
