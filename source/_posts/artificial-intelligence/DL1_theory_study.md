@@ -1,5 +1,5 @@
 ---
-title: 深度学习学习(DL)(一) — 探析
+title: 深度学习(DL)(一) — 探析
 date: 2024-09-02 17:15:11
 tags:
   - AI
@@ -18,3 +18,4 @@ mathjax:
 <!-- more -->
 
 在情绪分类中，输入{% mathjax %}x{% endmathjax %}是一个序列，因此，给定输入短语，如“这部电影没有什么可喜欢的”，您认为这篇评论会得到多少颗星？**序列模型**对于`DNA`序列分析也非常有用。`DNA`通过四个字母`A、C、G`和`T`表示。因此，给定一个`DNA`序列，您能否标记该`DNA`序列的哪一部分对应于蛋白质。在机器翻译中，您会得到一个输入句子，`voulez-vou chante avec moi？`然后要求以不同的语言输出翻译。<span style="color:#295F98;font-weight:900;">在视频活动识别中</span>，您可能会得到一系列视频帧并被要求识别活动。在名称实体识别中，您可能会得到一个句子并被要求识别该句子中的人。因此，所有这些问题都可以作为**监督学习**来解决，标签数据{% mathjax %}x,y{% endmathjax %}作为训练集。但是，从这个示例列表中可以看出，存在许多不同类型的序列问题。在某些情况下，输入{% mathjax %}x{% endmathjax %}和输出{% mathjax %}y{% endmathjax %}都是序列，有时{% mathjax %}x{% endmathjax %}和{% mathjax %}y{% endmathjax %}可以具有不同的长度，或者{% mathjax %}x{% endmathjax %}和{% mathjax %}y{% endmathjax %}具有相同的长度。或者只有{% mathjax %}x{% endmathjax %}或相反的{% mathjax %}y{% endmathjax %}是序列。
+
