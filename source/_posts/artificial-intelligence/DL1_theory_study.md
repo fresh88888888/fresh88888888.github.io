@@ -49,3 +49,6 @@ mathjax:
 {% asset_img dl_4.png %}
 
 如果你在一个大型训练集上训练这个`RNN`，给定任何初始单词集，它都可以预测下一个单词的概率。给定一个新句子，比如{% mathjax %}y^{<1>},y^{<2>},y^{<3>}{% endmathjax %}只有三个单词，可以计算出整个句子的概率，第一个`softmax`告诉你{% mathjax %}y^{<1>}{% endmathjax %}的概率是{% mathjax %}\mathbf{P}(y^{<1>}){% endmathjax %}，这将是第一个输出。然后给定{% mathjax %}y^{<1>}{% endmathjax %},{% mathjax %}y^{<2>}{% endmathjax %}的概率是{% mathjax %}\mathbf{P}(y^{<2>}|y^{<1>}){% endmathjax %}。然后，给定{% mathjax %}y^{<1>}{% endmathjax %}和{% mathjax %}y^{<2>}{% endmathjax %}，{% mathjax %}y^{<3>}{% endmathjax %}的概率是{% mathjax %}\mathbf{P}(y^{<3>}|y^{<1>},y^{<2>}){% endmathjax %}。通过将这三个概率相乘，你最终会得到三个单词句子的概率。这就是使用`RNN`训练**语言模型**的基本结构。
+
+#### 序列采样
+
