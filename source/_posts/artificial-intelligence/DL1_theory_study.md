@@ -70,7 +70,7 @@ mathjax:
 \tilde{c}^{<t>} & = \tan h(W_c[\Gamma_r\ast c^{<t-1>,x^{<t>}}] + b_c) \\
 \Gamma_u & = \sigma (W_u[c^{<t-1>},x^{<t>}] + b_u) \\
 \Gamma_r & = \sigma (W_r[c^{<t-1>},x^{<t>}] + b_r) \\
-c^{<t>} & = \Gamma_u\ast\tilde{c}^{<t>} + (1-\Gamma_u) + c^{<t-1>} \\
+c^{<t>} & = \Gamma_u\ast\tilde{c}^{<t>} + (1-\Gamma_u)\ast c^{<t-1>} \\
 a^{<t>} & = c^{<t>} \\
 \end{align}
 {% endmathjax %}
@@ -78,4 +78,7 @@ a^{<t>} & = c^{<t>} \\
 你可以想象，有多种方法来设计这些类型的神经网络，事实证明，研究人员已经尝试了许多不同的版本来设计这些单元，拥有更长距离的连接。尝试对长距离效应进行建模，同时解决**梯度消失**问题。`GRU`是最常用的版本之一，研究人员已经将其融合在一起，然后发现它对于许多不同的问题来说强大且有用的。`GRU`是一个标准的，只是常用的单元。这就是`GRU`，即**门控循环单元**。它是为了更好地捕捉非常长的依赖关系，从而使`RNN`更加有效。
 
 ##### 长短期记忆（LSTM）
+
+<span style="color:#295F98;font-weight:900;">长短期记忆单元(`LSTM`)</span>。比`GRU`更强大，对于`GRU`，有{% mathjax %}t=\tilde{c}^{<t>}{% endmathjax %}和两个门（**更新门**和**重置门**）。{% mathjax %}\tilde{c}^{<t>}{% endmathjax %}是替换**记忆单元**的候选。然后使用**更新门**{% mathjax %}\Gamma_u{% endmathjax %}来决定是否使用{% mathjax %}\tilde{c}^{<t>}{% endmathjax %}更新{% mathjax %}c^{<t>}{% endmathjax %}。`LSTM`是`GRU`的一个更强大、更通用的版本。对于`LSTM`，我们将不再有{% mathjax %}a^{<t>} = c^{<t>}{% endmathjax %}的情况。现在使用{% mathjax %}a^{<t>},a^{<t-1>},c^{<t-1>}{% endmathjax %}，不使用{% mathjax %}\Gamma_r{% endmathjax %}。这里有一个与`GRU`相同的更新门。{% mathjax %}\tilde{c}^{<t>} = \tan h(W_c[a^{<t-1>},x^{<t>}] + b_c){% endmathjax %}。**更新门**{% mathjax %}\Gamma_u = \sigma (W_u[a^{<t-1>},x^{<t>}] + b_u){% endmathjax %}，**遗忘门**{% mathjax %}\Gamma_f{% endmathjax %}是`S`型函数{% mathjax %}\Gamma_f = \sigma (W_f[a^{<t-1>},x^{<t>}] + b_f){% endmathjax %}。然后将得到一个新的**输出门**，**输出门**{% mathjax %}\Gamma_o = \sigma (W_o[a^{<t-1>},x^{<t>}] + b_o){% endmathjax %}，存储单元的更新值{% mathjax %}c^{<t>} = \Gamma_u \ast \tilde{c}^{<t>} + \Gamma_f\ast c^{<t-1>}\;,\; a^{<t>} = \Gamma_o \ast \tan h c^{<t>}{% endmathjax %}。这为**存储单元**提供了保留旧值{% mathjax %}c^{<t-1>}{% endmathjax %}的选项，然后将这个新值{% mathjax %}\tilde{c}^{<t-1>}{% endmathjax %}更新到它。这些控制`LSTM`的方程式。可以看出它有三个门(更新门，遗忘门，输出门)。因此，它有点复杂，并且位置略有不同。
+{% asset_img dl_5.png %}
 
