@@ -65,3 +65,26 @@ mathjax:
 使用手写数字识别作为一个激励示例。只区分手写数字`0`和`1`。所以这只是一个**二元分类**问题，我们将输入一个图像并进行分类，使用一个{% mathjax %}8\times 8{% endmathjax %}的图像。`255`表示亮白色像素，`0`表示黑色像素。不同的数字是黑色和白色之间的不同灰度。给定`64`个输入特征，使用具有两个**隐藏层**的**神经网络**。第一层隐藏层有`25`个神经元。第二层隐藏层有`15`个神经元。最后是**输出层**，`1`或`0`的概率是多少？神经网络需要进行的一系列计算，从输入{% mathjax %}\vec{x}{% endmathjax %}（{% mathjax %}8\times 8{% endmathjax %}）到预测概率{% mathjax %}a^{[3]}{% endmathjax %}。第一个计算是从{% mathjax %}\vec{x}{% endmathjax %}到{% mathjax %}\vec{a}^{[1]}{% endmathjax %}，这就是第一层**隐藏层**计算。请注意，{% mathjax %}\vec{a}^{[1]}{% endmathjax %}有·个数字，因为这个隐藏层有`25`个单元。这就是为什么参数从{% mathjax %}w_1,w_2,\ldots,w_{25}{% endmathjax %}以及{% mathjax %}b_1,b_2,\ldots,b_25{% endmathjax %}。第`0`层的激活，即{% mathjax %}\vec{a}^{[0]} = \vec{x}{% endmathjax %}。所以只计算{% mathjax %}\vec{a}^{[1]}{% endmathjax %}。下一步是计算{% mathjax %}\vec{a}^{[2]}{% endmathjax %}。看看第二个隐藏层，它会执行此计算，其中{% mathjax %}\vec{a}^{[2]}{% endmathjax %}是{% mathjax %}\vec{a}^{[1]}{% endmathjax %}的函数，{% mathjax %}\vec{a}^{[1]} = g(\vec{w}^{[1]}\cdot\vec{a}^{[0]} + b^{[1]}){% endmathjax %}。第二层有`15`个神经元，这就是为什么这里的参数从{% mathjax %}w_1,w_2,\ldots,w_{15}{% endmathjax %}和{% mathjax %}b_1,b_2,\ldots,b_15{% endmathjax %}。现在计算{% mathjax %}\vec{a}^{[2]} = g(w^{[2]}\cdot\vec{a}^{[1]} + b^{[2]}){% endmathjax %}。最后一步是计算{% mathjax %}\vec{a}^{[3]} = g(w^{[3]}\cdot\vec{a}^{[2]} + b^{[3]}){% endmathjax %}，最后这个第三层，**输出层**只有一个单位，这就是为什么这里只有一个输出。所以{% mathjax %}\vec{a}^{[3]}{% endmathjax %}只是一个标量。最后，将其阈值设为`0.5`以得出二进制分类标签{% mathjax %}\hat{y}{% endmathjax %}。计算序列首先取 {% mathjax %}\vec{x}{% endmathjax %}，然后计算{% mathjax %}\vec{a}^{[1]}{% endmathjax %}，然后计算{% mathjax %}\vec{a}^{[2]}{% endmathjax %}，最后计算{% mathjax %}\vec{a}^{[3]}{% endmathjax %}，这也是**神经网络**的输出。您也可以将其写为{% mathjax %}f(x) = \vec{a}^{[3]}{% endmathjax %}。还记得**线性回归**和**逻辑回归**，使用{% mathjax %}f(x){% endmathjax %}表示线性回归或逻辑回归的输出。也可以使用{% mathjax %}f(x){% endmathjax %}表示**神经网络**计算的函数。因为这个计算是从左到右进行的，所以从{% mathjax %}\vec{x}{% endmathjax %}开始计算{% mathjax %}\vec{a}^{[1]}{% endmathjax %}，然后是{% mathjax %}\vec{a}^{[2]}{% endmathjax %}，最后是{% mathjax %}\vec{a}^{[3]}{% endmathjax %}。这​​个算法也被称为**前向传播**，因为正在传播**神经元**的激活。所以是从左到右向前进行计算。
 {% asset_img ml_10.png %}
 
+#### TensorFlow实现
+
+##### 代码推理
+
+`TensorFlow`是实现**深度学习算法**的领先框架之一。当构建项目时，`TensorFlow`实际上是我最常用的工具。另一个流行的工具是`PyTorch`。让我们看看如何使用`TensorFlow`实现推理代码。学习算法能否帮助优化烘焙过程中获得的咖啡豆的质量？烘焙咖啡时，您需要控制两个参数：加热生咖啡豆的温度和时间。我们创建了不同温度和不同持续时间的数据集，以及咖啡是否味道好的标签。这里{% mathjax %}\hat{y}=1{% endmathjax %}代表好咖啡，{% mathjax %}\hat{y}=0{% endmathjax %}代表坏咖啡。如果您在太低的温度下烘焙，它就不会被烘焙，最终会煮得不够熟。如果你煮的时间不够长，时间太短，它也不是一组烘焙得很好的咖啡豆。如果你把它煮得太久或温度太高，那么最终会得到过熟的咖啡豆。也不是好咖啡。只有这个小三角形内的点才代表好咖啡。任务中给定一个特征向量{% mathjax %}\vec{x}{% endmathjax %}，其中包含温度和持续时间，比如`200`摄氏度，持续`17`分钟，如何在神经网络中进行推理，这种温度和持续时间设置是否会制作出好咖啡？我们将{% mathjax %}x{% endmathjax %}设置为两个数的数组。输入特征为`200`摄氏度和`17`分钟。然后，将第`1`层创建为第一个**隐藏层**，**神经网络**在该层中有`3`个**隐藏单元**，使用激活函数，即`S`型函数。**密集**是神经网络层的另一个名称。这里称为**密集层**，接下来，通过取第`1`层（实际上是一个函数）并将此函数第`1`层应用于{% mathjax %}\vec{x}{% endmathjax %}的值来计算{% mathjax %}\vec{a}^{[1]}{% endmathjax %}。它将是三个数的列表，因为第`1`层有三个单元。因此，为了便于说明，这里的{% mathjax %}\vec{a}^{[1]}{% endmathjax %}可能为{% mathjax %}\begin{bmatrix}0.2 \\0.7 \\0.3 \end{bmatrix}{% endmathjax %}。接下来，对于第二个隐藏层，第`2`层将是`密集层`。现在它有一个单元，再次使用`S`型激活函数，然后您可以通过将第`2`层函数应用于从第`1`层到{% mathjax %}\vec{a}^{[1]}{% endmathjax %}的激活值来计算{% mathjax %}\vec{a}^{[2]}{% endmathjax %}。这将为您提供 {% mathjax %}\vec{a}^{[2]}{% endmathjax %}的值，为了便于说明，该值可能是`0.8`。最后，如果您希望将其阈值设为`0.5`，那么只需测试是否{% mathjax %}\vec{a}_1^{[2]} > 0.5{% endmathjax %}，并将{% mathjax %}\hat{y}{% endmathjax %}设置为`1`或`0`（正或负交叉）。这就是使用`TensorFlow`在神经网络中进行推理的方式。
+{% asset_img ml_11.png %}
+
+```python
+x = np.array([[200.0,17.0]])
+layer_1 = Dense(units = 3, activation = 'sigmoid')
+a1 = layer_1(x) # [0.2,0.7,0.3]
+
+layer_2 = Dense(units = 1, activation = 'sigmoid')
+a2 = layer_2(a1) # 0.8
+
+if a2 >= 0.5 :
+    y = 1
+else :
+    y = 0
+```
+
+##### TensorFlow中的数据
+
