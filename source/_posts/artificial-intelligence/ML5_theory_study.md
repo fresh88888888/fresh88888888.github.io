@@ -12,6 +12,8 @@ mathjax:
     exFactor: 0.03
 ---
 
+#### 介绍
+
 构建**逻辑回归模型**的第一步是指定如何根据输入特征{% mathjax %}x{% endmathjax %}和参数{% mathjax %}w,b{% endmathjax %}计算输出。**逻辑回归函数**预测{% mathjax %}f_{\vec{W},b}(\vec{x}) = g{% endmathjax %}。{% mathjax %}g = \vec{W}\cdot\vec{x} + b{% endmathjax %}，那么{% mathjax %}g(z) = \frac{1}{1+ e^{-z}}{% endmathjax %}，代码实现为：`z = np.dot(w , x) + b, f_x = 1/(1 + np.exp(-z))`。
 <!-- more -->
 
