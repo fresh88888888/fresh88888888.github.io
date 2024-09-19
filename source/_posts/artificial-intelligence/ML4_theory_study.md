@@ -109,3 +109,27 @@ model.predict(x_new)
 ```
 如果必须用`Python`从头开始​​实现前向传播，你会怎么做，除了直观地了解`TensorFlow`和`PyTorch`等库之外。如果有一天你决定要构建比`TensorFlow`和`PyTorch`更好的**神经网络**。让我们看看如何在单层中实现**前向传播**，继续使用此处的咖啡烘焙模型。看看如何获​​取输入特征向量{% mathjax %}\vec{x}{% endmathjax %}，并实现**前向传播**以获得此输出{% mathjax %}\vec{a}^{[2]}{% endmathjax %}。在`Python`实现中，使用一维 数组来表示所有这些向量和参数，这就是为什么这里只有一个方括号。这是`Python`中的一维数组，而不是二维矩阵。需要计算{% mathjax %}\begin{matrix}\vec{W}_1^{[1]}, b_1^{[1]}\\\vec{W}_2^{[1]}, b_2^{[1]}\\\vec{W}_3^{[1]}, b_3^{[1]}\end{matrix}{% endmathjax %}，`x = np.array([200,17])`也是此处表达式{% mathjax %}a_1^{[1]} = g(\vec{W}_1^{[1]}\cdot\vec{x} + b_1^{[1]}){% endmathjax %}。代码实现为：`w1_1 = np.array([1,2])，b1_1 = np.array([-1])，z1_1 = np.dot(w1_1,x) + b1_1，a1_1 = sigmoid(z1_1)`；{% mathjax %}a_2^{[1]} = g(\vec{W}_2^{[1]}\cdot\vec{x} + b_2^{[1]}){% endmathjax %}，代码实现为：`w1_2 = np.array([-3,4])，b1_2 = np.array([1])，z1_2 = np.dot(w1_2,x) + b1_2，a1_2 = sigmoid(z1_2)`；同理{% mathjax %}a_3^{[1]} = g(\vec{W}_3^{[1]}\cdot\vec{x} + b_3^{[1]}){% endmathjax %}，代码实现为：`w1_3 = np.array([5,-6])，b1_3 = np.array([2])，z1_3 = np.dot(w1_3,x) + b1_3，a1_3 = sigmoid(z1_3)`，你已经计算了这三个值，{% mathjax %}a_1^{[1]}，a_2^{[1]}{% endmathjax %}和{% mathjax %}a_3^{[1]}{% endmathjax %}，我们想把这三个数字组合成一个数组`a1 = np.array([a1_1,a1_2,a1_3])`，这是第一层的输出。你可以使用 `np`数组将它们组合在一起，接下来实现第二层。所以计算输出{% mathjax %}a_1^{[2]} = g(\vec{W}_1^{[2]}\cdot\vec{x} + b_1^{[2]}){% endmathjax %}，代码实现为：`w2_1 = np.array([-7,8,9])，b2_1 = np.array([3])，z2_1 = np.dot(w2_1,x) + b2_1，a2_1 = sigmoid(z2_1)`，最后得出`a2 = a2_1`，这就是仅使用`Python`和`NumPy`实现**前向传播**的方法。
 
+如何在`Python`中实现前向传播，但需要为每个**神经元**硬编码。可以编写一个函数来实现一个**密集层**，即**神经网络**的单层。将前一层的**激活**以及给定层中**神经元**的参数{% mathjax %}W{% endmathjax %}和 {% mathjax %}b{% endmathjax %}作为输入。使用上一个示例，如果第`1`层有三个神经元，并且有参数{% mathjax %}W_1^{[1]}=\begin{bmatrix}1 \\2 \end{bmatrix},W_2^{[1]}=\begin{bmatrix}-3 \\4 \end{bmatrix},W_3^{[1]}=\begin{bmatrix}5 \\-6 \end{bmatrix}{% endmathjax %}，将所有这些**波矢量**堆叠成一个矩阵。这将是一个{% mathjax %}2\times 3{% endmathjax %}的矩阵，其中第一列是参数{% mathjax %}W_1^{[1]}{% endmathjax %}，第二列是参数{% mathjax %}W_2^{[1]}{% endmathjax %}，第三列是参数{% mathjax %}w_3^{[1]}{% endmathjax %}。代码实现为：`W = np.array([[1,-3,5],[2,4,-6]])`，然后以类似的方式，参数{% mathjax %}b_1^{[l]} = -1\;,\;b_2^{[l]} = 1\;,\;b_3^{[l]} = 2{% endmathjax %}，依此类推，将把这三个参数堆叠成一维数组{% mathjax %}b{% endmathjax %}，代码实现为：`b = np.array([-1,1,2])`。**密集函数**执行的操作将来自前一层的**激活**作为输入，这里的{% mathjax %}a{% endmathjax %}可以是{% mathjax %}\vec{a}^{[0]} = \vec{x}{% endmathjax %}，代码实现为：`a_in = np.array([-2,4])`，如下所示。此函数执行的操作是将{% mathjax %}a{% endmathjax %}输入到来自前一层的激活，并将输出来自当前层的激活。让我们逐步完成执行此操作的代码。
+```python
+def dense(a_in,W,b):
+  units = W.shape[1]
+  a_out = np.zeros(units)
+  for j in range(units):
+    w = W[:,j]
+    z = np.dot(w,a_in) + b[j]
+    a_out[j] = g(z)
+  
+  return a_out
+```
+
+首先，`units = W.shape[1]`。这里的{% mathjax %}W{% endmathjax %}是一个{% mathjax %}2\times 3{% endmathjax %}矩阵，所以列数是`3`。等于这一层中的单元数。查看{% mathjax %}W{% endmathjax %}的形状，这只是提取这一层中单元数的一种方式。接下来，将`a_out`初始化为一个零数组，元素数与单元数相同。在这个例子中，我们需要输出三个激活值，所以这只是将`a_out`初始化为[0,0,0]。接下来，通过`for`循环来计算`a_out`的第一、第二和第三个元素。`j`从零到单位数减一。。此命令`w = W[:,j]`在`Python`中提取矩阵第`j`列的方法。第一次执行此循环时，这将提取`w`的第一列，因此将提取{% mathjax %}W_1^{[1]}{% endmathjax %}。第二次执行此循环时，当计算第二个单元的激活时，将拉出与{% mathjax %}W_2^{[1]}{% endmathjax %}相对应的第二列，依此类推，第三次执行此循环。然后使用公式计算`z = np.dot(w,a_in) + b[j]`。然后计算激活a_out[j] = g(z)将S型函数应用于`z`。最后返回`a_out`。**密集函数**的作用是输入来自上一层的**激活**，并给定当前层的参数，返回下一层的激活。给定**密集函数**，可以按顺序将几个**密集层**串联在一起，以便在**神经网络**中实现**前向传播**。给定输入特征{% mathjax %}\vec{x}{% endmathjax %}，可以计算激活{% mathjax %}\vec{a}^{[1]}{% endmathjax %}，即{% mathjax %}\vec{a}^{[1]} = W^{[1]}\cdot\vec{x} + \vec{b}^{[1]}{% endmathjax %}的**稠密函数**，其中{% mathjax %}W^{[1]},\vec{b}^{[1]}{% endmathjax %}是参数，有时也称为第一个**隐藏层**的**权重**。然后，可以计算{% mathjax %}\vec{a}^{[2]} = W^{[2]}\cdot\vec{x} + \vec{b}^{[2]}{% endmathjax %}。{% mathjax %}W^{[2]},\vec{b}^{[2]}{% endmathjax %}是第二个隐藏层的参数或权重。然后计算{% mathjax %}\vec{a}^{[3]},\vec{a}^{[4]}{% endmathjax %}。如果这是一个有四层的**神经网络**，则定义{% mathjax %}f_{\vec{W},b}(\vec{x}) =\vec{a}^{[4]}{% endmathjax %}。
+```python
+def sequential(x):
+  a1 = dense(x1,W1,b1)
+  a2 = dense(a1,W2,b2)
+  a3 = dense(a2,W3,b3)
+  a4 = dense(a3,W4,b4)
+  f_x = a4
+
+  return f_x
+```
