@@ -25,8 +25,8 @@ model = Squential([Dense(...),Dense(...),Dense(...)])
 第二步是编译模型并告诉它要使用什么损失，这是用于指定此损失函数的代码：`model =.compile(loss = BinaryCrossentropy())`，即**二元交叉熵损失函数**，一旦指定此损失，对整个训练集取平均值，然后第三步是调用函数将成本最小化为神经网络参数的函数：`model.fit(x,y,epochs = 100)`。接下来更详细地了解这三个步骤。第一步，指定如何根据输入{% mathjax %}x{% endmathjax %}和参数{% mathjax %}w,b{% endmathjax %}计算输出。此代码片段指定了神经网络的整个架构。第一个隐藏层有`25`个隐藏单元，下一个隐藏层有`15`个隐藏单元，然后是一个输出单元，使用`S`型激活值。
 ```python
 import tensorflow as tf
-from tensorflow.keras import Sequential
-from tensorflow.keras.layouts import Dense
+from tf.keras import Sequential
+from tf.keras.layouts import Dense
 
 model = Squential([
     Dense(units = 25,activation='sigmoid'),
@@ -46,3 +46,20 @@ model = Squential([
 
 数学方程为{% mathjax %}g(z) = \max(0,z){% endmathjax %}。此激活函数有一个名称为`ReLU`，**整流线性单元**。还有一个值得一提的**激活函数**，称为**线性激活函数**，也就是{% mathjax %}g(z) = z{% endmathjax %}。如果{% mathjax %}\vec{a} = g(z)\;,\; g(z) = z{% endmathjax %}，那么{% mathjax %}\vec{a} = z = \vec{w}\cdot\vec{x} + b{% endmathjax %}。好像里面根本没有使用{% mathjax %} g{% endmathjax %}一样。所以没有使用任何**激活函数**。
 
+如何为**神经网络**中的**神经元**选择不同的**激活函数**。首先介绍如何为**输出层**选择**激活函数**，然后介绍**隐藏层激活函数**的选择。当考虑输出层的**激活函数**时，通常会有一个很自然的选择，具体取决于**目标标签**{% mathjax %}y{% endmathjax %}是什么。如果您正在处理分类问题，其中{% mathjax %}y{% endmathjax %}为`0`或`1`，即**二元分类问题**，`S`型激活函数是最自然的选择，因为神经网络会学习预测{% mathjax %}y=1{% endmathjax %}的概率，就像对**逻辑回归**所做的那样。如果正在处理**二元分类问题**，在输出层使用`S`型函数。如果正在解决**回归问题**，那么可以选择其它的**激活函数**。例如，如果预测明天的股价与今天的股价相比会如何变化。它可以上涨也可以下跌，在这种情况下，建议使用**线性激活函数**。使用**线性激活函数**，{% mathjax %}g(z){% endmathjax %}可以取正值或负值。所以{% mathjax %}\hat{y}{% endmathjax %}可以是正数也可以是负数。最后，如果 {% mathjax %}\hat{y}{% endmathjax %}只能取非负值，例如，如果预测房价，它永远不会为负数，那么最自然的选择就是`ReLU`激活函数，因为这个激活函数只取非负值，要么是零，要么是正值。在选择用于**输出层**的激活函数时，通常取决于预测的标签{% mathjax %}\hat{y}{% endmathjax %}是什么，会有一个很自然的选择。
+{% asset_img ml_4.png %}
+
+神经网络的**隐藏层**呢？`ReLU`激活函数是许多训练神经网络的最常见选择。在神经网络发展的早期历史中，人们在许多地方使用`S`型激活函数，但该领域已经发展到更频繁地使用`ReLU`。唯一的例外是，如果有一个**二元分类问题**，那么在输出层使用`S`型激活函数。那么为什么呢？首先，如果比较`ReLU`和`S`型激活函数，`ReLU`的计算速度要快一点，因为它只需要计算{% mathjax %}g(z) = \max(0,z){% endmathjax %}，而`S`型激活函数需要先求幂，然后求逆等等，所以效率稍低一些。但第二个原因更为重要，那就是`ReLU`激活函数只在图的一部分中平坦；这里左边是完全平坦的，而 `S`型激活函数在两边都平坦。如果你使用**梯度下降**来训**练神经网络**，那么当在很多地方都很胖的函数时，**梯度下降**会非常慢。**梯度下降**优化的是**成本函数**{% mathjax %}\mathbf{J}(\vec{W},b){% endmathjax %}，而不是**激活函数**，但**激活函数**是计算的一部分，这会导致**成本函数**{% mathjax %}\mathbf{J}(\vec{W},b){% endmathjax %}中更多地方也是平坦的，梯度很小，这会减慢学习速度。使用`ReLU`激活函数可以让神经网络学习得更快一些，在**隐藏层**中使用**ReLU**激活函数已经成为最常见的选择。
+{% asset_img ml_5.png %}
+
+总而言之，对于**输出层**，使用`S`型函数，如果你有一个**二元分类问题**；如果{% mathjax %}\hat{y}{% endmathjax %}是一个可以取正值或负值的数字，则使用**线性激活函数**；如果{% mathjax %}\hat{y}{% endmathjax %}只能取正值，则使用`ReLU`激活函数。对于**隐藏层**，建议`ReLU`作为默认激活函数，在`TensorFlow`中，您可以这样实现它。
+```python
+import tensorflow as tf
+from tf.keras.layouts import Dense
+
+model = Squential([
+    Dense(units = 25,activation='relu'),     # layer 1
+    Dense(units = 15,activation='relu'),     # layer 2
+    Dense(units = 1, activation='sigmoid')]) # layer 3 , activation is sigmoid (binary classification)、relu (y >= 0) or linear (y is negative/positive).
+```
+顺便说一句，如果你看看研究文献，你有时会听到作者使用其他激活函数，例如`tan h`激活函数、`LeakyReLU`激活函数或`swish`激活函数。
