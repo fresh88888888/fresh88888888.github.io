@@ -62,4 +62,4 @@ model = Squential([
     Dense(units = 15,activation='relu'),     # layer 2
     Dense(units = 1, activation='sigmoid')]) # layer 3 , activation is sigmoid (binary classification)、relu (y >= 0) or linear (y is negative/positive).
 ```
-顺便说一句，如果你看看研究文献，你有时会听到作者使用其他激活函数，例如`tan h`激活函数、`LeakyReLU`激活函数或`swish`激活函数。
+顺便说一句，如果你看看研究文献，有时会看到作者使用其他的**激活函数**，例如`tan h`激活函数、`LeakyReLU`激活函数或`swish`激活函数。
