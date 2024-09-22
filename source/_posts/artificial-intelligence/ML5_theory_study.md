@@ -80,10 +80,10 @@ model = Squential([
 
 如果{% mathjax %}j \approx 1{% endmathjax %}，则超出曲线的这一部分，损失将非常小。但是，如果{% mathjax %}j = 0.5{% endmathjax %}，则损失会稍微大一些。{% mathjax %}j{% endmathjax %}越小，损失越大。这会激励算法使{% mathjax %}j{% endmathjax %}尽可能大，尽可能接近`1`。请注意，每个训练示例中的{% mathjax %}y{% endmathjax %}只能取一个值。如果{% mathjax %}y = j{% endmathjax %},则计算损失只能为{% mathjax %}-\log a_j{% endmathjax %}。例如，如果{% mathjax %}y = 2{% endmathjax %}，只会计算{% mathjax %}-\log a_2{% endmathjax %}，但不会计算{% mathjax %}-\log a_1{% endmathjax %}。这是模型的形式以及`softmax`回归的**成本函数**。如果您要训练此模型，则可以构建**多元分类算法**。
 
-为了构建一个可以进行**多元分类**的**神经网络**，我们将采用`Softmax`回归模型，并将其放入**神经网络**的**输出层**。如果要对`10`个类（`0~9`）进行手写数字分类，那么神经网络具有`10`个输出单元，如下图所示。这个新的**输出层**将是一个`softmax`输出层。有时会说这个**神经网络**有一个`softmax`输出。这个**神经网络**中的**前向传播**工作方式是给定一个输入{% mathjax %}\vec{x}{% endmathjax %}，{% mathjax %}\vec{a}^{[1]}{% endmathjax %}的计算方式与之前完全相同。然后是{% mathjax %}\vec{a}^{[2]}{% endmathjax %}，第二个隐藏层的激活也与之前完全相同。现在计算这个输出层的激活{% mathjax %}\vec{a}^{[3]}{% endmathjax %}。然后计算{% mathjax %}z_1 = \vec{W}_1\cdot\vec{a}^{[2]} + b_1,z_2 = \vec{W}_2\cdot\vec{a}^{[2]} + b_1,\ldots,z_{10} = \vec{W}_{10}\cdot\vec{a}^{[2]} + b_{10}{% endmathjax %}。然后{% mathjax %}a_1 = \frac{e^{z_1}}{sum_{m=1}^{10} e^{z_m}} = \mathbf{P}(y= 1|\vec{x}) = g(z_1),a_2 = \frac{e^{z_2}}{sum_{m=1}^{10} e^{z_m}} = \mathbf{P}(y= 2|\vec{x}) = g(z_2),\ldots,a_{10} = \frac{e^{z_{10}}}{sum_{m=1}^{10} e^{z_m}} = \mathbf{P}(y= 10|\vec{x}) = g(z_10){% endmathjax %}。这就是{% mathjax %}\hat{y} = 1{% endmathjax %}的概率。`softmax`层有时也称为`softmax`激活函数，对于`softmax`激活函数，{% mathjax %}\vec{a}^{[1]}{% endmathjax %}是{% mathjax %}z_1,\ldots,z_{10}{% endmathjax %}的函数。因此，每个激活值都取决于所有{% mathjax %}z{% endmathjax %}值。这是`softmax`激活函数独有的属性。
+为了构建一个可以进行**多元分类**的**神经网络**，我们将采用`Softmax`回归模型，并将其放入**神经网络**的**输出层**。如果要对`10`个类（`0~9`）进行手写数字分类，那么神经网络具有`10`个输出单元，如下图所示。这个新的**输出层**将是一个`softmax`输出层。有时会说这个**神经网络**有一个`softmax`输出。这个**神经网络**中的**前向传播**工作方式是给定一个输入{% mathjax %}\vec{x}{% endmathjax %}，{% mathjax %}\vec{a}^{[1]}{% endmathjax %}的计算方式与之前完全相同。然后是{% mathjax %}\vec{a}^{[2]}{% endmathjax %}，第二个隐藏层的激活也与之前完全相同。现在计算这个输出层的激活{% mathjax %}\vec{a}^{[3]}{% endmathjax %}。然后计算{% mathjax %}z_1 = \vec{W}_1\cdot\vec{a}^{[2]} + b_1,z_2 = \vec{W}_2\cdot\vec{a}^{[2]} + b_1,\ldots,z_{10} = \vec{W}_{10}\cdot\vec{a}^{[2]} + b_{10}{% endmathjax %}。然后{% mathjax %}a_1 = \frac{e^{z_1}}{\sum_{m=1}^{10} e^{z_m}} = \mathbf{P}(y= 1|\vec{x}) = g(z_1),a_2 = \frac{e^{z_2}}{\sum_{m=1}^{10} e^{z_m}} = \mathbf{P}(y= 2|\vec{x}) = g(z_2),\ldots,a_{10} = \frac{e^{z_{10}}}{\sum_{m=1}^{10} e^{z_m}} = \mathbf{P}(y= 10|\vec{x}) = g(z_10){% endmathjax %}。这就是{% mathjax %}\hat{y} = 1{% endmathjax %}的概率。`softmax`层有时也称为`softmax`激活函数，对于`softmax`激活函数，{% mathjax %}\vec{a}^{[1]}{% endmathjax %}是{% mathjax %}z_1,\ldots,z_{10}{% endmathjax %}的函数。因此，每个激活值都取决于所有{% mathjax %}z{% endmathjax %}值。这是`softmax`激活函数独有的属性。
 {% asset_img ml_9.png %}
 
-最后，让我们看看如何在`TensorFlow`中实现它。训练模型有三个步骤。第一步是告诉`TensorFlow`按顺序串联三层。第一层是`25`个单元的`ReLU`激活函数。第二层是`15`个单元的`ReLU`激活函数。然后第三层是`10`个**输出单元**的`softmax`激活函数。`TensorFlow`中的**成本函数**称之为`SparseCategoricalCrossentropy`。而对于逻辑回归，有`BinaryCrossentropy`函数。稀疏分类指的是将{% mathjax %}\hat{y}{% endmathjax %}分类到{% mathjax %}1,\ldots,10{% endmathjax %}类别中。**稀疏**指的是{% mathjax %}\hat{y}{% endmathjax %}只能取这`10`个值中的一个。你不会看到一幅图像同时是2和7，所以稀疏是指每个数字只是这些类别中的一个。
+最后，让我们看看如何在`TensorFlow`中实现它。训练模型有三个步骤。第一步是告诉`TensorFlow`按顺序串联三层。第一层是`25`个单元的`ReLU`激活函数。第二层是`15`个单元的`ReLU`激活函数。然后第三层是`10`个**输出单元**的`softmax`激活函数。`TensorFlow`中的**成本函数**称之为`SparseCategoricalCrossentropy`。而对于逻辑回归，有`BinaryCrossEntropy`函数。稀疏分类指的是将{% mathjax %}\hat{y}{% endmathjax %}分类到{% mathjax %}{1,\ldots,10}{% endmathjax %}类别中。**稀疏**指的是{% mathjax %}\hat{y}{% endmathjax %}只能取这`10`个值中的一个。你不会看到一幅图像同时是2和7，所以稀疏是指每个数字只是这些类别中的一个。
 ```python
 import tensorflow as tf
 from tensorflow.keras import Sequential
@@ -95,6 +95,34 @@ model = Squential([
     Dense(units = 15,activation='relu'),      # layer 2
     Dense(units = 10, activation='softmax')]) # layer 3
 
-model.compile(loss.SparseCategoricalCrossentropy())
+model.compile(loss = loss.SparseCategoricalCrossentropy())
 model.fit(X,y,epochs=100)
 ```
+在计算机中计算相同数值的两种不同方法。选项一，可以将{% mathjax %}x{% endmathjax %}设置为{% mathjax %}x = \frac{2}{10000}{% endmathjax %}。选项二，我们可以将{% mathjax %}x{% endmathjax %}设置为 {% mathjax %}x = (1 + \frac{1}{10000}) - (1 - \frac{1}{10000}){% endmathjax %}。首先，们将{% mathjax %}x{% endmathjax %}设置为{% mathjax %}x = \frac{2}{10000}{% endmathjax %}，并将结果打印到小数点后几位。看起来相当不错。其次，将{% mathjax %}x{% endmathjax %}设置为{% mathjax %}x = (1 + \frac{1}{10000}) - (1 - \frac{1}{10000}){% endmathjax %}。将其打印出来。它看起来存在一些舍入误差。由于计算机只有有限的内存来存储每个数字（称为浮点数），决定如何计算{% mathjax %}\frac{2}{10000}{% endmathjax %}的值，结果可能或多或少的数值舍入误差。虽然计算`softmax`成本函数的方法是正确的，但还有一种不同的方法可以减少这些数值舍入误差，从而在`TensorFlow`中进行更准确的计算。让我首先使用逻辑回归更详细地解释这一点。然后我们将展示如何将这些想法应用于改进我们的 softmax 实现。首先，让我使用逻辑回归来说明这些想法。然后我们将继续展示如何改进您的 softmax 实现。回想一下，对于逻辑回归，如果要计算给定示例的**损失函数**，则首先要计算此输出激活{% mathjax %}a= g(z) = \frac{1}{1 + e^{-z}}{% endmathjax %}。然后，使用此处的表达式计算**损失**({% mathjax %}\text{loss} = -y\log(a) - (1 -y)\log(1 - a)\;,\;\text{loss} = -y\log(\frac{1}{1 + e^{-z}}) - (1 -y)\log(1 - \frac{1}{1 + e^{-z}}){% endmathjax %})。实际上，对于具有**二元交叉熵损失**的逻辑输出层，代码如下所示。
+```python
+import tensorflow as tf
+from tensorflow.keras import Sequential
+from tensorflow.keras.layouts import Dense
+
+model = Squential([
+    Dense(units = 25,activation='relu'),      # layer 1
+    Dense(units = 15,activation='relu'),      # layer 2
+    Dense(units = 10, activation='sigmoid')]) # layer 3
+
+model  = compile(loss = loss.BinaryCrossEntropy())
+```
+对于**逻辑回归**，通常数值舍入误差不会那么严重。`TensorFlow`不用将{% mathjax %}\vec{a}{% endmathjax %}作为中间项进行计算。相反，TensorFlow可以重新排列此表达式中的项，有一种更精确的方法来计算此**损失函数**。而原始程序计算中间值{% mathjax %}1 + \frac{1}{10000}{% endmathjax %}和另一个中间值{% mathjax %}1 - \frac{1}{10000}{% endmathjax %}，然后让这两个值相加得到{% mathjax %}\frac{2}{10000}{% endmathjax %}。此部分实现明确{% mathjax %}a{% endmathjax %}作为计算中间量。通过将此表达式指定为**损失函数**，`TensorFlow`提供了更大的灵活性。代码如下所示，它的作用是将输出层设置为**线性激活函数**，并将激活函数{% mathjax %}\frac{1}{1+e^{-z}}{% endmathjax %}，以及**交叉熵损失**放入此处的**损失函数**中。
+```python
+import tensorflow as tf
+from tensorflow.keras import Sequential
+from tensorflow.keras.layouts import Dense
+
+model = Squential([
+    Dense(units = 25,activation='relu'),      # layer 1
+    Dense(units = 15,activation='relu'),      # layer 2
+    Dense(units = 10, activation='linear')]) # layer 3
+
+model  = compile(loss = loss.BinaryCrossEntropy(from_logits = True))
+```
+
+`from_logits = True`参数。如果想知道`logits`是什么，它就是这个{% mathjax %}z{% endmathjax %}。 `TensorFlow`会将{% mathjax %}z{% endmathjax %}计算为中间值，但它可以重新排列，使其计算得更准确。此代码的一个缺点是它变得有点复杂。但这会使`TensorFlow`的数值舍入误差小一些。在**逻辑回归**的情况下，这两种实现实际上都可以正常工作，但当涉及到`softmax`时，数值舍入误差会变得更糟。现在将这个想法应用于`softmax`回归。回想一下上一个例子，按如下方式计算激活。激活是{% mathjax %}(a_1,a_2,\ldots,a_{10}) = g(z_1,z_2,\ldots,z_{10}){% endmathjax %}，其中{% mathjax %}a_1 = \frac{e^{z_1}}{\sum_{m=1}^{10} e^{z_m}}{% endmathjax %}，然后{% mathjax %}\text{loss}= L(\vec{a},y) = \begin{cases}-\log a_1 & \text{if}\;y = 1\\-\log a_2 & \text{if}\;y = 2\\ \vdots \\-\log a_{10} & \text{if}\;y = {10} \end{cases}{% endmathjax %}，这是必须在两个单独的步骤中计算的代码。但是，如果你指定损失函数为{% mathjax %}y = 1{% endmathjax %}时，则为{% mathjax %}-\log a_1{% endmathjax %}，依此类推。`TensorFlow`可以重新排列项，并以精确的方式进行计算。如果`z`非常小，{% mathjax %}e^{-z}{% endmathjax %}变得非常小，相反，{% mathjax %}z{% endmathjax %}值非常大，那么{% mathjax %}e^{-z}{% endmathjax %}可以通过重新排列，`TensorFlow`可以避免一些非常小或非常大的值，从而为损失函数提供更精确的计算。执行此操作的代码显示在输出层中，现在只使用**线性激活函数**，输出层只计算{% mathjax %}z_1,\ldots,z_{10}{% endmathjax %}，然后将整个损失计算捕获在**损失函数**中，其中使用`from_logists = True`参数。`Logist`回归的数值舍入误差并不是那么糟糕，但建议您改用此实现，从概念上讲，此代码与您之前的第一个版本的功能相同，只是它在数值上更精确一些。虽然缺点可能也更难理解。现在还有一个细节，就是将神经网络中的输出层更改为使用**线性激活函数**，而不是`softmax`激活函数。**神经网络**的**输出层**不再输出{% mathjax %}a_1,\ldots,a_{10}{% endmathjax %}。而是{% mathjax %}z_1,\ldots,z_{10}{% endmathjax %}。
