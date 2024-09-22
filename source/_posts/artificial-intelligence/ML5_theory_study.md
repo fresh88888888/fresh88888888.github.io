@@ -120,9 +120,24 @@ from tensorflow.keras.layouts import Dense
 model = Squential([
     Dense(units = 25,activation='relu'),      # layer 1
     Dense(units = 15,activation='relu'),      # layer 2
-    Dense(units = 10, activation='linear')]) # layer 3
+    Dense(units = 10, activation='linear')])  # layer 3
 
 model  = compile(loss = loss.BinaryCrossEntropy(from_logits = True))
 ```
+`from_logits = True`参数。如果想知道`logits`是什么，它就是这个{% mathjax %}z{% endmathjax %}。 `TensorFlow`会将{% mathjax %}z{% endmathjax %}计算为中间值，但它可以重新排列，使其计算得更准确。此代码的一个缺点是它变得有点复杂。但这会使`TensorFlow`的数值舍入误差小一些。在**逻辑回归**的情况下，这两种实现实际上都可以正常工作，但当涉及到`softmax`时，数值舍入误差会变得更糟。现在将这个想法应用于`softmax`回归。回想一下上一个例子，按如下方式计算激活。激活是{% mathjax %}(a_1,a_2,\ldots,a_{10}) = g(z_1,z_2,\ldots,z_{10}){% endmathjax %}，其中{% mathjax %}a_1 = \frac{e^{z_1}}{\sum_{m=1}^{10} e^{z_m}}{% endmathjax %}，然后{% mathjax %}\text{loss}= L(\vec{a},y) = \begin{cases}-\log a_1 & \text{if}\;y = 1\\-\log a_2 & \text{if}\;y = 2\\ \vdots \\-\log a_{10} & \text{if}\;y = {10} \end{cases}{% endmathjax %}，将其代入{% mathjax %}\text{loss}= L(\vec{a},y) = \begin{cases}-\log \frac{e^{z_1}}{\sum_{m=1}^{10} e^{z_m}} & \text{if}\;y = 1\\-\log \frac{e^{z_2}}{\sum_{m=1}^{10} e^{z_m}} & \text{if}\;y = 2\\ \vdots \\-\log \frac{e^{z_10}}{\sum_{m=1}^{10} e^{z_m}} & \text{if}\;y = {10} \end{cases}{% endmathjax %}。但是，如果你指定损失函数为{% mathjax %}y = 1{% endmathjax %}时，则为{% mathjax %}-\log a_1{% endmathjax %}，依此类推。`TensorFlow`可以重新排列项，并以精确的方式进行计算。如果`z`非常小，{% mathjax %}e^z{% endmathjax %}变得非常小，相反，{% mathjax %}z{% endmathjax %}值非常大，那么{% mathjax %}e^z{% endmathjax %}可以通过重新排列，`TensorFlow`可以避免一些非常小或非常大的值，从而为损失函数提供更精确的计算。执行此操作的代码显示在输出层中，现在只使用**线性激活函数**，输出层只计算{% mathjax %}z_1,\ldots,z_{10}{% endmathjax %}，然后将整个损失计算捕获在**损失函数**中，其中使用`from_logists = True`参数。`Logist`回归的数值舍入误差并不是那么糟糕，但建议您改用此实现，从概念上讲，此代码与您之前的第一个版本的功能相同，只是它在数值上更精确一些。虽然缺点可能也更难理解。现在还有一个细节，就是将神经网络中的输出层更改为使用**线性激活函数**，而不是`softmax`激活函数。**神经网络**的**输出层**不再输出{% mathjax %}a_1,\ldots,a_{10}{% endmathjax %}。而是{% mathjax %}z_1,\ldots,z_{10}{% endmathjax %}。
+```python
+import tensorflow as tf
+from tensorflow.keras import Sequential
+from tensorflow.keras.layouts import Dense
 
-`from_logits = True`参数。如果想知道`logits`是什么，它就是这个{% mathjax %}z{% endmathjax %}。 `TensorFlow`会将{% mathjax %}z{% endmathjax %}计算为中间值，但它可以重新排列，使其计算得更准确。此代码的一个缺点是它变得有点复杂。但这会使`TensorFlow`的数值舍入误差小一些。在**逻辑回归**的情况下，这两种实现实际上都可以正常工作，但当涉及到`softmax`时，数值舍入误差会变得更糟。现在将这个想法应用于`softmax`回归。回想一下上一个例子，按如下方式计算激活。激活是{% mathjax %}(a_1,a_2,\ldots,a_{10}) = g(z_1,z_2,\ldots,z_{10}){% endmathjax %}，其中{% mathjax %}a_1 = \frac{e^{z_1}}{\sum_{m=1}^{10} e^{z_m}}{% endmathjax %}，然后{% mathjax %}\text{loss}= L(\vec{a},y) = \begin{cases}-\log a_1 & \text{if}\;y = 1\\-\log a_2 & \text{if}\;y = 2\\ \vdots \\-\log a_{10} & \text{if}\;y = {10} \end{cases}{% endmathjax %}，这是必须在两个单独的步骤中计算的代码。但是，如果你指定损失函数为{% mathjax %}y = 1{% endmathjax %}时，则为{% mathjax %}-\log a_1{% endmathjax %}，依此类推。`TensorFlow`可以重新排列项，并以精确的方式进行计算。如果`z`非常小，{% mathjax %}e^{-z}{% endmathjax %}变得非常小，相反，{% mathjax %}z{% endmathjax %}值非常大，那么{% mathjax %}e^{-z}{% endmathjax %}可以通过重新排列，`TensorFlow`可以避免一些非常小或非常大的值，从而为损失函数提供更精确的计算。执行此操作的代码显示在输出层中，现在只使用**线性激活函数**，输出层只计算{% mathjax %}z_1,\ldots,z_{10}{% endmathjax %}，然后将整个损失计算捕获在**损失函数**中，其中使用`from_logists = True`参数。`Logist`回归的数值舍入误差并不是那么糟糕，但建议您改用此实现，从概念上讲，此代码与您之前的第一个版本的功能相同，只是它在数值上更精确一些。虽然缺点可能也更难理解。现在还有一个细节，就是将神经网络中的输出层更改为使用**线性激活函数**，而不是`softmax`激活函数。**神经网络**的**输出层**不再输出{% mathjax %}a_1,\ldots,a_{10}{% endmathjax %}。而是{% mathjax %}z_1,\ldots,z_{10}{% endmathjax %}。
+model = Squential([
+    Dense(units = 25,activation='relu'),      # layer 1
+    Dense(units = 15,activation='relu'),      # layer 2
+    Dense(units = 10, activation='linear')])  # layer 3
+
+model  = compile(loss = loss.BinaryCrossEntropy(from_logits = True))
+model.fit(X,y,epochs = 100)
+
+logits = model(X)
+f_x = tf.nn.sigmoid(logits)
+```
