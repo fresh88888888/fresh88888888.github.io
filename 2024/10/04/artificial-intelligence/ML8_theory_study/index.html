@@ -153,7 +153,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%81%9A%E7%B1%BB"><span class="nav-number">1.1.</span> <span class="nav-text">聚类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B3%E8%81%94-Association"><span class="nav-number">1.2.</span> <span class="nav-text">关联(Association)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%99%8D%E7%BB%B4"><span class="nav-number">1.3.</span> <span class="nav-text">降维</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%97%A0%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.</span> <span class="nav-text">无监督学习示例</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%81%9A%E7%B1%BB"><span class="nav-number">1.1.</span> <span class="nav-text">聚类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B3%E8%81%94-Association"><span class="nav-number">1.2.</span> <span class="nav-text">关联(Association)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%99%8D%E7%BB%B4"><span class="nav-number">1.3.</span> <span class="nav-text">降维</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%97%A0%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.</span> <span class="nav-text">无监督学习示例</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%9A%E7%B1%BB-1"><span class="nav-number">2.</span> <span class="nav-text">聚类</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#K-means%E8%81%9A%E7%B1%BB"><span class="nav-number">2.1.</span> <span class="nav-text">K-means聚类</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -301,14 +301,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.5k</span>
+      <span>2.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
+      <span>7 分钟</span>
     </span>
 </div>
 
@@ -340,6 +340,8 @@
 <li><strong>自然语言处理</strong>(<code>NLP</code>)：<strong>无监督机器学习</strong>通常用于各种<code>NLP</code>应用，例如对新闻版面中的文章分类、文本翻译和分类，或对话界面中的语音识别。</li>
 <li><strong>基因研究</strong>：<strong>基因聚类</strong>是另一个常见的<strong>无监督机器学习</strong>例子。<strong>层次聚类算法</strong>通常用于分析<code>DNA</code>模式和揭示进化关系。</li>
 </ul>
+<h4 id="聚类-1"><a href="#聚类-1" class="headerlink" title="聚类"></a>聚类</h4><p><code>1932</code>年，<code>HE Driver</code>和<code>ALKroeber</code>在论文<a target="_blank" rel="noopener" href="https://digitalassets.lib.berkeley.edu/anthpubs/ucb/text/ucp031-005.pdf"><code>Quantitative expression of cultural relationship</code></a>中提出了<strong>聚类</strong>方法。自那时起，这项技术取得了长足进步，并被用于探索许多应用领域的未知领域。<strong>聚类</strong>是一种<strong>无监督机器学习</strong>，需要从未标记的数据集中提取参考(特征、模式)。通常，它用于捕获数据集中固有的有意义的结构、底层过程和分组。在<strong>聚类任务</strong>是将总体分成几组，使得同一组中的数据点比其他组中的数据点更相似。简而言之，它是基于相似性和不相似性的<strong>对象集合</strong>。通过<strong>聚类</strong>，数据科学家可以发现未标记数据中的内在分组。虽然没有特定的标准来衡量<strong>聚类</strong>，但这完全取决于用户，并如何使用它来满足特定的需求。它可用于查找数据中的异常数据点&#x2F;异常值，或识别未知属性以在数据集中找到合适的<strong>分组</strong>。举个例子，假设您在沃尔玛商店担任经理，并希望更好地了解您的客户，以便使用新的和改进的<strong>营销策略</strong>来扩大业务。手动细分客户很困难。您有一些包含他们的年龄和购买历史的数据，在这里<strong>聚类</strong>可以根据客户的支出对数据进行<strong>分组</strong>。一旦完成客户细分，您就可以根据目标受众为每个组定义不同的<strong>营销策略</strong>。</p>
+<h5 id="K-means聚类"><a href="#K-means聚类" class="headerlink" title="K-means聚类"></a>K-means聚类</h5><p><code>K-means</code><strong>聚类</strong>是一种<strong>矢量量化方法</strong>，最初来自<strong>信号处理</strong>，旨在将<code>n</code>个观测值划分为<code>k</code>个<strong>聚类</strong>，其中每个观测值属于最接近<strong>均值</strong>的<strong>聚类</strong>，作为该<strong>聚类</strong>的原型。<code>K-means</code>是一种基于<strong>质心</strong>的<strong>聚类算法</strong>，计算每个数据点与<strong>质心</strong>之间的距离，将其分配到一个<strong>聚类</strong>中。目标是识别数据集中的<code>K</code>个组。这是一个将每个数据点分配到组中的迭代过程，数据点会根据相似特征<strong>聚类</strong>。目标是最小化数据点与<strong>聚类</strong>中心之间的距离总和，以确定每个数据点应该属于的正确组。在这里，将数据空间划分为<code>K</code>个<strong>簇</strong>，并为每个<strong>簇</strong>分配一个平均值。数据点被放置在最接近该<strong>簇</strong>平均值的<strong>簇</strong>中。有几种距离度量可用于计算距离。 </p>
 
     </div>
 
@@ -419,7 +421,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">64:03</span>
+    <span title="站点阅读时长">64:05</span>
   </span>
 </div>
 <div class="busuanzi-count">
