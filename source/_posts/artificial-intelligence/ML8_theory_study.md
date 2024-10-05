@@ -54,3 +54,34 @@ mathjax:
 
 `K-means`**的工作原理**：第一步，**选择聚类的数量**，就是定义簇数`K`，{% mathjax %}C = \{c_1,c_2,\ldots,c_K\}{% endmathjax %},其中每个{% mathjax %}c_K{% endmathjax %}都是{% mathjax %}K{% endmathjax %}维向量，表示第`k`个聚类的质心；第二步，**初始化聚类质心**，所谓**质心**就是聚类的中心，一般最初的时候聚类的中心都是未知的。所以我们选择随机的数据点作为每个聚类的**质心**；第三步，**将数据点分配给最近的簇**，质心已经初始化，接下来是将数据点{% mathjax %}x_i{% endmathjax %}分配给离{% mathjax %}x_i{% endmathjax %}最近的聚类质心{% mathjax %}c_k{% endmathjax %},在此步骤中，需要使用欧几里得距离来计算数据点{% mathjax %}x_i{% endmathjax %}和聚类质心{% mathjax %}c_k{% endmathjax %}之间的距离{% mathjax %}d(x_i,c_k) = \sqrt{\sum\limits_{i=1}^p (x_{i} -c_k)^2}{% endmathjax %},其中{% mathjax %}p{% endmathjax %}是数据的维度，然后选择数据点{% mathjax %}c_i{% endmathjax %}与聚类质心{% mathjax %}c_k{% endmathjax %}距离最小的聚类，即{% mathjax %}k = \arg \underset{k'}{\min} d(x_i,c_{k'}){% endmathjax %}；第四步，**更新聚类质心**，在所有数据点被分配到相应的簇后，更新每个簇的质心为该簇内所有数据点的均值：{% mathjax %}c_k = \frac{1}{S_k}\sum\limits_{x_i\in S_k} x_i{% endmathjax %}，其中{% mathjax %}S_k{% endmathjax %}是分配给簇{% mathjax %}k{% endmathjax %}的所有点的集合，{% mathjax %}|S_k|{% endmathjax %}是该集合中的数据点的数量；第五步，**迭代过程**，重复步骤`3`和`4`，直到质心不再发生显著变化，或达到设定的迭代次数，算法收敛时，聚类结果稳定；第六步，**目标函数**，`K-means`的目标是**最小化每个簇内的数据点与其质心之间的平方误差**，{% mathjax %}J = \sum\limits_{k=1}^K\sum\limits_{x_i\in S_k} d(x_i ,c_k)^2{% endmathjax %}，通过不断迭代，`K-means`算法旨在使目标函数{% mathjax %}J{% endmathjax %}达到最小值，从而优化聚类效果。
 
+**质心初始化方法**的目标是**聚类的质心初始化后尽可能接近实际质心的最佳值**。常用的方法有，**随机数据点定义聚类的质心**，这是初始化质心的传统方法，其中选择{% mathjax %}K{% endmathjax %}个随机数据点并将其定义为聚类的质心；**简单分片**，分片质心初始化算法，主要依赖于数据集中特定实例或行的所有属性的综合值，其思想是计算综合值，然后对数据实例进行排序，然后将其水平划分为{% mathjax %}K{% endmathjax %}个分片，最后将各个分片的所有属性相加并计算平均值。分片属性平均值集合将被确定为初始化的聚类质心集合；`K-means++`，`K-means++`是`K-means`算法的智能质心初始化方法，目标是通过随机分配第一个质心，然后根据最大平方距离选择其余质心来分散初始质心，其想法将质心初始化为彼此远离，从而产生比随机初始化更好的结果。`K-means++`用作`K-means`的默认初始化，scikit-learn的`K-means++`初始化代码实现：
+```python
+import matplotlib.pyplot as plt
+
+from sklearn.cluster import kmeans_plusplus
+from sklearn.datasets import make_blobs
+
+# Generate sample data
+n_samples = 4000
+n_components = 4
+X, y_true = make_blobs(n_samples=n_samples, centers=n_components, cluster_std=0.6, random_state=0)
+X = X[:, ::-1]
+
+# Calculate seeds from k-means++
+centers_init, indices = kmeans_plusplus(X, n_clusters=4, random_state=0)
+
+# Plot init seeds along side sample data
+plt.figure(1)
+colors = ["#4EACC5", "#FF9C34", "#4E9A06", "m"]
+for k, col in enumerate(colors):
+    cluster_data = y_true == k
+    plt.scatter(X[cluster_data, 0], X[cluster_data, 1], c=col, marker=".", s=10)
+
+plt.scatter(centers_init[:, 0], centers_init[:, 1], c='b', s=50)
+plt.title("K - Means + + Initialization")
+plt.xticks([])
+plt.yticks([])
+plt.show()
+```
+{% asset_img ml_2.png %}
+
