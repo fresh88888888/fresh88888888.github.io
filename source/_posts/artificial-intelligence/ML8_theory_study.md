@@ -54,7 +54,7 @@ mathjax:
 
 `K-means`**的工作原理**：第一步，**选择聚类的数量**，就是定义簇数`K`，{% mathjax %}C = \{c_1,c_2,\ldots,c_K\}{% endmathjax %},其中每个{% mathjax %}c_K{% endmathjax %}都是{% mathjax %}K{% endmathjax %}维向量，表示第`k`个聚类的质心；第二步，**初始化聚类质心**，所谓**质心**就是聚类的中心，一般最初的时候聚类的中心都是未知的。所以我们选择随机的数据点作为每个聚类的**质心**；第三步，**将数据点分配给最近的簇**，质心已经初始化，接下来是将数据点{% mathjax %}x_i{% endmathjax %}分配给离{% mathjax %}x_i{% endmathjax %}最近的聚类质心{% mathjax %}c_k{% endmathjax %},在此步骤中，需要使用欧几里得距离来计算数据点{% mathjax %}x_i{% endmathjax %}和聚类质心{% mathjax %}c_k{% endmathjax %}之间的距离{% mathjax %}d(x_i,c_k) = \sqrt{\sum\limits_{i=1}^p (x_{i} -c_k)^2}{% endmathjax %},其中{% mathjax %}p{% endmathjax %}是数据的维度，然后选择数据点{% mathjax %}c_i{% endmathjax %}与聚类质心{% mathjax %}c_k{% endmathjax %}距离最小的聚类，即{% mathjax %}k = \arg \underset{k'}{\min} d(x_i,c_{k'}){% endmathjax %}；第四步，**更新聚类质心**，在所有数据点被分配到相应的簇后，更新每个簇的质心为该簇内所有数据点的均值：{% mathjax %}c_k = \frac{1}{S_k}\sum\limits_{x_i\in S_k} x_i{% endmathjax %}，其中{% mathjax %}S_k{% endmathjax %}是分配给簇{% mathjax %}k{% endmathjax %}的所有点的集合，{% mathjax %}|S_k|{% endmathjax %}是该集合中的数据点的数量；第五步，**迭代过程**，重复步骤`3`和`4`，直到质心不再发生显著变化，或达到设定的迭代次数，算法收敛时，聚类结果稳定；第六步，**目标函数**，`K-means`的目标是**最小化每个簇内的数据点与其质心之间的平方误差**，{% mathjax %}J = \sum\limits_{k=1}^K\sum\limits_{x_i\in S_k} d(x_i ,c_k)^2{% endmathjax %}，通过不断迭代，`K-means`算法旨在使目标函数{% mathjax %}J{% endmathjax %}达到最小值，从而优化聚类效果。
 
-**质心初始化方法**的目标是**聚类的质心初始化后尽可能接近实际质心的最佳值**。常用的方法有，**随机数据点定义聚类的质心**，这是初始化质心的传统方法，其中选择{% mathjax %}K{% endmathjax %}个随机数据点并将其定义为聚类的质心；**简单分片**，分片质心初始化算法，主要依赖于数据集中特定实例或行的所有属性的综合值，其思想是计算综合值，然后对数据实例进行排序，然后将其水平划分为{% mathjax %}K{% endmathjax %}个分片，最后将各个分片的所有属性相加并计算平均值。分片属性平均值集合将被确定为初始化的聚类质心集合；`K-means++`，`K-means++`是`K-means`算法的智能质心初始化方法，目标是通过随机分配第一个质心，然后根据最大平方距离选择其余质心来分散初始质心，其想法将质心初始化为彼此远离，从而产生比随机初始化更好的结果。`K-means++`用作`K-means`的默认初始化，scikit-learn的`K-means++`初始化代码实现：
+**质心初始化方法**的目标是**聚类的质心初始化后尽可能接近实际质心的最佳值**。常用的方法有，**随机数据点定义聚类的质心**，这是初始化质心的传统方法，其中选择{% mathjax %}K{% endmathjax %}个随机数据点并将其定义为聚类的质心；**简单分片**，分片质心初始化算法，主要依赖于数据集中特定实例或行的所有属性的综合值，其思想是计算综合值，然后对数据实例进行排序，然后将其水平划分为{% mathjax %}K{% endmathjax %}个分片，最后将各个分片的所有属性相加并计算平均值。分片属性平均值集合将被确定为初始化的聚类质心集合；`K-means++`，`K-means++`是`K-means`算法的智能质心初始化方法，目标是通过随机分配第一个质心，然后根据最大平方距离选择其余质心来分散初始质心，其想法将质心初始化为彼此远离，从而产生比随机初始化更好的结果。`K-means++`用作`K-means`的默认初始化，`scikit-learn`的`K-means++`初始化代码实现：
 ```python
 import matplotlib.pyplot as plt
 
@@ -202,7 +202,7 @@ sns.scatterplot(customer_data['Annual_Income_(k$)'],customer_data['Spending_Scor
 
 我们使用`Scikit-Learn`几行代码创建客户数据的细分。最终的聚类数据在两种实现中是相同的。标签`0`：储蓄者，平均收入至高收入但明智消费；标签`1`：无忧无虑，收入低，但花钱大手大脚；标签`2`：消费者，平均收入至高收入。商场管理层可以相应地调整营销策略，例如，向标签`0`：储蓄者群体提供更多储蓄优惠，为标签`2`：大手笔消费者开设更多利润丰厚的商店。
 
-{% mathjax %}K{% endmathjax %}如何选择？一些因素会影响`K-means`**聚类**算法输出的有效性，其中之一就是确定聚类数({% mathjax %}K{% endmathjax %})。选择较少的聚类数会导致**欠拟合**，而指定较多的聚类数会导致**过拟合**。最佳**聚类**数取决于**相似性度量**和**用于聚类的参数**。因此，要找到数据中的聚类数，我们需要对执行`K-means`**聚类**一系列值进行比较。目前，可以使用一些技术来估计该值，包括**交叉验证**、**肘部法**(`Elbow Method`)、**信息准则**、**轮廓法**(`Silhouette`)和`G-means`算法。 
+`K`如何选择？一些因素会影响`K-means`**聚类**算法输出的有效性，其中之一就是确定聚类数({% mathjax %}K{% endmathjax %})。选择较少的聚类数会导致**欠拟合**，而指定较多的聚类数会导致**过拟合**。最佳**聚类**数取决于**相似性度量**和**用于聚类的参数**。因此，要找到数据中的聚类数，我们需要对执行`K-means`**聚类**一系列值进行比较。目前，可以使用一些技术来估计该值，包括**交叉验证**、**肘部法**(`Elbow Method`)、**信息准则**、**轮廓法**(`Silhouette`)和`G-means`算法。 
 - **肘部法**(`Elbow Method`)：距离度量是比较不同{% mathjax %}K{% endmathjax %}值结果的常用度量之一。当簇数{% mathjax %}K{% endmathjax %}增加时，质心到数据点的距离将减小，并达到{% mathjax %}K{% endmathjax %}与数据点数相同的点。这就是我们一直使用到质心的距离平均值的原因。在**肘部法**(`Elbow Method`)中，绘制平均距离并寻找减少率发生变化的**肘点**。这个肘点可用于确定{% mathjax %}K{% endmathjax %}。 肘点在数学优化中用作终止点，决定在哪个点收益递减不再值得额外花费。在**聚类**中，当添加另一个聚类不会改善建模结果时，它用于选择一定数量的聚类。这是一个迭代过程，其中将对数据集进行`K-means`**聚类**，{% mathjax %}K{% endmathjax %}值的范围如下：使用所有{% mathjax %}K{% endmathjax %}值执行`K-means`**聚类**。对于每个{% mathjax %}K{% endmathjax %}值，计算所有数据点到质心的平均距离，绘制每个点并找到平均距离突然下降的点（肘部），代码实现如下：
 ```python
 from sklearn.cluster import KMeans
@@ -256,3 +256,14 @@ plt.show()
 {% asset_img ml_8.png %}
 
 利用**轮廓法**(`Silhouette`)分析，选择{% mathjax %}K = 3{% endmathjax %}时，平均轮廓(`Silhouette`)分数最高，表明数据点的位置处于最佳状态。
+
+**聚类评估指标**：在聚类中，没有任何标记的数据，只有一组特征，目标是获得这些特征的高簇内相似性和低簇间相似性。评估任何**聚类**算法的性能并不像在监督学习中计算错误数量、找到**精度**或**召回率**那么容易，目前有多种可用的聚类评估指标。
+- **兰德指数**(`Rand Index`)：是一种用于评估聚类结果与真实标签之间相似度的指标。它通过比较数据点在不同聚类中的分组情况，量化聚类的质量。**兰德指数**(`Rand Index`)的值介于`0`和`1`之间，值越高表示聚类结果与真实标签越一致。如果{% mathjax %}C{% endmathjax %}是真实类别分配，{% mathjax %}K{% endmathjax %}是聚类，定义{% mathjax %}a,b{% endmathjax %}:
+  - `a`代表{% mathjax %}C{% endmathjax %}中属于同一集合{% mathjax %}K{% endmathjax %}中属于同一集合的元素对的数量。
+  - `b`代表{% mathjax %}C{% endmathjax %}中不同集合中的元素对数和{% mathjax %}K{% endmathjax %}中不同集合的元素对数。
+**兰德指数**(`Rand Index`)公式如下：{% mathjax %}RI = \frac{a + b}{C_2^{n_{\text{sample}}}}{% endmathjax %}，其中{% mathjax %}C_2^{n_{\text{sample}}}{% endmathjax %}是数据集中元素对数的总数，计算是在有序对还是无序对上执行并不重要，只要计算一致即可。然而，**兰德指数**(`Rand Index`)并不能保证随机标签分配会得到接近于零的值（特别是当聚类的数量与样本的数量在同一数量级时）。为了抵消这种影响，我们可以降低{% mathjax %}RI{% endmathjax %}的预期{% mathjax %}E[RI]{% endmathjax %}，调整如下所示：{% mathjax %}ARI = \frac{RI - E[RI]}{\max(RI) - E[RI]}{% endmathjax %}。
+- **轮廓系数**(`Silhouette Coefficient`)：**轮廓系数**(`Silhouette Coefficient`)针对每个样本定义，**轮廓系数**(`Silhouette Coefficient`)介于`-1`（表示聚类不正确）和`+1`（表示聚类高度密集）之间。分数接近零表示聚类重叠。由两个分数组成：
+  - `a`：样本与同一类别中所有其他点之间的平均距离。
+  - `b`：一个样本与下一个最近簇中所有其他点之间的平均距离。
+单个样本的**轮廓系数**(`Silhouette Coefficient`){% mathjax %}s{% endmathjax %}定义为：{% mathjax %}s = \frac{b-a}{\max(a,b)}{% endmathjax %}
+
