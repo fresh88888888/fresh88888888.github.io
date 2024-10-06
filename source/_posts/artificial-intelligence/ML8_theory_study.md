@@ -85,3 +85,121 @@ plt.show()
 ```
 {% asset_img ml_2.png %}
 
+`K-means`是如何处理真实数据的。这里有一个购物中心访客数据集（`2000`名）来创建客户细分，从而制定营销策略。先加载数据并检查是否有任何的缺失值：
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# load the dataset
+customer_data = pd.read_csv("Mall_Customers.csv")
+
+# read the data
+print(customer_data.head())
+
+# check for null or missing values
+print(customer_data.isna().sum())
+```
+结果输出为：
+```bash
+   CustomerID   Genre  Age  Annual_Income_(k$)  Spending_Score
+0           1    Male   19                  15              39
+1           2    Male   21                  15              81
+2           3  Female   20                  16               6
+3           4  Female   23                  16              77
+4           5  Female   31                  17              40
+
+
+CustomerID            0
+Genre                 0
+Age                   0
+Annual_Income_(k$)    0
+Spending_Score        0
+```
+使用年度收入和支出分数来查找数据中的聚类。支出分数从`1~100`，根据客户行为和支出性质分配。先看一下数据并了解他是如何分布的。
+```python
+plt.scatter(customer_data['Annual_Income_(k$)'], customer_data['Spending_Score'])
+plt.xlabel('Annual_Income_(k$)')
+plt.ylabel('Spending_Score')
+plt.show()
+```
+{% asset_img ml_3.png %}
+
+从上面的散点图来看，很难判断数据集中是否存在任何模式。这时，**聚类**就会有所帮助。首先随机初始化**聚类质心**。
+```python
+centroids = customer_data.sample(n=3) # random init centroid
+plt.scatter(customer_data['Annual_Income_(k$)'], customer_data['Spending_Score'])
+plt.scatter(centroids['Annual_Income_(k$)'], centroids['Spending_Score'], c='black')
+plt.xlabel('Annual_Income_(k$)')
+plt.ylabel('Spending_Score')
+plt.show()
+```
+{% asset_img ml_4.png %}
+
+接下来遍历每个质心和数据点，计算它们之间的距离，找到{% mathjax %}K{% endmathjax %}个**聚类**并将数据点分配给一个最近的**聚类**。这个过程将持续到先前定义的质心和当前质心之间的差异接近为`0`：
+```python
+K = 3
+centroids = customer_data.sample(n=K)
+mask = customer_data['CustomerID'].isin(centroids.CustomerID.tolist())
+X = customer_data[~mask]
+diff = 1
+j = 0
+XD = X
+while (diff != 0):
+    i = 1
+    for index1, row_c in centroids.iterrows():
+        ED = []
+        for index2, row_d in XD.iterrows():
+            d1 = (row_c["Annual_Income_(k$)"] - row_d["Annual_Income_(k$)"])**2
+            d2 = (row_c["Spending_Score"] - row_d["Spending_Score"])**2
+            d = np.sqrt(d1 + d2)
+            ED.append(d)
+        X[i] = ED
+        i = i + 1
+
+    C = []
+    for index, row in X.iterrows():
+        min_dist = row[1]
+        pos = 1
+        for i in range(K):
+            if row[i + 1] < min_dist:
+                min_dist = row[i + 1]
+                pos = i + 1
+        C.append(pos)
+    X["Cluster"] = C
+    centroids_new = X.groupby(["Cluster"]).mean()[["Spending_Score", "Annual_Income_(k$)"]]
+    if j == 0:
+        diff = 1
+        j = j + 1
+    else:
+        diff = (centroids_new['Spending_Score'] - centroids['Spending_Score']).sum() + (centroids_new['Annual_Income_(k$)'] - centroids['Annual_Income_(k$)']).sum()
+    centroids = X.groupby(["Cluster"]).mean()[["Spending_Score", "Annual_Income_(k$)"]]
+
+color = ['grey', 'blue', 'orange']
+for k in range(K):
+    data = X[X["Cluster"] == k + 1]
+    plt.scatter(data["Annual_Income_(k$)"], data["Spending_Score"], c=color[k])
+plt.scatter(centroids["Annual_Income_(k$)"], centroids["Spending_Score"], c='black')
+plt.xlabel('Annual_Income_(k$)')
+plt.ylabel('Spending_Score')
+plt.show()
+```
+{% asset_img ml_5.png %}
+
+`Scikit-Learn`实现`K-means`，首先，导入K-Means函数，然后通过传递**聚类**数量作为参数来调用该函数：
+```python
+import seaborn as sns
+from sklearn.cluster import KMeans
+
+km_sample = KMeans(n_clusters=3)
+km_sample.fit(customer_data[['Annual_Income_(k$)','Spending_Score']])
+
+labels_sample = km_sample.labels_
+customer_data['label'] = labels_sample
+sns.scatterplot(customer_data['Annual_Income_(k$)'],customer_data['Spending_Score'],hue=customer_data['label'],palette='Set1')
+```
+{% asset_img ml_6.png %}
+
+我们使用`Scikit-Learn`几行代码创建客户数据的细分。最终的聚类数据在两种实现中是相同的。标签`0`：储蓄者，平均收入至高收入但明智消费；标签`1`：无忧无虑，收入低，但花钱大手大脚；标签`2`：消费者，平均收入至高收入。商场管理层可以相应地调整营销策略，例如，向标签`0`：储蓄者群体提供更多储蓄优惠，为标签`2`：大手笔消费者开设更多利润丰厚的商店。
+
+{% mathjax %}K{% endmathjax %}如何选择？一些因素会影响`K-means`**聚类**算法输出的有效性，其中之一就是确定聚类数({% mathjax %}K{% endmathjax %})。选择较少的聚类数会导致**欠拟合**，而指定较多的聚类数会导致**过拟合**。最佳**聚类**数取决于**相似性度量**和**用于聚类的参数**。因此，要找到数据中的聚类数，我们需要对执行`K-means`**聚类**一系列值进行比较。目前，可以使用一些技术来估计该值，包括**交叉验证**、**肘部法**(`Elbow Method`)、**信息准则**、`Silhouette`和`G-means`算法。 
