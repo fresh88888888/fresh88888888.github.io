@@ -202,4 +202,57 @@ sns.scatterplot(customer_data['Annual_Income_(k$)'],customer_data['Spending_Scor
 
 我们使用`Scikit-Learn`几行代码创建客户数据的细分。最终的聚类数据在两种实现中是相同的。标签`0`：储蓄者，平均收入至高收入但明智消费；标签`1`：无忧无虑，收入低，但花钱大手大脚；标签`2`：消费者，平均收入至高收入。商场管理层可以相应地调整营销策略，例如，向标签`0`：储蓄者群体提供更多储蓄优惠，为标签`2`：大手笔消费者开设更多利润丰厚的商店。
 
-{% mathjax %}K{% endmathjax %}如何选择？一些因素会影响`K-means`**聚类**算法输出的有效性，其中之一就是确定聚类数({% mathjax %}K{% endmathjax %})。选择较少的聚类数会导致**欠拟合**，而指定较多的聚类数会导致**过拟合**。最佳**聚类**数取决于**相似性度量**和**用于聚类的参数**。因此，要找到数据中的聚类数，我们需要对执行`K-means`**聚类**一系列值进行比较。目前，可以使用一些技术来估计该值，包括**交叉验证**、**肘部法**(`Elbow Method`)、**信息准则**、`Silhouette`和`G-means`算法。 
+{% mathjax %}K{% endmathjax %}如何选择？一些因素会影响`K-means`**聚类**算法输出的有效性，其中之一就是确定聚类数({% mathjax %}K{% endmathjax %})。选择较少的聚类数会导致**欠拟合**，而指定较多的聚类数会导致**过拟合**。最佳**聚类**数取决于**相似性度量**和**用于聚类的参数**。因此，要找到数据中的聚类数，我们需要对执行`K-means`**聚类**一系列值进行比较。目前，可以使用一些技术来估计该值，包括**交叉验证**、**肘部法**(`Elbow Method`)、**信息准则**、**轮廓法**(`Silhouette`)和`G-means`算法。 
+- **肘部法**(`Elbow Method`)：距离度量是比较不同{% mathjax %}K{% endmathjax %}值结果的常用度量之一。当簇数{% mathjax %}K{% endmathjax %}增加时，质心到数据点的距离将减小，并达到{% mathjax %}K{% endmathjax %}与数据点数相同的点。这就是我们一直使用到质心的距离平均值的原因。在**肘部法**(`Elbow Method`)中，绘制平均距离并寻找减少率发生变化的**肘点**。这个肘点可用于确定{% mathjax %}K{% endmathjax %}。 肘点在数学优化中用作终止点，决定在哪个点收益递减不再值得额外花费。在**聚类**中，当添加另一个聚类不会改善建模结果时，它用于选择一定数量的聚类。这是一个迭代过程，其中将对数据集进行`K-means`**聚类**，{% mathjax %}K{% endmathjax %}值的范围如下：使用所有{% mathjax %}K{% endmathjax %}值执行`K-means`**聚类**。对于每个{% mathjax %}K{% endmathjax %}值，计算所有数据点到质心的平均距离，绘制每个点并找到平均距离突然下降的点（肘部），代码实现如下：
+```python
+from sklearn.cluster import KMeans
+from sklearn import metrics
+from scipy.spatial.distance import cdist
+import numpy as np
+import matplotlib.pyplot as plt
+
+x1 = np.array([3, 1, 1, 2, 1, 6, 6, 6, 5, 6, 7, 8, 9, 8, 9, 9, 8])
+x2 = np.array([5, 4, 5, 6, 5, 8, 6, 7, 6, 7, 1, 2, 1, 2, 3, 2, 3])
+
+X = np.array(list(zip(x1, x2))).reshape(len(x1), 2)
+
+# k means determine k
+distortions = []
+K = range(1,10)
+for k in K:
+   kmeanModel = KMeans(n_clusters=k).fit(X)
+   kmeanModel.fit(X)
+   distortions.append(sum(np.min(cdist(X, kmeanModel.cluster_centers_, 'euclidean'), axis=1)) / X.shape[0])
+
+# Plot the elbow
+plt.plot(K, distortions, 'bx-')
+plt.xlabel('k')
+plt.ylabel('Distortion')
+plt.title('The Elbow Method showing the optimal k')
+plt.show()
+```
+{% asset_img ml_7.png %}
+
+这可能是确定最佳簇数的最常用方法。不过，找到拐点可能是一个挑战，因为在实践中可能没有尖锐的拐点。 
+- **轮廓法**(`Silhouette`)：**轮廓法**是指一种解释和验证数据集群内一致性的方法。该技术以简洁的图形表示每个对象的分类情况。**轮廓系数**用于通过检查某个簇内的数据点与其他簇的相似程度来衡量簇的质量。**轮廓分析**可用于研究簇之间的距离。此离散测量值介于`-1`和`1`之间：`+1`：表示数据点距离相邻簇较远，因此位置最佳。`0`：表示它位于两个相邻集群之间的决策边界上。`-1`：表示数据点被分配到错误的簇。为了找到聚类数{% mathjax %}K{% endmathjax %}的最优值，使用轮廓图来显示一个聚类中每个点与相邻聚类中某个点的接近程度，从而提供一种直观评估聚类数等参数的方法。针对一系列值计算`K-means`**聚类**算法，对于{% mathjax %}K{% endmathjax %}的每个值，找到数据点的平均轮廓分数：
+```python
+from sklearn.metrics import silhouette_score
+
+sil_avg = []
+range_n_clusters = [2, 3, 4, 5, 6, 7, 8]
+
+for k in range_n_clusters:
+ kmeans = KMeans(n_clusters = k).fit(X)
+ labels = kmeans.labels_
+ sil_avg.append(silhouette_score(X, labels, metric = 'euclidean'))
+
+# 绘制每个K值的轮廓分数集合, 选择轮廓得分最大时的聚类数量：
+plt.plot(range_n_clusters,sil_avg,'bx-')
+plt.xlabel('Values of K')
+plt.ylabel('Silhouette score')
+plt.title('Silhouette analysis For Optimal k')
+plt.show()
+```
+{% asset_img ml_8.png %}
+
+利用**轮廓法**(`Silhouette`)分析，选择{% mathjax %}K = 3{% endmathjax %}时，平均轮廓(`Silhouette`)分数最高，表明数据点的位置处于最佳状态。
