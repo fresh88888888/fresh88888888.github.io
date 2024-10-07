@@ -291,3 +291,57 @@ plt.show()
 ##### 局部异常因子(LOF)
 
 **局部异常因子**(`LOF`)是应用最广泛的无监督的**局部异常检测算法**。它采用最近邻居的思想来确定**异常**或**离群值分数**。它计算数据点相对于其邻居的**局部密度偏差**。它将密度明显低于邻居的样本视为**离群值**。简单来说，**局部异常因子**(`LOF`)将一个数据点的**局部密度**与其{% mathjax %}k{% endmathjax %}个最近邻的**局部密度**进行比较，并给出一个分数作为最终输出。
+
+`k-distance`表示一个数据点到其第{% mathjax %}k{% endmathjax %}个邻居的距离，如下图所示，假设{% mathjax %}k = 3{% endmathjax %}计算`A`数据点的**局部异常因子**(`LOF`)，`k-distance`表示与`A`数据点排第三距离最近的的数据点，这里是数据点`E`。**可达距离**(`RD`)代表为相邻点的`k-distance`与两点之间距离最大值。从数据点A到数据点B，则{% mathjax %}RD = \max(\text{k-distance},\text{distance(A,B)}){% endmathjax %}。最后**局部可达密度**(`LRD`)的计算公式为：{% mathjax %}LRD_k(x) = 1/\big\(\frac{\sum_{o\in N_k(x)}d_k(x,o)}{|N_k (x)|}\big\){% endmathjax %}。最后计算`A`点的**局部异常因子**(`LOF`)，这里需要三个步骤：`1`.必须为每个数据点（假设为{% mathjax %}x{% endmathjax %}）找到{% mathjax %}k{% endmathjax %}个最近邻。`2`.使用{% mathjax %}k{% endmathjax %}个最近邻{% mathjax %}N_k{% endmathjax %}，通过计算**局部可达密度**(`LRD`)来估计数据点的**局部密度**。`3`.最后，通过将一条记录的`LRD`与其{% mathjax %}k{% endmathjax %}个邻居的`LRD`进行比较来计算`LOF`分数。**局部异常因子**(`LOF`)的计算公式为：{% mathjax %}\text{LOF}(x) = \frac{\sum\limits_{o\in N_k(x)}\frac{LRD_k(o)}{LRD_k(x)}}{|N_k(x)|}{% endmathjax %}。这里计算数据点`A`的**局部异常因子**(`LOF`){% mathjax %}RD_A = \max(3rd k-distance(B),distance(AB)) + \max(3rd k-distance(B),distance(AC) + \max(3rd k-distance(B),distance(AE))){% endmathjax %}，并以B、C、E为参考点，计算{% mathjax %}RD_B,RD_C,RD_E{% endmathjax %}，计算A与其邻居每个数据点的`LRD`，则{% mathjax %}LOF_A =( (LRD_E +LRD_B +LRD_C)/ LRD_A) * 1/3{% endmathjax %}。密度与邻居密度一样大的点的结果得分约为{% mathjax %}1.0{% endmathjax %}。局部密度较低的异常将会产生更高的分数。
+```python
+from matplotlib.legend_handler import HandlerPathCollection
+import matplotlib.pyplot as plt
+from sklearn.neighbors import LocalOutlierFactor
+import numpy as np
+
+np.random.seed(42)
+# Generate data with outliers
+X_inliers = 0.3 * np.random.rand(100, 2)
+X_inliers = np.r_[X_inliers + 2, X_inliers - 2]
+X_outliers = np.random.uniform(low=4, high=4, size=(20, 2))
+X = np.r_[X_inliers, X_outliers]
+
+n_outliers = len(X_outliers)
+ground_truth = np.ones(len(X), dtype=int)
+ground_truth[-n_outliers] = -1
+
+# 拟合异常值检测模型
+clf = LocalOutlierFactor(n_neighbors=20, contamination=0.1)
+y_pred = clf.fit_predict(X)
+n_errors = (y_pred != ground_truth).sum()
+X_scores = clf.negative_outlier_factor_
+
+# 绘制图形
+
+
+def update_legend_marker_size(handle, orig):
+    "Customize size of the legend marker"
+    handle.update_from(orig)
+    handle.set_sizes([20])
+
+
+# plot circles with radius proportional to the outlier scores
+radius = (X_scores.max() - X_scores) / (X_scores.max() - X_scores.min())
+scatter = plt.scatter(
+    X[:, 0],
+    X[:, 1],
+    s=1000 * radius,
+    edgecolors="r",
+    facecolors="none",
+    label="Outlier scores",
+)
+plt.scatter(X[:, 0], X[:, 1], color="k", s=3.0, label="Data points")
+plt.axis("tight")
+plt.xlim((-5, 5))
+plt.ylim((-5, 5))
+plt.xlabel("prediction errors: %d" % (n_errors))
+plt.legend(handler_map={scatter: HandlerPathCollection(update_func=update_legend_marker_size)})
+plt.title("Local Outlier Factor (LOF)")
+plt.show()
+```
+{% asset_img ml_10.png %}
