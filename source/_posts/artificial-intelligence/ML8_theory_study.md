@@ -538,3 +538,16 @@ plt.axis("square")
 plt.legend(handles=handles, labels=["outliers", "inliers"], title="true class")
 plt.show()
 ```
+{% asset_img ml_14.png %}
+
+**绘制路径长度的决策边界**，当一组随机树共同产生较短的**路径长度**并隔离某些特定样本时，该数据点很可能是异常值，并且**正态性度量**接近`0`。同样，较大的路径对应于接近`1`，该数据点很可能是正常值。
+```python
+disp = DecisionBoundaryDisplay.from_estimator(clf,X,response_method="decision_function",alpha=0.5,)
+disp.ax_.scatter(X[:, 0], X[:, 1], c=y, s=20, edgecolor="k")
+disp.ax_.set_title("Path length decision boundary \nof IsolationForest")
+plt.axis("square")
+plt.legend(handles=handles, labels=["outliers", "inliers"], title="true class")
+plt.colorbar(disp.ax_.collections[1])
+plt.show()
+```
+{% asset_img ml_15.png %}
