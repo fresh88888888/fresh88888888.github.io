@@ -318,13 +318,10 @@ n_errors = (y_pred != ground_truth).sum()
 X_scores = clf.negative_outlier_factor_
 
 # 绘制图形
-
-
 def update_legend_marker_size(handle, orig):
     "Customize size of the legend marker"
     handle.update_from(orig)
     handle.set_sizes([20])
-
 
 # plot circles with radius proportional to the outlier scores
 radius = (X_scores.max() - X_scores) / (X_scores.max() - X_scores.min())
