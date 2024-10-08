@@ -483,3 +483,58 @@ plt.show()
 
 **孤立森林**(`Isolation Forest`)是一种用于**异常检测**的**无监督学习算法**，最初由`Fei Tony Liu`等人在`2008`年提出。该算法通过构建多个二叉树来识别数据中的**异常点**，具有线性时间复杂度和低内存使用，特别适合处理高维数据。**孤立森林**(`Isolation Forest`)的核心原理是：**构建隔离树**，算法随机选择一个**特征**和一个**分割值**，将数据集分割成两个部分。这一过程会递归进行，直到每个数据点都被隔离到一个独立的叶节点；**路径长度**，每个数据点从根节点到达叶节点所经过的边数称为**路径长度**。对于异常点，由于其特性，通常需要更少的分割（即更短的路径）就能被隔离。因此，**路径长度**越短，表示该点越可能是异常；**异常分数**，算法通过计算每个数据点在所有隔离树中的**平均路径长度**来确定其**异常分数**。分数越低，表明该点越可能是异常。具体而言，**异常分数**可以通过以下公式计算：{% mathjax %}s(x) = 2^{-\frac{E[h(x)]}{c(n)}}{% endmathjax %}，其中，{% mathjax %}E[h(x)]{% endmathjax %}是通过所有树计算的**平均路径长度**，{% mathjax %}c(n){% endmathjax %}是二叉搜索树在{% mathjax %}n{% endmathjax %}个观察值下的**平均路径长度**。其主要应用于金融欺诈检测、网络安全、制造业等领域。**孤立森林**(`Isolation Forest`)是一种高效且灵活的**异常检测工具**，通过随机分割和路径长度来识别数据中的异常点。
 
+**孤立森林**(`Isolation Forest`)是一组“**孤立树**”，通过**递归随机分割**来“**隔离**”观测值，可以用树结构表示。隔离样本所需的分割次数对于异常值较低，而对于正常值较高。现在有一个**孤立森林**(`Isolation Forest`)的例子，在玩具数据集上训练的**孤立森林**(`Isolation Forest`)的决策边界。
+```python
+import numpy as np
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+
+n_samples, n_outliers = 120, 40
+rng = np.random.RandomState(0)
+covariance = np.array([[0.5, -0.1], [0.7, 0.4]])
+cluster_1 = 0.4 * rng.randn(n_samples, 2) @ covariance + np.array([2, 2])  # general
+cluster_2 = 0.3 * rng.randn(n_samples, 2) + np.array([-2, -2])  # spherical
+outliers = rng.uniform(low=-4, high=4, size=(n_outliers, 2))
+
+X = np.concatenate([cluster_1, cluster_2, outliers])
+y = np.concatenate([np.ones((2 * n_samples), dtype=int), -np.ones((n_outliers), dtype=int)])
+X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=42)
+
+# 可视化（绘图）
+scatter = plt.scatter(X[:, 0], X[:, 1], c=y, s=20, edgecolor="k")
+handles, labels = scatter.legend_elements()
+plt.axis("square")
+plt.legend(handles=handles, labels=["outliers", "inliers"], title="true class")
+plt.title("Gaussian inliers with \nuniformly distributed outliers")
+plt.show()
+```
+{% asset_img ml_13.png %}
+
+创建**孤立森林**(`Isolation Forest`)，代码实现为：
+```python
+from sklearn.ensemble import IsolationForest
+
+clf = IsolationForest(max_samples=100, random_state=0)
+clf.fit(X_train)
+```
+结果输出为：
+```bash
+IsolationForest(max_samples=100, random_state=0)
+```
+**绘制离散决策边界**，背景颜色表示该给定区域中的样本是否被预测为异常值。散点图显示真实标签。
+```python
+import matplotlib.pyplot as plt
+from sklearn.inspection import DecisionBoundaryDisplay
+
+disp = DecisionBoundaryDisplay.from_estimator(
+    clf,
+    X,
+    response_method="predict",
+    alpha=0.5,
+)
+disp.ax_.scatter(X[:, 0], X[:, 1], c=y, s=20, edgecolor="k")
+disp.ax_.set_title("Binary decision boundary \nof IsolationForest")
+plt.axis("square")
+plt.legend(handles=handles, labels=["outliers", "inliers"], title="true class")
+plt.show()
+```
