@@ -344,3 +344,137 @@ plt.show()
 ```
 {% asset_img ml_10.png %}
 
+##### 拟合椭圆包络(Fitting an elliptic envelope)
+
+**拟合椭圆包络**(`Fitting an elliptic envelope`)是一种用于**异常检测**的机器学习算法，主要用于识别多维数据中的**异常值**。该算法假设数据点遵循**高斯分布**，并试图找到一个最小体积的椭球体，以包围正常数据。任何落在此估计椭球体之外的数据点都被视为**异常值**。拟合椭圆包络**(`Fitting an elliptic envelope`)算法的原理是：**高斯分布假设**，数据点被认为是从**多维高斯分布**中生成的；**椭球体拟合**，算法通过计算数据的**均值**和**协方差矩阵**，拟合出一个椭球体，该椭球体能够覆盖大部分正常数据；**异常值判定**，任何位于此椭球体外的数据点被标记为**异常值**。拟合椭圆包络**(`Fitting an elliptic envelope`)是一种有效的异常检测工具，适用于许多实际应用，如**金融欺诈检测**、**网络安全**等领域。通过合理设置参数和理解其假设，可以有效识别并处理数据中的**异常值**。
+
+下面有一个实例，**鲁棒协方差估计与马哈拉诺比斯距离的相关性**。**鲁棒协方差**估计是一种用于**异常检测**的技术，特别适用于**高斯分布**的数据。**马哈拉诺比斯距离**是一种衡量一个点与分布之间距离的方法，它通过分布的**均值**和**协方差矩阵**来进行计算。其原理为：**高斯分布假设**，在**高斯分布**的数据中，**马哈拉诺比斯距离**可以用来计算**观测值**与**分布模式**之间的距离；**协方差矩阵的影响**，标准的**最大似然估计器**(`MLE`)对数据集中异常值非常敏感，因此计算出的**马哈拉诺比斯距离**也会受到影响。为了确保估计结果能够抵抗“错误”观测值的干扰，使用**鲁棒的协方差估计器**是更好的选择；**最小协方差行列式估计器**(`MCD`)：`MCD`是一种**鲁棒的协方差估计器**，具有高抗干扰能力。它通过寻找具有最小行列式的样本子集，从而计算出更准确的**协方差矩阵**。
+
+这里的**马哈拉诺比斯距离**计算公式：{% mathjax %}d_{(\mu,\sum)}(x_i)^2 = (x_i - \mu)^T\sum^{-1}(x_i - \mu){% endmathjax %}，其中{% mathjax %}\mu{% endmathjax %}是高斯分布的位置，{% mathjax %}\sum{% endmathjax %}是高斯分布的协方差。最好使用**鲁棒的协方差估计器**来保证估计值能够抵抗数据集中的“错误”观测值，并且计算出的**马哈拉诺比斯距离**准确反映观测值的真实性。**最小协方差行列式估计器**(`MCD`)是一个鲁棒的、高抗干扰能力的协方差估计器。`MCD`是为了找到{% mathjax %}\frac{n_{\text{sample}} + n_{\text{\features}} + 1}{2}{% endmathjax %}最小行列式的样本子集，从而计算出更准确的协方差矩阵。此示例说明了**马哈拉诺比斯距离**如何受到异常数据的影响。当使用**最大似然估计**(`MLE`)的**马哈拉诺比斯距离**时，从污染分布中得出的观测值与来自真实**高斯分布**的观测值无法得到区分。使用基于**最小协方差行列式估计器**(`MCD`)的**马哈拉诺比斯距离**，这两个群体变得可以区分。
+```python
+import numpy as np
+
+# for consistent results
+np.random.seed(7)
+
+n_samples = 125
+n_outliers = 25
+n_features = 2
+
+# 生成一个包含125个样本和2个特征的数据集。两个特征都是高斯分布的，
+# 均值为0，但特征1的标准差等于2，特征2 的标准差等于1
+gen_cov = np.eye(n_features)
+gen_cov[0, 0] = 2.0
+X = np.dot(np.random.randn(n_samples, n_features), gen_cov)
+
+# 将25个样本替换为高斯异常样本，其中特征1的标准差等于1，特征2的标准差等于7。
+outliers_cov = np.eye(n_features)
+outliers_cov[np.arange(1, n_features), np.arange(1, n_features)] = 7.0
+X[-n_outliers:] = np.dot(np.random.randn(n_outliers, n_features), outliers_cov)
+
+```
+下面，将基于`MCD`和`MLE`的**协方差估计器**拟合到我们的数据中，并打印估计器的**协方差矩阵**。请注意，使用基于**最大似然估计器**(`MLE`)估计的特征`2`的方差比使用**最小协方差行列式估计器**(`MCD`)估计的特征`2`的方差高得多。这表明基于**最小协方差行列式估计器**(`MCD`)的鲁棒协方差估计对异常样本的抵抗力更强，这些样本在特征2中具有更大的方差。
+```python
+import matplotlib.pyplot as plt
+from sklearn.covariance import EmpiricalCovariance, MinCovDet
+
+# fit a MCD robust estimator to data
+robust_cov = MinCovDet().fit(X)
+# fit a MLE estimator to data
+emp_cov = EmpiricalCovariance().fit(X)
+print("Estimated covariance matrix:\nMCD (Robust):\n{}\nMLE:\n{}".format(robust_cov.covariance_, emp_cov.covariance_))
+```
+结果输出为：
+```bash
+MCD: [[ 3.26253567e+00 -3.06695631e-03] [-3.06695631e-03  1.22747343e+00]]
+MLE: [[ 3.23773583 -0.24640578] [-0.24640578  7.51963999]]
+```
+为了更直观地展示差异，绘制这两种方法(`MCD,MLE`)计算出的**马哈拉诺比斯距离**的轮廓。请注意，基于鲁棒`MCD`的**马哈拉诺比斯距离**更适合内部黑点，而基于`MLE`的**马哈拉诺比斯距离**则受外部红点的影响更大。
+```python
+import matplotlib.lines as mlines
+
+fig, ax = plt.subplots(figsize=(10, 5))
+# Plot data set
+inlier_plot = ax.scatter(X[:, 0], X[:, 1], color="black", label="inliers")
+outlier_plot = ax.scatter(
+    X[:, 0][-n_outliers:], X[:, 1][-n_outliers:], color="red", label="outliers"
+)
+ax.set_xlim(ax.get_xlim()[0], 10.0)
+ax.set_title("Mahalanobis distances of a contaminated data set")
+
+# Create meshgrid of feature 1 and feature 2 values
+xx, yy = np.meshgrid(
+    np.linspace(plt.xlim()[0], plt.xlim()[1], 100),
+    np.linspace(plt.ylim()[0], plt.ylim()[1], 100),
+)
+zz = np.c_[xx.ravel(), yy.ravel()]
+# Calculate the MLE based Mahalanobis distances of the meshgrid
+mahal_emp_cov = emp_cov.mahalanobis(zz)
+mahal_emp_cov = mahal_emp_cov.reshape(xx.shape)
+emp_cov_contour = plt.contour(
+    xx, yy, np.sqrt(mahal_emp_cov), cmap=plt.cm.PuBu_r, linestyles="dashed"
+)
+# Calculate the MCD based Mahalanobis distances
+mahal_robust_cov = robust_cov.mahalanobis(zz)
+mahal_robust_cov = mahal_robust_cov.reshape(xx.shape)
+robust_contour = ax.contour(
+    xx, yy, np.sqrt(mahal_robust_cov), cmap=plt.cm.YlOrBr_r, linestyles="dotted"
+)
+
+# Add legend
+ax.legend(
+    [
+        mlines.Line2D([], [], color="tab:blue", linestyle="dashed"),
+        mlines.Line2D([], [], color="tab:orange", linestyle="dotted"),
+        inlier_plot,
+        outlier_plot,
+    ],
+    ["MLE dist", "MCD dist", "inliers", "outliers"],
+    loc="upper right",
+    borderaxespad=0,
+)
+
+plt.show()
+```
+{% asset_img ml_11.png %}
+
+如何基于**马哈拉诺比斯距离**来区分异常值？对马哈拉诺比斯距离取立方根，得到近似正态分布，然后用箱线图绘制正常和异常样本的值。基于鲁棒`MCD`的**马哈拉诺比斯距离**，异常值样本的分布与正常值样本的分布更加分离。
+```python
+fig, (ax1, ax2) = plt.subplots(1, 2)
+plt.subplots_adjust(wspace=0.6)
+
+# Calculate cubic root of MLE Mahalanobis distances for samples
+emp_mahal = emp_cov.mahalanobis(X - np.mean(X, 0)) ** (0.33)
+# Plot boxplots
+ax1.boxplot([emp_mahal[:-n_outliers], emp_mahal[-n_outliers:]], widths=0.25)
+# Plot individual samples
+ax1.plot(
+    np.full(n_samples - n_outliers, 1.26),
+    emp_mahal[:-n_outliers],
+    "+k",
+    markeredgewidth=1,
+)
+ax1.plot(np.full(n_outliers, 2.26), emp_mahal[-n_outliers:], "+k", markeredgewidth=1)
+ax1.axes.set_xticklabels(("inliers", "outliers"), size=15)
+ax1.set_ylabel(r"$\sqrt[3]{\rm{(Mahal. dist.)}}$", size=16)
+ax1.set_title("Using non-robust estimates\n(Maximum Likelihood)")
+
+# Calculate cubic root of MCD Mahalanobis distances for samples
+robust_mahal = robust_cov.mahalanobis(X - robust_cov.location_) ** (0.33)
+# Plot boxplots
+ax2.boxplot([robust_mahal[:-n_outliers], robust_mahal[-n_outliers:]], widths=0.25)
+# Plot individual samples
+ax2.plot(
+    np.full(n_samples - n_outliers, 1.26),
+    robust_mahal[:-n_outliers],
+    "+k",
+    markeredgewidth=1,
+)
+ax2.plot(np.full(n_outliers, 2.26), robust_mahal[-n_outliers:], "+k", markeredgewidth=1)
+ax2.axes.set_xticklabels(("inliers", "outliers"), size=15)
+ax2.set_ylabel(r"$\sqrt[3]{\rm{(Mahal. dist.)}}$", size=16)
+ax2.set_title("Using robust estimates\n(Minimum Covariance Determinant)")
+
+plt.show()
+```
+{% asset_img ml_12.png %}
