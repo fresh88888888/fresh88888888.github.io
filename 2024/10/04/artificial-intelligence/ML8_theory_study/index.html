@@ -46,6 +46,8 @@
 <meta property="og:image" content="https://fresh88888888.github.io/2024/10/04/artificial-intelligence/ML8_theory_study/ml_11.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/10/04/artificial-intelligence/ML8_theory_study/ml_12.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/10/04/artificial-intelligence/ML8_theory_study/ml_13.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/10/04/artificial-intelligence/ML8_theory_study/ml_14.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/10/04/artificial-intelligence/ML8_theory_study/ml_15.png">
 <meta property="article:published_time" content="2024-10-04T03:24:11.000Z">
 <meta property="article:modified_time" content="2024-10-04T03:24:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -313,14 +315,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>9.1k</span>
+      <span>9.3k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>30 分钟</span>
+      <span>31 分钟</span>
     </span>
 </div>
 
@@ -462,6 +464,12 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IsolationForest(max_samples=100, random_state=0)</span><br></pre></td></tr></table></figure>
 <p><strong>绘制离散决策边界</strong>，背景颜色表示该给定区域中的样本是否被预测为异常值。散点图显示真实标签。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> sklearn.inspection <span class="keyword">import</span> DecisionBoundaryDisplay</span><br><span class="line"></span><br><span class="line">disp = DecisionBoundaryDisplay.from_estimator(</span><br><span class="line">    clf,</span><br><span class="line">    X,</span><br><span class="line">    response_method=<span class="string">&quot;predict&quot;</span>,</span><br><span class="line">    alpha=<span class="number">0.5</span>,</span><br><span class="line">)</span><br><span class="line">disp.ax_.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>], c=y, s=<span class="number">20</span>, edgecolor=<span class="string">&quot;k&quot;</span>)</span><br><span class="line">disp.ax_.set_title(<span class="string">&quot;Binary decision boundary \nof IsolationForest&quot;</span>)</span><br><span class="line">plt.axis(<span class="string">&quot;square&quot;</span>)</span><br><span class="line">plt.legend(handles=handles, labels=[<span class="string">&quot;outliers&quot;</span>, <span class="string">&quot;inliers&quot;</span>], title=<span class="string">&quot;true class&quot;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/10/04/artificial-intelligence/ML8_theory_study/ml_14.png" class="">
+
+<p><strong>绘制路径长度的决策边界</strong>，当一组随机树共同产生较短的<strong>路径长度</strong>并隔离某些特定样本时，该数据点很可能是异常值，并且<strong>正态性度量</strong>接近<code>0</code>。同样，较大的路径对应于接近<code>1</code>，该数据点很可能是正常值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">disp = DecisionBoundaryDisplay.from_estimator(clf,X,response_method=<span class="string">&quot;decision_function&quot;</span>,alpha=<span class="number">0.5</span>,)</span><br><span class="line">disp.ax_.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>], c=y, s=<span class="number">20</span>, edgecolor=<span class="string">&quot;k&quot;</span>)</span><br><span class="line">disp.ax_.set_title(<span class="string">&quot;Path length decision boundary \nof IsolationForest&quot;</span>)</span><br><span class="line">plt.axis(<span class="string">&quot;square&quot;</span>)</span><br><span class="line">plt.legend(handles=handles, labels=[<span class="string">&quot;outliers&quot;</span>, <span class="string">&quot;inliers&quot;</span>], title=<span class="string">&quot;true class&quot;</span>)</span><br><span class="line">plt.colorbar(disp.ax_.collections[<span class="number">1</span>])</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<img data-src="/2024/10/04/artificial-intelligence/ML8_theory_study/ml_15.png" class="">
+
     </div>
 
     
@@ -540,7 +548,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">64:28</span>
+    <span title="站点阅读时长">64:29</span>
   </span>
 </div>
 <div class="busuanzi-count">
