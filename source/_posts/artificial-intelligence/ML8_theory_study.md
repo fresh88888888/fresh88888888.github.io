@@ -663,6 +663,206 @@ plt.tight_layout()
 - 最后，取方差的平方根得到标准差：{% mathjax %}\text{Standard Deviation} = \sqrt{\text{Variance}}{% endmathjax %}。
 
 如果知道样本中值的分布是**高斯分布**或**类高斯分布**，就可以使用样本的**标准差**(`Standard deviation`)作为识别异常值的临界值。**标准差**(`Standard deviation`)显示各个数据点与平均值之间的差异。如果数据分布为正态分布，则`68%`的数据值位于平均值的一个标准差内；`95%`的数据值位于两个标准差内；`99.7%`的数据值位于三个标准差内。根据设定的`2`倍或`3`倍**标准差**(`Standard deviation`)，此方法可能无法检测异常值，因为异常值会增加标准差。异常值越极端，**标准差**(`Standard deviation`)受到的影响就越大。**标准差**(`Standard deviation`)方法是一种直观且有效的**异常值检测**工具，适用于多种应用场景。通过利用均值和标准差，它能够帮助分析师识别出潜在的问题数据，从而提高数据分析结果的可靠性。
-
 {% asset_img ml_18.png %}
+
+```python
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from matplotlib import pyplot as plt
+from collections import Counter
+
+df_raw = pd.read_csv('../input/fraud-detection/creditcard.csv')
+df=df_raw.drop(['Time'], axis=1)
+feature_list = ['V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 'V10', 'V11','V12', 'V13', 'V14', 
+    'V15', 'V16', 'V17', 'V18', 'V19', 'V20', 'V21','V22', 'V23', 'V24', 'V25', 'V26', 'V27', 'V28', 'Amount']
+
+def StDev_method (df,n,features):
+    """
+    Takes a dataframe df of features and returns an index list corresponding to the observations 
+    containing more than n outliers according to the standard deviation method.
+    """
+    outlier_indices = []
+    
+    for column in features:
+        # calculate the mean and standard deviation of the data frame
+        data_mean = df[column].mean()
+        data_std = df[column].std()
+        
+        # calculate the cutoff value
+        cut_off = data_std * 3
+        
+        # Determining a list of indices of outliers for feature column        
+        outlier_list_column = df[(df[column] < data_mean - cut_off) | (df[column] > data_mean + cut_off)].index
+        
+        # appending the found outlier indices for column to the list of outlier indices 
+        outlier_indices.extend(outlier_list_column)
+        
+    # selecting observations containing more than x outliers
+    outlier_indices = Counter(outlier_indices)        
+    multiple_outliers = list( k for k, v in outlier_indices.items() if v > n )
+    
+    # Calculate the number of records below and above lower and above bound value respectively
+    df1 = df[df[column] > data_mean + cut_off]
+    df2 = df[df[column] < data_mean - cut_off]
+    print('Total number of outliers is:', df1.shape[0]+ df2.shape[0])
+    
+    return multiple_outliers   
+
+# detecting outliers
+Outliers_StDev = StDev_method(df,1,feature_list)
+
+# dropping outliers
+df_out2 = df.drop(Outliers_StDev, axis = 0).reset_index(drop=True)
+
+# Total number of outliers is: 4076
+
+fig, axes = plt.subplots(nrows=3, ncols=3,figsize=(13,8))
+fig.suptitle('Distributions of most important features after dropping outliers using Standard Deviation Method\n', size = 18)
+
+axes[0,0].hist(df_out2['V17'], bins=60, linewidth=0.5, edgecolor="white")
+axes[0,0].set_title("V17 distribution");
+
+axes[0,1].hist(df_out2['V10'], bins=60, linewidth=0.5, edgecolor="white")
+axes[0,1].set_title("V10 distribution");
+
+axes[0,2].hist(df_out2['V12'], bins=60, linewidth=0.5, edgecolor="white")
+axes[0,2].set_title("V12 distribution");
+
+axes[1,0].hist(df_out2['V16'], bins=60, linewidth=0.5, edgecolor="white")
+axes[1,0].set_title("V16 distribution");
+
+axes[1,1].hist(df_out2['V14'], bins=60, linewidth=0.5, edgecolor="white")
+axes[1,1].set_title("V14 distribution");
+
+axes[1,2].hist(df_out2['V3'], bins=60, linewidth=0.5, edgecolor="white")
+axes[1,2].set_title("V3 distribution");
+
+axes[2,0].hist(df_out2['V7'], bins=60, linewidth=0.5, edgecolor="white")
+axes[2,0].set_title("V7 distribution");
+
+axes[2,1].hist(df_out2['V11'], bins=60, linewidth=0.5, edgecolor="white")
+axes[2,1].set_title("V11 distribution");
+
+axes[2,2].hist(df_out2['V4'], bins=60, linewidth=0.5, edgecolor="white")
+axes[2,2].set_title("V4 distribution");
+
+plt.tight_layout()
+plt.show()
+```
+{% asset_img ml_19.png "左边是删除异常值前的数据点分布，右边是用标准差方法删除异常值的数据点分布" %}
+
+##### Z-score方法
+
+`Z-score`方法是一种用于标准化数据的统计技术，主要用于识别异常值和比较不同数据集。`Z-score`表示一个数据点与总体均值之间的距离，以**标准差**为单位。`Z-score`（标准分数）是一个数值，表示某个数据点与总体均值的偏离程度。计算公式为：{% mathjax %}z = \frac{x -\mu}{\sigma}{% endmathjax %}，其中{% mathjax %}x{% endmathjax %}是要计算的原始数据值，{% mathjax %}\mu{% endmathjax %}是总体均值，{% mathjax %} \sigma{% endmathjax %}是总体标准差。`Z-score`方法的计算步骤为：1. 确定原始数据值{% mathjax %}x{% endmathjax %}；2. 计算均值{% mathjax %}\mu{% endmathjax %}（将所有数据值相加后除以数据点的数量）；3. 计算标准差{% mathjax %}\sigma{% endmathjax %}（衡量数据点分散程度的指标）；4.代入公式（将**原始数据值**、**均值**和**标准差**代入公式，计算出`Z-score`）。`Z-score`方法是一种有效且广泛应用的工具，用于分析和比较数据。它通过标准化数据，使得在不同条件下的数据分析变得更加直观和可行。
+{% asset_img ml_20.png  %}
+
+```python
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from matplotlib import pyplot as plt
+from collections import Counter
+
+df_raw = pd.read_csv('../input/fraud-detection/creditcard.csv')
+df=df_raw.drop(['Time'], axis=1)
+feature_list = ['V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 'V10', 'V11','V12', 'V13', 'V14', 
+    'V15', 'V16', 'V17', 'V18', 'V19', 'V20', 'V21','V22', 'V23', 'V24', 'V25', 'V26', 'V27', 'V28', 'Amount']
+
+def z_score_method (df,n,features):
+    """
+    Takes a dataframe df of features and returns an index list corresponding to the observations 
+    containing more than n outliers according to the z-score method.
+    """
+    outlier_list = []
+    
+    for column in features:
+        # calculate the mean and standard deviation of the data frame
+        data_mean = df[column].mean()
+        data_std = df[column].std()
+        threshold = 3
+        
+        z_score = abs( (df[column] - data_mean)/data_std )
+        
+        # Determining a list of indices of outliers for feature column        
+        outlier_list_column =  df[z_score > threshold].index
+        
+        # appending the found outlier indices for column to the list of outlier indices 
+        outlier_list.extend(outlier_list_column)
+        
+    # selecting observations containing more than x outliers
+    outlier_list = Counter(outlier_list)        
+    multiple_outliers = list( k for k, v in outlier_list.items() if v > n )
+    
+    # Calculate the number of outlier records
+    df1 = df[z_score > threshold]
+    print('Total number of outliers is:', df1.shape[0])
+    
+    return multiple_outliers
+
+# detecting outliers
+Outliers_z_score = z_score_method(df,1,feature_list)
+
+# dropping outliers
+df_out3 = df.drop(Outliers_z_score, axis = 0).reset_index(drop=True)
+
+# Total number of outliers is: 4076
+
+fig, axes = plt.subplots(nrows=3, ncols=3,figsize=(13,8))
+fig.suptitle('Distributions of most important features after dropping outliers using z-score\n', size = 18)
+
+axes[0,0].hist(df_out3['V17'], bins=60, linewidth=0.5, edgecolor="white")
+axes[0,0].set_title("V17 distribution");
+
+axes[0,1].hist(df_out3['V10'], bins=60, linewidth=0.5, edgecolor="white")
+axes[0,1].set_title("V10 distribution");
+
+axes[0,2].hist(df_out3['V12'], bins=60, linewidth=0.5, edgecolor="white")
+axes[0,2].set_title("V12 distribution");
+
+axes[1,0].hist(df_out3['V16'], bins=60, linewidth=0.5, edgecolor="white")
+axes[1,0].set_title("V16 distribution");
+
+axes[1,1].hist(df_out3['V14'], bins=60, linewidth=0.5, edgecolor="white")
+axes[1,1].set_title("V14 distribution");
+
+axes[1,2].hist(df_out3['V3'], bins=60, linewidth=0.5, edgecolor="white")
+axes[1,2].set_title("V3 distribution");
+
+axes[2,0].hist(df_out3['V7'], bins=60, linewidth=0.5, edgecolor="white")
+axes[2,0].set_title("V7 distribution");
+
+axes[2,1].hist(df_out3['V11'], bins=60, linewidth=0.5, edgecolor="white")
+axes[2,1].set_title("V11 distribution");
+
+axes[2,2].hist(df_out3['V4'], bins=60, linewidth=0.5, edgecolor="white")
+axes[2,2].set_title("V4 distribution");
+
+plt.tight_layout()
+plt.show()
+```
+{% asset_img ml_21.png "左边是删除异常值前的数据点分布，右边是用Z-score方法删除异常值的数据点分布" %}
+
+##### Modified Z-score方法
+
+`Modified Z-score`方法是一种用于识别异常值的统计方法，旨在克服传统`Z-score`在处理小样本或受极端值影响时的局限性。`Modified Z-score`使用**中位数**和**绝对偏差**来计算，使其对异常值更具**鲁棒性**。`Modified Z-score`的计算公式：{% mathjax %}M_i = \frac{0.6745\times (x_i - \tilde{x})}{M\;AD}{% endmathjax %}。其中{% mathjax %}M_i{% endmathjax %}是第{% mathjax %}i{% endmathjax %}个数据点的`Modified Z-score`值，{% mathjax %}x_i{% endmathjax %}是原始数据值，{% mathjax %}\tilde{x}{% endmathjax %}是数据集的中位数，{% mathjax %}{M\;AD}{% endmathjax %}是中位数绝对偏差（`Median Absolute Deviation`），计算公式为{% mathjax %}{M\;AD}= \tilde{|x_i - \tilde{x}|}{% endmathjax %}，计算步骤：1. 计算中位数，首先找出数据集的中位数{% mathjax %}\tilde{x}{% endmathjax %}；计算绝对偏差，对于每个数据点，计算其与中位数的绝对偏差；计算`MAD`，求出所有绝对偏差的中位数，得到`MAD`；计算修正`Z-score`，将每个数据点代入修正`Z-score`公式。通常情况下，如果`Modified Z-score`的绝对值大于`3`，则该数据点被认为是异常值。这一阈值可以根据具体情况进行调整。`Modified Z-score`是一种有效且鲁棒的方法，用于检测异常值。通过利用中位数和绝对偏差，这一方法能够提供更可靠的数据分析结果，尤其是在存在极端值或小样本时。
+
+##### DBSCAN算法
+
+`DBSCAN`是一种强大的基于密度的数据聚类算法。聚类是一种无监督学习技术，我们尝试根据特定特征对数据点进行分组。`DBSCAN`由`Martin Ester`等人于`1996`年提出。它基于这样的假设：**聚类是空间中由低密度区域分隔的密集区域**。为了对数据点进行**聚类**，`DBSCAN`算法将数据的**高密度区域**与**低密度区域**分开。它使用距离和每个聚类的最小点数将点分类为异常值。此方法类似于`K-means`聚类。广泛应用于**无监督机器学习**任务，尤其适用于数据具有任意形状或大小的情况。它通过识别高密度区域中的点来形成聚类，同时将低密度区域中的点视为噪声。`DBSCAN`算法不对数据的分布方式做出假设。`DBSCAN`算法的算法原理为将数据点分为三类：
+- **核心点**：在指定半径内({% mathjax %}(`\varepsilon`){% endmathjax %})有至少`minPoints`个邻居的数据点；
+- **边界点**：距离某个核心点很近，但在其邻域内的邻居数量少于minPts的数据点；
+- **噪声点**：既不是核心点也不是边界点的数据点。
+
+`DBSCAN`算法步骤为：
+- 选择一个未访问的点：从数据集中随机选择一个未访问的点，并标记为已访问；
+- 查找邻域：计算该点的{% mathjax %}(`\varepsilon`){% endmathjax %}邻域内所有点。如果该点是核心点，则开始一个新聚类；
+- 扩展聚类：对于每个邻域内的点，检查它们是否也是核心点。如果是，则继续查找其邻域并将这些点添加到**聚类**中。
+- 处理边界和噪声：如果选定的点是边界点，则将其添加到最近的核心点所在的聚类中。如果没有找到核心点，则将其标记为噪声。
+- 重复以上步骤：直到所有数据点都被访问过。
+
+DBSCAN需要两个主要参数：{% mathjax %}(`\varepsilon`){% endmathjax %}，定义邻域的半径；`minPoints`，在{% mathjax %}(`\varepsilon`){% endmathjax %}邻域内必须包含的最小数据点数量，以被认为是**核心点**。DBSCAN在多个领域中得到了广泛应用，包括客户细分、图像分割、异常检测、环境监测。`DBSCAN`是一种强大的**聚类**算法，适用于多种实际应用场景。它通过基于**密度**的方法有效地处理复杂形状的数据集，并能够识别出噪声，从而提高了数据分析的准确性和可靠性。
+{% asset_img ml_22.png %}
+
+
 
