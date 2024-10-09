@@ -619,6 +619,38 @@ Outliers_IQR = IQR_method(df,1,feature_list)
 df_out = df.drop(Outliers_IQR, axis = 0).reset_index(drop=True)
 
 # Total number of outliers is: 31904
+
+fig, axes = plt.subplots(nrows=3, ncols=3,figsize=(13,8))
+fig.suptitle('Distributions of most important features after dropping outliers using IQR Method\n', size = 18)
+
+axes[0,0].hist(df_out['V17'], bins=60, linewidth=0.5, edgecolor="white")
+axes[0,0].set_title("V17 distribution");
+
+axes[0,1].hist(df_out['V10'], bins=60, linewidth=0.5, edgecolor="white")
+axes[0,1].set_title("V10 distribution");
+
+axes[0,2].hist(df_out['V12'], bins=60, linewidth=0.5, edgecolor="white")
+axes[0,2].set_title("V12 distribution");
+
+axes[1,0].hist(df_out['V16'], bins=60, linewidth=0.5, edgecolor="white")
+axes[1,0].set_title("V16 distribution");
+
+axes[1,1].hist(df_out['V14'], bins=60, linewidth=0.5, edgecolor="white")
+axes[1,1].set_title("V14 distribution");
+
+axes[1,2].hist(df_out['V3'], bins=60, linewidth=0.5, edgecolor="white")
+axes[1,2].set_title("V3 distribution");
+
+axes[2,0].hist(df_out['V7'], bins=60, linewidth=0.5, edgecolor="white")
+axes[2,0].set_title("V7 distribution");
+
+axes[2,1].hist(df_out['V11'], bins=60, linewidth=0.5, edgecolor="white")
+axes[2,1].set_title("V11 distribution");
+
+axes[2,2].hist(df_out['V4'], bins=60, linewidth=0.5, edgecolor="white")
+axes[2,2].set_title("V4 distribution");
+
+plt.tight_layout()
 ```
 {% asset_img ml_17.png "左边是删除异常值前的数据点分布，右边是用IQR删除异常值的数据点分布" %}
 
