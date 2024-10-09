@@ -551,3 +551,73 @@ plt.colorbar(disp.ax_.collections[1])
 plt.show()
 ```
 {% asset_img ml_15.png %}
+
+##### Tukey's IQR方法
+
+`Tukey's IQR`方法用于检测倾斜或非钟形数据中的异常值，因为它不做任何分布假设。但是，`Tukey's IQR`方法可能不适用于小样本量。一般规则是，任何不在(`Q1 - 1.5IQR`)~(`Q3 + 1.5IQR`)范围内的值都是异常值，可以删除。`Tukey's IQR`是通过将数据集划分为四个部分来衡量数据变异性的一种方法。具体来说：
+- `Q1`（第一个四分位数）是将数据按升序排列后，前`25%`的数据点落在其以下的值。
+- `Q3`（第三个四分位数）是后`75%`的数据点落在其以下的值。
+
+四分位距离的计算公式为：{% mathjax %}IQR = Q3 - Q1{% endmathjax %}，`Tukey's IQR`的界限定义为**下界**：{% mathjax %}\text{Lower Fence} = Q1 - 1.5\times IQR{% endmathjax %}；**上界**为：{% mathjax %}\text{Upper Fence} = Q3 + 1.5\times IQR{% endmathjax %}。任何低于**下界**或高于**上界**的数据点都被视为异常值。
+{% asset_img ml_16.png %}
+
+举例说明，这里的数据集包含欧洲持卡人在`2013`年`9`月使用信用卡进行的交易。该数据集显示两天内发生的交易，在`284,807`笔交易中，有`492`笔是欺诈交易。该数据集高度不平衡，欺诈交易占所有交易的`0.172%`。它仅包含数值输入变量，这些变量是`PCA`转换的结果。特征`V1、V2、…V28`是通过`PCA`获得的主要组成，唯一未通过`PCA`转换的特征是“时间”(`Time`)和“金额”(`Amount`)。特征“时间”(`Time`)包含数据集中每笔交易与第一笔交易之间经过的秒数。特征“金额”(`Amount`)是交易金额，此特征可用于基于示例的成本敏感学习。特征“类别”(`Class`)是响应变量，在欺诈情况下取值为`1`，否则取值为`0`。
+```python
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from matplotlib import pyplot as plt
+from collections import Counter
+
+df_raw = pd.read_csv('../input/fraud-detection/creditcard.csv')
+df=df_raw.drop(['Time'], axis=1)
+feature_list = ['V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 'V10', 'V11','V12', 'V13', 'V14', 
+    'V15', 'V16', 'V17', 'V18', 'V19', 'V20', 'V21','V22', 'V23', 'V24', 'V25', 'V26', 'V27', 'V28', 'Amount']
+
+def IQR_method (df,n,features):
+    """
+    Takes a dataframe and returns an index list corresponding to the observations 
+    containing more than n outliers according to the Tukey IQR method.
+    """
+    outlier_list = []
+    
+    for column in features:
+                
+        # 1st quartile (25%)
+        Q1 = np.percentile(df[column], 25)
+        # 3rd quartile (75%)
+        Q3 = np.percentile(df[column],75)
+        
+        # Interquartile range (IQR)
+        IQR = Q3 - Q1
+        
+        # outlier step
+        outlier_step = 1.5 * IQR
+        
+        # Determining a list of indices of outliers
+        outlier_list_column = df[(df[column] < Q1 - outlier_step) | (df[column] > Q3 + outlier_step )].index
+        
+        # appending the list of outliers 
+        outlier_list.extend(outlier_list_column)
+        
+    # selecting observations containing more than x outliers
+    outlier_list = Counter(outlier_list)        
+    multiple_outliers = list( k for k, v in outlier_list.items() if v > n )
+    
+    # Calculate the number of records below and above lower and above bound value respectively
+    df1 = df[df[column] < Q1 - outlier_step]
+    df2 = df[df[column] > Q3 + outlier_step]
+    
+    print('Total number of outliers is:', df1.shape[0]+df2.shape[0])
+    
+    return multiple_outliers
+
+# detecting outliers
+Outliers_IQR = IQR_method(df,1,feature_list)
+
+# dropping outliers
+df_out = df.drop(Outliers_IQR, axis = 0).reset_index(drop=True)
+
+# Total number of outliers is: 31904
+```
+{% asset_img ml_17.png "左边是删除异常值前的数据点分布，右边是用IQR删除异常值的数据点分布" %}
