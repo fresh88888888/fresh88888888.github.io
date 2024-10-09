@@ -621,3 +621,16 @@ df_out = df.drop(Outliers_IQR, axis = 0).reset_index(drop=True)
 # Total number of outliers is: 31904
 ```
 {% asset_img ml_17.png "左边是删除异常值前的数据点分布，右边是用IQR删除异常值的数据点分布" %}
+
+##### 标准差(Standard deviation)方法
+
+**标准差**(`Standard deviation`)是一种用于识别数据集中**异常值**的统计技术，基于数据的**均值**和**标准差**来判断哪些数据点偏离了正常范围。这种方法在许多领域中被广泛应用，尤其是在质量控制、金融分析和科学研究中。**标准差**(`Standard Deviation`)是衡量数据集分散程度的指标。它表示数据点与**均值**之间的平均距离。计算**标准差**的步骤如下：
+- 计算数据集的均值：{% mathjax %}\text{Mean} = \frac{\sum_{i=1}^n x_i}{n}{% endmathjax %}；
+- 计算每个数据点与均值的差异，并将其平方：{% mathjax %}(x_i - \text{Mean})^2{% endmathjax %}；
+- 计算这些平方差的平均值（方差）：{% mathjax %}\text{Variance} = \frac{\sum_{i=1}^n (x_i - \text{Mean})^2}{n}{% endmathjax %}；
+- 最后，取方差的平方根得到标准差：{% mathjax %}\text{Standard Deviation} = \sqrt{\text{Variance}}{% endmathjax %}。
+
+如果知道样本中值的分布是**高斯分布**或**类高斯分布**，就可以使用样本的**标准差**(`Standard deviation`)作为识别异常值的临界值。**标准差**(`Standard deviation`)显示各个数据点与平均值之间的差异。如果数据分布为正态分布，则`68%`的数据值位于平均值的一个标准差内；`95%`的数据值位于两个标准差内；`99.7%`的数据值位于三个标准差内。根据设定的`2`倍或`3`倍**标准差**(`Standard deviation`)，此方法可能无法检测异常值，因为异常值会增加标准差。异常值越极端，**标准差**(`Standard deviation`)受到的影响就越大。**标准差**(`Standard deviation`)方法是一种直观且有效的**异常值检测**工具，适用于多种应用场景。通过利用均值和标准差，它能够帮助分析师识别出潜在的问题数据，从而提高数据分析结果的可靠性。
+
+{% asset_img ml_18.png %}
+
