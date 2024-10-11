@@ -367,3 +367,44 @@ ax.yaxis.set_ticklabels([])
 plt.show()
 ```
 {% asset_img ml_5.png %}
+
+###### 增量主成分分析(IPCA)
+
+**增量主成分分析**(`IPCA`)是一种用于处理大规模数据集的降维技术，特别适合于不能一次性加载到内存中的数据。与传统的主成分分析(`PCA`)不同，**增量主成分分析**(`IPCA`)允许逐步更新模型，通过分批处理数据来实现高效的计算。**增量主成分分析**(`IPCA`)基本原理：**数据分批处理**，将大数据集划分为多个小批次，每次只处理一个批次的数据。这种方式使得内存使用量与输入数据样本数量无关，而是与特征数量相关；**更新模型**，每当新的一批数据到达时，使用当前模型的状态（如**主成分**和**协方差矩阵**）来更新**主成分**。这通常涉及到对当前**主成分**进行调整，以反映新数据的影响；**特征值和特征向量计算**，通过对当前的**协方差矩阵**进行**特征值分解**，提取新的**主成分**。
+
+当要分解的数据集太大而无法装入内存时，**增量主成分分析**(`IPCA`)通常用于替代**主成分分析**(`PCA`)。**增量主成分分析**(`IPCA`)使用与输入数据样本数量无关的内存量为输入数据构建**低秩近似**。它仍然依赖于输入数据特征，但更改批处理大小可以控制内存使用量。此示例可直观地检查**增量主成分分析**(`IPCA`)是否能够找到与**主成分分析**(`PCA`)相似的数据投影（符号翻转），**增量主成分分析**(`IPCA`)适用于无法装入内存的大型数据集，这时需要增量方法。
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.datasets import load_iris
+from sklearn.decomposition import PCA, IncrementalPCA
+
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+n_components = 2
+ipca = IncrementalPCA(n_components=n_components, batch_size=10)
+X_ipca = ipca.fit_transform(X)
+
+pca = PCA(n_components=n_components)
+X_pca = pca.fit_transform(X)
+
+colors = ["navy", "turquoise", "darkorange"]
+
+for X_transformed, title in [(X_ipca, "Incremental PCA"), (X_pca, "PCA")]:
+    plt.figure(figsize=(8, 8))
+    for color, i, target_name in zip(colors, [0, 1, 2], iris.target_names):
+        plt.scatter(X_transformed[y == i, 0],X_transformed[y == i, 1],color=color,lw=2,label=target_name,)
+
+    if "Incremental" in title:
+        err = np.abs(np.abs(X_pca) - np.abs(X_ipca)).mean()
+        plt.title(title + " of iris dataset\nMean absolute unsigned error %.6f" % err)
+    else:
+        plt.title(title + " of iris dataset")
+    plt.legend(loc="best", shadow=False, scatterpoints=1)
+    plt.axis([-4, 4, -1.5, 1.5])
+
+plt.show()
+```
+{% asset_img ml_6.png %}
