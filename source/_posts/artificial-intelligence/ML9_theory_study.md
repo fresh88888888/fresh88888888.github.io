@@ -210,9 +210,6 @@ plt.show()
 
 下面是一个基于权重浓度先验类型（**变分贝叶斯高斯混合**）来分析数据的例子。这里会涉及到**狄利克雷**(`Dirichlet`)**分布**的**有限混合模型**和**狄利克雷**(`Dirichlet`)**过程**的**无限混合模型**：
 ```python
-# Author: Thierry Guillemot <thierry.guillemot.work@gmail.com>
-# License: BSD 3 clause
-
 import matplotlib as mpl
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
