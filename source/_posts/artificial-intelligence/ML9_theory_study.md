@@ -317,3 +317,53 @@ plt.show()
 {% asset_img ml_4.png %}
 
 #### 流形学习(Manifold Learning)
+
+**流形学习**(`Manifold Learning`)是一种**非线性降维**技术，旨在从**高维数据**中提取低维流形结构。它基于这样一个假设：高维数据通常分布在一个**低维流形**上，这种流形可以通过捕捉数据的内在几何特征来进行建模。**流形**：在数学中，**流形**是一个局部类似于**欧几里得空间**的空间。简单来说，**流形**可以被视为一种“**曲面**”，在高维空间中具有低维的特性。例如，二维球面是三维空间中的一个**流形**。**高维数据**：许多实际应用中的数据（如图像、文本、音频等）通常位于高维空间中。**流形学习**的目标是找到这些**高维数据**的低维表示，同时尽可能保留数据的结构和特征。**流形学习**包含多种算法和技术，如**主成分分析**(`PCA`)、`t-`分布随机邻域嵌入(`t-SNE`)、等距映射(`Isomap`)、局部线性嵌入(`LLE`)、多维尺度分析(`MDS`)、`Hessian`特征映射(`HLLE`)、谱嵌入(`Spectral Embedding`)、统一流形近似与投影(`UMAP`)等。
+
+##### 主成分分析(PCA)
+
+**主成分分析**(`Principal Component Analysis, PCA`)是一种常用的**线性降维技术**，旨在通过提取数据中的主要特征来减少数据的维度，同时尽可能保留原始数据的变异性。**主成分分析**(`PCA`)在**数据预处理**、**特征提取**和**可视化**等领域中广泛应用。**主成分分析**(`PCA`)原理：**主成分分析**(`PCA`)的核心思想是将**高维数据**投影到**低维空间**中，使得投影后的数据在新的坐标系中具有最大的**方差**。具体步骤如下：
+**标准化数据**：首先对数据进行标准化处理，确保每个特征的**均值**为`0`，**方差**为`1`。这一步是为了消除不同特征之间的**量纲影响**。
+**计算协方差矩阵**：计算标准化后数据的**协方差矩阵** {% mathjax %}C{% endmathjax %}，其公式为：{% mathjax %}C = \frac{1}{n - 1}(X^T X){% endmathjax %}。其中{% mathjax %}X{% endmathjax %}是标准化后的数据矩阵，{% mathjax %}n{% endmathjax %}是样本数量。
+- **特征值分解**：对**协方差矩阵**进行**特征值分解**，得到特征值和对应的特征向量。**特征值**表示每个主成分所解释的方差大小，而**特征向量**则表示新坐标系的方向。
+- **选择主成分**：根据**特征值**的大小选择前{% mathjax %}k{% endmathjax %}个**主成分**，这些**主成分**对应于最大的**特征值**。
+- **转换数据**：将原始数据投影到选定的**主成分**上，得到降维后的数据表示。
+
+下面是鸢尾花数据集的一个示例，它由4个特征组成，投影在可以解释**最大方差**的2个维度上：
+```python
+import matplotlib.pyplot as plt
+import mpl_toolkits.mplot3d  
+import numpy as np
+from sklearn import datasets, decomposition
+
+np.random.seed(5)
+
+iris = datasets.load_iris()
+X = iris.data
+y = iris.target
+
+fig = plt.figure(1, figsize=(4, 3))
+plt.clf()
+
+ax = fig.add_subplot(111, projection="3d", elev=48, azim=134)
+ax.set_position([0, 0, 0.95, 1])
+
+plt.cla()
+pca = decomposition.PCA(n_components=3)
+pca.fit(X)
+X = pca.transform(X)
+
+for name, label in [("Setosa", 0), ("Versicolour", 1), ("Virginica", 2)]:
+    ax.text3D(X[y == label, 0].mean(),X[y == label, 1].mean() + 1.5,X[y == label, 2].mean(),name,horizontalalignment="center",
+        bbox=dict(alpha=0.5, edgecolor="w", facecolor="w"),)
+
+# Reorder the labels to have colors matching the cluster results
+y = np.choose(y, [1, 2, 0]).astype(float)
+ax.scatter(X[:, 0], X[:, 1], X[:, 2], c=y, cmap=plt.cm.nipy_spectral, edgecolor="k")
+
+ax.xaxis.set_ticklabels([])
+ax.yaxis.set_ticklabels([])
+
+plt.show()
+```
+{% asset_img ml_5.png %}
