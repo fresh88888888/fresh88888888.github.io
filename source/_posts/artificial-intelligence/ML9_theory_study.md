@@ -180,3 +180,136 @@ plt.show()
 {% asset_img ml_2.png %}
 
 在图中，训练数据以点显示，而测试数据以十字显示。
+
+##### 变分贝叶斯高斯混合模型(VB-GMM)
+
+**变分贝叶斯高斯混合模型**(`VB-GMM`)是一种强大的统计技术，用于数据分析中的**聚类**和**密度估计**。它将**高斯混合模型**(`GMM`)的概念与**变分推断**结合在一起，允许有效地**近似后验分布**。这里再提一下**高斯混合模型**(`GMM`)的原理：**高斯混合模型**(`GMM`)假设数据点是从多个**高斯分布**的混合中生成的。每个分布对应一个**聚类**，由其**均值**和**协方差**特征化。该模型由以下内容定义：**潜在变量**，每个数据点与一个**潜在变量**相关联，指示其属于哪个**高斯成分**；**参数**，模型参数包括**高斯成分**的**均值**、**协方差**和**混合系数**。目标是从观察到的数据中估计这些参数。
+
+**变分推断**：**变分推断**提供了一种**近似复杂后验分布**的框架。它不是直接计算真实后验（通常计算上不可行），而是通过优化一个更简单的分布来寻求近似。关键概念包括：**均场近似**，假设**联合分布**可以**因子化**为独立成分，从而简化计算；**证据下界**(`ELBO`)，**变分推断**中的优化目标是最大化`ELBO`，它作为观察数据**边际似然**的下界。这涉及最小化**近似分布**与**真实后验**之间的`Kullback-Leibler(KL)`**散度**。在`GMM`的背景下，**变分推断**可以完成以下工作：
+- **参数估计**：可以使用**变分推断**迭代更新每个**高斯成分**的参数。这包括根据当前数据点对聚类的分配来估计**均值**、**协方差**和**混合比例**。
+- **处理不确定性**：通过将参数视为分布而非固定值，`VB-GMM`捕捉参数估计中的不确定性，从而导致更稳定的聚类结果。
+- **可扩展性**：与传统方法（如**期望最大化**(`EM`)相比，**变分推断**通常更具可扩展性，尤其是在处理大数据集时。
+
+实施步骤：
+- **模型规范**：定义成分（**聚类**）的数量及其**先验分布**。
+- **变分分布**：选择一个家族的分布来近似潜在变量和参数的**后验**。
+- **优化**：使用迭代更新最大化**证据下界**(`ELBO`)`，调整变分参数直到收敛。
+- **推断**：一旦优化完成，使用**变分分布**对新数据点进行预测或分析聚类特征。
+
+**狄利克雷**(`Dirichlet`)**分布**是一种连续的**多元概率分布**，通常用于**贝叶斯统计**中的**先验分布**。它是**分类分布**和**多项分布**的**共轭先验**，因此在处理这些类型的数据时，使用**狄利克雷**(`Dirichlet`)**分布**可以简化计算。**狄利克雷**(`Dirichlet`)**分布**是由一个正实数向量{% mathjax %}\alpha{% endmathjax %}参数化，通常表示为：{% mathjax %}\text{Dir}(\alpha){% endmathjax %}，它的概率密度函数(`PDF`)适用于{% mathjax %}K{% endmathjax %}维向量{% mathjax %}x{% endmathjax %}，其元素在区间{% mathjax %}[0,1]{% endmathjax %}内，并且满足{% mathjax %}\|x\|_1 = 1{% endmathjax %}(即所有元素之和为1)，这使得**狄利克雷**(`Dirichlet`)**分布**可以被视为{% mathjax %}K{% endmathjax %}类分类事件的概率分布。变分贝叶斯高斯混合提出了两种权重分布的先验类型：具有**狄利克雷**(`Dirichlet`)**分布**的**有限混合模型**和具有**狄利克雷**(`Dirichlet`)**过程**的**无限混合模型**。
+
+**共轭先验**：在**贝叶斯统计**中，如果**后验分布**和**先验分布**属于同一概率分布族，则称它们为**共轭分布**。**狄利克雷**(`Dirichlet`)**分布**作为**多项分布**的**共轭先验**，使得在更新后验时，计算变得更加简单。具体来说，如果我们有一个**多项分布**的参数{% mathjax %}\theta{% endmathjax %}，其**后验分布**依然是一个**狄利克雷**(`Dirichlet`)**分布**。
+
+**对称狄利克雷**(`Dirichlet`)**分布**：**狄利克雷**(`Dirichlet`)**分布**的一个特殊情况是**对称狄利克雷**(`Dirichlet`)**分布**，其中参数向量{% mathjax %}\alpha{% endmathjax %}的所有元素相同。在这种情况下，可以用一个标量值（浓度参数）来表示。对称情况下，当浓度参数{% mathjax %}\alpha = 1{% endmathjax %}时，**对称狄利克雷**(`Dirichlet`)**分布**等价于标准`(K-1)-simplex`上的**均匀分布**。当浓度参数大于`1`时，倾向于生成**均匀分布**；当小于`1`时，则倾向于生成**稀疏分布**。
+
+**狄利克雷**(`Dirichlet`)**过程**是一种重要的随机过程，广泛应用于**贝叶斯非参数统计**中。它的主要特点是能够生成**随机概率分布**，这些分布可以用于建模数据的潜在结构，尤其是在数据的类别数未知或不固定的情况下。**狄利克雷**(`Dirichlet`)**过程**由两个主要参构成：
+- **基准分布**{% mathjax %}H{% endmathjax %}：这是一个**概率分布**，表示数据分布的先验知识。它提供了**狄利克雷**(`Dirichlet`)**过程**生成的分布的“中心”。
+- **浓度参数**{% mathjax %}\alpha{% endmathjax %}：这是一个正实数，控制生成分布的**离散程度**。较大的{% mathjax %}\alpha{% endmathjax %}值意味着生成的分布可能包含更多的类别，而较小的{% mathjax %}\alpha{% endmathjax %}值则倾向于集中在少数几个类别上。
+
+**狄利克雷**(`Dirichlet`)**过程**性质和特征为：**随机性**，从**狄利克雷**(`Dirichlet`)**过程**中生成的分布几乎总是离散的，即使基准分布{% mathjax %}H{% endmathjax %}是连续的。这种特性使得**狄利克雷**(`Dirichlet`)**过程**特别适合用于聚类和混合模型；**共轭先验**，**狄利克雷**(`Dirichlet`)**过程**在**贝叶斯推断**中作为无限混合模型的**共轭先验**，可以有效地更新**后验分布**；**自适应性**，**狄利克雷**(`Dirichlet`)**过程**能够根据数据自动调整其复杂度，无需预先指定类别数量。这使得它在处理未知类别数的数据时非常有用。
+
+下面是一个基于权重浓度先验类型（**变分贝叶斯高斯混合**）来分析数据的例子。这里会涉及到**狄利克雷**(`Dirichlet`)**分布**的**有限混合模型**和**狄利克雷**(`Dirichlet`)**过程**的**无限混合模型**：
+```python
+# Author: Thierry Guillemot <thierry.guillemot.work@gmail.com>
+# License: BSD 3 clause
+
+import matplotlib as mpl
+import matplotlib.gridspec as gridspec
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.mixture import BayesianGaussianMixture
+
+def plot_ellipses(ax, weights, means, covars):
+    for n in range(means.shape[0]):
+        eig_vals, eig_vecs = np.linalg.eigh(covars[n])
+        unit_eig_vec = eig_vecs[0] / np.linalg.norm(eig_vecs[0])
+        angle = np.arctan2(unit_eig_vec[1], unit_eig_vec[0])
+        # Ellipse needs degrees
+        angle = 180 * angle / np.pi
+        # eigenvector normalization
+        eig_vals = 2 * np.sqrt(2) * np.sqrt(eig_vals)
+        ell = mpl.patches.Ellipse(means[n], eig_vals[0], eig_vals[1], angle=180 + angle, edgecolor="black")
+        ell.set_clip_box(ax.bbox)
+        ell.set_alpha(weights[n])
+        ell.set_facecolor("#56B4E9")
+        ax.add_artist(ell)
+
+def plot_results(ax1, ax2, estimator, X, y, title, plot_title=False):
+    ax1.set_title(title)
+    ax1.scatter(X[:, 0], X[:, 1], s=5, marker="o", color=colors[y], alpha=0.8)
+    ax1.set_xlim(-2.0, 2.0)
+    ax1.set_ylim(-3.0, 3.0)
+    ax1.set_xticks(())
+    ax1.set_yticks(())
+    plot_ellipses(ax1, estimator.weights_, estimator.means_, estimator.covariances_)
+
+    ax2.get_xaxis().set_tick_params(direction="out")
+    ax2.yaxis.grid(True, alpha=0.7)
+    for k, w in enumerate(estimator.weights_):
+        ax2.bar(k,w,width=0.9,color="#56B4E9",zorder=3,align="center",edgecolor="black",)
+        ax2.text(k, w + 0.007, "%.1f%%" % (w * 100.0), horizontalalignment="center")
+    ax2.set_xlim(-0.6, 2 * n_components - 0.4)
+    ax2.set_ylim(0.0, 1.1)
+    ax2.tick_params(axis="y", which="both", left=False, right=False, labelleft=False)
+    ax2.tick_params(axis="x", which="both", top=False)
+
+    if plot_title:
+        ax1.set_ylabel("Estimated Mixtures")
+        ax2.set_ylabel("Weight of each component")
+
+# Parameters of the dataset
+random_state, n_components, n_features = 2, 3, 2
+colors = np.array(["#0072B2", "#F0E442", "#D55E00"])
+
+covars = np.array([[[0.7, 0.0], [0.0, 0.1]], [[0.5, 0.0], [0.0, 0.1]], [[0.5, 0.0], [0.0, 0.1]]])
+samples = np.array([200, 500, 200])
+means = np.array([[0.0, -0.70], [0.0, 0.0], [0.0, 0.70]])
+
+# mean_precision_prior= 0.8 to minimize the influence of the prior
+estimators = [
+    (
+        "Finite mixture with a Dirichlet distribution\nprior and " r"$\gamma_0=$",
+        BayesianGaussianMixture(
+            weight_concentration_prior_type="dirichlet_distribution",
+            n_components=2 * n_components,
+            reg_covar=0,
+            init_params="random",
+            max_iter=1500,
+            mean_precision_prior=0.8,
+            random_state=random_state,
+        ),
+        [0.001, 1, 1000],
+    ),
+    (
+        "Infinite mixture with a Dirichlet process\n prior and" r"$\gamma_0=$",
+        BayesianGaussianMixture(
+            weight_concentration_prior_type="dirichlet_process",
+            n_components=2 * n_components,
+            reg_covar=0,
+            init_params="random",
+            max_iter=1500,
+            mean_precision_prior=0.8,
+            random_state=random_state,
+        ),
+        [1, 1000, 100000],
+    ),
+]
+
+# Generate data
+rng = np.random.RandomState(random_state)
+X = np.vstack([rng.multivariate_normal(means[j], covars[j], samples[j]) for j in range(n_components)])
+y = np.concatenate([np.full(samples[j], j, dtype=int) for j in range(n_components)])
+
+# Plot results in two different figures
+for title, estimator, concentrations_prior in estimators:
+    plt.figure(figsize=(4.7 * 3, 8))
+    plt.subplots_adjust(bottom=0.04, top=0.90, hspace=0.05, wspace=0.05, left=0.03, right=0.99)
+
+    gs = gridspec.GridSpec(3, len(concentrations_prior))
+    for k, concentration in enumerate(concentrations_prior):
+        estimator.weight_concentration_prior = concentration
+        estimator.fit(X)
+        plot_results(plt.subplot(gs[0:2, k]),plt.subplot(gs[2, k]),estimator,X,y,r"%s$%.1e$" % (title, concentration),plot_title=k == 0,)
+
+plt.show()
+```
