@@ -310,3 +310,10 @@ for title, estimator, concentrations_prior in estimators:
 
 plt.show()
 ```
+{% asset_img ml_3.png %}
+
+****
+
+{% asset_img ml_4.png %}
+
+#### 流形学习(Manifold Learning)
