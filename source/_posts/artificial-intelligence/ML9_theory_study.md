@@ -468,5 +468,5 @@ pca_estimator = decomposition.PCA(n_components=n_components, svd_solver="randomi
 pca_estimator.fit(faces_centered)
 plot_gallery("Eigenfaces - PCA using randomized SVD", pca_estimator.components_[:n_components])
 ```
-{% asset_img ml_6.png "左边是原始人脸面部数据，右边是通过随机奇异值分解(SVD)的PCA降维后的数据" %}
+{% asset_img ml_7.png "左边是原始人脸面部数据，右边是通过随机奇异值分解(SVD)的PCA降维后的数据" %}
 
