@@ -417,7 +417,7 @@ plt.show()
 - **计算**`SVD`：对投影后的数据执行标准的**奇异值分解**，得到**奇异值**和对应的**奇异向量**。这些**奇异向量**用于构建**主成分分析**(`PCA`)的主成分。
 - **选择主成分**：根据**奇异值**选择前{% mathjax %}k{% endmathjax %}个主成分，这些主成分对应于**最大方差**方向。
 
-通过删除与较低**奇异值**相关的分量的**奇异向量**，将数据投影到保留大部分方差的**低维空间**通常很有趣。例如，如果我们使用{% mathjax %}64\times 64{% endmathjax %}像素灰度图片进行人脸识别，数据的维数为`4096`，在如此宽的数据上训练`RBF`**支持向量机**的速度很慢。此外，数据的固有维数远低于`4096`，因为所有人脸图片看起来都有些相似。样本位于维数低得多的**流形**上（例如大约`200`）。**主成分分析**(`PCA`)算法可用于线性变换数据，同时降低维数并同时保留大部分方差。例如，下图显示了`Olivetti`数据集中的`16`个样本肖像（以`0.0`为中心）。右侧是重新**流形**为肖像的前`16`个**奇异向量**。由于我们只需数据集前`16`个**奇异向量**样本大小为{% mathjax %}n_{\text{sample}} = 400{% endmathjax %}且特征数为{% mathjax %}n_{\text{features}} = 64\times 64 = 4096{% endmathjax %}，计算时间小于`1s`。注意{% mathjax %}n_{\text{max}} = \max(n_{\text{sample}}, n_{\text{features}}){% endmathjax %}和{% mathjax %}n_{\text{min}} = \min(n_{\text{sample}}, n_{\text{features}}){% endmathjax %}，则其时间复杂度为{% mathjax %}\mathcal{O}(n_{\text{max}}^2\cdot n_{\text{components}}){% endmathjax %}而不是{% mathjax %}\mathcal{O}(n_{\text{max}}^2\cdot n_{\text{min}}){% endmathjax %}。
+通过删除与较低**奇异值**相关的分量的**奇异向量**，将数据投影到保留大部分方差的**低维空间**通常很有趣。例如使用{% mathjax %}64\times 64{% endmathjax %}像素灰度图片进行人脸识别，数据的维数为`4096`，在如此宽的数据上训练`RBF`**支持向量机**的速度很慢。此外，数据的固有维数远低于`4096`，因为所有人脸图片看起来都有些相似。样本位于维数低得多的**流形**上（例如大约`200`）。**主成分分析**(`PCA`)算法可用于线性变换数据，同时降低维数并同时保留大部分方差。例如，下图显示了`Olivetti`数据集中的`16`个样本肖像（以`0.0`为中心）。右侧是重新**流形**为肖像的前`16`个**奇异向量**。由于我们只需数据集前`16`个**奇异向量**样本大小为{% mathjax %}n_{\text{sample}} = 400{% endmathjax %}且特征数为{% mathjax %}n_{\text{features}} = 64\times 64 = 4096{% endmathjax %}，计算时间小于`1s`。注意{% mathjax %}n_{\text{max}} = \max(n_{\text{sample}}, n_{\text{features}}){% endmathjax %}和{% mathjax %}n_{\text{min}} = \min(n_{\text{sample}}, n_{\text{features}}){% endmathjax %}，则其时间复杂度为{% mathjax %}\mathcal{O}(n_{\text{max}}^2\cdot n_{\text{components}}){% endmathjax %}而不是{% mathjax %}\mathcal{O}(n_{\text{max}}^2\cdot n_{\text{min}}){% endmathjax %}。
 
 下边是一个人脸识别的例子，使用`Olivetti`人脸数据集，使用**奇异值分解**(`SVD`)对数据进行**线性降维**，将其投影到较低维空间中。
 ```python
@@ -463,10 +463,114 @@ def plot_gallery(title, images, n_col=n_col, n_row=n_row, cmap=plt.cm.gray):
 
 plot_gallery("Faces from dataset", faces_centered[:n_components])
 
-# 使用奇异值分解(SVD)对数据进行线性降维，将其投影到较低维空间
+# 使用随机奇异值分解(SVD)对数据进行线性降维，将其投影到较低维空间
 pca_estimator = decomposition.PCA(n_components=n_components, svd_solver="randomized", whiten=True)
 pca_estimator.fit(faces_centered)
 plot_gallery("Eigenfaces - PCA using randomized SVD", pca_estimator.components_[:n_components])
 ```
 {% asset_img ml_7.png "左边是原始人脸面部数据，右边是通过随机奇异值分解(SVD)的PCA降维后的数据" %}
+
+###### 稀疏主成分分析(SPCA)
+
+**稀疏主成分分析**(`SPCA`)是一种统计方法，旨在在保留数据主要特征的同时，增强结果的**可解释性**。与传统的**主成分分析**(`PCA`)相比，**稀疏主成分分析**(`SPCA`)通过引入**稀疏性**，使得**主成分**的系数大多数为`0`，从而突出主要变量，减少冗余信息。**稀疏主成分分析**(`SPCA`)在**主成分分析**(`PCA`)的基础上，引入了**稀疏性**，通过优化目标中的`L1`**正则化项**，使得大部分系数变为`0`。这种方法不仅保留了数据的主要特征，还提高了结果的**可解释性**，因为它强调了对结果影响最大的变量。**主成分分析**(`PCA`)的缺点是，通过该方法提取的成分具有完全密集的表达式，当它们表示为原始变量的**线性组合**时，它们具有非零系数。这可能使解释变得困难。在许多情况下，真实的底层成分可以想象为**稀疏向量**；例如在人脸识别中，**成分**可能自然地映射到面部的各个部分。**稀疏主成分**产生更简约、更易于解释的表示，清楚地强调哪些原始特征导致了样本之间的差异。
+
+以下示例使用**稀疏主成分分析**(`SPCA`)从`Olivetti`人脸数据集中提取16个组件，使用{% mathjax %}64\times 64{% endmathjax %}像素灰度图片进行人脸识别，数据的维数为`4096`。
+```python
+import logging
+import matplotlib.pyplot as plt
+from numpy.random import RandomState
+from sklearn import cluster, decomposition
+from sklearn.datasets import fetch_olivetti_faces
+
+rng = RandomState(0)
+
+# Display progress logs on stdout
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+
+# 加载并预处理Olivetti人脸数据集
+faces, _ = fetch_olivetti_faces(return_X_y=True, shuffle=True, random_state=rng)
+n_samples, n_features = faces.shape
+
+# Global centering (focus on one feature, centering all samples)
+faces_centered = faces - faces.mean(axis=0)
+
+# Local centering (focus on one sample, centering all features)
+faces_centered -= faces_centered.mean(axis=1).reshape(n_samples, -1)
+
+# print("Dataset consists of %d faces" % n_samples)
+n_row, n_col = 2, 3
+n_components = n_row * n_col
+image_shape = (64, 64)
+
+# 定义一个函数来绘制面部图
+def plot_gallery(title, images, n_col=n_col, n_row=n_row, cmap=plt.cm.gray):
+    fig, axs = plt.subplots(nrows=n_row,ncols=n_col,figsize=(2.0 * n_col, 2.3 * n_row),facecolor="white",constrained_layout=True,)
+    fig.set_constrained_layout_pads(w_pad=0.01, h_pad=0.02, hspace=0, wspace=0)
+    fig.set_edgecolor("black")
+    fig.suptitle(title, size=16)
+    for ax, vec in zip(axs.flat, images):
+        vmax = max(vec.max(), -vec.min())
+        im = ax.imshow(vec.reshape(image_shape),cmap=cmap,interpolation="nearest",vmin=-vmax,vmax=vmax,)
+        ax.axis("off")
+
+    fig.colorbar(im, ax=axs, orientation="horizontal", shrink=0.99, aspect=40, pad=0.01)
+    plt.show()
+
+# 使用随机奇异值分解(SVD)对数据进行线性降维，将其投影到较低维空间
+pca_estimator = decomposition.PCA(n_components=n_components, svd_solver="randomized", whiten=True)
+pca_estimator.fit(faces_centered)
+plot_gallery("Eigenfaces - PCA using randomized SVD", pca_estimator.components_[:n_components])
+
+# 使用小批量稀疏主成分分析(SPCA)对数据进行先线性降维，将其投影到较低维空间
+batch_pca_estimator = decomposition.MiniBatchSparsePCA(n_components=n_components, alpha=0.1, max_iter=100, batch_size=3, random_state=rng)
+batch_pca_estimator.fit(faces_centered)
+plot_gallery("Sparse components - MiniBatchSparsePCA",batch_pca_estimator.components_[:n_components],)
+```
+{% asset_img ml_7.png "左边是通过随机奇异值分解(SVD)的PCA降维后的数据，右边是通过稀疏主成分分析(SPCA)降维后的数据" %}
+
+##### 核主成分分析(KPCA)
+
+**核主成分分析**(`KPCA`)是一种扩展的**主成分分析**(`PCA`)技术，旨在处理非线性数据。与传统的`PCA`不同，**核主成分分析**(`KPCA`)通过引入**核函数**将数据映射到**高维特征空间**，从而能够在这个空间中进行**线性降维**。**核主成分分析**(`KPCA`)原理是利用**核函数**将原始数据映射到**高维特征空间**，使得在低维空间中非线性可分的数据在**高维空间**中变得**线性可分**。具体步骤如下：
+- **计算核矩阵**：使用**核函数**计算每对样本之间的相似度，形成**核矩阵**。
+- **中心化核矩阵**：将核矩阵中的每个元素减去均值，以确保数据在高维空间中的中心为`0`。
+- **特征值分解**：对中心化后的**核矩阵**进行**特征值分解**，提取**特征向量**和**特征值**。
+- **选择主成分**：根据特征值的大小选择前{% mathjax %}k{% endmathjax %}个主成分。
+- **投影**：将原始数据集投影到选定的主成分上，从而得到降维后的数据。
+
+**核主成分分析**(`KPCA`)的特征求解器包括：**随机求解器**、**密集求解器**、`arpack`**求解器**。接下来举一个例子**主成分分析**(`PCA`)和**核主成分分析**(`KPCA`)投影数据的比较：
+{% asset_img ml_8.png "左边是训练数据集，右边是测试数据集" %}
+
+```python
+from sklearn.datasets import make_circles
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA, KernelPCA
+
+X, y = make_circles(n_samples=1_000, factor=0.3, noise=0.05, random_state=0)
+X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=0)
+_, (train_ax, test_ax) = plt.subplots(ncols=2, sharex=True, sharey=True, figsize=(8, 4))
+
+pca = PCA(n_components=2)
+kernel_pca = KernelPCA(n_components=None, kernel="rbf", gamma=10, fit_inverse_transform=True, alpha=0.1)
+X_test_pca = pca.fit(X_train).transform(X_test)
+X_test_kernel_pca = kernel_pca.fit(X_train).transform(X_test)
+
+fig, (orig_data_ax, pca_proj_ax, kernel_pca_proj_ax) = plt.subplots( ncols=3, figsize=(14, 4))
+orig_data_ax.scatter(X_test[:, 0], X_test[:, 1], c=y_test)
+orig_data_ax.set_ylabel("Feature #1")
+orig_data_ax.set_xlabel("Feature #0")
+orig_data_ax.set_title("Testing data")
+
+pca_proj_ax.scatter(X_test_pca[:, 0], X_test_pca[:, 1], c=y_test)
+pca_proj_ax.set_ylabel("Principal component #1")
+pca_proj_ax.set_xlabel("Principal component #0")
+pca_proj_ax.set_title("Projection of testing data\n using PCA")
+
+kernel_pca_proj_ax.scatter(X_test_kernel_pca[:, 0], X_test_kernel_pca[:, 1], c=y_test)
+kernel_pca_proj_ax.set_ylabel("Principal component #1")
+kernel_pca_proj_ax.set_xlabel("Principal component #0")
+kernel_pca_proj_ax.set_title("Projection of testing data\n using KernelPCA")
+plt.show()
+```
+{% asset_img ml_9.png "左边是测试数据集，中间使用PCA投影的测试数据，右边使用KernelPCA投影的测试数据" %}
 
