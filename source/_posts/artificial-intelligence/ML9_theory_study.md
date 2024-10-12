@@ -417,3 +417,56 @@ plt.show()
 - **计算**`SVD`：对投影后的数据执行标准的**奇异值分解**，得到**奇异值**和对应的**奇异向量**。这些**奇异向量**用于构建**主成分分析**(`PCA`)的主成分。
 - **选择主成分**：根据**奇异值**选择前{% mathjax %}k{% endmathjax %}个主成分，这些主成分对应于**最大方差**方向。
 
+通过删除与较低**奇异值**相关的分量的**奇异向量**，将数据投影到保留大部分方差的**低维空间**通常很有趣。例如，如果我们使用{% mathjax %}64\times 64{% endmathjax %}像素灰度图片进行人脸识别，数据的维数为`4096`，在如此宽的数据上训练`RBF`**支持向量机**的速度很慢。此外，数据的固有维数远低于`4096`，因为所有人脸图片看起来都有些相似。样本位于维数低得多的**流形**上（例如大约`200`）。**主成分分析**(`PCA`)算法可用于线性变换数据，同时降低维数并同时保留大部分方差。例如，下图显示了`Olivetti`数据集中的`16`个样本肖像（以`0.0`为中心）。右侧是重新**流形**为肖像的前`16`个**奇异向量**。由于我们只需数据集前`16`个**奇异向量**样本大小为{% mathjax %}n_{\text{sample}} = 400{% endmathjax %}且特征数为{% mathjax %}n_{\text{features}} = 64\times 64 = 4096{% endmathjax %}，计算时间小于`1s`。注意{% mathjax %}n_{\text{max}} = \max(n_{\text{sample}}, n_{\text{features}}){% endmathjax %}和{% mathjax %}n_{\text{min}} = \min(n_{\text{sample}}, n_{\text{features}}){% endmathjax %}，则其时间复杂度为{% mathjax %}\mathcal{O}(n_{\text{max}}^2\cdot n_{\text{components}}){% endmathjax %}而不是{% mathjax %}\mathcal{O}(n_{\text{max}}^2\cdot n_{\text{min}}){% endmathjax %}。
+
+下边是一个人脸识别的例子，使用`Olivetti`人脸数据集，使用**奇异值分解**(`SVD`)对数据进行**线性降维**，将其投影到较低维空间中。
+```python
+import logging
+import matplotlib.pyplot as plt
+from numpy.random import RandomState
+from sklearn import cluster, decomposition
+from sklearn.datasets import fetch_olivetti_faces
+
+rng = RandomState(0)
+
+# Display progress logs on stdout
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+
+# 加载并预处理Olivetti人脸数据集
+faces, _ = fetch_olivetti_faces(return_X_y=True, shuffle=True, random_state=rng)
+n_samples, n_features = faces.shape
+
+# Global centering (focus on one feature, centering all samples)
+faces_centered = faces - faces.mean(axis=0)
+
+# Local centering (focus on one sample, centering all features)
+faces_centered -= faces_centered.mean(axis=1).reshape(n_samples, -1)
+
+# print("Dataset consists of %d faces" % n_samples)
+n_row, n_col = 2, 3
+n_components = n_row * n_col
+image_shape = (64, 64)
+
+# 定义一个函数来绘制面部图
+def plot_gallery(title, images, n_col=n_col, n_row=n_row, cmap=plt.cm.gray):
+    fig, axs = plt.subplots(nrows=n_row,ncols=n_col,figsize=(2.0 * n_col, 2.3 * n_row),facecolor="white",constrained_layout=True,)
+    fig.set_constrained_layout_pads(w_pad=0.01, h_pad=0.02, hspace=0, wspace=0)
+    fig.set_edgecolor("black")
+    fig.suptitle(title, size=16)
+    for ax, vec in zip(axs.flat, images):
+        vmax = max(vec.max(), -vec.min())
+        im = ax.imshow(vec.reshape(image_shape),cmap=cmap,interpolation="nearest",vmin=-vmax,vmax=vmax,)
+        ax.axis("off")
+
+    fig.colorbar(im, ax=axs, orientation="horizontal", shrink=0.99, aspect=40, pad=0.01)
+    plt.show()
+
+plot_gallery("Faces from dataset", faces_centered[:n_components])
+
+# 使用奇异值分解(SVD)对数据进行线性降维，将其投影到较低维空间
+pca_estimator = decomposition.PCA(n_components=n_components, svd_solver="randomized", whiten=True)
+pca_estimator.fit(faces_centered)
+plot_gallery("Eigenfaces - PCA using randomized SVD", pca_estimator.components_[:n_components])
+```
+{% asset_img ml_6.png "左边是原始人脸面部数据，右边是通过随机奇异值分解(SVD)的PCA降维后的数据" %}
+
