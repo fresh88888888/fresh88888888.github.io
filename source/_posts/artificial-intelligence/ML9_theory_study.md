@@ -609,5 +609,5 @@ kernel_pca_back_proj_ax.set_xlabel("Feature #0")
 kernel_pca_back_proj_ax.set_title("Reconstruction via KernelPCA")
 plt.show()
 ```
-{% asset_img ml_10.png "左边是测试数据集，中间使用PCA重建原始特征空间，右边使用内核PCA重建原始特征空间" %}
+{% asset_img ml_11.png "左边是测试数据集，中间使用PCA重建原始特征空间，右边使用内核PCA重建原始特征空间" %}
 
