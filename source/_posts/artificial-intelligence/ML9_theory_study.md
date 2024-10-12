@@ -572,5 +572,42 @@ kernel_pca_proj_ax.set_xlabel("Principal component #0")
 kernel_pca_proj_ax.set_title("Projection of testing data\n using KernelPCA")
 plt.show()
 ```
-{% asset_img ml_10.png "左边是测试数据集，中间使用PCA投影的测试数据，右边使用KernelPCA投影的测试数据" %}
+{% asset_img ml_10.png "左边是测试数据集，中间使用PCA投影的测试数据，右边使用内核PCA投影的测试数据" %}
+
+`PCA`线性变换数据导致坐标系将居中，根据其**方差**在每个分量上重新缩放，再旋转。从而获得的数据，各向是同性的且投影到其**主成分**上。使用`PCA`的投影（即中间图），我们发现缩放没有变化；实际上，数据是两个以`0`为中心的同心圆，原始数据已经是各向同性的。但是，数据已经旋转。如果定义一个**线性分类器**来区分两个类别的样本，这样的投影将将无法区分。使用核可以进行**非线性投影**。通过使用`RBF`**核**，**投影**将展开数据集，同时保留原始空间中彼此接近的数据点的相对距离。在右图中发现给定类的样本彼此之间的距离比来自相反类的样本之间的距离更近，从而解开了两个样本集。现在可以使用**线性分类器**将样本从两个类中分离出来。
+
+**主成分分析**(`PCA`)和**核主成分分析**(`KPCA`)可以投影到**原始特征空间**中进行**重建**。
+```python
+from sklearn.datasets import make_circles
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA, KernelPCA
+
+X, y = make_circles(n_samples=1_000, factor=0.3, noise=0.05, random_state=0)
+X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=0)
+
+pca = PCA(n_components=2)
+kernel_pca = KernelPCA(n_components=None, kernel="rbf", gamma=10, fit_inverse_transform=True, alpha=0.1)
+X_test_pca = pca.fit(X_train).transform(X_test)
+X_test_kernel_pca = kernel_pca.fit(X_train).transform(X_test)
+
+X_reconstructed_pca = pca.inverse_transform(pca.transform(X_test))
+X_reconstructed_kernel_pca = kernel_pca.inverse_transform(kernel_pca.transform(X_test))
+fig, (orig_data_ax, pca_back_proj_ax, kernel_pca_back_proj_ax) = plt.subplots(ncols=3, sharex=True, sharey=True, figsize=(13, 4))
+
+orig_data_ax.scatter(X_test[:, 0], X_test[:, 1], c=y_test)
+orig_data_ax.set_ylabel("Feature #1")
+orig_data_ax.set_xlabel("Feature #0")
+orig_data_ax.set_title("Original test data")
+
+pca_back_proj_ax.scatter(X_reconstructed_pca[:, 0], X_reconstructed_pca[:, 1], c=y_test)
+pca_back_proj_ax.set_xlabel("Feature #0")
+pca_back_proj_ax.set_title("Reconstruction via PCA")
+
+kernel_pca_back_proj_ax.scatter(X_reconstructed_kernel_pca[:, 0], X_reconstructed_kernel_pca[:, 1], c=y_test)
+kernel_pca_back_proj_ax.set_xlabel("Feature #0")
+kernel_pca_back_proj_ax.set_title("Reconstruction via KernelPCA")
+plt.show()
+```
+{% asset_img ml_10.png "左边是测试数据集，中间使用PCA重建原始特征空间，右边使用内核PCA重建原始特征空间" %}
 
