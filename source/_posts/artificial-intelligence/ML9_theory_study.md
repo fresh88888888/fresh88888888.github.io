@@ -526,7 +526,7 @@ batch_pca_estimator = decomposition.MiniBatchSparsePCA(n_components=n_components
 batch_pca_estimator.fit(faces_centered)
 plot_gallery("Sparse components - MiniBatchSparsePCA",batch_pca_estimator.components_[:n_components],)
 ```
-{% asset_img ml_7.png "左边是通过随机奇异值分解(SVD)的PCA降维后的数据，右边是通过稀疏主成分分析(SPCA)降维后的数据" %}
+{% asset_img ml_8.png "左边是通过随机奇异值分解(SVD)的PCA降维后的数据，右边是通过稀疏主成分分析(SPCA)降维后的数据" %}
 
 ##### 核主成分分析(KPCA)
 
@@ -538,7 +538,7 @@ plot_gallery("Sparse components - MiniBatchSparsePCA",batch_pca_estimator.compon
 - **投影**：将原始数据集投影到选定的主成分上，从而得到降维后的数据。
 
 **核主成分分析**(`KPCA`)的特征求解器包括：**随机求解器**、**密集求解器**、`arpack`**求解器**。接下来举一个例子**主成分分析**(`PCA`)和**核主成分分析**(`KPCA`)投影数据的比较：
-{% asset_img ml_8.png "左边是训练数据集，右边是测试数据集" %}
+{% asset_img ml_9.png "左边是训练数据集，右边是测试数据集" %}
 
 ```python
 from sklearn.datasets import make_circles
@@ -572,5 +572,5 @@ kernel_pca_proj_ax.set_xlabel("Principal component #0")
 kernel_pca_proj_ax.set_title("Projection of testing data\n using KernelPCA")
 plt.show()
 ```
-{% asset_img ml_9.png "左边是测试数据集，中间使用PCA投影的测试数据，右边使用KernelPCA投影的测试数据" %}
+{% asset_img ml_10.png "左边是测试数据集，中间使用PCA投影的测试数据，右边使用KernelPCA投影的测试数据" %}
 
