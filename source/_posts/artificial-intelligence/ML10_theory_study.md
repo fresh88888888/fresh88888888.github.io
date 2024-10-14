@@ -178,3 +178,23 @@ plt.show()
 
 在**非负矩阵分解**(`NMF`)中，通过最小化{% mathjax %}\beta{% endmathjax %}散度来求解问题，可以表示为：{% mathjax %}\underset{W,H}{\min}D_{\beta}(V| WH){% endmathjax %}。
 
+**小批量非负矩阵分解**(`Mini-batch NMF`)是一种改进的**非负矩阵分解**方法，旨在提高大规模数据集上**非负矩阵分解**(`NMF`)的效率和可扩展性。通过使用小批量数据进行更新，这种方法能够显著减少计算时间和内存消耗，同时保持分解的质量。**小批量非负矩阵分解**(`Mini-batch NMF`)的目标是将一个**非负矩阵**{% mathjax %}V{% endmathjax %}分解为两个**非负矩阵**{% mathjax %}W{% endmathjax %}和{% mathjax %}H{% endmathjax %}的乘积：{% mathjax %}V\approx WH{% endmathjax %}，在**小批量非负矩阵分解**(`Mini-batch NMF`)中，整个数据集被划分为多个小批量，每个小批量包含一定数量的数据样本。每次迭代仅使用一个小批量来更新**基矩阵**{% mathjax %}W{% endmathjax %}和**系数矩阵**{% mathjax %}H{% endmathjax %}。**小批量非负矩阵分解**(`Mini-batch NMF`)的执行步骤为：
+- **数据分批**：将**原始数据矩阵**{% mathjax %}V{% endmathjax %}划分为多个小批量，每个小批量包含{% mathjax %}b{% endmathjax %}个样本。
+- **初始化**：随机初始化**基矩阵**{% mathjax %}W{% endmathjax %}和**系数矩阵**{% mathjax %}H{% endmathjax %}，确保它们的元素均为非负值。
+- **迭代更新**：对于每个小批量，进行以下步骤：1.计算当前小批量的**重构误差**；2.使用**乘法更新法**或其他优化算法更新**基矩阵**{% mathjax %}W{% endmathjax %}和**系数矩阵**{% mathjax %}H{% endmathjax %}。更新规则为：对于基矩阵{% mathjax %}W{% endmathjax %}的更新，则{% mathjax %}W \gets W\odot \frac{(VH^T)}{WHH^T + \epsilon}{% endmathjax %}；对于系数矩阵{% mathjax %}H{% endmathjax %}的更新，则{% mathjax %}H\gets H\odot \frac{W^T V}{W^T WH + \epsilon} {% endmathjax %}。
+- **迭代直到收敛**：重复上述步骤，直到达到预定的迭代次数或满足收敛条件。
+
+**小批量非负矩阵分解**(`Mini-batch NMF`)是一种高效且灵活的`NMF`方法，通过结合小批量处理技术，它不仅提高了训练速度，还增强了模型的**可扩展性**和**鲁棒性**。
+
+#### 潜在狄利克雷分配(LDA)
+
+**潜在狄利克雷分配**(`LDA`)是一种广泛使用的主题模型，旨在从文档集合中发现潜在主题。**潜在狄利克雷分配**(`LDA`)通过假设每个文档是由多个主题生成的，而每个主题又是由多个词构成的，从而实现对文本数据的建模和分析。**潜在狄利克雷分配**(`LDA`)广泛应用于多个领域，包括文本挖掘、推荐系统、社交网络分析等领域。**潜在狄利克雷分配**(`LDA`)的核心思想是将文档视为主题的混合，每个主题由一组词以不同的概率分布生成。其基本模型可以用以下步骤描述：**主题分布**，为每个文档生成一个主题分布，假设遵循**狄利克雷分布**。具体来说，对于文档{% mathjax %}d{% endmathjax %}，生成一个主题分布{% mathjax %}\theta_d{% endmathjax %}：{% mathjax %}\theta_d\sim \text{Dirichlet}(\alpha){% endmathjax %}，其中{% mathjax %}\alpha{% endmathjax %}是超参数，控制主题分布的**稀疏性**；**生成词**，对于文档中的每个词：从主题分布{% mathjax %}\theta_d{% endmathjax %}中抽取一个主题{% mathjax %}z_{d,n}{% endmathjax %}，则{% mathjax %}z_{d,n}\sim \text{Multinomial}(\theta_d){% endmathjax %}；从该主题的词分布中抽取一个词{% mathjax %}w_{d,n}{% endmathjax %}，则{% mathjax %}w_{d,n}\sim \text{Multinomial}(\phi_{z_{d,n}}){% endmathjax %}，其中{% mathjax %}\phi_k{% endmathjax %}是第{% mathjax %}k{% endmathjax %}个主题的词分布，通常假设遵循**狄利克雷分布**；**模型参数**，**潜在狄利克雷分配**(`LDA`)模型包括**超参数**{% mathjax %}\alpha{% endmathjax %}和每个主题的**词分布参数**{% mathjax %}\beta{% endmathjax %}。
+
+**潜在狄利克雷分配**(`LDA`)的推断过程旨在估计给定文档集合下的隐含主题和相关参数。常用的方法包括：**变分推断**(`Variational Inference`)，通过优化变分下界来**近似后验分布**；**吉布斯采样**(`Gibbs Sampling`)，一种**马尔可夫链蒙特卡罗**(`MCMC`)方法，通过**迭代采样**来估计模型参数。**潜在狄利克雷分配**(`LDA`)的优势包括：
+- **可解释性**：**潜在狄利克雷分配**(`LDA`)提供了清晰的主题表示，使得每个主题由一组相关词构成，便于理解和分析。
+- **灵活性**：能够处理大规模文本数据，并适用于多种文本挖掘任务，如文档聚类、推荐系统和信息检索。
+- **无监督学习**：**潜在狄利克雷分配**(`LDA`)是一种**无监督学习**方法，不需要预先标注的数据即可发现潜在结构。
+
+**潜在狄利克雷分配**(`LDA`)是一种强大的主题建模工具，通过假设文档由多个潜在主题生成，它能够有效地从大规模文本数据中提取有意义的信息。随着自然语言处理和机器学习的发展，**潜在狄利克雷分配**(`LDA`)在许多实际应用中展现了其重要价值，尤其是在需要理解和分析文本内容时。
+{% asset_img ml_3.png %}
+
