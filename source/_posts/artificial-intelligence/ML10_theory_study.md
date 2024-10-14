@@ -101,3 +101,67 @@ plt.show()
 ```
 {% asset_img ml_1.png %}
 
+**概率主成分分析**(`PPCA`)是一种基于**概率模型**的降维技术，旨在通过潜在变量模型来分析数据。与传统的**主成分分析**(`PCA`)不同，**概率主成分分析**(`PPCA`)不仅关注数据的线性结构，还考虑了数据中的**噪声**和**缺失值**。**概率主成分分析**(`PPCA`)的原理：其通过引入潜在变量来建模观测数据。其基本模型可以表示为：{% mathjax %}x_n = \mathbf{W}z_n+ \mu + \varepsilon_n{% endmathjax %}。其中{% mathjax %}x_n{% endmathjax %}是观测数据点，{% mathjax %}\mathbf{W}{% endmathjax %}是因子载荷矩阵，表示潜在因子与观测变量之间的关系。{% mathjax %}z_n{% endmathjax %}是潜在变量，通常假设其服从标准正态分布。{% mathjax %}\mu{% endmathjax %}是均值向量，{% mathjax %}\varepsilon_n{% endmathjax %}是噪声项，假设其服从正态分布。通过这种方式，**概率主成分分析**(`PPCA`)能够对每个数据点的分布进行建模：{% mathjax %}x_n \sim \mathcal{N}(\mu,WW^T + \sigma^2\mathbf{I}){% endmathjax %}。其中{% mathjax %}\sigma^2{% endmathjax %}表示**噪声**的方差。
+
+**概率主成分分析**(`PPCA`)的优势：
+- **处理缺失值**：**概率主成分分析**(`PPCA`)能够有效处理数据中的缺失值，而传统的**主成分分析**(`PCA`)无法做到这一点。这使得**概率主成分分析**(`PPCA`)在实际应用中更加灵活。
+- **概率模型**：由于**概率主成分分析**(`PPCA`)基于**概率模型**，可以利用**最大似然估计**(`MLE`)来估计参数，并进行统计推断。
+- **期望最大化算法**（`EM`算法）：**概率主成分分析**(`PPCA`)通常使用`EM`算法进行参数估计。`EM`算法通过迭代优化潜在变量和模型参数，提高了估计的准确性。
+
+**概率主成分分析**(`PPCA`)提供了一种更为灵活和强大的降维方法，通过引入**概率模型**和潜在变量，它能够有效处理复杂的数据结构和缺失值问题。
+
+#### 独立成分分析(ICA)
+
+**独立成分分析**(`ICA`)是一种统计和计算技术，用于从多维信号中提取出相互独立的成分。**独立成分分析**(`ICA`)特别适用于处理混合信号，尤其是在信号处理、图像处理和生物医学工程等领域。**独立成分分析**(`ICA`)的原理是通过假设观测信号是若干个独立源信号的线性组合，来恢复这些源信号。其基本模型可以表示为：{% mathjax %}x = \mathbf{A}s{% endmathjax %}。其中{% mathjax %}x{% endmathjax %}是观测信号向量（例如多个传感器的输出），{% mathjax %}\mathbf{A}{% endmathjax %}是**混合矩阵**，表示源信号之间的线性组合。{% mathjax %}s{% endmathjax %}是独立源信号向量。**独立成分分析**(`ICA`)的目标是估计混合矩阵{% mathjax %}\mathbf{A}{% endmathjax %}和源信号{% mathjax %}s{% endmathjax %}，使得提取出的**成分**尽可能独立。常用的**独立成分分析**(`ICA`)算法包括：`FastICA`，一种迭代算法，通过**最大化非高斯性**来估计独立成分，速度较快且易于实现；`Infomax`，基于**信息论**的方法，通过最大化输出信息量来估计独立成分。**独立成分分析**(`ICA`)是一种强大的工具，通过假设观测信号是多个独立源的线性组合，能够有效地从复杂数据中提取出有意义的信息。**独立成分分析**(`ICA`)不是用于**降低维度**的，而是用于**分离叠加信号**。由于**独立成分分析**(`ICA`)模型不包含噪声项，因此为了使模型正确，必须应用白化。
+
+下面有一个例子是利用**独立成分分析**(`ICA`)来估测噪声的来源。假设有`3`种乐器同时在演奏，`3`个麦克风录制混合信号。**独立成分分析**(`ICA`)则用于恢复混合信号的来源，即每种乐器演奏的内容。因为相关信号(乐器)反映了非高斯过程，所以**主成分分析**(`PCA`)无法恢复这些乐器信号。
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import signal
+from sklearn.decomposition import PCA, FastICA
+
+np.random.seed(0)
+n_samples = 2000
+time = np.linspace(0, 8, n_samples)
+
+s1 = np.sin(2 * time)  # Signal 1 : sinusoidal signal
+s2 = np.sign(np.sin(3 * time))  # Signal 2 : square signal
+s3 = signal.sawtooth(2 * np.pi * time)  # Signal 3: saw tooth signal
+
+S = np.c_[s1, s2, s3]
+S += 0.2 * np.random.normal(size=S.shape)  # Add noise
+
+S /= S.std(axis=0)  # Standardize data
+# Mix data
+A = np.array([[1, 1, 1], [0.5, 2, 1.0], [1.5, 1.0, 2.0]])  # Mixing matrix
+X = np.dot(S, A.T)  # Generate observations
+
+# Compute ICA
+ica = FastICA(n_components=3, whiten="arbitrary-variance")
+S_ = ica.fit_transform(X)  # Reconstruct signals
+A_ = ica.mixing_  # Get estimated mixing matrix
+
+# We can `prove` that the ICA model applies by reverting the unmixing.
+assert np.allclose(X, np.dot(S_, A_.T) + ica.mean_)
+
+# For comparison, compute PCA
+pca = PCA(n_components=3)
+H = pca.fit_transform(X)  # Reconstruct signals based on orthogonal components
+
+plt.figure()
+models = [X, S, S_, H]
+names = ["Observations (mixed signal)","True Sources","ICA recovered signals","PCA recovered signals",]
+colors = ["red", "steelblue", "orange"]
+
+for ii, (model, name) in enumerate(zip(models, names), 1):
+    plt.subplot(4, 1, ii)
+    plt.title(name)
+    for sig, color in zip(model.T, colors):
+        plt.plot(sig, color=color)
+
+plt.tight_layout()
+plt.show()
+```
+{% asset_img ml_2.png %}
+
