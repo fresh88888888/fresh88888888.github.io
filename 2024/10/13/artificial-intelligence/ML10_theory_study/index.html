@@ -155,7 +155,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%A0%E5%AD%90%E5%88%86%E6%9E%90-Factor-Analysis"><span class="nav-number">1.</span> <span class="nav-text">因子分析(Factor Analysis)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8B%AC%E7%AB%8B%E6%88%90%E5%88%86%E5%88%86%E6%9E%90-ICA"><span class="nav-number">2.</span> <span class="nav-text">独立成分分析(ICA)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%9E%E8%B4%9F%E7%9F%A9%E9%98%B5%E5%88%86%E8%A7%A3-NMF"><span class="nav-number">3.</span> <span class="nav-text">非负矩阵分解(NMF)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BD%9C%E5%9C%A8%E7%8B%84%E5%88%A9%E5%85%8B%E9%9B%B7%E5%88%86%E9%85%8D-LDA"><span class="nav-number">4.</span> <span class="nav-text">潜在狄利克雷分配(LDA)</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%A0%E5%AD%90%E5%88%86%E6%9E%90-Factor-Analysis"><span class="nav-number">1.</span> <span class="nav-text">因子分析(Factor Analysis)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8B%AC%E7%AB%8B%E6%88%90%E5%88%86%E5%88%86%E6%9E%90-ICA"><span class="nav-number">2.</span> <span class="nav-text">独立成分分析(ICA)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%9E%E8%B4%9F%E7%9F%A9%E9%98%B5%E5%88%86%E8%A7%A3-NMF"><span class="nav-number">3.</span> <span class="nav-text">非负矩阵分解(NMF)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BD%9C%E5%9C%A8%E7%8B%84%E5%88%A9%E5%85%8B%E9%9B%B7%E5%88%86%E9%85%8D-LDA"><span class="nav-number">4.</span> <span class="nav-text">潜在狄利克雷分配(LDA)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E7%8E%BB%E5%B0%94%E5%85%B9%E6%9B%BC%E6%9C%BA-RBM"><span class="nav-number">5.</span> <span class="nav-text">限制玻尔兹曼机(RBM)</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -303,14 +303,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>4.5k</span>
+      <span>8.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>15 分钟</span>
+      <span>7 分钟</span>
     </span>
 </div>
 
@@ -376,6 +376,7 @@
 <p><strong>潜在狄利克雷分配</strong>(<code>LDA</code>)是一种强大的主题建模工具，通过假设文档由多个潜在主题生成，它能够有效地从大规模文本数据中提取有意义的信息。随着自然语言处理和机器学习的发展，<strong>潜在狄利克雷分配</strong>(<code>LDA</code>)在许多实际应用中展现了其重要价值，尤其是在需要理解和分析文本内容时。</p>
 <img data-src="/2024/10/13/artificial-intelligence/ML10_theory_study/ml_3.png" class="">
 
+<h4 id="限制玻尔兹曼机-RBM"><a href="#限制玻尔兹曼机-RBM" class="headerlink" title="限制玻尔兹曼机(RBM)"></a>限制玻尔兹曼机(RBM)</h4><p><strong>限制玻尔兹曼机</strong>(<code>RBM</code>)是一种<strong>无监督学习算法</strong>，属于深度学习中的生成模型。<strong>限制玻尔兹曼机</strong>(<code>RBM</code>)由一组<strong>可见单元</strong>(<code>visible units</code>)和一组<strong>隐藏单元</strong>(<code>hidden units</code>)组成，二者之间通过权重连接，但同一层的单元之间没有连接。<strong>限制玻尔兹曼机</strong>(<code>RBM</code>)的结构可以用以下几个要素来描述：<br><strong>可见层</strong>(<code>Visible Layer</code>)：表示输入数据的特征，通常与观测数据直接对应。每个<strong>可见单元</strong>表示一个特征或输入值。<br><strong>隐藏层</strong>(<code>Hidden Layer</code>)：用于捕捉输入数据中的潜在特征。<strong>隐藏单元</strong>通过与<strong>可见单元</strong>的连接来学习数据的<strong>隐含表示</strong>。<br><strong>权重矩阵</strong>(<code>Weight Matrix</code>)：连接<strong>可见层</strong>和<strong>隐藏层</strong>的<strong>权重矩阵</strong><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex;" xmlns="http://www.w3.org/2000/svg" width="2.371ex" height="1.595ex" role="img" focusable="false" viewBox="0 -683 1048 705" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-8-TEX-I-1D44A" d="M436 683Q450 683 486 682T553 680Q604 680 638 681T677 682Q695 682 695 674Q695 670 692 659Q687 641 683 639T661 637Q636 636 621 632T600 624T597 615Q597 603 613 377T629 138L631 141Q633 144 637 151T649 170T666 200T690 241T720 295T759 362Q863 546 877 572T892 604Q892 619 873 628T831 637Q817 637 817 647Q817 650 819 660Q823 676 825 679T839 682Q842 682 856 682T895 682T949 681Q1015 681 1034 683Q1048 683 1048 672Q1048 666 1045 655T1038 640T1028 637Q1006 637 988 631T958 617T939 600T927 584L923 578L754 282Q586 -14 585 -15Q579 -22 561 -22Q546 -22 542 -17Q539 -14 523 229T506 480L494 462Q472 425 366 239Q222 -13 220 -15T215 -19Q210 -22 197 -22Q178 -22 176 -15Q176 -12 154 304T131 622Q129 631 121 633T82 637H58Q51 644 51 648Q52 671 64 683H76Q118 680 176 680Q301 680 313 683H323Q329 677 329 674T327 656Q322 641 318 637H297Q236 634 232 620Q262 160 266 136L501 550L499 587Q496 629 489 632Q483 636 447 637Q428 637 422 639T416 648Q416 650 418 660Q419 664 420 669T421 676T424 680T428 682T436 683Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D44A" xlink:href="#MJX-8-TEX-I-1D44A"></use></g></g></g></svg></mjx-container>，用于调整<strong>可见单元</strong>和<strong>隐藏单元</strong>之间的关系。<br><strong>偏置项</strong>(<code>Bias Terms</code>)：每个<strong>可见单元</strong>和<strong>隐藏单元</strong>都有一个<strong>偏置项</strong>，用于调整<strong>激活值</strong>。</p>
 
     </div>
 
@@ -448,14 +449,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">1.2m</span>
+    <span title="站点总字数">2.8m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">65:31</span>
+    <span title="站点阅读时长">39:29</span>
   </span>
 </div>
 <div class="busuanzi-count">
