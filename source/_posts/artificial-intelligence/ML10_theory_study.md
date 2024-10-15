@@ -366,7 +366,7 @@ weighted avg       0.01      0.10      0.02      1797
 {% endmathjax %}
 
 **协方差估计**(`Covariance Estimation`)方法有：
-- **样本协方差矩阵**(`Sample Covariance Matrix`)：**样本协方差矩阵**是最常用的估计方法，适用于完整数据集。其计算公式为：{% mathjax %}S = \frac{1}{n - 1}\sum\limits_{i=1}^n (X_1 - \bar{X})(X_i - \bar{X}^T){% endmathjax %}。其中{% mathjax %}n{% endmathjax %}是样本的大小，{% mathjax %}X_i{% endmathjax %}是样本向量，{% mathjax %}\bar{X}{% endmathjax %}是样本均值。
+- **样本协方差矩阵**(`Sample Covariance Matrix`)：**样本协方差矩阵**是最常用的估计方法，适用于完整数据集。其计算公式为：{% mathjax %}S = \frac{1}{n - 1}\sum\limits_{i=1}^n (X_i - \bar{X})(X_i - \bar{X})^T{% endmathjax %}。其中{% mathjax %}n{% endmathjax %}是样本的大小，{% mathjax %}X_i{% endmathjax %}是样本向量，{% mathjax %}\bar{X}{% endmathjax %}是样本均值。
 - **正则化和收缩方法**(`Shrinkage Methods`)：在高维数据中，**样本协方差矩阵**可能会不稳定或非正定。收缩方法通过将样本**协方差矩阵**向某个目标矩阵（如单位矩阵）收缩，从而提高估计的稳定性和准确性。
 - **图模型方法**(`Graphical Models`)：**图模型**（如**高斯图模型**）直接估计**精度矩阵**（**协方差矩阵**的逆），在某些情况下比直接估计**协方差矩阵**更有效。
 - **自适应方法**(`Adaptive Methods`)：这些方法根据数据特性自适应地调整估计过程，以提高准确性。例如，使用**加权平均**或**局部回归技术**来估计**协方差**。
@@ -374,7 +374,11 @@ weighted avg       0.01      0.10      0.02      1797
 **协方差估计**(`Covariance Estimation`)是统计分析中的关键步骤，涉及多种方法和技术。选择合适的估计方法取决于数据的特性、维度以及应用场景。通过精确的**协方差估计**，可以更好地理解变量之间的关系，并做出更有效的决策。
 ##### 经验协方差
 
-**经验协方差**(`Empirical Covariance`)是通过样本数据计算出的**协方差**，用于估计总体**协方差**。它是描述两个随机变量之间关系的重要统计量，能够反映这两个变量在样本中的共同变化程度。
+**经验协方差**(`Empirical Covariance`)是通过样本数据计算出的**协方差**，用于估计总体**协方差**。它是描述两个随机变量之间关系的重要统计量，能够反映这两个变量在样本中的共同变化程度。**经验协方差**(`Empirical Covariance`)定义：**经验协方差**用于衡量两个随机变量{% mathjax %}X{% endmathjax %}和{% mathjax %}Y{% endmathjax %}的联合变异性，通常表示为：{% mathjax %}\text{Cov}(X,Y) = \frac{1}{n - 1}\sum\limits_{i=1}^n (X_i - \bar{X})(Y_i - \bar{Y}){% endmathjax %}，其中{% mathjax %}N{% endmathjax %}是样本大小，{% mathjax %}X_i{% endmathjax %}和{% mathjax %}Y_i{% endmathjax %}是样本中观测值，{% mathjax %}\bar{X}{% endmathjax %}和{% mathjax %}\bar{Y}{% endmathjax %}分别是随机变量{% mathjax %}X{% endmathjax %}和{% mathjax %}Y{% endmathjax %}的样本均值。计算步骤：1.**计算样本均值**，首先计算每个变量的样本均值；**计算偏差**，对于每一对观测值，计算它们与各自均值的偏差；2.**求积并求和**，将偏差相乘并累加；3.**归一化**，将总和除以{% mathjax %}N - 1{% endmathjax %}，以获得**经验协方差**。**经验方差**的特点是：
+- **正负符号**：**正协方差**，表示两个变量同向变化，即一个变量增加时另一个变量也增加；**负协方差**，表示两个变量反向变化，即一个变量增加时另一个变量减少。
+- **数值范围**：**经验协方差**的数值没有上限或下限，可以是正数、负数或零。**零协方差**表示两个变量之间没有线性关系。
+
+**经验协方差**是通过样本数据计算出的重要统计量，能够有效地描述和**量化**随机变量之间的关系。
 
 ##### 收缩协方差(Shrunk Covariance)
 
