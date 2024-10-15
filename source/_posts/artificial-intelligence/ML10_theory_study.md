@@ -265,7 +265,8 @@ rbm = BernoulliRBM(random_state=0, verbose=True)
 rbm_features_classifier = Pipeline(steps=[("rbm", rbm), ("logistic", logistic)])
 
 # 整个模型的超参数（学习率、隐藏层大小、正则化）通过网格搜索进行了优化，训练
-# Hyper-parameters. These were set by cross-validation, using a GridSearchCV. Here we are not performing cross-validation to save time.
+# Hyper-parameters. These were set by cross-validation, using a GridSearchCV. 
+# Here we are not performing cross-validation to save time.
 rbm.learning_rate = 0.06
 rbm.n_iter = 10
 rbm.n_components = 100
@@ -315,4 +316,28 @@ Logistic regression using RBM features:
 weighted avg       0.01      0.10      0.02      1797
 ```
 {% asset_img ml_4.png %}
+
+##### 图模型与参数化
+
+**限制玻尔兹曼机**(`RBM`)的图模型是全连通的二分图。
+{% asset_img ml_5.png %}
+
+节点是随机变量，其状态取决于它们所连接的其他节点的状态。因此，该模型由连接的权重以及每个**可见**和**隐藏单元**的一个**截距**（偏差）项参数化，为简单起见，图像中省略了该项。能量函数衡量联合分配的质量：{% mathjax %}E(v,h) = -\sum\limits_i\sum\limits_j w_{ij}v_i h_j - \sum\limits_i b_i v_i - \sum\limits_j c_j h_j{% endmathjax %}。在上面的公式中，{% mathjax %}b{% endmathjax %}和{% mathjax %}c{% endmathjax %}分别是**可见层**和**隐藏层**的**截距向量**。模型的**联合概率**根据能量定义：{% mathjax %}P(v,h) = \frac{e^{-E(v,h)}}{Z}{% endmathjax %}。受限一词指的是模型的**二分结构**，它禁止**隐藏单元**之间或**可见单元**之间的直接交互。意味着：{% mathjax %}h_i\perp h_j|v,\; v_i\perp v_j|h{% endmathjax %}，二分结构允许使用高效的**块吉布斯采样**(`Block Gibbs Sampling`)进行推理。
+
+**能量函数**(`Energy Function`)是一个数学表示，用于**量化**系统某一状态所具有的能量。它在多个领域中具有重要应用，包括物理学、工程学和优化算法。**能量函数**(`Energy Function`)用于描述系统的状态，并评估该状态的可行性或优越性。在优化问题中，**能量函数**(`Energy Function`)通常用于指导搜索算法，如**模拟退火**和**禁忌搜索**，通过提供一个度量来判断解的接近程度，从而影响接受或拒绝新候选解的决策。在优化问题中，**能量函数**(`Energy Function`)用于评估不同解的优劣。例如，在机器学习和计算机视觉中，**能量函数**(`Energy Function`)可以帮助模型找到最优参数或配置。通过最小化能量函数，可以找到最优解或近似最优解。
+
+**块吉布斯采样**(`Block Gibbs Sampling`)是一种**马尔可夫链蒙特卡罗**(`MCMC`)方法，用于从复杂的多维概率分布中抽样。与传统的**吉布斯采样**不同，**块吉布斯采样**(`Block Gibbs Sampling`)在每次迭代中同时更新多个变量，而不是逐个更新。这种方法在处理高维数据和具有复杂依赖关系的模型时特别有效。
+
+##### 伯努利限制玻尔兹曼机
+
+**伯努利限制玻尔兹曼机**(`BRBM`)是一种特殊类型的**限制玻尔兹曼机**(`RBM`)，其中**可见层**的单元使用**伯努利分布**来建模。这使得**伯努利限制玻尔兹曼机**(`BRBM`)特别适用于处理二元(`0-1`)数据，如图像的黑白像素或用户偏好（喜欢/不喜欢）等。其模型结构与工作原理都与**限制玻尔兹曼机**(`RBM`)相同。**伯努利限制玻尔兹曼机**(`BRBM`)优势：
+- **适用于二元数据**：**伯努利限制玻尔兹曼机**(`BRBM`)特别适合处理二进制或稀疏数据，使其在许多实际应用中表现良好。
+- **特征学习**：通过隐含层捕捉数据中的潜在结构，使得**伯努利限制玻尔兹曼机**(`BRBM`)能够自动提取有用特征。
+- **生成能力**：**伯努利限制玻尔兹曼机**(`BRBM`)不仅可以用于特征提取，还可以生成新样本，具有良好的生成模型性能。
+
+计算**隐藏单元**的激活概率：{% mathjax %}P(h_j=1|v) = \sigma (b_j + \sum\limits_i v_i w_{ij}){% endmathjax %}。其中{% mathjax %}\sigma{% endmathjax %}是**激活函数**(`sigmoid`)，{% mathjax %}b_j{% endmathjax %}是**隐藏单元**的偏置，{% mathjax %}w_{ij}{% endmathjax %}是连接**可见单元**和**隐藏单元**的权重。使用**隐藏单元**的状态重构可见层：{% mathjax %}P(v_i|h) = \sigma (c_i + \sum\limits_j h_j w_{ij}){% endmathjax %}。其中{% mathjax %}c_i{% endmathjax %}是可见单元的偏置。其中{% mathjax %}\sigma(x) = \frac{1}{1 + e^{-x}}{% endmathjax %}。
+
+##### 随机最大似然学习
+
+**随机最大似然学习**(`Stochastic Maximum Likelihood Learning`)是一种用于参数估计的优化方法，特别适用于处理大规模数据集和复杂模型。它结合了**最大似然估计**（`MLE`）和**随机梯度下降**(`Stochastic Gradient Descent, SGD`)等技术，以提高学习效率和收敛速度。
 
