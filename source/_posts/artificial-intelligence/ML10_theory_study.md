@@ -335,7 +335,7 @@ weighted avg       0.01      0.10      0.02      1797
 - **特征学习**：通过隐含层捕捉数据中的潜在结构，使得**伯努利限制玻尔兹曼机**(`BRBM`)能够自动提取有用特征。
 - **生成能力**：**伯努利限制玻尔兹曼机**(`BRBM`)不仅可以用于特征提取，还可以生成新样本，具有良好的生成模型性能。
 
-计算**隐藏单元**的激活概率：{% mathjax %}P(h_j=1|v) = \sigma (b_j + \sum\limits_i v_i w_{ij}){% endmathjax %}。其中{% mathjax %}\sigma{% endmathjax %}是**激活函数**(`sigmoid`)，{% mathjax %}b_j{% endmathjax %}是**隐藏单元**的偏置，{% mathjax %}w_{ij}{% endmathjax %}是连接**可见单元**和**隐藏单元**的权重。使用**隐藏单元**的状态重构可见层：{% mathjax %}P(v_i|h) = \sigma (c_i + \sum\limits_j h_j w_{ij}){% endmathjax %}。其中{% mathjax %}c_i{% endmathjax %}是可见单元的偏置。其中{% mathjax %}\sigma(x) = \frac{1}{1 + e^{-x}}{% endmathjax %}。
+计算**隐藏单元**的激活概率：{% mathjax %}P(h_j=1|v) = \sigma (b_j + \sum\limits_i v_i w_{ij}){% endmathjax %}。其中{% mathjax %}\sigma{% endmathjax %}是**激活函数**(`sigmoid`)，{% mathjax %}b_j{% endmathjax %}是**隐藏单元**的偏置，{% mathjax %}w_{ij}{% endmathjax %}是连接**可见单元**和**隐藏单元**的权重。使用**隐藏单元**的状态重构可见层：{% mathjax %}P(v_i|h) = \sigma (c_i + \sum\limits_j h_j w_{ij}){% endmathjax %}。其中{% mathjax %}c_i{% endmathjax %}是可见单元的偏置，{% mathjax %}\sigma(x) = \frac{1}{1 + e^{-x}}{% endmathjax %}。
 
 ##### 随机最大似然学习
 
