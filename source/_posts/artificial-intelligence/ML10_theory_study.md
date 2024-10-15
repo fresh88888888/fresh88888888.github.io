@@ -200,9 +200,119 @@ plt.show()
 
 #### 限制玻尔兹曼机(RBM)
 
-**限制玻尔兹曼机**(`RBM`)是一种**无监督学习算法**，属于深度学习中的生成模型。**限制玻尔兹曼机**(`RBM`)由一组**可见单元**(`visible units`)和一组**隐藏单元**(`hidden units`)组成，二者之间通过权重连接，但同一层的单元之间没有连接。**限制玻尔兹曼机**(`RBM`)的结构可以用以下几个要素来描述：
+**限制玻尔兹曼机**(`RBM`)是一种**无监督学习算法**，属于深度学习中的生成模型。**限制玻尔兹曼机**(`RBM`)由一组**可见单元**(`visible units`)和一组**隐藏单元**(`hidden units`)组成，二者之间通过权重连接，但同一层的单元之间没有连接。**限制玻尔兹曼机**(`RBM`)广泛应用于多个领域，包括：推荐系统、图像处理、自然语言处理。**限制玻尔兹曼机**(`RBM`)的结构可以用以下几个要素来描述：
 **可见层**(`Visible Layer`)：表示输入数据的特征，通常与观测数据直接对应。每个**可见单元**表示一个特征或输入值。
 **隐藏层**(`Hidden Layer`)：用于捕捉输入数据中的潜在特征。**隐藏单元**通过与**可见单元**的连接来学习数据的**隐含表示**。
 **权重矩阵**(`Weight Matrix`)：连接**可见层**和**隐藏层**的**权重矩阵**{% mathjax %}W{% endmathjax %}，用于调整**可见单元**和**隐藏单元**之间的关系。
 **偏置项**(`Bias Terms`)：每个**可见单元**和**隐藏单元**都有一个**偏置项**，用于调整**激活值**。
+
+**限制玻尔兹曼机**(`RBM`)的工作原理是通过对输入数据进行概率建模来学习特征，其主要步骤如下：
+- **前向传播**：给定可见单元的输入{% mathjax %}v{% endmathjax %}，计算**隐藏单元**的激活概率：{% mathjax %}P(h_j=1|v) = \sigma (b_j + \sum\limits_i v_i w_{ij}){% endmathjax %}。其中{% mathjax %}\sigma{% endmathjax %}是**激活函数**(`sigmoid`)，{% mathjax %}b_j{% endmathjax %}是**隐藏单元**的偏置，{% mathjax %}w_{ij}{% endmathjax %}是连接**可见单元**和**隐藏单元**的权重。
+- **采样**：根据计算出的概率，从**隐藏单元**中采样得到激活状态{% mathjax %}h{% endmathjax %}。
+- **重构**：使用**隐藏单元**的状态重构可见层：{% mathjax %}P(v_i|h) = \sigma (c_i + \sum\limits_j h_j w_{ij}){% endmathjax %}。其中{% mathjax %}c_i{% endmathjax %}是可见单元的偏置。
+- **对比散度**(`Contrastive Divergence`)：通过**对比散度算法**更新**权重**和**偏置**，以最小化输入数据和重构数据之间的差异。这一过程通常涉及多个迭代步骤。
+
+**限制玻尔兹曼机**(`RBM`)的优势：
+- **无监督学习**：**限制玻尔兹曼机**(`RBM`)能够在没有标签的数据上进行训练，适用于大规模未标注数据集。
+- **特征学习**：通过**隐含层**捕捉数据中的潜在结构，使得**限制玻尔兹曼机**(`RBM`)能够自动提取有用特征。
+- **生成能力**：**限制玻尔兹曼机**(`RBM`)不仅可以用于特征提取，还可以生成新样本，具有良好的生成模型性能。
+
+**限制玻尔兹曼机**(`RBM`)是一种强大的**无监督学习**工具，通过结合**可见层**和**隐藏层**，它能够有效地捕捉数据中的潜在结构。
+
+下面有一个示例，利用**伯努利限制玻尔兹曼机模型**对灰度图像数据提取非线性特征，例如手写数字识别，为了从小数据集中学习到好的潜在表示，可以通过在每个方向上以`1`个像素的线性移位扰动训练数据来生成更多标记数据：
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import metrics
+from sklearn import datasets
+from sklearn.base import clone
+from scipy.ndimage import convolve
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import minmax_scale
+from sklearn import linear_model
+from sklearn.neural_network import BernoulliRBM
+from sklearn.pipeline import Pipeline
+
+def nudge_dataset(X, Y):
+    """
+    This produces a dataset 5 times bigger than the original one,
+    by moving the 8x8 images in X around by 1px to left, right, down, up
+    """
+    direction_vectors = [
+        [[0, 1, 0], [0, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [0, 0, 1], [0, 0, 0]],
+        [[0, 0, 0], [0, 0, 0], [0, 1, 0]],
+    ]
+
+    def shift(x, w):
+        return convolve(x.reshape((8, 8)), mode="constant", weights=w).ravel()
+
+    X = np.concatenate([X] + [np.apply_along_axis(shift, 1, X, vector) for vector in direction_vectors])
+    Y = np.concatenate([Y for _ in range(5)], axis=0)
+    return X, Y
+
+
+X, y = datasets.load_digits(return_X_y=True)
+X = np.asarray(X, "float32")
+X, Y = nudge_dataset(X, y)
+X = minmax_scale(X, feature_range=(0, 1))  # 0-1 scaling
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
+
+# 利用伯努利限制玻尔兹曼机模型特征提取器和分类器构建分类管道
+logistic = linear_model.LogisticRegression(solver="newton-cg", tol=1)
+rbm = BernoulliRBM(random_state=0, verbose=True)
+rbm_features_classifier = Pipeline(steps=[("rbm", rbm), ("logistic", logistic)])
+
+# 整个模型的超参数（学习率、隐藏层大小、正则化）通过网格搜索进行了优化，训练
+# Hyper-parameters. These were set by cross-validation, using a GridSearchCV. Here we are not performing cross-validation to save time.
+rbm.learning_rate = 0.06
+rbm.n_iter = 10
+rbm.n_components = 100
+logistic.C = 6000
+
+# Training RBM-Logistic Pipeline
+rbm_features_classifier.fit(X_train, Y_train)
+
+# Training the Logistic regression classifier directly on the pixel
+raw_pixel_classifier = clone(logistic)
+raw_pixel_classifier.C = 100.0
+raw_pixel_classifier.fit(X_train, Y_train)
+
+# 评估
+Y_pred = rbm_features_classifier.predict(X_test)
+print("Logistic regression using RBM features:\n%s\n" % (metrics.classification_report(Y_test, Y_pred)))
+
+plt.figure(figsize=(4.2, 4))
+for i, comp in enumerate(rbm.components_):
+    plt.subplot(10, 10, i + 1)
+    plt.imshow(comp.reshape((8, 8)), cmap=plt.cm.gray_r, interpolation="nearest")
+    plt.xticks(())
+    plt.yticks(())
+
+plt.suptitle("100 components extracted by RBM", fontsize=16)
+plt.subplots_adjust(0.08, 0.02, 0.92, 0.85, 0.08, 0.23)
+plt.show()
+```
+输出评估结果为：
+```bash
+Logistic regression using RBM features:
+              precision    recall  f1-score   support
+
+           0       0.10      1.00      0.18       174
+           1       0.00      0.00      0.00       184
+           2       0.00      0.00      0.00       166
+           3       0.00      0.00      0.00       194
+           4       0.00      0.00      0.00       186
+           5       0.00      0.00      0.00       181
+           6       0.00      0.00      0.00       207
+           7       0.00      0.00      0.00       154
+           8       0.00      0.00      0.00       182
+           9       0.00      0.00      0.00       169
+
+    accuracy                           0.10      1797
+   macro avg       0.01      0.10      0.02      1797
+weighted avg       0.01      0.10      0.02      1797
+```
+{% asset_img ml_4.png %}
 
