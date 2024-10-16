@@ -382,7 +382,82 @@ weighted avg       0.01      0.10      0.02      1797
 
 ##### 收缩协方差(Shrunk Covariance)
 
-**收缩协方差**(`Shrunk Covariance`)是一种用于提高**协方差矩阵估计**稳定性和准确性的技术，特别是在高维数据分析中。传统的**样本协方差矩阵**在样本量相对较小或变量数量较多时，可能会变得不稳定或非正定（即其特征值中存在负值），这会影响后续的统计分析和模型构建。
+**收缩协方差**(`Shrunk Covariance`)是一种用于提高**协方差矩阵估计**稳定性和准确性的技术，特别是在高维数据分析中。传统的**样本协方差矩阵**在样本量相对较小或变量数量较多时，可能会变得不稳定或非正定（即其特征值中存在负值），这会影响后续的统计分析和模型构建。**收缩协方差**(`Shrunk Covariance`)的工作原理是：**收缩协方差**通过将**样本协方差矩阵**向某个**目标矩阵**（通常是**单位矩阵**或**对角矩阵**）收缩，从而减少估计的方差，提高估计的可靠性。其基本思想是结合**样本协方差**和**目标矩阵**，形成一个新的**协方差估计**。它的数学表示：设{% mathjax %}S{% endmathjax %}为**样本协方差矩阵**，{% mathjax %}\Sigma_0{% endmathjax %}为**目标协方差矩阵**（如单位矩阵）收缩后的协方差矩阵{% mathjax %}S_{\text{shrink}}{% endmathjax %}可以表示为：{% mathjax %}S_{\text{shrink}} = (1 - \lambda)S + \lambda\Sigma_0{% endmathjax %}。其中{% mathjax %}\lambda{% endmathjax %}是收缩参数，取值范围在`[0,1]`之间，通过调整{% mathjax %}\lambda{% endmathjax %}的值，可以控制**样本协方差**和**目标协方差**之间的权重。
+
+**收缩协方差**(`Shrunk Covariance`)的优势：
+- **提高稳定性**：通过引入**目标矩阵**，**收缩协方差**能够减少**样本协方差**的波动性，使得估计更加稳定。
+- **防止非正定**：在高维情况下，**样本协方差**可能会变得非正定，而收缩方法可以确保得到一个正定矩阵，从而适用于后续的分析。
+- **适应性强**：根据数据特性自适应地调整收缩程度，可以有效提高模型性能。
+
+**收缩协方差**(`Shrunk Covariance`)方法示例有：`Ledoit-Wolf`收缩，一种常用的收缩方法，通过**最小化均方误差**来选择最优的收缩参数{% mathjax %}\lambda{% endmathjax %}；**对角收缩**：将样本协方差收缩到**对角矩阵**，以简化模型并减少复杂性。下面有一个示例，利用**收缩协方差**估计量中使用的正则化来提高**协方差**的准确性。这里比较了三种方法：`Ledoit-Wolf`(通过**最小化均方误差**来选择最优的收缩参数{% mathjax %}\lambda{% endmathjax %})、`OAS`(假设数据呈现高斯分布，其收敛性明显更好，尤其是对于小样本)和最大似然估计。
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import linalg
+from sklearn.covariance import OAS, LedoitWolf
+from sklearn.model_selection import GridSearchCV
+from sklearn.covariance import ShrunkCovariance, empirical_covariance, log_likelihood
+
+n_features, n_samples = 40, 20
+np.random.seed(42)
+base_X_train = np.random.normal(size=(n_samples, n_features))
+base_X_test = np.random.normal(size=(n_samples, n_features))
+
+# Color samples（数据生成）
+coloring_matrix = np.random.normal(size=(n_features, n_features))
+X_train = np.dot(base_X_train, coloring_matrix)
+X_test = np.dot(base_X_test, coloring_matrix)
+
+# spanning a range of possible shrinkage coefficient values
+shrinkages = np.logspace(-2, 0, 30)
+negative_logliks = [-ShrunkCovariance(shrinkage=s).fit(X_train).score(X_test) for s in shrinkages]
+
+# under the ground-truth model, which we would not have access to in real settings
+real_cov = np.dot(coloring_matrix.T, coloring_matrix)
+emp_cov = empirical_covariance(X_train)
+loglik_real = -log_likelihood(emp_cov, linalg.inv(real_cov))
+# GridSearch for an optimal shrinkage coefficient
+tuned_parameters = [{"shrinkage": shrinkages}]
+cv = GridSearchCV(ShrunkCovariance(), tuned_parameters)
+cv.fit(X_train)
+
+# Ledoit-Wolf optimal shrinkage coefficient estimate
+lw = LedoitWolf()
+loglik_lw = lw.fit(X_train).score(X_test)
+
+# OAS coefficient estimate
+oa = OAS()
+loglik_oa = oa.fit(X_train).score(X_test)
+
+# 为了量化估计误差，我们绘制了收缩参数不同值下未见数据的可能性，并且做了交叉验证。
+fig = plt.figure()
+plt.title("Regularized covariance: likelihood and shrinkage coefficient")
+plt.xlabel("Regularization parameter: shrinkage coefficient")
+plt.ylabel("Error: negative log-likelihood on test data")
+# range shrinkage curve
+plt.loglog(shrinkages, negative_logliks, label="Negative log-likelihood")
+plt.plot(plt.xlim(), 2 * [loglik_real], "--r", label="Real covariance likelihood")
+
+# adjust view
+lik_max = np.amax(negative_logliks)
+lik_min = np.amin(negative_logliks)
+ymin = lik_min - 6.0 * np.log((plt.ylim()[1] - plt.ylim()[0]))
+ymax = lik_max + 10.0 * np.log(lik_max - lik_min)
+xmin = shrinkages[0]
+xmax = shrinkages[-1]
+# LW likelihood
+plt.vlines(lw.shrinkage_, ymin, -loglik_lw, color="magenta", linewidth=3, label="Ledoit-Wolf estimate",)
+# OAS likelihood
+plt.vlines(oa.shrinkage_, ymin, -loglik_oa, color="purple", linewidth=3, label="OAS estimate")
+# best CV estimator likelihood
+plt.vlines(cv.best_estimator_.shrinkage, ymin, -cv.best_estimator_.score(X_test), color="cyan", linewidth=3, label="Cross-validation best estimate",)
+plt.ylim(ymin, ymax)
+plt.xlim(xmin, xmax)
+plt.legend()
+
+plt.show()
+```
+{% asset_img ml_6.png %}
 
 ##### 稀疏逆协方差(Sparse Inverse Covariance)
 
