@@ -461,7 +461,79 @@ plt.show()
 
 ##### 稀疏逆协方差(Sparse Inverse Covariance)
 
-**稀疏逆协方差**(`Sparse Inverse Covariance`)是一种用于估计高维数据中的**协方差矩阵逆**（**精度矩阵**）的方法，尤其适用于变量数量远大于样本数量的情况。通过引入**稀疏性约束**，这种方法能够有效地识别变量之间的条件独立性，从而提供更具可解释性的模型。
+**稀疏逆协方差**(`Sparse Inverse Covariance`)是一种用于估计高维数据中的**协方差矩阵逆**（**精度矩阵**）的方法，尤其适用于变量数量远大于样本数量的情况。通过引入**稀疏性约束**，这种方法能够有效地识别变量之间的条件独立性，从而提供更具可解释性的模型。**协方差矩阵**：描述多个随机变量之间的线性关系。**逆协方差矩阵**：是**协方差矩阵**的逆，反映了变量之间的条件独立性。若{% mathjax %}\Sigma{% endmathjax %}是**协方差矩阵**，则其逆为{% mathjax %}\Sigma^{-1}{% endmathjax %}。**稀疏性**：在高维数据中，许多变量可能是条件独立的。**稀疏逆协方差估计**通过强制大多数元素为`0`，来简化**逆协方差矩阵**，从而使得模型更易于解释和分析。
+
+**稀疏逆协方差**(`Sparse Inverse Covariance`)估计方法：
+- `Lasso`方法：**稀疏逆协方差估计**通常使用`Lasso`回归（`L1`正则化）来实现。目标是最小化以下**损失函数**：{% mathjax %}\underset{\Theta}{\min}(tr(S\Theta) - \log|\Theta| + \lambda\|\Theta\|_1){% endmathjax %}。其中{% mathjax %}S{% endmathjax %}是**样本协方差矩阵**，{% mathjax %}\Theta{% endmathjax %}是待估计得**逆协方差矩阵**，{% mathjax %}|\Theta|{% endmathjax %}表示行列式，{% mathjax %}\|\Theta\|_1{% endmathjax %}是{% mathjax %}L_1{% endmathjax %}范数，用于引入**稀疏性**。{% mathjax %}\lambda{% endmathjax %}是正则化参数，控制稀疏程度。
+- `Graphical Lasso`方法：`Graphical Lasso`是一种具体实现，它利用优化算法（如坐标下降法）来求解上述优化问题。通过迭代更新，可以有效地获得**稀疏逆协方差估计**。
+
+**稀疏逆协方差**(`Sparse Inverse Covariance`)优势：
+- **可解释性**：通过引入**稀疏性**，能够明确识别变量之间的关系，提供更清晰的模型解释。
+- **处理高维数据**：在变量数量远大于样本数量的情况下，稀疏逆协方差估计能够有效避免传统方法的不稳定性。
+- **条件独立性推断**：能够揭示变量之间的条件独立结构，为构建图形模型（如**贝叶斯网络**）提供支持。
+
+这里有一个协方差估计和稀疏精度的实例，**高斯模型**是由**协方差矩阵逆**（**精度矩阵**）参数化的。
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import linalg
+from sklearn.datasets import make_sparse_spd_matrix
+from sklearn.covariance import GraphicalLassoCV, ledoit_wolf
+
+n_samples = 60
+n_features = 20
+
+prng = np.random.RandomState(1)
+prec = make_sparse_spd_matrix(n_features, alpha=0.98, smallest_coef=0.4, largest_coef=0.7, random_state=prng)
+cov = linalg.inv(prec)
+d = np.sqrt(np.diag(cov))
+cov /= d
+cov /= d[:, np.newaxis]
+prec *= d
+prec *= d[:, np.newaxis]
+X = prng.multivariate_normal(np.zeros(n_features), cov, size=n_samples)
+X -= X.mean(axis=0)
+X /= X.std(axis=0)
+
+# 协方差估计
+emp_cov = np.dot(X.T, X) / n_samples
+model = GraphicalLassoCV()
+model.fit(X)
+cov_ = model.covariance_
+prec_ = model.precision_
+lw_cov_, _ = ledoit_wolf(X)
+lw_prec_ = linalg.inv(lw_cov_)
+
+plt.figure(figsize=(10, 6))
+plt.subplots_adjust(left=0.02, right=0.98)
+
+# plot the covariances
+covs = [("Empirical", emp_cov),("Ledoit-Wolf", lw_cov_),("GraphicalLassoCV", cov_),("True", cov),]
+vmax = cov_.max()
+for i, (name, this_cov) in enumerate(covs):
+    plt.subplot(2, 4, i + 1)
+    plt.xticks(())
+    plt.yticks(())
+    plt.title("%s covariance" % name)
+    plt.imshow(this_cov, interpolation="nearest", vmin=-vmax, vmax=vmax, cmap=plt.cm.RdBu_r)
+
+# plot the precisions
+precs = [("Empirical", linalg.inv(emp_cov)),("Ledoit-Wolf", lw_prec_),("GraphicalLasso", prec_),("True", prec),]
+vmax = 0.9 * prec_.max()
+for i, (name, this_prec) in enumerate(precs):
+    ax = plt.subplot(2, 4, i + 5)
+    plt.xticks(())
+    plt.yticks(())
+    plt.imshow(np.ma.masked_equal(this_prec, 0),interpolation="nearest",vmin=-vmax,vmax=vmax,cmap=plt.cm.RdBu_r,)
+    plt.title("%s precision" % name)
+    if hasattr(ax, "set_facecolor"):
+        ax.set_facecolor(".7")
+    else:
+        ax.set_axis_bgcolor(".7")
+
+plt.show()
+```
+{% asset_img ml_7.png %}
 
 ##### 鲁棒方协差估计(Robust Covariance Estimation)
 
