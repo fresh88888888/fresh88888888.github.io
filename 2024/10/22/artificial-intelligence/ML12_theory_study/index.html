@@ -26,12 +26,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="介绍推荐系统(Recommendation system)的链路包括两个重要的步骤：检索（称召回）和排名（分为粗排，精排和重排）检索或召回主要用于衡量系统从全量信息中找出相关内容的能力。它的核心目的是在用户查询的背景下，尽可能多地返回与之相关的信息。如下图所示：">
+    <meta name="description" content="概念介绍推荐系统(Recommendation system)的链路包括两个重要的步骤：检索（称召回）和排名（分为粗排，精排和重排）检索或召回主要用于衡量系统从全量信息中找出相关内容的能力。它的核心目的是在用户查询的背景下，尽可能多地返回与之相关的信息。如下图所示：">
 <meta property="og:type" content="article">
 <meta property="og:title" content="机器学习(ML)(十二) — 推荐系统探析">
 <meta property="og:url" content="https://fresh88888888.github.io/2024/10/22/artificial-intelligence/ML12_theory_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="介绍推荐系统(Recommendation system)的链路包括两个重要的步骤：检索（称召回）和排名（分为粗排，精排和重排）检索或召回主要用于衡量系统从全量信息中找出相关内容的能力。它的核心目的是在用户查询的背景下，尽可能多地返回与之相关的信息。如下图所示：">
+<meta property="og:description" content="概念介绍推荐系统(Recommendation system)的链路包括两个重要的步骤：检索（称召回）和排名（分为粗排，精排和重排）检索或召回主要用于衡量系统从全量信息中找出相关内容的能力。它的核心目的是在用户查询的背景下，尽可能多地返回与之相关的信息。如下图所示：">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/10/22/artificial-intelligence/ML12_theory_study/ml_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/10/22/artificial-intelligence/ML12_theory_study/ml_2.png">
@@ -155,7 +155,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">概念介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#A-B%E6%B5%8B%E8%AF%95"><span class="nav-number">2.</span> <span class="nav-text">A&#x2F;B测试</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -320,7 +320,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p><strong>推荐系统</strong>(<code>Recommendation system</code>)的链路包括两个重要的步骤：<strong>检索</strong>（称<strong>召回</strong>）和<strong>排名</strong>（分为<strong>粗排</strong>，<strong>精排</strong>和<strong>重排</strong>）<strong>检索</strong>或<strong>召回</strong>主要用于衡量系统从全量信息中找出相关内容的能力。它的核心目的是在用户查询的背景下，尽可能多地返回与之相关的信息。如下图所示：</p>
+    <div class="post-body" itemprop="articleBody"><h4 id="概念介绍"><a href="#概念介绍" class="headerlink" title="概念介绍"></a>概念介绍</h4><p><strong>推荐系统</strong>(<code>Recommendation system</code>)的链路包括两个重要的步骤：<strong>检索</strong>（称<strong>召回</strong>）和<strong>排名</strong>（分为<strong>粗排</strong>，<strong>精排</strong>和<strong>重排</strong>）<strong>检索</strong>或<strong>召回</strong>主要用于衡量系统从全量信息中找出相关内容的能力。它的核心目的是在用户查询的背景下，尽可能多地返回与之相关的信息。如下图所示：</p>
 <img data-src="/2024/10/22/artificial-intelligence/ML12_theory_study/ml_1.png" class="" title="推荐系统的链路">
 <span id="more"></span>
 
@@ -330,7 +330,7 @@
 <p><strong>精排</strong>与<strong>粗排</strong>的唯一区别就是<strong>精排</strong>用的模型更大，特征更多，模型的输入包括用户特征、物品特征、统计特征。假如要判断用户对某个物品感兴趣，我们就要把该用户的特征、物品的特征和统计特征输入<strong>神经网络</strong>，神经网络会输出很多数值，比如点击率、点赞率、收藏率、转发率等等，这些数值都是神经网络对用户行为的预估。这些数值越大说明用户对该物品越感兴趣，最后把多个预估值做融合，得到最终的分数。比如求加权和，这个分数决定了这个物品会不会展示给用户，以及物品展示的位置是靠前还是靠后，请注意，这只是对一个物品的打分，<strong>粗排</strong>要对几千个物品打分，<strong>精排</strong>要对几百个物品打分。每个物品都用多个预估分数融合成一个分数作为给这个物品排序的依据。<strong>推荐系统</strong>链路上的最后一环是<strong>重排</strong>，重排最重要的能力是<strong>多样性抽样</strong>（比如<code>MMR</code>、<code>DPP</code>），需要从几百个物品中选出几十个物品。<strong>多样性抽样</strong>的时候有两个依据：一个依据是<strong>精排</strong>分数的大小，另一个依据是<strong>多样性</strong>。做完<strong>多样性抽样</strong>之后会根据规则将相似物品打散。重排的另一个目的是插入广告、运营推广的内容，根据生态要求调整排序。</p>
 <img data-src="/2024/10/22/artificial-intelligence/ML12_theory_study/ml_2.png" class="" title="精排、粗排">
 
-
+<h4 id="A-B测试"><a href="#A-B测试" class="headerlink" title="A&#x2F;B测试"></a>A&#x2F;B测试</h4>
     </div>
 
     
