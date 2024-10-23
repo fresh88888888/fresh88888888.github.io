@@ -35,7 +35,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/10/22/artificial-intelligence/ML12_theory_study/ml_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/10/22/artificial-intelligence/ML12_theory_study/ml_2.png">
-<meta property="og:image" content="https://fresh88888888.github.io/2024/10/22/artificial-intelligence/ML12_theory_study/ml_2.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/10/22/artificial-intelligence/ML12_theory_study/ml_3.png">
 <meta property="article:published_time" content="2024-10-22T07:37:11.000Z">
 <meta property="article:modified_time" content="2024-10-22T07:37:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -328,7 +328,7 @@
 <img data-src="/2024/10/22/artificial-intelligence/ML12_theory_study/ml_2.png" class="" title="推荐系统：排序">
 
 <p><strong>精排</strong>与<strong>粗排</strong>的唯一区别就是<strong>精排</strong>用的模型更大，特征更多，模型的输入包括用户特征、物品特征、统计特征。假如要判断用户对某个物品感兴趣，我们就要把该用户的特征、物品的特征和统计特征输入<strong>神经网络</strong>，神经网络会输出很多数值，比如点击率、点赞率、收藏率、转发率等等，这些数值都是神经网络对用户行为的预估。这些数值越大说明用户对该物品越感兴趣，最后把多个预估值做融合，得到最终的分数。比如求加权和，这个分数决定了这个物品会不会展示给用户，以及物品展示的位置是靠前还是靠后，请注意，这只是对一个物品的打分，<strong>粗排</strong>要对几千个物品打分，<strong>精排</strong>要对几百个物品打分。每个物品都用多个预估分数融合成一个分数作为给这个物品排序的依据。<strong>推荐系统</strong>链路上的最后一环是<strong>重排</strong>，重排最重要的能力是<strong>多样性抽样</strong>（比如<code>MMR</code>、<code>DPP</code>），需要从几百个物品中选出几十个物品。<strong>多样性抽样</strong>的时候有两个依据：一个依据是<strong>精排</strong>分数的大小，另一个依据是<strong>多样性</strong>。做完<strong>多样性抽样</strong>之后会根据规则将相似物品打散。重排的另一个目的是插入广告、运营推广的内容，根据生态要求调整排序。</p>
-<img data-src="/2024/10/22/artificial-intelligence/ML12_theory_study/ml_2.png" class="" title="精排、粗排">
+<img data-src="/2024/10/22/artificial-intelligence/ML12_theory_study/ml_3.png" class="" title="精排、粗排">
 
 <h4 id="A-B测试"><a href="#A-B测试" class="headerlink" title="A&#x2F;B测试"></a>A&#x2F;B测试</h4>
     </div>
