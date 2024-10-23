@@ -35,6 +35,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/10/22/artificial-intelligence/ML12_theory_study/ml_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/10/22/artificial-intelligence/ML12_theory_study/ml_2.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/10/22/artificial-intelligence/ML12_theory_study/ml_2.png">
 <meta property="article:published_time" content="2024-10-22T07:37:11.000Z">
 <meta property="article:modified_time" content="2024-10-22T07:37:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -302,14 +303,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>699</span>
+      <span>1.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>4 分钟</span>
     </span>
 </div>
 
@@ -325,6 +326,9 @@
 
 <p><strong>推荐系统</strong>(<code>Recommendation system</code>)的目标是从物品的数据库中取出几十个物品展示给用户。<strong>推荐系统</strong>链路上的第一环是<strong>检索</strong>或<strong>召回</strong>，就是从数据库中快速取回一些物品，在实践中，<strong>推荐系统</strong>有很多条<strong>召回通道</strong>（如<strong>协同过滤</strong>、<strong>双塔模型</strong>、<strong>关注的作者</strong>等等），每条<strong>召回通道</strong>取回几百个物品。这些<strong>召回通道</strong>一共返回几千个物品，然后<strong>推荐系统</strong>会融合这些物品，并且做去重和过滤，过滤的意思是排除掉不喜欢的物品，召回几千个物品之后，下一步是<strong>排序</strong>，<strong>排序</strong>要用机器学习模型预估用户对物品的兴趣，保留评分最高的物品，如果用一个大规模神经网络逐一对几千个物品打分，花费的代价会很大，为了解决计算量的问题，通常把排序分为<strong>粗排</strong>和<strong>精排</strong>。<strong>粗排</strong>一般使用比较简单的模型，快速给几千个物品打分，保留分数最高的几百个物品；<strong>精排</strong>用一个较大的<strong>神经网络</strong>给几百个物品打分，不用做截断。<strong>精排模型</strong>比<strong>粗排模型</strong>大很多，用的特征也更多，所以<strong>精排模型</strong>打的分数也更可靠。但是<strong>精排模型</strong>的计算量也很大，这就是为什么我们用<strong>粗排模型</strong>先做筛选，然后才用<strong>精排模型</strong>，这样做可以很好的平衡<strong>计算量</strong>和<strong>准确性</strong>。做完<strong>粗排</strong>和<strong>精排</strong>得到几百个物品，每个物品都有一个分数，表示用户多物品的兴趣有多高。可以直接把物品按照打的分数排序，然后展示给用户，但此时的结果还是会存在一些不足，需要做一些调整，这一步叫做<strong>重排</strong>。<strong>重排</strong>主要是考虑<strong>多样性</strong>，要根据多样性进行随机抽样，从几百个物品中选择出几十个物品，然后还要使用规则把相似的物品打散，<strong>重排</strong>的结果就是展示给用户的物品。比如把<code>top50</code>的物品（包含广告）展示给用户。如下图所示：</p>
 <img data-src="/2024/10/22/artificial-intelligence/ML12_theory_study/ml_2.png" class="" title="推荐系统：排序">
+
+<p><strong>精排</strong>与<strong>粗排</strong>的唯一区别就是<strong>精排</strong>用的模型更大，特征更多，模型的输入包括用户特征、物品特征、统计特征。假如要判断用户对某个物品感兴趣，我们就要把该用户的特征、物品的特征和统计特征输入<strong>神经网络</strong>，神经网络会输出很多数值，比如点击率、点赞率、收藏率、转发率等等，这些数值都是神经网络对用户行为的预估。这些数值越大说明用户对该物品越感兴趣，最后把多个预估值做融合，得到最终的分数。比如求加权和，这个分数决定了这个物品会不会展示给用户，以及物品展示的位置是靠前还是靠后，请注意，这只是对一个物品的打分，<strong>粗排</strong>要对几千个物品打分，<strong>精排</strong>要对几百个物品打分。每个物品都用多个预估分数融合成一个分数作为给这个物品排序的依据。<strong>推荐系统</strong>链路上的最后一环是<strong>重排</strong>，重排最重要的能力是<strong>多样性抽样</strong>（比如<code>MMR</code>、<code>DPP</code>），需要从几百个物品中选出几十个物品。<strong>多样性抽样</strong>的时候有两个依据：一个依据是<strong>精排</strong>分数的大小，另一个依据是<strong>多样性</strong>。做完<strong>多样性抽样</strong>之后会根据规则将相似物品打散。重排的另一个目的是插入广告、运营推广的内容，根据生态要求调整排序。</p>
+<img data-src="/2024/10/22/artificial-intelligence/ML12_theory_study/ml_2.png" class="" title="精排、粗排">
 
 
     </div>
@@ -405,7 +409,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">66:44</span>
+    <span title="站点阅读时长">66:45</span>
   </span>
 </div>
 <div class="busuanzi-count">
