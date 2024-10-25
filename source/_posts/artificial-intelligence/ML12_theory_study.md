@@ -73,3 +73,7 @@ mathjax:
 
 #### 召回 - 向量召回
 
+**矩阵补充**(`matrix completion`)是**向量召回**最简单的一种方法，现在基本不怎么使用了。`Embedding`可以把用户`ID`或者物品`ID`映射成向量，如下图所示：
+{% asset_img ml_11.png "矩阵补充模型" %}
+
+模型的输入是一个用户ID和一个物品ID，模型的输出是一个实数，是用户对物品兴趣的预估值。这个数越大，表示用户对物品越感兴趣。下面我们看一下模型的结构，左边的结构只有一个`Embedding`层，把一个用户ID映射到一个向量，记录向量{% mathjax %}\vec{a}{% endmathjax %}，这个向量是对用户的表征。而`Embedding`层的参数是一个矩阵，矩阵中列的数量是用户数量，每一列都是{% mathjax %}\vec{a}{% endmathjax %}这样大小的向量，`Embedding`层的参数数量 = 用户数量 x 向量{% mathjax %}\vec{a}{% endmathjax %}的大小；右边的结构是另外一个`Embedding`层，把一个物品ID映射到一个向量，记录向量{% mathjax %}\vec{b}{% endmathjax %}，大小跟向量{% mathjax %}\vec{a}{% endmathjax %}设置成一样的，向量{% mathjax %}\vec{b}{% endmathjax %}是对物品的表征，`Embedding`层的参数是一个矩阵，输出的向量{% mathjax %}\vec{b}{% endmathjax %}是矩阵的一列，矩阵列的数量是物品的数量。模型一共用了2个`Embedding`层，它们不共享参数，对向量{% mathjax %}\vec{a}{% endmathjax %}和{% mathjax %}\vec{b}{% endmathjax %}求内积得到一个实数，作为模型的输出。这个模型就是**矩阵补充模型**。
