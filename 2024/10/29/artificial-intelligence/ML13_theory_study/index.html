@@ -35,6 +35,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/10/29/artificial-intelligence/ML13_theory_study/ml_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/10/29/artificial-intelligence/ML13_theory_study/ml_2.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/10/29/artificial-intelligence/ML13_theory_study/ml_3.png">
 <meta property="article:published_time" content="2024-10-29T02:44:11.000Z">
 <meta property="article:modified_time" content="2024-10-29T02:44:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -302,14 +303,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>3.8k</span>
+      <span>4.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>13 分钟</span>
+      <span>14 分钟</span>
     </span>
 </div>
 
@@ -345,7 +346,11 @@
 <li><strong>全量更新</strong>：每天凌晨，用昨天全天的数据训练模型，而不是随机初始化。把昨天<code>1</code>天的数据去打包成<code>TFRecord</code>文件，在昨天模型参数的基础上做训练。把昨天的数据过一遍，每条数据只用<code>1</code>次，也就是训练只做<code>1 epoch</code>。训练完成之后，发布新的用户塔（是在线上实时计算用户向量，作为召回的<code>query</code>）神经网络和物品向量（几亿个向量存入向量数据库，向量数据库会重新建索引，在线上可以做最近邻查找），全量更新的实现相对比较容易，对数据流、整个系统的要求不高，全量更新不需要实时的数据流，对训练生成的速度没有要求。只需要把每天的数据落表，在凌晨做个批处理，把数据打包成<code>TFRecord</code>文件就可以，<strong>全量更新</strong>对系统的要求也很低，每天做一次<strong>全量更新</strong>，所以只需要把神经网络和物品向量每天发布一次就够了。</li>
 <li><strong>增量更新</strong>：做<code>online learning</code>更新模型参数，每隔几十分钟就把新的模型参数发布出去。为什么要做<strong>增量更新</strong>呢？这是因为用户的兴趣会随时发生变化，<strong>增量更新</strong>对数据流的要求比较高，要实时收集线上数据做流式处理，实时生成训练模型需要的<code>TFRecord</code>文件，然后对模型做<code>online learning</code>，做<strong>梯度下降</strong><code>ID Embedding</code>的参数，也就是从早到晚，训练数据文件不断生成，不断做梯度下降更新模型的<code>Embedding</code>层，注意<code>online learning</code>不更新神经网络其他部分的参数，全连接层的参数都是锁住的，不做<strong>增量更新</strong>，只更新<code>Embedding</code>层的参数，只有做<strong>全量更新</strong>的时候，才会更新全连接层。模型更新之后，再把算出的用户<code>ID Embedding</code>发布出去，用户的<code>ID Embedding</code>是一个哈希表的形式，给定用户<code>ID</code>，可以查出<code>ID Embedding</code>向量。发布用户<code>ID Embedding</code>的目的是为了线上计算用户向量。最新的用户<code>ID Embedding</code>能够捕捉到用户最新的兴趣点，对推荐很有帮助。发布用户<code>ID Embedding</code>的过程会有延迟，通过对系统做优化，可以将延迟降低到几十分钟或者更短。如下图所示： <img data-src="/2024/10/29/artificial-intelligence/ML13_theory_study/ml_2.png" class="" title="全量更新 vs 增量更新"></li>
 </ul>
-<p> 为什么只做<strong>增量更新</strong>不好呢？如果你只看一个小时的数据它是有偏的，分钟级数据差别更大。在不同的时间段用户的行为是不一样的，比如中午和傍晚的数据明显不一致，如果你只看5分钟的数据，那么偏差就更大了，它跟全天数据的统计值差别更大，做全量更新数据的时候，要随机排列数据，也就是<code>random shuffle</code>，这样就是为了消除偏差，全量更新是在<code>random shuffle</code>数据上做，而增量更新是按照数据从早到晚的顺序上做训练。同样使用一天的数据，这两种排列顺序的方式会导致训练的效果有差别，把数据按照从早到晚的顺序进行排列，效果不如把数据随机打乱，所以全量训练的效果比增量训练更好，这就是为什么我既要做全量训练又要做增量训练。全量训练的模型更好，增量训练能够实时捕捉用户的兴趣。</p>
+<p> 为什么只做<strong>增量更新</strong>不好呢？如果你只看一个小时的数据它是有偏的，分钟级数据差别更大。在不同的时间段用户的行为是不一样的，比如中午和傍晚的数据明显不一致，如果你只看<code>5</code>分钟的数据，那么偏差就更大了，它跟全天数据的统计值差别更大，做全量更新数据的时候，要随机排列数据，也就是<code>random shuffle</code>，这样就是为了消除偏差，全量更新是在<code>random shuffle</code>数据上做，而增量更新是按照数据从早到晚的顺序上做训练。同样使用一天的数据，这两种排列顺序的方式会导致训练的效果有差别，把数据按照从早到晚的顺序进行排列，效果不如把数据随机打乱，所以全量训练的效果比增量训练更好，这就是为什么我既要做全量训练又要做增量训练。全量训练的模型更好，增量训练能够实时捕捉用户的兴趣。</p>
+<p><strong>双塔模型</strong>，如下图所示，左边的用户塔，右边是物品塔：</p>
+<img data-src="/2024/10/29/artificial-intelligence/ML13_theory_study/ml_3.png" class="" title="双塔模型结构">
+
+<p><strong>自监督学习</strong>的目的是把物品塔训练的更好，为什么要做<strong>自监督学习</strong>呢？在实际的推荐系统模型中，数据上的问题会影响双塔模型的表现，推荐系统都有<strong>头部效应</strong>：少部分的物品占据了大部分的点击，大部分的物品点击次数不高。训练双塔模型的时候，用点击数据作为正样本，模型学习物品的表征，靠的就是点击行为。如果一个物品给几千个用户曝光，有好几百个用户点击，那么物品的表征就会学的比较好，反过来，长尾物品的表征就学的不够好，这是因为长尾物品的点积和曝光次数太少，训练的样本数量不够，一种比较好的方法就是<strong>自监督学习</strong>。对物品做<code>data augmentation</code>，可以更好的学习长尾物品的<strong>向量表征</strong>。请参考文献：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2007.12865"><code>Self-supervised Learning for Large-scale Item Recommendations</code></a>。</p>
 
     </div>
 
@@ -425,7 +430,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">67:36</span>
+    <span title="站点阅读时长">67:37</span>
   </span>
 </div>
 <div class="busuanzi-count">
