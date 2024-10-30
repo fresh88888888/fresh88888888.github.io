@@ -33,7 +33,7 @@ mathjax:
 如下图所示，这是训练好的两个塔，它们分别提取用户、物品特征，在开始双塔训练之后，线上服务之前，先用右边物品的塔提取物品的特征，把物品特征向量记作{% mathjax %}\vec{b}{% endmathjax %}，这里有多少个物品就有多少个向量（几亿），把<特征向量{% mathjax %}\vec{b}{% endmathjax %}, 物品`ID`>保存到向量数据库，向量数据库存储物品向量和物品`ID`的二元组，用作最近邻查找，左边的用户塔不要事先计算并存储向量，而是当用户线上发起推荐请求的时候，调用神经网络在线上计算一个向量{% mathjax %}\vec{a}{% endmathjax %}，然后把向量作为`query`去数据库中做检索，查找最近邻，也就是跟向量{% mathjax %}\vec{a}{% endmathjax %}相似度最高的{% mathjax %}k{% endmathjax %}个红色向量，每个红色向量对应一个物品，`k`-近邻查找一共召回了{% mathjax %}k{% endmathjax %}个物品，作为这条召回通道的结果返回。
 {% asset_img ml_1.png "左边是物品向量b离线存储，右边用户向量a线上召回" %}
 
-**双塔模型的召回**：离线存储，把物品向量{% mathjax %}\vec{b}{% endmathjax %}存入向量数据库；线上召回，查找用户最感兴趣的{% mathjax %}k{% endmathjax %}个物品，给定用户ID和画像，线上用神经网络算用户向量{% mathjax %}\vec{a}{% endmathjax %}，然后最近邻查找（把向量{% mathjax %}\vec{a}{% endmathjax %}作为query，调用向量数据库做最近邻查找，数据库返回余弦相似度最大的{% mathjax %}k{% endmathjax %}个物品，作为召回结果。）。
+**双塔模型的召回**：离线存储，把物品向量{% mathjax %}\vec{b}{% endmathjax %}存入向量数据库；线上召回，查找用户最感兴趣的{% mathjax %}k{% endmathjax %}个物品，给定用户ID和画像，线上用神经网络算用户向量{% mathjax %}\vec{a}{% endmathjax %}，然后最近邻查找（把向量{% mathjax %}\vec{a}{% endmathjax %}作为`query`，调用向量数据库做最近邻查找，数据库返回余弦相似度最大的{% mathjax %}k{% endmathjax %}个物品，作为召回结果。）。
 
 事先存储物品向量{% mathjax %}\vec{b}{% endmathjax %}，线上现算用户向量{% mathjax %}\vec{a}{% endmathjax %}，为什么要区别对待物品向量和用户向量呢？没做一次召回只用到一个向量{% mathjax %}\vec{a}{% endmathjax %}，而要用到几亿物品向量{% mathjax %}\vec{b}{% endmathjax %}，拿神经网络现算一个用户向量，计算量不大，但是几亿个物品向量显然是算不起的。所以不得不离线算好物品向量，那能不能把几亿个用户向量提前算好并存储起来，进一步减少线上负担呢？这样做当然可以，早期的时候就是这样做的。这样工程实现很简单，但这样不利于推荐的效果。用户的兴趣点是动态变化的，所以应该线上实时计算用户向量，而不是事先计算好存储起来。但是事先存储物品向量是可以的，是因为物品特征相对稳定，短期内不会发生变化。
 
