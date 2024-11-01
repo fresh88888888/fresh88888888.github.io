@@ -72,7 +72,7 @@ mathjax:
 
 #### 召回 - Deep Retrieval
 
-`Deep Retrieval`是一种基于深度学习的**检索模型**，旨在提高大规模推荐系统中的候选项检索效率和准确性。它通过将候选项编码到一个离散的潜在空间中，利用深度神经网络的强大表示能力，实现端到端的学习过程。经典的双塔模型把用户、物品表示为向量，线上做紧邻查找。Deep Retrieval则把物品表征为路径(`path`)，线上查找用户最匹配的路径。论文可以参考[`Deep Retrieval: Learning A Retrievable Structure for Large-Scale Recommendations`](https://arxiv.org/pdf/2007.07203)。
+`Deep Retrieval`是一种基于深度学习的**检索模型**，旨在提高大规模推荐系统中的候选项检索效率和准确性。它通过将候选项编码到一个离散的潜在空间中，利用深度神经网络的强大表示能力，实现端到端的学习过程。经典的双塔模型把用户、物品表示为向量，线上做紧邻查找。`Deep Retrieval`则把物品表征为路径(`path`)，线上查找用户最匹配的路径。论文可以参考[`Deep Retrieval: Learning A Retrievable Structure for Large-Scale Recommendations`](https://arxiv.org/pdf/2007.07203)。
 
 `Deep Retrieval`的索引：物品表征为路径，索引把路径关联起来，如下图所示，神经网络分为三层，深度为{% mathjax %}\text{depth} = 3{% endmathjax %}，宽度为{% mathjax %}\text{width} = K{% endmathjax %}，也就说每一层有{% mathjax %}K{% endmathjax %}个节点，`Deep Retrieval`用到了路径这个概念，把一个物品表示为路径(`path`)，比如`[2,4,1]`。一个物品可以表示为多条路径，比如`{[2,4,1],[4,1,1]}`。路径可以有重合的节点，`Deep Retrieval`用到两个索引：一个索引是`item -> List<path>`，训练神经网络的时候要用到这个索引，一个物品可以对应多条路径，假设结构有3层，就用三个节点来表示一条路径：{% mathjax %}\text{path} = [a,b,c]{% endmathjax %}，{% mathjax %}a,b,c{% endmathjax %}是节点。另一个索引是：`path -> List<item>`，一条路径会对应多个物品，线上做召回的时候会用到这个索引。给定一条路径会取回很多个物品作为召回的结果。
 {% asset_img ml_7.png %}
