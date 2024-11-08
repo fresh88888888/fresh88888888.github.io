@@ -44,4 +44,6 @@ mathjax:
 
 #### 特征交叉 - SENet & Bilinear 交叉
 
-用户`ID`、物品`ID`、物品类目、物品管关键词等是**推荐系统**用到的离散特征。对这些离散特征做`embedding`得到多个向量。假设有{% mathjax %}m{% endmathjax %}个特征，每个特征都表示为{% mathjax %}k{% endmathjax %}维的向量，可以把所有特征表示成{% mathjax %}m\times k{% endmathjax %}的矩阵，对矩阵的行做`AvgPool`，得到一个{% mathjax %}m\times 1{% endmathjax %}维的向量。向量的每一个元素对应一个离散特征，用一个全连接层和`ReLU`激活函数把{% mathjax %}m\times 1{% endmathjax %}维向量压缩成{% mathjax %}\frac{r}{m}\times 1{% endmathjax %}的向量，其中{% mathjax %}r{% endmathjax %}是压缩比例，设置成一个大于1的数，再用一个全连接层和`sigmoid`激活函数恢复成{% mathjax %}m{% endmathjax %}维的向量，这个向量的元素都介于`0~1`之间，接下来，用右边的{% mathjax %}m{% endmathjax %}维向量对左边的矩阵的行做加权，把向量逐行乘到矩阵上得到得到一个新的矩阵，这个矩阵的大小也是{% mathjax %}m\times k{% endmathjax %}，跟左边的矩阵一样大。如下图所示：
+用户`ID`、物品`ID`、物品类目、物品管关键词等是**推荐系统**用到的离散特征。对这些离散特征做`embedding`得到多个向量。假设有{% mathjax %}m{% endmathjax %}个特征，每个特征都表示为{% mathjax %}k{% endmathjax %}维的向量，可以把所有特征表示成{% mathjax %}m\times k{% endmathjax %}的矩阵，对矩阵的行做`AvgPool`，得到一个{% mathjax %}m\times 1{% endmathjax %}维的向量。向量的每一个元素对应一个离散特征，用一个全连接层和`ReLU`激活函数把{% mathjax %}m\times 1{% endmathjax %}维向量压缩成{% mathjax %}\frac{r}{m}\times 1{% endmathjax %}的向量，其中{% mathjax %}r{% endmathjax %}是压缩比例，设置成一个大于`1`的数，再用一个全连接层和`sigmoid`激活函数恢复成{% mathjax %}m{% endmathjax %}维的向量，这个向量的元素都介于`0~1`之间，接下来，用右边的{% mathjax %}m{% endmathjax %}维向量对左边的矩阵的行做加权，把向量逐行乘到矩阵上得到得到一个新的矩阵，这个矩阵的大小也是{% mathjax %}m\times k{% endmathjax %}，跟左边的矩阵一样大。如下图所示：
+{% asset_img ml_6.png "SENet网络结构" %}
+
