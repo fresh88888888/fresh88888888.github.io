@@ -50,7 +50,7 @@ mathjax:
 为了方便，把{% mathjax %}m{% endmathjax %}个离散特征映射成了{% mathjax %}k{% endmathjax %}维向量，事实上，这{% mathjax %}m{% endmathjax %}个向量的维度可以不同，不会影响`SENet`，`SENet`对每个向量做`AvgPool`得到一个{% mathjax %}m{% endmathjax %}维向量，再用两个全连接层得到另外一个{% mathjax %}m{% endmathjax %}维向量，用来对{% mathjax %}m{% endmathjax %}个向量做加权，最终`SENet`输出{% mathjax %}m{% endmathjax %}个向量。`SENet`的本质是对离散特征做`field-wise`加权，`field`：用户`ID Embedding`是`64`维向量，向量的`64`个元素算一个`field`，并获得相同的权重。如果有{% mathjax %}m{% endmathjax %}个离散特征，即{% mathjax %}m{% endmathjax %}个`fields`，那么权重向量就是{% mathjax %}m{% endmathjax %}维，用这个向量的一个元素给`field`做加权，也就是说，`SENet`会根据所有特征自动判断每个`field`特征重要性，重要的`field`权重高、不重要的`field`权重低。
 
 `field`**间特征交叉**：意思是把两个`field`做交叉，得到新的特征，比如说，把物品所在位置和用户所在位置各自做`embedding`，然后把两个`embedding`向量做交叉。交叉两个向量方法如下图所示：
-{% asset_img ml_7.png "field间交叉，左边基于内积，右边基于阿达玛乘积" %}
+{% asset_img ml_7.png "field间特征交叉，左边基于内积，右边基于阿达玛乘积" %}
 
 **内积**和**阿达玛乘积**(`Hadamard Product`)是最简单的交叉方法：
 - **内积**：{% mathjax %}x_i{% endmathjax %}和{% mathjax %}x_j{% endmathjax %}是两个特征的`embedding`，求它们的内积得到一个实数{% mathjax %}f_{ij}{% endmathjax %}，如果有{% mathjax %}m{% endmathjax %}`fields`，也就是说有{% mathjax %}m{% endmathjax %}个离散特征，会计算出{% mathjax %}m^2{% endmathjax %}个实数，**推荐系统**中{% mathjax %}m{% endmathjax %}的数量不是很大，数量也就几十个。
@@ -59,8 +59,10 @@ mathjax:
 `Bilinear Cross`是一种更先进的特征交叉方法，`Bilinear Cross`有内积、**阿达玛乘积**(`Hadamard Product`)两种形式：
 - `Bilinear Cross`（**内积**）：{% mathjax %}x_i{% endmathjax %}和{% mathjax %}x_j{% endmathjax %}是两个特征的`embedding`，它们的形状可以相同，也可以不同。计算{% mathjax %}x_i{% endmathjax %}转置乘以{% mathjax %}w_{ij}{% endmathjax %}，再乘以{% mathjax %}x_j{% endmathjax %}，记作{% mathjax %}f_{ij} = x^{\mathsf{T}}_i\cdot w_{ij}\cdot x_j{% endmathjax %}，其中得到一个实数{% mathjax %}f_{ij}{% endmathjax %}，{% mathjax %}f_{ij}{% endmathjax %}是两个`fields`的交叉，用这种特征交叉的方式，如果有{% mathjax %}m{% endmathjax %}个`fields`，那么会产生{% mathjax %}m^2{% endmathjax %}个交叉特征，都是实数。交叉特征的数量不是很大，做`Bilinear Cross`的时候，需要很多像{% mathjax %}w_{ij}{% endmathjax %}这样的参数矩阵，如果有{% mathjax %}m{% endmathjax %}个fields，那么就会有{% mathjax %}m^2/2{% endmathjax %}个参数矩阵。加入每个参数矩阵的大小都是{% mathjax %}64\times 64{% endmathjax %}，有`1000`个这样的参数矩阵，那么`Bilinear Cross`的参数量是{% mathjax %} 4\,000\,000{% endmathjax %}个，参数数量太大。想要减少数量，需要人工指定某些相关的而且重要的特征做交叉，而不能让所有特征做两两交叉。
 - `Bilinear Cross`（**阿达玛乘积**）：{% mathjax %}x_i{% endmathjax %}和{% mathjax %}x_j{% endmathjax %}是两个特征的`embedding`，先把矩阵{% mathjax %}w_{x_ix_j}{% endmathjax %}和{% mathjax %}x_j{% endmathjax %}相乘得出另一个向量，再求与向量{% mathjax %}x_i{% endmathjax %}的**阿达玛乘积**，也就是让两个向量逐元素相乘，**阿达玛乘积**得出一个向量{% mathjax %}f_{ij}{% endmathjax %}，用这种特征交叉的方式，如果有{% mathjax %}m{% endmathjax %}个`fields`，就会计算出{% mathjax %}m^2{% endmathjax %}个向量，对{% mathjax %}m^2{% endmathjax %}个向量做`concatnation`得到的向量维度太大了，而且其中大多数都是无意义的特征，在实践中，最好人工指定一部分特征做交叉，而不是让所有{% mathjax %}m{% endmathjax %}个特征两两做交叉。这样既可以减少参数的数量，又可以让`concatnation`之后的向量变小。
-{% asset_img ml_8.png "field间交叉，左边基于Bilinear Cross(内积)，右边基于Bilinear Cross(阿达玛乘积)" %}
+{% asset_img ml_8.png "field间特征交叉，左边基于Bilinear Cross(内积)，右边基于Bilinear Cross(阿达玛乘积)" %}
 
 `FiBiNet`：把`SENet`和`Bilinear Cross`结合起来就是`FiBiNet`，用户`ID`、物品`ID`、物品类目等等是用到的离散特征，对这些离散特征做`embedding`，用`1`个向量表示一个特征，把这些向量做`concatenation`，得到一个高维向量，对这些`embedding`向量做`Bilinear Cross`，得到很多交叉特征，拼接成一个向量。用`SENet`对`embedding`向量做加权，得到一个一个同样大小的向量，在对这些向量做`Bilinear Cross`，得到很多交叉特征，拼接成一个向量。这些是`FiBiNet`对离散特征变换之后得到的向量，对它们做`concatenation`，输入上层的神经网络，这是还有连续特征，连续特征变换之后，输入上层的神经网络。跟简单排序模型相比，`FiBiNet`用了`SENet`加权和`Bilinear Cross`，在精排模型中使用效果很显著。如下图所示：
 {% asset_img ml_9.png "FiBiNet网络结构" %}
+
+#### 行为序列 - 用户行为序列建模
 
