@@ -74,3 +74,18 @@ mathjax:
 {% asset_img ml_10.png "DIN模型加权平均" %}
 
 `DIN`模型的本质就是**注意力机制**。{% mathjax %}x_1,x_2,\ldots,x_n{% endmathjax %}是用户`LastN`物品的向量表征，{% mathjax %}q{% endmathjax %}是候选物品的向量表征，把{% mathjax %}x_1,x_2,\ldots,x_n{% endmathjax %}向量看作是`key`和`value`，把向量{% mathjax %}q{% endmathjax %}向量看作是`query`，全都输入单头注意力层，`query`只有一个向量，单头注意力层的输出也是一个向量，所以它和注意力机制完全一致。简单平均和注意力机制都适用于精排模型，单间平均还适用于召回的双塔模型和粗排的三塔模型。简单平均只用到用户的`LastN`，属于用户自身的特征，跟候选物品无关，因此可以把`LastN`的平均作为用户塔的输入。但是注意力机制(`attention`)就不适用于双塔模型和三塔模型。注意力机制(`attention`)既用到`LastN`，也要用到候选物品。用户塔看不到候选物品，因此不能把注意力机制(`attention`)用在用户塔上。比如在双塔召回的时候，一共有上亿个候选物品，用户塔只能够看到用户特征，却看不到候选物品特征，但是`DIN`模型需要知道候选物品的特征，因此`DIN`模型不能放在用户塔，`DIN`模型不能运用到双塔模型、三塔模型。
+
+#### 行为序列 - SIM模型
+
+`DIN`模型其实是**注意力机制**(`attention`)，**注意力层**的计算量正比于{% mathjax %}n{% endmathjax %}（正比于用户序列的长度），记作{% mathjax %}\text{DIN} \propto n{% endmathjax %}，{% mathjax %}n{% endmathjax %}越大，`DIN`模型的计算量也就越大，`DIN`模型通常只能记录最近几百个物品，否则计算量太大。因此记录的用户行为太短，模型只关注短期兴趣，遗忘了长期兴趣。如何保留用户长期行为序列，而且计算量不会过大？改进`DIN`的思路是：`DIN`对`LastN`向量做加权平均，权重是候选物品与每个`LastN`物品的相似度，如果`LastN`物品与候选物品差异很大，则权重接近于`0`。快速排除掉与候选物品无关的`LastN`物品，只把相关物品输入注意力层，这样就大幅降低注意力层的计算量。这种方法被称作`SIM`模型。`SIM`模型相关论文，请参考：[`Search-based User Interest Modeling with Lifelong Sequential Behavior Data for Click-Through Rate Prediction`](https://arxiv.org/pdf/2006.05639)。
+
+如果使用`SIM`模型的话，可以保留用户的长期历史行为记录，{% mathjax %}n{% endmathjax %}的大小可以是几千。对于每个候选物品，在用户`LastN`记录中做快速查找，找到{% mathjax %}k{% endmathjax %}个相似物品。{% mathjax %}k{% endmathjax %}是一个比较小的数，比如{% mathjax %}k = 100{% endmathjax %}。例如我们这里记录了用户交互过的`1000`个物品`ID`，也就是说{% mathjax %}n = 1000{% endmathjax %}，根据候选物品的类目，快速排除掉绝大多数`LastN`物品，只保留最相关`100`个，通过查找，把`LastN`变成了`Top-K`，然后`Top-K`输入到注意力层。`SIM`模型的好处是减少了计算量（从{% mathjax %}n{% endmathjax %}降到{% mathjax %}k{% endmathjax %}）。然后再用注意力层，因为{% mathjax %}k{% endmathjax %}比较小，所以注意力层的计算量也比较小。`SIM`模型分为了两步：第一步是**查找**，第二步是**注意力机制**。
+
+`SIM`模型第一步的**查找**有`2`种方法：
+- `Hard search`：就是根据规则做筛选，比如根据候选物品的类目，保留`LastN`物品中类目相同的，这样用规则做筛选的方式简单、快速，无需训练。
+- `Soft search`：就是向量的最近邻查找，需要把`LastN`物品和候选物品都做embedding，变成向量。把候选物品的向量作为`query`，做{% mathjax %}k{% endmathjax %}近邻查找，保留`LastN`物品中最接近的{% mathjax %}k{% endmathjax %}个物品。实践效果更好，编程实现更复杂，计算代价也更高。
+
+第二步**注意力机制**：跟`DIN`模型的区别是{% mathjax %}x_1,x_2,\ldots,x_n{% endmathjax %}不是用户`LastN`的交互记录，而是用户`Top-K`交互记录。第一步的查找把`LastN`物品缩小到了`Top-K`，排除掉的物品大多与候选物品无关，所以把`LastN`变成了`Top-K`，这几乎不会影响加权平均的结果。注意力层输出的向量作为用户行为特征，与其它特征一起作为精排模型的输入，用于预估点击率等指标。用户与某个`LastN`物品的交互时刻距今为{% mathjax %}\delta{% endmathjax %}，比如发生在`1000`小时以前，则{% mathjax %}\delta = 1000{% endmathjax %}，{% mathjax %}\delta{% endmathjax %}是一个连续值，这里需要对{% mathjax %}\delta{% endmathjax %}做离散化，再做`embedding`，得到向量{% mathjax %}d{% endmathjax %}，向量{% mathjax %}x{% endmathjax %}是物品的`embedding`，向量{% mathjax %}d{% endmathjax %}是时间的`embedding`，把这两个向量做`concatenation`，拼接成一个向量，作为一个`LastN`物品的表征。这些向量就是对用户记录的表征，保留`LastN`物品中`Top-K`，使用向量{% mathjax %}d_1,\ldots,d_k{% endmathjax %}和{% mathjax %}x_1,\ldots,x_k{% endmathjax %}，两个向量拼接起来就是对一个物品的表征，向量{% mathjax %}q{% endmathjax %}是候选物品的表征，不需要对它的时间做`embedding`，把这些向量都输入注意力层，然后输出一个向量，这个向量就是对用户兴趣的表征。
+
+为什么`SIM`模型需要使用时间信息？因为`DIN`模型记录了用户交互过的几百个物品，使用短序列，几乎都是用户的近期的行为。`SIM`模型使用长序列，记录了用户的长期行为，`LastN`中的物品可能是1年前的交互，也可能是`10`分钟前的交互。通常来实说时间越久远，重要性就越低。所有`SIM`模型预测点击率的时候，应该把时间也考虑到。`SIM`模型的注意力机制，如下图所示：
+{% asset_img ml_10.png "SIM模型注意力机制" %}
