@@ -100,4 +100,10 @@ mathjax:
 
 改进召回的模型包括**双塔模型**、`Item-To-Item`、**其它模型**：
 - **双塔模型**：1、优化正、负样本，简单正样本：有点击的（用户，物品）二元组；简单负样本：随机组合的（用户，物品）二元组；困难负样本：排序靠后的（用户，物品）二元组。2、改进神经网络结构，双塔模型有用户塔和物品塔两个神经网络（全连接网络），它们分别把用户特征、物品特征作为输入，各自输出一个向量作为用户、物品的表征。可以用更高级的神经网络代替全连接网络。在用户塔中使用用户行为序列(`last-n`)也可以让双塔模型的效果更好。标准的双塔模型也叫但向量模型，两个塔各输出一个向量，根据向量相似度做分类，能够让模型区分正、负样本。这里使用多向量代替单向量模型，物品塔跟单向量模型没有区别，物品塔只输出一个向量作为物品的表征，这里的用户塔输出很多个向量，用户塔输出的每一个向量都和物品塔输出的向量形状相同，可以计算它们的内积或者余弦相似度，用这两个向量的相似度来最为一个目标（点击率、点赞率、收藏率、转发率）的预估。如果要预估`10`个目标，那么用户塔要输出`10`个向量，但是物品塔只输出一个向量，用户塔的`10`个向量分别跟物品塔的一个向量去计算相似度，作为对`10`个目标的预估。3、改进模型的训练方法，训练双塔模型最基本的方法是二分类，让模型学会区分正样本和负样本，训练的方法可以进一步改进，结合二分类、`batch`内负采样（需要做纠偏）。使用自监督学习，让冷门物品的`embedding`学得更好。
-- `Item-To-Item`**模型**：是一大类模型的总称，基于相似物品做召回，常见的用法是`U2I2I`(`user-> item -> item`)
+- `Item-To-Item`**模型**：是一大类模型的总称，基于相似物品做召回，常见的用法是`U2I2I`(`user-> item -> item`)，假设用户{% mathjax %}u{% endmathjax %}喜欢物品{% mathjax %}i_1{% endmathjax %}(用户历史上交互过的物品)，寻找{% mathjax %}i_1{% endmathjax %}的相似物品{% mathjax %}i_2{% endmathjax %}，即`I2I`。最后将{% mathjax %}i_2{% endmathjax %}推荐给用户{% mathjax %}u{% endmathjax %}。计算物品的相似度有两种方法：1、基于用户兴趣的相似度来计算（ItemCF及其变体）；2、基于物品的向量表征，计算向量的相似度（双塔模型、图神经网络计算物品的向量特征）。
+- **其它模型**：`U2UI`(`user -> user -> item`)模型，已知用户{% mathjax %}u_1{% endmathjax %}和{% mathjax %}u_2{% endmathjax %}相似，且{% mathjax %}u_2{% endmathjax %}喜欢物品{% mathjax %}i{% endmathjax %}，那么给用户{% mathjax %}u_1{% endmathjax %}推荐物品{% mathjax %}i{% endmathjax %}。`U2A2I`(`user -> author -> item`)模型，已知用户{% mathjax %}u{% endmathjax %}喜欢作者{% mathjax %}a{% endmathjax %}，且{% mathjax %}a{% endmathjax %}发布物品{% mathjax %}i{% endmathjax %}，那么给用户{% mathjax %}u{% endmathjax %}推荐物品{% mathjax %}i{% endmathjax %}。`U2A2A2I`(`user -> author -> author -> item`)模型，已知用户{% mathjax %}u{% endmathjax %}喜欢作者{% mathjax %}a_1{% endmathjax %}，且{% mathjax %}a_1{% endmathjax %}与{% mathjax %}a_2{% endmathjax %}相似，{% mathjax %}a_2{% endmathjax %}发布物品{% mathjax %}i{% endmathjax %}，那么给用户{% mathjax %}u{% endmathjax %}推荐物品{% mathjax %}i{% endmathjax %}。还有一些小众的召回模型，比如`PDN`、`Deep Retrieval`、`SINE`、`M2GRL`等模型。
+
+在召回总量不变的前提下，仔细调整各召回通道的配额，可以提高核心指标（可以让各用户群体用不同的配额）。
+
+#### 评价指标优化 - 排序
+
