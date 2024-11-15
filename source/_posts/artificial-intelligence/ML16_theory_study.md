@@ -139,4 +139,13 @@ mathjax:
 
 #### 评价指标优化 - 交互行为
 
-**交互行为**包括：点击、点赞、收藏、转发、关注、评论.....，主要是将模型预估的交互率进行排序，模型将交互行为当做预估的目标，输出介于`0~1`之间的数值。将预估的点击率、交互率做融合作为排序的依据。对于一位用户，他关注的作者越多，平台对他的吸引力也就越强。
+**交互行为**包括：点击、点赞、收藏、转发、关注、评论...，主要是将模型预估的交互率进行排序，模型将交互行为当做预估的目标，输出介于`0~1`之间的数值。将预估的点击率、交互率做融合作为排序的依据。对于一位用户，他关注的作者越多，平台对他的吸引力也就越强。把用户的留存率（{% mathjax %}r{% endmathjax %}）与关注的坐着数量（{% mathjax %}f{% endmathjax %}）正相关。如果某用户的{% mathjax %}f{% endmathjax %}比较小，则推荐系统要促使该用户关注更多作者。如何利用关注关系提升用户留存？1、用排序策略提升关注量，对于用户{% mathjax %}u{% endmathjax %}，模型预估候选物品{% mathjax %}i{% endmathjax %}/的关注率为{% mathjax %}p_i{% endmathjax %}，设用户{% mathjax %}u{% endmathjax %}已经关注了{% mathjax %}f{% endmathjax %}个作者。这里定义一个单调递减函数{% mathjax %}w(f){% endmathjax %}，用户已经关注的作者越多，则{% mathjax %}w(f){% endmathjax %}越小。在排序的融分公式中添加{% mathjax %}w(f)\codt p_i{% endmathjax %}（如果{% mathjax %}f{% endmathjax %}小且{% mathjax %}p_i{% endmathjax %}，则{% mathjax %}w(f)\codt p_i{% endmathjax %}给物品{% mathjax %}i{% endmathjax %}带来很大的加分）。另一种方法是构造促关注内容池和召回通道，这个内容池中物品的关注率高，如果用户点击进入这些物品，有较大概率关注作者。只有用户关注的作者数{% mathjax %}f{% endmathjax %}较小，才对用户使用该内容池。做召回时，召回配额可以是固定的，也可以与{% mathjax %}f{% endmathjax %}相关。用户关注作者越少，就从这个内容池召回越多的物品。
+
+`UGC`平台将作者发布量、发布率作为核心指标，希望作者多发布。作者发布的物品被平台推送给用户，会产生点赞、评论、关注等交互，交互可以提升作者发布的积极性。作者的粉丝数量越少，则每增加一个粉丝对发布积极性的提升越大。用排序策略帮助低粉新作者涨粉。某作者{% mathjax %}a{% endmathjax %}的粉丝数（被关注数）为{% mathjax %}f_a{% endmathjax %}，作者{% mathjax %}a{% endmathjax %}发布的物品{% mathjax %}i{% endmathjax %}被推荐给用户{% mathjax %}u{% endmathjax %}，模型预估关注率为{% mathjax %}p_{ui}{% endmathjax %}，关注率{% mathjax %}p_{ui}{% endmathjax %}越高，用户对物品{% mathjax %}i{% endmathjax %}的兴趣也就越大。这里定义单调递减函数{% mathjax %}w(f_a){% endmathjax %}作为权重，作者{% mathjax %}a{% endmathjax %}的粉丝数越多，则{% mathjax %}w(f_a){% endmathjax %}越小。在排序公式中添加{% mathjax %}w(f_a)\cdot p_{ui}{% endmathjax %}，帮助低粉作者涨粉。
+
+**显示关注关系**：用户{% mathjax %}u{% endmathjax %}关注了作者{% mathjax %}a{% endmathjax %}，将{% mathjax %}a{% endmathjax %}发布的物品推荐给{% mathjax %}u{% endmathjax %}，跟其它召回通道相比，关注关系召回的物品有更高的点击率、交互率。**隐式关注关系**也可以用于召回，用户{% mathjax %}u{% endmathjax %}喜欢看作者{% mathjax %}a{% endmathjax %}发布的物品，但是用户{% mathjax %}u{% endmathjax %}没有关注作者{% mathjax %}a{% endmathjax %}，隐式关注的作者数量要远大于显示关注。因此推荐系统应当挖掘隐式关注关系，给每个用户找到隐式关注的作者。利用**隐式关注关系**做`U2A2I`召回，可以提升**推荐系统**的核心指标。
+
+- **关注**：留存价值（让新用户关注更多作者，提升新用户留存）；发布价值（帮助新作者获得更多粉丝，提升作者的发布积极性）；利用隐式关注关系做召回。
+- **转发**：判断哪些用户是站外`KOL`，利用他们转发的价值，吸引站外的流量。
+- **评论**：发布价值（促使新物品获得评论，提升作者发布积极性）；留存价值（给喜欢讨论的用户创造更多留评论的机会）；鼓励高质量评论的用户多留评论。
+
