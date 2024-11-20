@@ -451,7 +451,7 @@
 </ul>
 <img data-src="/2024/06/21/artificial-intelligence/quality_data_study/qd_14.png" class="" title="使用随机错误标记的样本在CIFAR 10&#x2F;100上的测试误差，比较了不同的数据过滤或噪声数据训练方法">
 
-<h5 id="噪声交叉验证"><a href="#噪声交叉验证" class="headerlink" title="噪声交叉验证"></a>噪声交叉验证</h5><p><code>NCV</code>（噪声交叉验证）方法(<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.05040"><code>Chen et al, 2019</code></a>)将数据集随机分成两半，然后如果数据样本的标签与仅在另一半数据集上训练的模型提供的预测标签相匹配，则将数据样本标识为“干净”。干净的样本预计更值得信赖。<code>INCV</code>（迭代噪声交叉验证）迭代运行<code>NCV</code>，其中更多干净样本被添加到可信候选集中<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.057ex;" xmlns="http://www.w3.org/2000/svg" width="1.192ex" height="1.652ex" role="img" focusable="false" viewBox="0 -705 527 730" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-38-TEX-C-43" d="M201 -25Q167 -25 136 -14T75 23T29 94T12 202Q12 290 50 394T161 574Q227 642 303 673T433 704Q435 705 457 705Q533 701 533 640Q533 606 507 548T464 474Q431 444 396 444Q381 444 381 453Q381 459 388 473T407 513T428 563Q433 580 433 594Q433 636 381 636Q314 636 260 594T175 489T128 363T112 247Q112 157 153 101T273 44Q347 44 398 121Q413 144 437 157T481 171Q496 171 496 160Q496 150 476 123Q426 56 350 16T201 -25Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="43" xlink:href="#MJX-38-TEX-C-43"></use></g></g></g></g></svg></mjx-container>并去除了更多噪声样本。</p>
+<h5 id="噪声交叉验证"><a href="#噪声交叉验证" class="headerlink" title="噪声交叉验证"></a>噪声交叉验证</h5><p><code>NCV</code>（噪声交叉验证）方法(<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.05040"><code>Chen et al, 2019</code></a>)将数据集随机分成两半，然后如果数据样本的标签与仅在另一半数据集上训练的模型提供的预测标签相匹配，则将数据样本标识为“干净”。干净的样本预计更值得信赖。<code>INCV</code>（迭代噪声交叉验证）迭代运行<code>NCV</code>，其中更多干净样本被添加到可信候选集中<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.057ex;" xmlns="http://www.w3.org/2000/svg" width="1.192ex" height="1.652ex" role="img" focusable="false" viewBox="0 -705 527 730" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><path id="MJX-39-TEX-C-43" d="M201 -25Q167 -25 136 -14T75 23T29 94T12 202Q12 290 50 394T161 574Q227 642 303 673T433 704Q435 705 457 705Q533 701 533 640Q533 606 507 548T464 474Q431 444 396 444Q381 444 381 453Q381 459 388 473T407 513T428 563Q433 580 433 594Q433 636 381 636Q314 636 260 594T175 489T128 363T112 247Q112 157 153 101T273 44Q347 44 398 121Q413 144 437 157T481 171Q496 171 496 160Q496 150 476 123Q426 56 350 16T201 -25Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="43" xlink:href="#MJX-39-TEX-C-43"></use></g></g></g></g></svg></mjx-container>并去除了更多噪声样本。</p>
 <img data-src="/2024/06/21/artificial-intelligence/quality_data_study/qd_15.png" class="" title="INCV（迭代噪声交叉验证）算法">
 
 
@@ -536,7 +536,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">70:13</span>
+    <span title="站点阅读时长">70:17</span>
   </span>
 </div>
 <div class="busuanzi-count">
