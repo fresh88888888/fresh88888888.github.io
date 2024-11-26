@@ -270,6 +270,7 @@ https://fresh88888888.github.io/tags/mutex/
 https://fresh88888888.github.io/tags/phantom-data/
 https://fresh88888888.github.io/tags/%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91/
 https://fresh88888888.github.io/tags/%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%9E%8B/
+https://fresh88888888.github.io/tags/String-%E5%92%8C%E6%96%87%E6%9C%AC/
 https://fresh88888888.github.io/tags/%E5%AE%8F/
 https://fresh88888888.github.io/tags/rust%E5%9F%BA%E7%A1%80/
 https://fresh88888888.github.io/tags/%E5%B8%B8%E7%94%A8-Trait/
@@ -317,7 +318,6 @@ https://fresh88888888.github.io/tags/S3/
 https://fresh88888888.github.io/tags/Quantitative-Trading/
 https://fresh88888888.github.io/tags/%E9%87%8F%E5%8C%96%E4%BA%A4%E6%98%93/
 https://fresh88888888.github.io/tags/AI/
-https://fresh88888888.github.io/tags/String-%E5%92%8C%E6%96%87%E6%9C%AC/
 https://fresh88888888.github.io/categories/rust/
 https://fresh88888888.github.io/categories/Cloud-Native/
 https://fresh88888888.github.io/categories/Edge-Computing/
