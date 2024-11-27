@@ -54,3 +54,21 @@ mathjax:
 - **动作值函数**(`Action Value Function`)：**动作值函数**{% mathjax %}Q(s,a){% endmathjax %}表示在状态{% mathjax %}s{% endmathjax %}下采取动作{% mathjax %}a{% endmathjax %}后，遵循某一策略所能获得的期望回报。为了描述**贝尔曼方程**，我将使用以下符号。使用{% mathjax %}s{% endmathjax %}来表示当前状态。使用{% mathjax %}R(s){% endmathjax %}表示当前状态的奖励。在之前的示例中，状态`1`的奖励{% mathjax %}R(1) = 100{% endmathjax %}、状态`2`的奖励为{% mathjax %}R(2) = 0{% endmathjax %}、状态`6`的奖励是{% mathjax %}R(6) = 40{% endmathjax %}。使用{% mathjax %}a{% endmathjax %}表示当前动作，即在状态{% mathjax %}s{% endmathjax %}中采取的动作。执行动作{% mathjax %}a{% endmathjax %}后进入某个新的状态。例如，状态`4`采取左侧的动作，那么进入状态`3`。用{% mathjax %}s'{% endmathjax %}表示当前状态{% mathjax %}s{% endmathjax %}执行动作{% mathjax %}a{% endmathjax %}后进入的状态。用{% mathjax %}a'{% endmathjax %}表示状态{% mathjax %}s'{% endmathjax %}中执行的动作。贝尔曼方程可以表示为：{% mathjax %}Q(s,a) = \sum\limits_{s',r} P(s',r|s,a)[r + \gamma V(s')]{% endmathjax %}，如果使用最优策略，可以写成{% mathjax %}Q^{*}(s,a) = \sum\limits_{s',r} P(s',r|s,a)[r + \gamma\underset{a'}{\max}Q^{*}(s',a')]{% endmathjax %}。
 
 **贝尔曼方程**(`Bellman Equation`)的重要性体现在以下几个方面：**递归结构**，它将一个复杂问题分解为更简单的子问题，使得我们可以通过**动态规划**的方法来求解；**最优性原则**，**贝尔曼方程**体现了**最优策略**的特性，即在每个决策点上选择能最大化未来回报的动作；**强化学习算法基础**，许多强化学习算法（如`Q-learning`、`SARSA`等）都是基于**贝尔曼方程**进行更新和优化的。**贝尔曼方程**是**强化学习**和**动态规划**中的一个基本工具，它为**智能体**(`Agent`)提供了一种系统的方法来评估和优化决策过程。
+
+#### K-臂赌博机
+
+`K-`**臂赌博机**(`K-Armed Bandit`)问题是**多臂赌博机**(`Multi-Armed Bandit`)问题的一种特例，具体指有固定数量{% mathjax %}K{% endmathjax %}的臂。每个臂都有一个未知的概率分布，用于生成随机奖励。`K-`**臂赌博机**明确规定了臂的数量为{% mathjax %}K{% endmathjax %}，例如，{% mathjax %}K = 3{% endmathjax %}表示有三个可供选择的臂。问题通常集中在如何在有限次尝试中找到最佳臂，以最大化总回报。`K-`**臂赌博机**通常假设每个臂的奖励分布是**独立且同分布**(`IID`)的。首先，我们需要了解**反馈类型**（奖励/惩罚）之间的区别，因为奖励是**代理**(`Agent`)的一种**反馈类型**，如下图所示，**代理**(`Agent`)与环境交互，在每一个时间步进行观察({% mathjax %}O_t{% endmathjax %})，并基于这些观察执行动作，这里包含了`4`种动作，分别为{% mathjax %}A_1,A_2,A_3{% endmathjax %}和{% mathjax %}A_4{% endmathjax %},假设最佳动作为{% mathjax %}a^{*} = A_2{% endmathjax %}，但**代理**(`Agent`)选择了{% mathjax %}A_4{% endmathjax %}。
+{% asset_img ml_2.png "4-臂赌博机在简单环境中的代理交互示例图" %}
+
+这里指导的反馈动作为{% mathjax %}A_4{% endmathjax %}，是错误的。而最佳动作为{% mathjax %}A_2{% endmathjax %}，这种情况在**监督学习**任务中经常发生，对于反馈的评估取决于采取的动作，这在**强化学习**任务中很常见。假设你需要反复从多个选项（动作）中进行选择。每次做选择之后，根据**平稳性概率分布**获得奖励分值（或惩罚分值）。“平稳性”是指**奖励**和**转换**的概率分布随时间保持不变。为了简化，**强化学习**(`RL`)算法依赖于**平稳性**和**无模型**方法，例如`Q-learning`。然而，这种假设在实际应用中并不总是成立，因此还有针对**非平稳环境**的算法。对于{% mathjax %}k{% endmathjax %}个有效动作的每一个都有预期的平均奖励，称作动作的价值分数，假设在时间步{% mathjax %}t{% endmathjax %}选取的动作为{% mathjax %}A_t{% endmathjax %}，这时获得的奖励分值为{% mathjax %}R_t{% endmathjax %}，定义{% mathjax %}q^{*}(a){% endmathjax %}为随机动作{% mathjax %}a{% endmathjax %}的价值分数。{% mathjax %}q^{*}(a){% endmathjax %}的意思是**代理**(`Agent`)在时间步{% mathjax %}t{% endmathjax %}时采取动作{% mathjax %}a{% endmathjax %}的预期奖励。数学上定义为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+q^{*}(a) = \mathbb{E}[R_t|A_t = a]
+\end{align}
+{% endmathjax %}
+其中{% mathjax %}q^{*}(a){% endmathjax %}表示采取动作{% mathjax %}a{% endmathjax %}的预期奖励，这作为衡量`K-`**臂赌博机**动作评估的基础。如果我们知道要采取的最佳动作，那么问题就很简单了，因为我们通常都会选择最佳的动作。如果没有这些信息，那么就必须评估每个动作的价值分数，在时间步{% mathjax %}t{% endmathjax %}时{% mathjax %}Q_t(a){% endmathjax %}应该更加接近{% mathjax %}q^{*}(a){% endmathjax %}。在评估了动作价值分数之后，每个时间步至少有一个动作应该具有最高的评估值，这些动作被称为“贪婪动作”。选择“贪婪动作”会利用当前知识获得**即时奖励**，而选择“非贪婪动作”则会推动和改进评估值。通过采样平均值来评估动作价值分数，对于稳定`K-`**臂赌博机**问题非常有效，实际情况，在非平稳环境中，对于近期奖励赋予更大权重是有意义的。通常使用恒定步长参数，将样本平均方程重写为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+Q_{n+1}= Q_n + \alpha[R_n - Q_n]
+\end{align}
+{% endmathjax %}
