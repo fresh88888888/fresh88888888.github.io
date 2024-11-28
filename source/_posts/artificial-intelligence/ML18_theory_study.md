@@ -137,9 +137,9 @@ p(s',r|s,a) \equiv \text{Pr}\{S_t = s',R_t = r|S_{t-1} = s,S_{t-1} = a\}
 其中函数{% mathjax %}p{% endmathjax %}被定义为**马尔可夫决策过程**(`MDP`)动态。可以从`4`个参数的**动态函数**{% mathjax %}p{% endmathjax %}中得出以下**状态转换概率**、**状态动作**和状态-动作-下一状态的预期奖励的三元组，如下：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
-p(s',r|s,a) \equiv & \text{Pr}\{S_t = s',R_t = r|S_{t-1} = s,S_{t-1} = a\} = \sum\limits_{r\in R}p(s',r|s,a) \\
-r(s,a) \equiv & \mathbb{E}\{R_t|S_{t-1} = s,A_{t-1} = a\} = \sum\limits_{r\in R}r\sum\limits_{r\in R}p(s',r|s,a) \\
-r(s,a,s') \equiv & \mathbb{E}\{R_t|S_{t-1} = s,A_{t-1} = a,S_t = s'\} = \sum\limits_{r\in R}\frac{rp(s',r|s,a)}{p(s',r|s,a)}
+p(s',r|s,a) \equiv & \;\text{Pr}\{S_t = s',R_t = r|S_{t-1} = s,S_{t-1} = a\} = \sum\limits_{r\in R}p(s',r|s,a) \\
+r(s,a) \equiv & \;\mathbb{E}\{R_t|S_{t-1} = s,A_{t-1} = a\} = \sum\limits_{r\in R}r\sum\limits_{r\in R}p(s',r|s,a) \\
+r(s,a,s') \equiv & \;\mathbb{E}\{R_t|S_{t-1} = s,A_{t-1} = a,S_t = s'\} = \sum\limits_{r\in R}\frac{rp(s',r|s,a)}{p(s',r|s,a)}
 \end{align}
 {% endmathjax %}
 动作(`action`)的概念涵盖与学习有关的任何决定，而**状态**(`state`)的概念涵盖可用于通知这些决定的任何信息。任何学习问题都可以归结为**代理**(`Agent`)与**环境**之间的三个信号：**动作**、**状态**和**奖励**。回报表示为{% mathjax %}G_t{% endmathjax %}，是从时间步{% mathjax %}t{% endmathjax %}开始获得的奖励累积总和。在时间步{% mathjax %}t{% endmathjax %}之后获得的奖励序列，它定义如下：
@@ -154,4 +154,19 @@ G_t \equiv R_{t+1} + R_{t+2} +\ldots + R_{T}
 G_t \equiv R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} +\ldots = \sum\limits_{k=0}^{\infty}\gamma^k R_{t+k+1}
 \end{align}
 {% endmathjax %}
-其中{% mathjax %}\gamma{% endmathjax %}是折扣因子({% mathjax %}0 \leq \gamma \geq 1{% endmathjax %})。
+其中{% mathjax %}\gamma{% endmathjax %}是**折扣因子**({% mathjax %}0 \leq \gamma \geq 1{% endmathjax %})。**折扣因子**{% mathjax %}\gamma{% endmathjax %}会影响未来奖励的当前价值。当{% mathjax %}\gamma < 1{% endmathjax %}时，**无限和**收敛到有限值。当{% mathjax %}\gamma = 0{% endmathjax %}时，**代理**(`Agent`)最大化**即时奖励**。当{% mathjax %}\gamma{% endmathjax %}接近 `1`时，未来的奖励会变得更有分量。将**回报递归**定义为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+G_t \equiv R_{t+1} + \gamma G_{t+1}
+\end{align}
+{% endmathjax %}
+如果奖励非零且为常数，则**回报**是有限的，并且**折扣因子**{% mathjax %}\gamma < 1{% endmathjax %}。对**偶发任务**和**持续任务**使用一个公式：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+G_t \equiv \sum\limits_{k = t+1}^T\gamma^{k-t-1}R_k
+\end{align}
+{% endmathjax %}
+如果{% mathjax %}T = \infty{% endmathjax %}或{% mathjax %}\gamma = 1{% endmathjax %}，则此公式适用于**情景任务**和**持续任务**。
+
+#### 策略和价值函数
+
