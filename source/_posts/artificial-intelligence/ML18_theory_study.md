@@ -121,7 +121,7 @@ Q_{n+1} = Q_n + \alpha[R_n - Q_n]
 **动作价值分数**的初始值在学习过程中起着至关重要的作用。这些初始值会影响**代理**(`Agent`)做出的早期决策。虽然**样本均值方法**可以在每个动作被选择至少一次后减少这种初始偏差，但使用恒定步长学习率参数{% mathjax %}\alpha{% endmathjax %}的方法往往会随着时间的推移逐渐减少这种偏差。设置乐观的初始值可能会有利。通过分配更高的初始值，可以鼓励**代理**(`Agent`)尽早探索更多的动作。这是因为最初的乐观情绪使未尝试的动作看起来更有吸引力，从而促进探索，即使**代理**(`Agent`)使用的**贪婪策略**也是如此。这种方法有助于确保**代理**(`Agent`)在收敛到最终**策略**(`Policy`)之前调整完动作空间。然而，这种**策略**(`Policy`)需要仔细确定初始值，在标准做法中，初始值通常设置为0。初始值的选择应该反映出对潜在回报的合理猜测，如果管理不当，过于乐观的值可能会阻碍了**代理**(`Agent`)有效收敛。总体而言，乐观的初始值可以成为平衡**强化学习**中的搜索和利用的方法，鼓励更广泛的探索，并带来更优的长期**策略**(`Policy`)。由于与**动作价值分数**计算相关的不确定性，搜索是必不可少的。在`ϵ-`-greedy 方法中，非贪婪动作被无差别地探索。最好根据非贪婪动作的潜在**最优性**和**不确定性**有选择地探索非贪婪动作。基于**上置信界**(`UCB`)算法，**上置信界算法**是一种用于解决多臂赌博机问题的强化学习算法，旨在平衡探索与利用之间的权衡。`UCB`算法通过利用不确定性来选择动作，从而优化长期回报。动作的选择基于以下标准：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
-A_t \equiv \text{arg}\;\underset{a}{\max}\big[ Q_t(a)+ c\sqrt{\frac{\ln t}{N_t(a)}}\big]
+A_t \equiv \text{arg}\;\underset{a}{\max}\big\big[ Q_t(a)+ c\sqrt{\frac{\ln t}{N_t(a)}}\big\big]
 \end{align}
 {% endmathjax %}
 这里{% mathjax %}\ln t{% endmathjax %}是时间步{% mathjax %}t{% endmathjax %}的自然对数，{% mathjax %}c{% endmathjax %}控制探索，且{% mathjax %}c > 0{% endmathjax %}。{% mathjax %}N_t(a){% endmathjax %}是在时间步骤{% mathjax %}t{% endmathjax %}之前采取动作{% mathjax %}a{% endmathjax %}的次数。如果{% mathjax %}N_t(a) = 0{% endmathjax %}，则{% mathjax %}a{% endmathjax %}被视为价值分数最大化的动作。作为其价值评估的一部分，`UCB`将**不确定性**纳入其对动作价值分数上限的计算中。**置信度**由常数{% mathjax %}c{% endmathjax %}来控制。通过选择动作{% mathjax %}a{% endmathjax %}，与{% mathjax %}a{% endmathjax %}相关的不确定性会随着{% mathjax %}N_t(a){% endmathjax %}的增加而减少，而通过选择其他动作，与{% mathjax %}a{% endmathjax %}相关的不确定性会随着{% mathjax %}t{% endmathjax %}的增加而增加。使用**自然对数**，随着不确定性调整随时间而减少，最终会探索所有动作。频繁选取的动作的频率会随着时间的推移而在减少。
