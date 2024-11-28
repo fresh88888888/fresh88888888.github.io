@@ -151,7 +151,7 @@ G_t \equiv R_{t+1} + R_{t+2} +\ldots + R_{T}
 其中{% mathjax %}G_t{% endmathjax %}是奖励序列的一个特殊函数。在{% mathjax %}T{% endmathjax %}处终止序列有何目的？顾名思义，**情景问题**是指**代理**与**环境**之间的交互自然地按顺序发生的问题，称为**情景**，而任务称为**情景任务**。正在进行的任务通常涉及在整个任务期间持续存在的交互，例如过程控制或机器人程序。由于**持续任务**中没有终止状态({% mathjax %}T = /infty{% endmathjax %}) ，因此**持续任务**的回报应以不同的方式定义。如果**代理**(`Agent`)持续获得奖励，则回报可能是无限的。对于**持续任务**，对于没有终止状态的持续任务，回报{% mathjax %}G_t{% endmathjax %}定义为**未来奖励**的折扣总和：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
-G_t \equiv R_{t+1} + \gammaR_{t+2} + \gamma^2 R_{t+3} +\ldots = \sum\limits_{k=0}^{\infty}\gamma^k R_{t+k+1}
+G_t \equiv R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} +\ldots = \sum\limits_{k=0}^{\infty}\gamma^k R_{t+k+1}
 \end{align}
 {% endmathjax %}
 其中{% mathjax %}\gamma{% endmathjax %}是折扣因子({% mathjax %}0 \leq \gamma \geq 1{% endmathjax %})。
