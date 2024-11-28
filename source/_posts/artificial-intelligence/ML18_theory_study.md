@@ -142,3 +142,16 @@ r(s,a) \equiv & \mathbb{E}\{R_t|S_{t-1} = s,A_{t-1} = a\} = \sum\limits_{r\in R}
 r(s,a,s') \equiv & \mathbb{E}\{R_t|S_{t-1} = s,A_{t-1} = a,S_t = s'\} = \sum\limits_{r\in R}\frac{rp(s',r|s,a)}{p(s',r|s,a)}
 \end{align}
 {% endmathjax %}
+动作(`action`)的概念涵盖与学习有关的任何决定，而**状态**(`state`)的概念涵盖可用于通知这些决定的任何信息。任何学习问题都可以归结为**代理**(`Agent`)与**环境**之间的三个信号：**动作**、**状态**和**奖励**。回报表示为{% mathjax %}G_t{% endmathjax %}，是从时间步{% mathjax %}t{% endmathjax %}开始获得的奖励累积总和。在时间步{% mathjax %}t{% endmathjax %}之后获得的奖励序列，它定义如下：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+G_t \equiv R_{t+1} + R_{t+2} +\ldots + R_{T}
+\end{align}
+{% endmathjax %}
+其中{% mathjax %}G_t{% endmathjax %}是奖励序列的一个特殊函数。在{% mathjax %}T{% endmathjax %}处终止序列有何目的？顾名思义，**情景问题**是指**代理**与**环境**之间的交互自然地按顺序发生的问题，称为**情景**，而任务称为**情景任务**。正在进行的任务通常涉及在整个任务期间持续存在的交互，例如过程控制或机器人程序。由于**持续任务**中没有终止状态({% mathjax %}T = /infty{% endmathjax %}) ，因此**持续任务**的回报应以不同的方式定义。如果**代理**(`Agent`)持续获得奖励，则回报可能是无限的。对于**持续任务**，对于没有终止状态的持续任务，回报{% mathjax %}G_t{% endmathjax %}定义为**未来奖励**的折扣总和：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+G_t \equiv R_{t+1} + \gammaR_{t+2} + \gamma^2 R_{t+3} +\ldots = \sum\limits_{k=0}^{\infty}\gamma^k R_{t+k+1}
+\end{align}
+{% endmathjax %}
+其中{% mathjax %}\gamma{% endmathjax %}是折扣因子({% mathjax %}0 \leq \gamma \geq 1{% endmathjax %})。
