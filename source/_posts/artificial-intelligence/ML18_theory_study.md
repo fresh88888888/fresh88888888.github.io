@@ -137,8 +137,8 @@ p(s',r|s,a) \equiv \text{Pr}\{S_t = s',R_t = r|S_{t-1} = s,S_{t-1} = a\}
 其中函数{% mathjax %}p{% endmathjax %}被定义为**马尔可夫决策过程**(`MDP`)动态。可以从`4`个参数的**动态函数**{% mathjax %}p{% endmathjax %}中得出以下**状态转换概率**、**状态动作**和状态-动作-下一状态的预期奖励的三元组，如下：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
-p(s',r|s,a) \equiv & \text{Pr}\{S_t = s',R_t = r|S_{t-1} = s,S_{t-1} = a\} = \sum\limits_{r\in R}p(s',r|s,a)
-r(s,a) \equiv & \mathbb{E}\{R_t|S_{t-1} = s,A_{t-1} = a\} = \sum\limits_{r\in R}r\sum\limits_{r\in R}p(s',r|s,a)
+p(s',r|s,a) \equiv & \text{Pr}\{S_t = s',R_t = r|S_{t-1} = s,S_{t-1} = a\} = \sum\limits_{r\in R}p(s',r|s,a) \\
+r(s,a) \equiv & \mathbb{E}\{R_t|S_{t-1} = s,A_{t-1} = a\} = \sum\limits_{r\in R}r\sum\limits_{r\in R}p(s',r|s,a) \\
 r(s,a,s') \equiv & \mathbb{E}\{R_t|S_{t-1} = s,A_{t-1} = a,S_t = s'\} = \sum\limits_{r\in R}\frac{rp(s',r|s,a)}{p(s',r|s,a)}
 \end{align}
 {% endmathjax %}
