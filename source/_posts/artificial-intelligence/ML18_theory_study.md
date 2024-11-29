@@ -197,3 +197,28 @@ v_{\pi}(s) \equiv \mathbb{E}_{\pi}[G_t|s_t = s] = \mathbb{E}_{\pi}[R_{t+1} + \ga
 **状态值函数**{% mathjax %}v_{\pi}(s){% endmathjax %}和**动作值函数**{% mathjax %}q_{\pi}(s,a){% endmathjax %}在**强化学习**中发挥着不同的作用。在评估确定性**策略**或需要理解处于特定状态的价值时，使用**状态值函数**。在**策略评估**和**策略迭代**方法中，策略被明确定义，并且需要评估在策略下处于特定状态的性能，这时**状态值函数**非常有用。当存在许多动作时，使用**状态值函数**是有效的，因为它们只需要评估**状态值**即可降低复杂性。**动作价值函数**用于评估和比较在同一状态下发生不同动作的可能性。它们对于动作的选取很重要，例如在`Q-learnning`和`SARSA`中，**目标**是确定每种状态最合适的动作。由于**动作价值函数**考虑了不同动作的预期回报，因此它们在具有随机策略的环境中特别有用。此外，在处理**连续动作空间**时，**动作价值函数**可以提供对动作影响的更详细信息，有助于**策略**实施的微调。
 
 考虑这样一个赌博场景：玩家从10美元开始，并面临有关下注金额的决定。此游戏说明了**强化学习**中的**状态**和**动作价值函数**。
+- **状态价值函数**({% mathjax %}v_{\pi}(s){% endmathjax %})：**状态价值函数**{% mathjax %}v_{\pi}(s){% endmathjax %}量化给定策略{% mathjax %}\pi{% endmathjax %}时，状态{% mathjax %}s{% endmathjax %}的预期累积未来奖励。假设玩家有`5`美元：如果连续下注`1`美元，{% mathjax %}v_{\pi}(5) = 0.5{% endmathjax %}表示预期收益为`0.5`美元；如果持续下注`2`美元，{% mathjax %}v_{\pi}(5) = -1{% endmathjax %}表示预期损失`1`美元。
+- **动作价值函数**{% mathjax %}q_{\pi}(s,a){% endmathjax %}：**动作价值函数**{% mathjax %}q_{\pi}(s,a){% endmathjax %}评估在状态{% mathjax %}s{% endmathjax %}下动作{% mathjax %}a{% endmathjax %}的预期累积未来奖励。例如：{% mathjax %}q_{\pi}(5,1) = 1{% endmathjax %}表示从`5`美元下注`1`美元可获得`1`美元的累计奖励；{% mathjax %}q_{\pi}(5,2) = -0.5{% endmathjax %}表示从`5`美元下注`2`美元，损失`0.5`美元。
+
+这个赌博游戏场景强调了**状态**和**动作价值函数**在**强化学习**中的作用，指导动态环境中的最佳决策。
+
+**价值函数**对策略创建偏序，允许基于**预期累积奖励**进行比较和排名。如果对于所有状态{% mathjax %}s{% endmathjax %}下的{% mathjax %}v_{\pi}(s) \geq v_{\pi_0}(s){% endmathjax %}，则策略{% mathjax %}\pi{% endmathjax %}优于或等于{% mathjax %}\pi_0{% endmathjax %}。**最优策略**优于或等于所有其他策略，用{% mathjax %}\pi^{*}{% endmathjax %}表示，共享相同的**最优状态值函数** {% mathjax %}v^{*}{% endmathjax %}：**最优状态值函数**{% mathjax %}v^{*}(s){% endmathjax %}定义为所有策略的**最大值函数**：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+v^{*}(s) \equiv \underset{\pi}{\max}v^{\pi}(s)\;\text{for all s}\in S
+\end{align}
+{% endmathjax %}
+最优策略也具有相同的**最优动作价值函数**{% mathjax %}q^{*}{% endmathjax %}，**最优动作值函数**{% mathjax %}q^{*}(s,a){% endmathjax %}定义为所有策略的**最大动作值函数**：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+q^{*}(s,a) \equiv \mathbb{E}[R_{t+1} + \gamma v^{*}(S_{t+1})|S_t = s,A_t = a]
+\end{align}
+{% endmathjax %}
+该方程以**即时奖励**和**折扣未来状态值**的形式表达**状态-动作对**的预期累积回报。**最优值函数**和**策略**代表**强化学习**的理想状态。然而，由于实际情况，在计算要求高的任务中很少能找到真正最优的策略。**强化学习**的**代理**(`Agent`)的目标是接近**最佳策略**。假设**环境模型**很完美，**动态规划**(`DP`)则有助于确定最佳值。`DP`和`RL`的基本思想是使用**价值函数**来组织对策略的搜索。对于**马尔可夫决策过程**(`MDP`)，环境的动态由概率{% mathjax %}p(s',r|s,a){% endmathjax %}给出。**动态规划**在特殊情况下会找到精确解，例如查找最短路径。**最优状态值函数**{% mathjax %}v^{*}(s){% endmathjax %}和**最优动作值函数**{% mathjax %}q^{*}(s,a){% endmathjax %}的**贝尔曼最优方程**如下：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+v^{*}(s) = & \underset{a}{\max}\mathbb{E}[R_{t+1} + \gamma v^{*}(S_{t+1})|S_t = s,A_t = a] = \underset{a}{\max}\sum\limits_{s',r}p(s',r|s,a)[r + \gamma v^{*}(s')] \\
+q^{*}(s,a) = & \mathbb{E}[R_{t+1} + \underset{a'}{\max}q^{*}(S_{t+1},a')|S_t = s,A_t = a] = \sum\limits_{s',r}p(s',r|s,a)[r + \gamma\underset{a'}{\max}q^{*}(s',a')]
+\end{align}
+{% endmathjax %}
+**动态规划**(`DP`)算法是通过将**贝尔曼方程**转化为更新规则从而推导出来的。
