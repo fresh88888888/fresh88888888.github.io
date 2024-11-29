@@ -242,7 +242,29 @@ q_{\pi}(s,a) \equiv \mathbb{E}[R_{t+1} + \gamma v_{\pi}(S_{t+1})|S_t = s,A_t = a
 \end{align}
 {% endmathjax %}
 如果{% mathjax %}q_{\pi}(s,a) > v_{\pi}(s){% endmathjax %}，则始终选择状态{% mathjax %}s{% endmathjax %}中的动作{% mathjax %}a{% endmathjax %}比遵循{% mathjax %}\pi{% endmathjax %}更有利，从而改进策略{% mathjax %}\pi'{% endmathjax %} 。策略改进方法指出，如果对于所有状态{% mathjax %}s{% endmathjax %}，{% mathjax %}q_{\pi}(s,\pi'(s)) \geq v_{\pi}(s){% endmathjax %}，则新策略{% mathjax %}\pi'{% endmathjax %}至少与原始策略{% mathjax %}\pi{% endmathjax %}一样好。让{% mathjax %}\pi{% endmathjax %}和{% mathjax %}\pi'{% endmathjax %}成为**确定性策略**，使得对于所有状态{% mathjax %}s\in S{% endmathjax %}：
-
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+q_{\pi}(s,\pi'(s)) \geq v_{\pi}(s)
+\end{align}
+{% endmathjax %}
+如果{% mathjax %}\pi{% endmathjax %}从所有状态({% mathjax %}s\in S{% endmathjax %})预期回报都大于等于策略{% mathjax %}\pi'{% endmathjax %}获得的，则：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+v_{\pi'} \geq v_{\pi}(s)
+\end{align}
+{% endmathjax %}
+通过选择**最大化动作价值函数**{% mathjax %}q_{\pi}(s,a){% endmathjax %}的动作，可以得到新的策略{% mathjax %}\pi'{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+v_{\pi'}(s) = \underset{a}{\max}\mathbb{E}[R_{t+1} + \gamma v_{\pi'}(S_t = s,A_t = a)] = \underset{a}{\max}\sum\limits_{s',r}p(s',r|s,a)[r + \gamma v_{\pi'}(s')]
+\end{align}
+{% endmathjax %}
+这是**贝尔曼最优方程**，{% mathjax %}v_{\pi'} = v^{*}{% endmathjax %}，并且{% mathjax %}\pi{% endmathjax %}和{% mathjax %}\pi'{% endmathjax %}都是最优策略。除非**初始策略**已经是最优的，否则策略改进会产生更优的策略。在使用{% mathjax %}v_{\pi}{% endmathjax %}增强策略{% mathjax %}\pi{% endmathjax %}以得出改进的策略{% mathjax %}\pi'{% endmathjax %}之后，计算{% mathjax %}v_{\pi'}{% endmathjax %}并进一步细化以获得更优策略{% mathjax %}\pi''{% endmathjax %}。此过程生成一系列改进策略和相应的价值函数：**策略迭代**的过程包括**策略评估**和**策略改进**的交替进行，以获得一系列改进的策略和**价值函数**：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+\pi_0\overset{\text{Evaluation}}{\to} v_{\pi_0}\overset{\text{Improvement}}{\to} \pi_1\overset{\text{Evaluation}}{\to} v_{\pi_1}\overset{\text{Improvement}}{\to} \pi_2\overset{\text{Evaluation}}{\to} \ldots \overset{\text{Improvement}}{\to} \pi_{*}\overset{\text{Evaluation}}{\to} v^{*}
+\end{align}
+{% endmathjax %}
 此序列中的每个策略都比其前一个策略有显著的改进，除非前一个策略已经是最佳的。给定一个有限**马尔可夫决策过程**(`MDP`)，这个迭代过程会在有限次数的迭代中收敛到**最优策略**和**价值函数**。这种方法称为**策略迭代**。
 
 #### 值迭代
