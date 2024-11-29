@@ -189,7 +189,7 @@ q_{\pi}(s,a) \equiv \mathbb{E}_{\pi}[G_t|S_t = s,A_t = a] = \mathbb{E}_{\pi}\Big
 需要注意{% mathjax %}v{% endmathjax %}和{% mathjax %}q{% endmathjax %}之间的区别，即{% mathjax %}q{% endmathjax %}取决于每个状态下采取的动态。{% mathjax %}q{% endmathjax %}有`10`个状态，每个状态有`8`个动作，因此{% mathjax %}q{% endmathjax %}需要`80`个函数，而{% mathjax %}v{% endmathjax %}只需要`10`个函数。遵循策略{% mathjax %}\pi{% endmathjax %}，如果**代理**(`Agent`)对每个状态的回报求均值，则均值收敛到{% mathjax %}v_{\pi}(s){% endmathjax %}。对每个动作的回报，则均值收敛到{% mathjax %}q_{\pi}(s,a){% endmathjax %}。在**蒙特卡罗方法**中，许多随机收益样本被均值化。这种方法不提供样本效率，需要为每个状态分别计算均值。通过使用参数较少的**参数化函数**可以改进计算。{% mathjax %}v{% endmathjax %}应以递归方式，编写如下：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
-v_{\pi}(s) \equiv \mathbb{E}_{\pi}[G_t|s_t = s] = \mathbb{E}_{\pi}[R_{t+1} + \gammaG_{t+1}|s_t = s] = \sum\limits_a \pi(a|s)\sum\limits_{s'}\sum\limits_r p(s',r|s,a)[r + \gamma v_{\pi}(s')]
+v_{\pi}(s) \equiv \mathbb{E}_{\pi}[G_t|s_t = s] = \mathbb{E}_{\pi}[R_{t+1} + \gamma G_{t+1}|s_t = s] = \sum\limits_a \pi(a|s)\sum\limits_{s'}\sum\limits_r p(s',r|s,a)[r + \gamma v_{\pi}(s')]
 \end{align}
 {% endmathjax %}
 其中{% mathjax %}v_{\pi}{% endmathjax %}的**贝尔曼方程**。**贝尔曼方程**将状态的值与其潜在后继状态的值联系起来。初始状态的值等于预期的下一个状态的折扣值加上预期的奖励。
@@ -222,3 +222,5 @@ q^{*}(s,a) = & \mathbb{E}[R_{t+1} + \underset{a'}{\max}q^{*}(S_{t+1},a')|S_t = s
 \end{align}
 {% endmathjax %}
 **动态规划**(`DP`)算法是通过将**贝尔曼方程**转化为更新规则从而推导出来的。
+
+**策略评估**（也称**预测**）涉及计算给定策略{% mathjax %}\pi{% endmathjax %}的**状态值函数**{% mathjax %}v^{\pi}{% endmathjax %}。此过程的评估在每个状态下遵循策略{% mathjax %}\pi{% endmathjax %}时的预期回报。状态值函数{% mathjax %}v_{\pi}(s){% endmathjax %}定义为从状态{% mathjax %}s{% endmathjax %}开始并遵循策略{% mathjax %}\pi{% endmathjax %}的预期回报：
