@@ -236,34 +236,7 @@ v_{\pi}(s) \equiv \mathbb{E}_{\pi}[R_{t+1} + \gamma G_{t+1}|S_t = s] = \sum\limi
 \end{align}
 {% endmathjax %}
 在这个方程中，{% mathjax %}\pi(a|s){% endmathjax %}表示在策略{% mathjax %}\pi{% endmathjax %}下，在状态{% mathjax %}s{% endmathjax %}下采取动作{% mathjax %}a{% endmathjax %}的概率。如果 {% mathjax %}\gamma < 1{% endmathjax %}或所有状态最终在{% mathjax %}\pi{% endmathjax %}终止，则能保证{% mathjax %}v^{\pi}{% endmathjax %}的存在性和唯一性。**动态规划**(`DP`)算法更新被称为“预期更新”，因为它们依赖于对所有未来状态的期望，而不仅仅是样本。计算策略的**价值函数**的目的是为了提升策略。假设**确定性策略**{% mathjax %}v^{\pi}{% endmathjax %}。对于状态{% mathjax %}s{% endmathjax %} ，我们是否应该改变策略以选取动作{% mathjax %}a \neq \pi(s){% endmathjax %}？我们知道从状态{% mathjax %}s(v^{\pi(s)}){% endmathjax %}开始遵守现有策略的有效性，但过渡到新策略是否会产生更好的结果？我们可以通过在状态{% mathjax %}s{% endmathjax %}中选取动作{% mathjax %}a{% endmathjax %}然后遵循策略{% mathjax %}\pi{% endmathjax %}来阐述这个问题：为了确定策略是否可以改进，我们将在状态{% mathjax %}s{% endmathjax %}下采取不同行动{% mathjax %}a{% endmathjax %}与当前策略的价值进行比较。这是使用**动作价值函数**{% mathjax %}q_{\pi}(s,a){% endmathjax %}完成的：
-{% mathjax '{"conversion":{"em":14}}' %}
-\begin{align}
-q_{\pi}(s,a) \equiv \mathbb{E}[R_{t+1} + \gamma v_{\pi}(S_{t+1})|S_t = s,A_t = a] = \sum\limits_{s',r}p(s',r|s,a)[r + \gamma v_{\pi}(s')]
-\end{align}
-{% endmathjax %}
-如果{% mathjax %}q_{\pi}(s,a) > v_{\pi}(s){% endmathjax %}，则始终选择状态{% mathjax %}s{% endmathjax %}中的动作{% mathjax %}a{% endmathjax %}比遵循{% mathjax %}\pi{% endmathjax %}更有利，从而改进策略{% mathjax %}\pi'{% endmathjax %} 。策略改进方法指出，如果对于所有状态{% mathjax %}s{% endmathjax %}，{% mathjax %}q_{\pi}(s,\pi'(s)) \geq v_{\pi}(s){% endmathjax %}，则新策略{% mathjax %}\pi'{% endmathjax %}至少与原始策略{% mathjax %}\pi{% endmathjax %}一样好。让{% mathjax %}\pi{% endmathjax %}和{% mathjax %}\pi'{% endmathjax %}成为**确定性策略**，使得对于所有状态{% mathjax %}s\in S{% endmathjax %}：
-{% mathjax '{"conversion":{"em":14}}' %}
-\begin{align}
-q_{\pi}(s,\pi'(s)) \geq v_{\pi}(s)
-\end{align}
-{% endmathjax %}
-如果{% mathjax %}\pi{% endmathjax %}从所有状态({% mathjax %}s\in S{% endmathjax %})预期回报都大于等于策略{% mathjax %}\pi'{% endmathjax %}获得的，则：
-{% mathjax '{"conversion":{"em":14}}' %}
-\begin{align}
-v_{\pi'} \geq v_{\pi}(s)
-\end{align}
-{% endmathjax %}
-通过选择**最大化动作价值函数**{% mathjax %}q_{\pi}(s,a){% endmathjax %}的动作，可以得到新的策略{% mathjax %}\pi'{% endmathjax %}：
-{% mathjax '{"conversion":{"em":14}}' %}
-\begin{align}
-v_{\pi'}(s) = \underset{a}{\max}\mathbb{E}[R_{t+1} + \gamma v_{\pi'}(S_t = s,A_t = a)] = \underset{a}{\max}\sum\limits_{s',r}p(s',r|s,a)[r + \gamma v_{\pi'}(s')]
-\end{align}
-这是**贝尔曼最优方程**，{% mathjax %}v_{\pi'} = v^{*}{% endmathjax %}，并且{% mathjax %}\pi{% endmathjax %}和{% mathjax %}\pi'{% endmathjax %}都是最优策略。除非**初始策略**已经是最优的，否则策略改进会产生更优的策略。在使用{% mathjax %}v_{\pi}{% endmathjax %}增强策略{% mathjax %}\pi{% endmathjax %}以得出改进的策略{% mathjax %}\pi'{% endmathjax %}之后，计算{% mathjax %}v_{\pi'}{% endmathjax %}并进一步细化以获得更优策略{% mathjax %}\pi''{% endmathjax %} 。此过程生成一系列改进策略和相应的价值函数：**策略迭代**的过程包括**策略评估**和**策略改进**的交替进行，以获得一系列改进的策略和**价值函数**：
-{% mathjax '{"conversion":{"em":14}}' %}
-\begin{align}
-\pi_0\overset{\text{Evaluation}}{\to} v_{\pi_0}\overset{\text{Improvement}}{\to} \pi_1\overset{\text{Evaluation}}{\to} v_{\pi_1}\overset{\text{Improvement}}{\to} \pi_2\overset{\text{Evaluation}}{\to} \ldots \overset{\text{Improvement}}{\to} \pi_{*}\overset{\text{Evaluation}}{\to} v^{*}
-\end{align}
-{% endmathjax %}
+
 此序列中的每个策略都比其前一个策略有显著的改进，除非前一个策略已经是最佳的。给定一个有限**马尔可夫决策过程**(`MDP`)，这个迭代过程会在有限次数的迭代中收敛到**最优策略**和**价值函数**。这种方法称为**策略迭代**。
 
 #### 值迭代
