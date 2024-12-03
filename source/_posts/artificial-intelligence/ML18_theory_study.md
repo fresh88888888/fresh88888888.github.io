@@ -177,7 +177,7 @@ G_t \equiv \sum\limits_{k = t+1}^T\gamma^{k-t-1}R_k
 对于**马尔可夫决策过程**(`MDP`)来说，{% mathjax %}v{% endmathjax %}和{% mathjax %}q{% endmathjax %}定义为如下：**状态值函数**{% mathjax %}v_{\pi}(s){% endmathjax %}表示从状态{% mathjax %}s{% endmathjax %}开始并遵循策略{% mathjax %}\pi{% endmathjax %}的预期回报。它在数学上定义如下：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
-v_{\pi}(s) \equiv \mathbb{E}_{\pi}\Bigg[\sum\limits_{k=0}^{\infty}\gamma^kR_{t+k+1}|S_t = s \Bigg],\;\text{for all s\in S}
+v_{\pi}(s) \equiv \mathbb{E}_{\pi}\Bigg[\sum\limits_{k=0}^{\infty}\gamma^kR_{t+k+1}|S_t = s \Bigg],\;\text{for all} s\in S
 \end{align}
 {% endmathjax %}
 **动作价值函数**{% mathjax %}q_{\pi}(s,a){% endmathjax %}表示从状态{% mathjax %}s{% endmathjax %}开始，采取动作{% mathjax %}a{% endmathjax %}，然后遵循策略{% mathjax %}\pi{% endmathjax %}的预期回报。其定义如下：
