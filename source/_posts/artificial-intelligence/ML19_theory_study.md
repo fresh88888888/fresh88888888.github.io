@@ -46,7 +46,7 @@ mathjax:
 |**基于策略的方法**|在这个方法中，策略是直接学习的。将每个状态映射到该状态下最佳对应的动作。或者该状态下可能动作集合的概率分布。|
 |**基于价值的方法**|在这个方法中，不需要训练策略，而是训练一个价值函数，将每个状态映射到该状态的预期值。|
 
-`Gymnasium`是一个为所有单智能体**强化学习**环境提供`API`的框架，其中包括常见环境的实现：`cartpole`（游戏）、`pendulum`（游戏）、`mountain-car`（山地车）、`mujoco`（物理引擎模拟器）、`atari`（游戏）等。`Gymnasium`包括其四个主要功能：`make()`、`Env.reset()`、`Env.step()`和`Env.render()`。`Gymnasium`的核心是`Env`，一个`Python`类，代表**强化学习**理论中的`马尔可夫决策过程`(`MDP`)（注意：这不是完美的重构，缺少`MDP`的几个组成部分）。该类为用户提供了生成初始状态、根据操作转换/移动到新状态以及可视化环境的能力。除了`Env`之外，还提供`Wrapper`来帮助增强/修改环境，特别是智能体观察、奖励和采取的动作。
+`Gymnasium`是一个为所有单智能体**强化学习**环境提供`API`的框架，其中包括常见环境的实现：`cartpole`（游戏）、`pendulum`（游戏）、`mountain-car`（山地车）、`mujoco`（物理引擎模拟器）、`atari`（游戏）等。`Gymnasium`包括其四个主要功能：`make()`、`Env.reset()`、`Env.step()`和`Env.render()`。`Gymnasium`的核心是`Env`，一个`Python`类，代表**强化学习**理论中的**马尔可夫决策过程**(`MDP`)（注意：这不是完美的重构，缺少`MDP`的几个组成部分）。该类为用户提供了生成初始状态、根据操作转换/移动到新状态以及可视化环境的能力。除了`Env`之外，还提供`Wrapper`来帮助增强/修改环境，特别是智能体观察、奖励和采取的动作。
 ```python
 import gymnasium as gym
 
@@ -71,4 +71,84 @@ for _ in range(20):
 
 env.close()
 ```
-我们将训练一个**智能体**(`Agent`)，即**月球着陆器**，使其正确地着陆在月球上。**智能体**(`Agent`)需要学习调整其速度和位置（水平、垂直和角度），从而实现正确着陆。
+我们将训练一个**智能体**(`Agent`)，即**月球着陆器**，使其正确地着陆在月球上。**智能体**(`Agent`)需要学习调整其速度和位置（水平、垂直和角度），从而实现正确着陆。我们看到，通过观察空间形状`(8,)`，观察到是一个大小为`8`的向量，其中每个值包含有关着陆器的不同信息：水平坐标(`x`)、垂直坐标(`y`)、水平速度(`x`)、垂直速度(`y`)、角度、角速度、左腿接触点是否已接触地面（布尔值）、右腿接触点是否已接触地面（布尔值）。动作空间（**智能体**(`Agent`)可以采取的一组可能的动作）是离散的，有`4`个动作可用：动作`0`-不做任何事，动作`1`-启动左方向的引擎，动作`2`-启动主发动机，动作`3`-启动右方向引擎。
+```python
+env = gym.make("LunarLander-v2")
+env.reset()
+
+print("Observation Space Shape", env.observation_space.shape)
+print("Sample observation", env.observation_space.sample()) # Get a random observation
+
+# Observation Space Shape (8,)
+#Sample observation [-11.904714    12.34132      1.8366828   -1.7705393   -1.5868014    4.7483463    0.08337952   0.5845598 ]
+
+print("Action Space Shape", env.action_space.n)
+print("Action Space Sample", env.action_space.sample()) # Take a random action
+
+# Action Space Shape 4
+# Action Space Sample 0
+```
+**奖励函数**（在每个时间步给予奖励的函数），每一步之后都会获得奖励。一个回合的总奖励是该回合中所有步的奖励总和。 对于每一步，奖励：随着着陆器距离着陆台越来越近或越来越远，其变化幅度会越来越大或越来越小；着陆器移动得越慢/越快，其增加/减少量就越大；着陆器倾斜越大（角度不水平），其衰减就越小；着陆器倾斜越大（角度不水平），其衰减就越小；每条腿接触地面一次，增加`10`分；每帧侧发动机启动时减少`0.03`分；主发动机启动每帧减少`0.3`分。该回合将因坠毁或着陆分别获得`-100`或`+100`分的额外奖励。如果某一回合得分达到`200`分，则该回合则被视为解决方案。我们创建了一个由`16`个环境组成的**矢量化环境**（将多个独立环境堆叠成一个环境的方法）。
+```python
+# Create the environment
+env = make_vec_env('LunarLander-v2', n_envs=16)
+```
+通过控制左、右和主方向引擎，能够将月球着陆器正确地着陆到着陆台。为此，我们将使用**深度强化学习库**：`Stable Baselines3 (SB3)`。`SB3`是`PyTorch`实现的**深度强化学习算法库**。为了解决这个问题，我们将使用 SB3的`PPO`算法。`PPO`（又名**近端策略优化**）。`PPO`是**基于价值**的**强化学习方法**（学习一个**动作价值函数**，在给定状态和动作的情况下采取的最有价值的动作）和**基于策略的强化学习方法**（学习一种策略，为我们提供行动的概率分布）。`Stable-Baselines3`设置：
+- 创建环境；
+- 定义模型并实例化该模型(`model = PPO("MlpPolicy")`)；
+- 使用`model.learn`训练**智能体**(`Agent`)，并定义训练时间步数。
+
+```python
+# Define a PPO MlpPolicy architecture
+model = model = PPO(policy = 'MlpPolicy', env = env, n_steps = 1024, batch_size = 64, n_epochs = 4,gamma = 0.999,
+    gae_lambda = 0.98, ent_coef = 0.01, verbose=1)
+```
+接下来训练**智能体**(`Agent`)包含`1,000,000`个时间步。
+```python
+# Train it for 1,000,000 timesteps
+model.learn(total_timesteps=1000000)
+# Save the model
+model.save("ppo-LunarLander-v2")
+```
+```bash
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 94.4     |
+|    ep_rew_mean     | -159     |
+| time/              |          |
+|    fps             | 2584     |
+|    iterations      | 1        |
+|    time_elapsed    | 6        |
+|    total_timesteps | 16384    |
+---------------------------------
+-----------------------------------------
+| rollout/                |             |
+|    ep_len_mean          | 511         |
+|    ep_rew_mean          | -4.69       |
+| time/                   |             |
+|    fps                  | 1262        |
+|    iterations           | 17          |
+|    time_elapsed         | 220         |
+|    total_timesteps      | 278528      |
+| train/                  |             |
+|    approx_kl            | 0.006326129 |
+|    clip_fraction        | 0.0303      |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -1.22       |
+|    explained_variance   | 0.578       |
+|    learning_rate        | 0.0003      |
+|    loss                 | 82.3        |
+|    n_updates            | 64          |
+|    policy_gradient_loss | -0.00175    |
+|    value_loss           | 213         |
+-----------------------------------------
+......
+```
+**智能体**(`Agent`)评估：将环境包装在监视器中。当评估**智能体**(`Agent`)时，不应该使用训练环境，而是创建一个评估环境。
+```python
+# 创建一个新的评估环境
+eval_env = Monitor(gym.make("LunarLander-v2", render_mode='rgb_array'))
+
+# Evaluate the model with 10 evaluation episodes and deterministic=True
+mean_reward, std_reward = evaluate_policy(model, eval_env, n_eval_episodes=10, deterministic=True)
+```
