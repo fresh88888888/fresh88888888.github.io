@@ -46,3 +46,29 @@ mathjax:
 |**基于策略的方法**|在这个方法中，策略是直接学习的。将每个状态映射到该状态下最佳对应的动作。或者该状态下可能动作集合的概率分布。|
 |**基于价值的方法**|在这个方法中，不需要训练策略，而是训练一个价值函数，将每个状态映射到该状态的预期值。|
 
+`Gymnasium`是一个为所有单智能体**强化学习**环境提供`API`的框架，其中包括常见环境的实现：`cartpole`（游戏）、`pendulum`（游戏）、`mountain-car`（山地车）、`mujoco`（物理引擎模拟器）、`atari`（游戏）等。`Gymnasium`包括其四个主要功能：`make()`、`Env.reset()`、`Env.step()`和`Env.render()`。`Gymnasium`的核心是`Env`，一个`Python`类，代表**强化学习**理论中的`马尔可夫决策过程`(`MDP`)（注意：这不是完美的重构，缺少`MDP`的几个组成部分）。该类为用户提供了生成初始状态、根据操作转换/移动到新状态以及可视化环境的能力。除了`Env`之外，还提供`Wrapper`来帮助增强/修改环境，特别是智能体观察、奖励和采取的动作。
+```python
+import gymnasium as gym
+
+# 首先创建一个RL环境，被称作`LunarLander-v2`
+env = gym.make('LunarLander-v2')
+
+# 接下来，重置这个环境
+observation, info = env.reset()
+
+for _ in range(20):
+    # 采取一个随机的动作
+    action = env.action_space.simple()
+    print('action taken: ',action)
+    
+    # 在这个环境中执行这个动作，并获取下一个状态、奖励、terminated、truncated、info
+    observation, reward, terminated, truncated, info = env.step(action)
+
+    # 如果游戏被terminated或truncated，则重置这个环境。
+    if terminated or truncated :
+        observation, info = env.reset()
+        print("environment is reset")
+
+env.close()
+```
+我们将训练一个**智能体**(`Agent`)，即**月球着陆器**，使其正确地着陆在月球上。**智能体**(`Agent`)需要学习调整其速度和位置（水平、垂直和角度），从而实现正确着陆。
