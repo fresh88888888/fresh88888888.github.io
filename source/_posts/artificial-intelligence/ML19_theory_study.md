@@ -152,3 +152,76 @@ eval_env = Monitor(gym.make("LunarLander-v2", render_mode='rgb_array'))
 # Evaluate the model with 10 evaluation episodes and deterministic=True
 mean_reward, std_reward = evaluate_policy(model, eval_env, n_eval_episodes=10, deterministic=True)
 ```
+接下来介绍另外一个例子“小狗`Huggy`捡棍子”，它是`Thomas Simonini`根据`Puppo The Corgi`创建的环境，使用的库是`MLAgents`。首先需要下载`MLAgents`代码库：
+```bash
+# Clone the repository (can take 3min)
+git clone --depth 1 https://github.com/Unity-Technologies/ml-agents
+
+# 进入代码库内，并进行安装
+cd ml-agents
+pip3 install -e ./ml-agents-envs
+pip3 install -e ./ml-agents
+```
+下载并解压环境`Huggy`文件，需要将解压的文件放在`./trained-envs-executables/linux/`文件夹下。
+```bash
+# 创建./trained-envs-executables/linux/ 文件夹。
+!mkdir ./trained-envs-executables
+!mkdir ./trained-envs-executables/linux
+
+# 下载和解压Huggy.zip压缩包文件，并确保解压的文件有足够的访问权限。
+wget "https://github.com/huggingface/Huggy/raw/main/Huggy.zip" -O ./trained-envs-executables/linux/Huggy.zip
+
+unzip -d ./trained-envs-executables/linux/ ./trained-envs-executables/linux/Huggy.zip
+
+chmod -R 755 ./trained-envs-executables/linux/Huggy
+```
+{% asset_img ml_2.png %}
+`Huggy`的腿是由关节马达驱动的。为了完成目标，`Huggy`需要学会正确地旋转每条腿的关节马达，这样它才能移动。**奖励函数**的初衷是为了让`Huggy`完成目标："取回棍子"。**强化学习**的核心之一是**奖励假设**：目标可以描述为预期累积奖励的最大化。在这里，目标是Huggy朝棍子走去并捡起棍子，但不要旋转太多。因此**奖励函数**必须转化这个目标。奖励函数：
+- **定位奖励**：这里奖励它接近目标。
+- **时间惩罚**：每次动作都给予固定**时间惩罚**，以迫使它尽快到达棍子所在的位置。
+- **旋转惩罚**：如果`Huggy`旋转太多或者转得太快，就对它进行惩罚。
+- **达到目标奖励**：奖励`Huggy`完成目标。
+
+<video controls autoplay><source src="https://huggingface.co/datasets/huggingface-deep-rl-course/course-images/resolve/main/en/notebooks/unit-bonus1/huggy.mp4" type="video/mp4">
+</video>
+
+在用`ML-Agents`训练**智能体**(`Agent`)之前，你需要创建一个`/content/ml-agents/config/ppo/Huggy.yaml`来保存训练的超参数。
+```yaml
+behaviors:
+  Huggy:
+    trainer_type: ppo
+    hyperparameters:
+      batch_size: 2048
+      buffer_size: 20480
+      learning_rate: 0.0003
+      beta: 0.005
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 3
+      learning_rate_schedule: linear
+    network_settings:
+      normalize: true
+      hidden_units: 512
+      num_layers: 3
+      vis_encode_type: simple
+    reward_signals:
+      extrinsic:
+        gamma: 0.995
+        strength: 1.0
+    checkpoint_interval: 200000
+    keep_checkpoints: 15
+    max_steps: 2e6
+    time_horizon: 1000
+    summary_freq: 50000
+```
+`checkpoint_interval`：每个检查点之间收集的训练时间步数。`keep_checkpoints`：要保留的模型检查点的最大数量。为了训练**智能体**(`Agent`)，只需要启动`mlagents-learn`并选择包含环境的可执行文件。
+```bash
+mlagents-learn "./config/ppo/Huggy.yaml" --env="./trained-envs-executables/linux/Huggy" --run-id="Huggy" --no-graphics
+```
+使用`ML Agents`运行训练脚本。这里定义了四个参数：
+- `mlagents-learn <config>`：超参数配置文件所在的路径。
+- `--env`：环境可执行文件所在的位置。
+- `--run-id`: 为训练运行`ID`创建的名称。
+- `--no-graphics`：在训练期间不启动可视化。
+- `--resume`：训练模型，发生中断时使用`--resume`标志继续训练。
+
