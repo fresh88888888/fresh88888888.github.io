@@ -269,7 +269,7 @@ mlagents-learn "./config/ppo/Huggy.yaml" --env="./trained-envs-executables/linux
 
 {% note warning %}
 请记住，在**时间差分学习**(`TD`)学习中，在交互的一个回合之后更新**策略**或**价值函数**（取决于选择的**强化学习**方法）。
-{% end note%}
+{% end note %}
 
 为了实现**时间差分学习**(`TD`)的目标，这里使用了**即时奖励**加上下一个状态的折扣值，记作{% mathjax %}R_{t+1} + \gamma V(S_{t+1}){% endmathjax %}，通过找到在下一个状态下最大化当前{% mathjax %}Q{% endmathjax %}函数的动作来获得（称之为**引导**）。
 {% mathjax '{"conversion":{"em":14}}' %}
