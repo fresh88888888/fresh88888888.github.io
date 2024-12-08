@@ -254,3 +254,24 @@ mlagents-learn "./config/ppo/Huggy.yaml" --env="./trained-envs-executables/linux
 {% asset_img ml_4.png %}
 
 `Q-Learning`是一种强化学习算法。训练一个`Q`函数（动作值函数），其内部是一个包含所有**状态-动作对**值的`Q`表。给定一个状态和动作，`Q`函数将在其`Q`表中搜索相应的值。当训练完成后，有一个最佳的`Q`函数，意味着有一个最佳的`Q`表。如果有一个最佳`Q`函数，那么就有一个**最佳策略**。它可以表示为：{% mathjax %}\pi^{*}(s) = \text{arg}\;\underset{a}{\max}Q^{*}(s,a){% endmathjax %}。起初`Q`表的内容毫无意义，因为它将每个状态-动作对初始化为`0`。随着**智能体**(`Agent`)探索环境并更新`Q`表，它将越来越接近最优策略的近似值。如下图所示，这是`Q-Learning`伪代码。
+{% asset_img ml_5.png %}
+
+- 步骤一：初始化{% mathjax %}Q{% endmathjax %}表，需要为{% mathjax %}Q{% endmathjax %}表中的每个**状态-动作对**做初始化为`0`。
+- 步骤二：使用`epsilon-greedy`策略选取一个动作。**贪婪策略**是一种处理探索/利用的策略。初始时{% mathjax %}\epsilon = 0{% endmathjax %}，在训练开始时，探索的概率会很大（{% mathjax %}\epsilon{% endmathjax %}值较大），这时候选择探索的策略（随机选取动作）；但随着训练的进行，{% mathjax %}Q{% endmathjax %}表内容的值越来越接近，{% mathjax %}\epsilon {% endmathjax %}值逐渐降低，这时候选择利用策略（**智能体**选取具有最高**状态-动作对**值的动作）。
+- 步骤三：执行动作{% mathjax %}A_t{% endmathjax %}，获得奖励{% mathjax %}R_{t+1}{% endmathjax %}和下一个状态{% mathjax %}S_{t+1}{% endmathjax %}。
+- 步骤四：更新{% mathjax %}Q(S_t,A_t){% endmathjax %}表。
+
+{% note warning %}
+请记住，在**时间差分学习**(`TD`)学习中，在交互的一个回合之后更新**策略**或**价值函数**（取决于选择的**强化学习**方法）。
+{% end note%}
+
+为了实现**时间差分学习**(`TD`)的目标，这里使用了**即时奖励**加上下一个状态的折扣值，记作{% mathjax %}R_{t+1} + \gamma V(S_{t+1}){% endmathjax %}，通过找到在下一个状态下最大化当前{% mathjax %}Q{% endmathjax %}函数的动作来获得（称之为**引导**）。
+{% mathjax '{"conversion":{"em":14}}' %}
+V(S_t)\leftarrow V(S_t) + \alpha [R_{t+1} + \gamma V(S_{t+1}) - V(S_t)]
+{% endmathjax %}
+则{% mathjax %}Q(S_t,A_t){% endmathjax %}函数的更新公式如下：
+{% mathjax '{"conversion":{"em":14}}' %}
+Q(S_t,A_t)\leftarrow Q(S_t,A_t) + \alpha [R_{t+1} + \gamma \text{arg}\underset{a}{\max}Q(S_{t+1},a) - Q(S_t,A_t)]
+{% endmathjax %}
+为了更新{% mathjax %}Q(S_t,A_t){% endmathjax %}值，则需要知道{% mathjax %}S_t,A_t,R_{t+1},S_{t+1}{% endmathjax %}和{% mathjax %}R_{t+1} + \gamma \text{arg}\underset{a}{\max}Q(S_{t+1},a){% endmathjax %}（**时间差分学习**(`TD`)的目标）。获得奖励{% mathjax %}R_{t+1}{% endmathjax %}之后，执行后一个动作{% mathjax %}A_t{% endmathjax %}。为了获得下一个状态的最佳**状态-动作对**值，使用**贪婪策略**来选择下一个最佳动作。请注意，这不是`epsilon-greedy`策略，它将始终采取具有最高**状态-动作对**值的动作。当完成此{% mathjax %}Q{% endmathjax %}值的更新后，从新的状态开始，并再次使用`epsilon-greedy`策略来选取动作。这也是`Q-Learning`是离线策略算法的原因。**离线策略**，使用不同的策略进行推理和训练；**在线策略**，使用相同的策略进行推理和训练。
+
