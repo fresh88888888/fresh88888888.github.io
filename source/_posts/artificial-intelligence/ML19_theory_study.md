@@ -277,7 +277,15 @@ V(S_t)\leftarrow V(S_t) + \alpha [R_{t+1} + \gamma V(S_{t+1}) - V(S_t)]
 {% endmathjax %}
 则{% mathjax %}Q(S_t,A_t){% endmathjax %}函数的更新公式如下：
 {% mathjax '{"conversion":{"em":14}}' %}
-Q(S_t,A_t)\leftarrow Q(S_t,A_t) + \alpha [R_{t+1} + \gamma \text{arg}\underset{a}{\max}Q(S_{t+1},a) - Q(S_t,A_t)]
+Q(S_t,A_t)\leftarrow Q(S_t,A_t) + \alpha [R_{t+1} + \gamma \underset{a}{\max}Q(S_{t+1},a) - Q(S_t,A_t)]
 {% endmathjax %}
-为了更新{% mathjax %}Q(S_t,A_t){% endmathjax %}值，则需要知道{% mathjax %}S_t,A_t,R_{t+1},S_{t+1}{% endmathjax %}和{% mathjax %}R_{t+1} + \gamma \text{arg}\underset{a}{\max}Q(S_{t+1},a){% endmathjax %}（**时间差分学习**(`TD`)的目标）。获得奖励{% mathjax %}R_{t+1}{% endmathjax %}之后，执行后一个动作{% mathjax %}A_t{% endmathjax %}。为了获得下一个状态的最佳**状态-动作对**值，使用**贪婪策略**来选择下一个最佳动作。请注意，这不是`epsilon-greedy`策略，它将始终采取具有最高**状态-动作对**值的动作。当完成此{% mathjax %}Q{% endmathjax %}值的更新后，从新的状态开始，并再次使用`epsilon-greedy`策略来选取动作。这也是`Q-Learning`是离线策略算法的原因。**离线策略**，使用不同的策略进行推理和训练；**在线策略**，使用相同的策略进行推理和训练。
+为了更新{% mathjax %}Q(S_t,A_t){% endmathjax %}值，则需要知道{% mathjax %}S_t,A_t,R_{t+1},S_{t+1}{% endmathjax %}和{% mathjax %}R_{t+1} + \gamma \underset{a}{\max}Q(S_{t+1},a){% endmathjax %}（**时间差分学习**的目标）。获得奖励{% mathjax %}R_{t+1}{% endmathjax %}之后，执行后一个动作{% mathjax %}A_t{% endmathjax %}。为了获得下一个状态的最佳**状态-动作对**值，使用**贪婪策略**来选择下一个最佳动作。请注意，这不是`epsilon-greedy`策略，它将始终采取具有最高**状态-动作对**值的动作。当完成此{% mathjax %}Q{% endmathjax %}值的更新后，从新的状态开始，并再次使用`epsilon-greedy`策略来选取动作。这也是`Q-Learning`是离线策略算法的原因。**离线策略**，使用不同的策略进行推理和训练；**在线策略**，使用相同的策略进行推理和训练。
 
+#### 深度Q-Learning
+
+`Q-Learning`是一种用于训练`Q`函数的算法，`Q`函数是一种**动作值函数**，它决定了该状态下采取动作的值，`Q`来自于该状态下该动作的“**质量**”(`the Quality`)。但存在一个问题，由于`Q-Learning`是一种表格方法，如果**状态和动作空间**不够小，则无法用数组和表格表示，也就是说，`Q`表无法进行扩展。
+{% asset_img ml_6.png %}
+
+深度`Q`网络(`DQN`)的网络架构：由3部分组成，分别是**神经网络**，`DQN`使用**深度神经网络**（通常是**卷积神经网络**）作为**函数逼近器**，当前状态作为输入，所有可能动作的`Q`值向量为输出。通过这种方式，`DQN`能够处理高维输入；**经验回放**，`DQN`引入了**经验回放机制**，将智能体与环境交互过程中获得的经验存储在一个**回放缓冲区**中。每次更新时，从这个缓冲区中随机抽取一批经验进行训练。这种方法可以打破样本之间的相关性，提高学习效率和稳定性；**目标网络**，`DQN`使用两个神经网络：一个是**主网络**（用于选取动作），另一个是**目标网络**（用于计算目标`Q`值）。**目标网络**的参数定期更新，以保持相对稳定。这有助于减少训练过程中的波动性。
+
+深度`Q-Learning`算法使用深度神经网络（**卷积神经网络**）来近似某一状态下每个动作的`Q`值（**价值函数**预测）。与`Q-Learning`算法不同之处在于，在训练阶段，不会直接更新**状态-动作对**的`Q`值：
