@@ -300,3 +300,15 @@ Q(S_t,A_t)\leftarrow Q(S_t,A_t) + \alpha [R_{t+1} + \gamma \underset{a}{\max}Q(S
 
 **双重深度**`Q`**网络**：又称**双重深度**`Q`**学习神经网络**，由`Hado van Hasselt`提出 。此方法可解决`Q`值预测过高的问题。在计算`TD`目标时，如何确定下一个状态的最佳动作是`Q`值最高的动作？解决方案是：当计算`Q`目标时，使用两个网络将动作选取与目标`Q`值分离。使用`DQN`网络来选择下一个状态的最佳动作（具有最高`Q`值的动作）。使用**目标网络**来计算在下一个状态下采取该动作的目标`Q`值。
 
+#### 策略梯度
+
+**强化学习**(`RL`)的主要目标是找到最优策略{% mathjax %}\pi^{*}{% endmathjax %}，使其**最大化预期累积奖励**。因为**强化学习**(`RL`)是基于“**奖励假设**”：所有目标都可以描述为**预期累计奖励的最大化**。例如，在一场足球比赛中，您将训练两个**智能体**(`Agent`)，目标是赢得比赛。我们可以在**强化学习**(`RL`)中将此目标描述为最大化对方球门的进球数（当球越过球门线时），并最小化自己球门的进球数。基于价值的方法：通过最优价值函数来实现最优策略{% mathjax %}\pi^{*}{% endmathjax %}。目标是**最小化预测值**和**目标值**之间的**损失**以近似真实的**动作值函数**。基于策略的方法：这个方法是将策略参数化，例如，使用神经网络{% mathjax %}\pi_{\theta}{% endmathjax %}，该策略将输出动作的**概率分布**（**随机策略**），记作{% mathjax %}\pi_{\theta}(s) = \mathbb{P}[A|s;\theta]{% endmathjax %}。它的目标就是利用**梯度**上升来最大参数化策略的性能。基于策略的方法，可以直接优化策略{% mathjax %}\pi_{\theta}{% endmathjax %}输出动作的概率分布{% mathjax %}\pi_{\theta}(a|s){% endmathjax %}，​​从而实现最佳累积收益。为此，这里定义一个目标函数{% mathjax %}J(\theta){% endmathjax %}，即**预期累积奖励**。这里只需要找到最大化该**目标函数**的{% mathjax %}\theta{% endmathjax %}值。策略梯度方法：是基于策略的方法的一个子集，优化大多数时候都是基于策略的，因为对于每次更新，只需要使用最新版本的{% mathjax %}\pi_{\theta}(a|s){% endmathjax %}。基于**策略的方法**和**策略梯度方法**之间的区别：
+- **在基于策略的方法中**，直接搜索最优策略。通过使用`hill climbing`、**模拟退火**或**进化策略**等技术最大化**目标函数**的局部近似值来优化参数{% mathjax %}\theta{% endmathjax %}。
+- **在基于策略梯度方法中**，由于它是基于策略的方法的子集，直接搜索最优策略。但优化参数{% mathjax %}\theta{% endmathjax %}直接通过对**目标函数**的性能进行梯度上升{% mathjax %}J(\theta){% endmathjax %}。
+
+**策略梯度方法**优点：**集成简单**，可以直接预测策略，而无需存储额外的数据；**策略梯度方法**可以学习随机策略，而**价值函数**则不能；**策略梯度方法**在高维动作空间和连续动作空间中更有效；**策略梯度方法**具有更好的收敛特性。**策略梯度方法**缺点：通常，**策略梯度方法**会收敛到局部最大值而不是全局最大值。**策略梯度**逐渐变慢，训练可能需要更长的时间（效率低下）。**策略梯度**可能具有较高的方差。
+
+**策略梯度**的目标是通过调整策略来控制动作的概率分布，以便将来更频繁地采样好的动作（最大化回报）。每次**智能体**(`Agent`)与环境交互时，都会调整参数，以便将来更有可能采样好的动作。但是要如何利用预期回报来优化权重呢？随机策略记作{% mathjax %}\pi{% endmathjax %}，参数记作{% mathjax %}\theta{% endmathjax %}，策略{% mathjax %}\pi{% endmathjax %}是给定一个状态，输出动作的**概率分布**。{% mathjax %}\pi_{\theta}(a_t|s_t){% endmathjax %}是智能体根据当下的策略，从状态{% mathjax %}s_t{% endmathjax %}中选取动作{% mathjax %}a_t{% endmathjax %}的概率。但如何判定该策略是否有效？这里定义一个{% mathjax %}J(\theta){% endmathjax %}的**目标函数**。**目标函数**提供了给定轨迹的**智能体**(`Agent`)的性能，并输出**预期累积奖励**。记作{% mathjax %}J(\theta) = \mathbb{E}_{\tau\sim\pi}[R(\tau)]\;,\;R(\tau) = r_{t+1} + \gamma r_{t+2} + \gamma^{2} r_{t+3} + \gamma^{3} r_{t+4} + \ldots{% endmathjax %}。{% mathjax %}J(\theta) = \sum\limits_{\tau}P(\tau;\theta)R(\tau){% endmathjax %}预期回报也称为**预期累计奖励**，是加权平均值（其中权重由回报{% mathjax %}P(\tau;\thate){% endmathjax %}给出，并包含回报{% mathjax %}R(\tau){% endmathjax %}取得的所有值）。
+- {% mathjax %}R(\tau){% endmathjax %}：从任意轨迹获得的回报。要获取此量并用它来计算预期回报，需要将其乘以每个可能轨迹的概率。
+- {% mathjax %}P(\tau;\thate){% endmathjax %}：每个可能轨迹的概率{% mathjax %}\tau{% endmathjax %}（该概率取决于{% mathjax %}\theta{% endmathjax %}，因为它定义了用于选择轨迹动作的策略，而该策略会对所访问的状态产生影响）。
+- {% mathjax %}J(\theta){% endmathjax %}：**预期回报**，通过对所有轨迹求和，给定{% mathjax %}\theta{% endmathjax %}乘以该轨迹的回报，得出采取该轨迹的概率。我们的目标是通过找到输出最佳动作概率分布的 {% mathjax %}\theta{% endmathjax %}来**最大化预期累积奖励**：{% mathjax %}\underset{a}{\max}J(\theta) = \mathbb{E}_{\tau\sim\pi_{\theta}}[R(\tau)]{% endmathjax %}。
