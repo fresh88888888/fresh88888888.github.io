@@ -310,5 +310,17 @@ Q(S_t,A_t)\leftarrow Q(S_t,A_t) + \alpha [R_{t+1} + \gamma \underset{a}{\max}Q(S
 
 **策略梯度**的目标是通过调整策略来控制动作的概率分布，以便将来更频繁地采样好的动作（最大化回报）。每次**智能体**(`Agent`)与环境交互时，都会调整参数，以便将来更有可能采样好的动作。但是要如何利用预期回报来优化权重呢？随机策略记作{% mathjax %}\pi{% endmathjax %}，参数记作{% mathjax %}\theta{% endmathjax %}，策略{% mathjax %}\pi{% endmathjax %}是给定一个状态，输出动作的**概率分布**。{% mathjax %}\pi_{\theta}(a_t|s_t){% endmathjax %}是智能体根据当下的策略，从状态{% mathjax %}s_t{% endmathjax %}中选取动作{% mathjax %}a_t{% endmathjax %}的概率。但如何判定该策略是否有效？这里定义一个{% mathjax %}J(\theta){% endmathjax %}的**目标函数**。**目标函数**提供了给定轨迹的**智能体**(`Agent`)的性能，并输出**预期累积奖励**。记作{% mathjax %}J(\theta) = \mathbb{E}_{\tau\sim\pi}[R(\tau)]\;,\;R(\tau) = r_{t+1} + \gamma r_{t+2} + \gamma^{2} r_{t+3} + \gamma^{3} r_{t+4} + \ldots{% endmathjax %}。{% mathjax %}J(\theta) = \sum\limits_{\tau}P(\tau;\theta)R(\tau){% endmathjax %}预期回报也称为**预期累计奖励**，是加权平均值（其中权重由回报{% mathjax %}P(\tau;\theta){% endmathjax %}给出，并包含回报{% mathjax %}R(\tau){% endmathjax %}取得的所有值）。
 - {% mathjax %}R(\tau){% endmathjax %}：从任意轨迹获得的回报。要获取此量并用它来计算预期回报，需要将其乘以每个可能轨迹的概率。
-- {% mathjax %}P(\tau;\theta){% endmathjax %}：每个可能轨迹的概率{% mathjax %}\tau{% endmathjax %}（该概率取决于{% mathjax %}\theta{% endmathjax %}，因为它定义了用于选择轨迹动作的策略，而该策略会对所访问的状态产生影响）。
-- {% mathjax %}J(\theta){% endmathjax %}：**预期回报**，通过对所有轨迹求和，给定{% mathjax %}\theta{% endmathjax %}乘以该轨迹的回报，得出采取该轨迹的概率。我们的目标是通过找到输出最佳动作概率分布的 {% mathjax %}\theta{% endmathjax %}来最大化预期累积奖励：{% mathjax %}\underset{a}{\max}J(\theta) = \mathbb{E}_{\tau\sim\pi_{\theta}}[R(\tau)]{% endmathjax %}。
+- {% mathjax %}P(\tau;\theta){% endmathjax %}：每个可能轨迹的概率{% mathjax %}\tau{% endmathjax %}（该概率取决于{% mathjax %}\theta{% endmathjax %}，因为它定义了用于选择轨迹动作的策略，而该策略会对所访问的状态产生影响）{% mathjax %}J(\theta) = \sum\limits_{\tau}P(\tau;\theta)R(\tau)\;,\;P(\tau;\theta) = [\underset{t=0}{\prod}P(s_{t+1}|s_t,a_t)\pi_{\theta}(a_t|s_t)]{% endmathjax %}。
+- {% mathjax %}J(\theta){% endmathjax %}：预期回报，通过对所有轨迹求和，给定{% mathjax %}\theta{% endmathjax %}乘以该轨迹的回报，得出采取该轨迹的概率。我们的目标是通过找到输出最佳动作概率分布的 {% mathjax %}\theta{% endmathjax %}来最大化预期累积奖励：{% mathjax %}\underset{a}{\max}J(\theta) = \mathbb{E}_{\tau\sim\pi_{\theta}}[R(\tau)]{% endmathjax %}。
+
+**策略梯度**是一个优化问题：想要找到最大化目标函数{% mathjax %}J(\theta){% endmathjax %}的{% mathjax %}\theta{% endmathjax %}值，需要使用**梯度上升**。它是**梯度下降**的**逆函数**，因为它给出了最陡峭的增长方向{% mathjax %}J(\theta){% endmathjax %}。**梯度上升**的更新步骤是{% mathjax %}\theta\leftarrow \theta + \alpha \ast \nabla_{\theta}J(\theta){% endmathjax %}，通过反复更新，使{% mathjax %}\theta{% endmathjax %}收敛到{% mathjax %}J(\theta){% endmathjax %}最大化。但是计算{% mathjax %}J(\theta){% endmathjax %}的导数存在`2`个问题：
+- 无法计算**目标函数**的**真实梯度**，因为它需要计算每条可能轨迹的概率，这在计算上代价非常大。所以使用基于样本的预测值（收集一些轨迹）来计算**梯度预测值**。
+- 为了区分这个**目标函数**，需要区分**状态分布**，称为**马尔可夫决策过程动力学**，这与环境有关。它给出了环境进入下一个状态的概率，考虑到当前状态和**智能体**(`Agent`)采取的动作。问题是无法区分**状态分布**。
+
+解决办法是使用**策略梯度定理**，它将目标函数重新表述为**可微函数**，而不涉及状态分布的**微​​分**。记作{% mathjax %}\nabla_{\theta}J(\theta) = \mathbb{E}_{\pi\theta}[\nabla_{\theta}\log \pi_{\theta}(a_t|s_t)R(\tau)]{% endmathjax %}。**强化算法**，也称为**蒙特卡洛策略梯度算法**，是一种使用整个事件的预测回报来更新策略参数的**策略梯度算法**{% mathjax %}\theta{% endmathjax %}，在循环中：
+- 使用策略{% mathjax %}\pi_{\theta}{% endmathjax %}来收集一个回合的{% mathjax %}\tau{% endmathjax %}。
+- 使用回合来预测梯度{% mathjax %}\nabla_{\theta}J(\theta) \approx \hat{g} = \sum\limits_{t=0} \nabla_{\theta}\log_{\pi_{\theta}}(a_t|s_t)R(\tau){% endmathjax %}。
+- 更新策略的权重{% mathjax %}\theta \leftarrow \theta + \alpha\hat{g}{% endmathjax %}。
+
+{% mathjax %}\nabla_{\theta}\log_{\pi_{\theta}}(a_t|s_t){% endmathjax %}是从状态{% mathjax %}s_t{% endmathjax %}中选取动作{% mathjax %}a_t{% endmathjax %}的对数概率增加最快的方向。如果想增加/减少在状态{% mathjax %}s_t{% endmathjax %}下选取动作{% mathjax %}a_t{% endmathjax %}的对数概率的情况下，该如何改变策略权重？{% mathjax %}R(\tau){% endmathjax %}是奖励函数，如果回报很高，它将提高（状态，动作）组合的概率；否则，它将降低（状态，动作）组合的概率。我们还可以收集多个回合（轨迹）来预测梯度：{% mathjax %}\nabla_{\theta}J(\theta) \approx \hat{g} = \frac{1}{m}\sum\limits_{i=1}\sum\limits_{t=0} \nabla_{\theta}\log_{\pi_{\theta}}(a_t^{(i)}|s_t^{(i)})R(\tau^{(i)}){% endmathjax %}。
+
