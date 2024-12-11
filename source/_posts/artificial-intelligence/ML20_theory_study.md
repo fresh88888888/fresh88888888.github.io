@@ -35,3 +35,19 @@ mathjax:
 利用`Actor-Critic`方法减少方差：减少强化算法的方差并更快更好地训练**智能体**(`Agent`)的办法是利用基于策略和价值的方法的组合，即`Actor-Critic`方法。要理解`Actor-Critic`，想象一下你正在玩电子游戏。你可以和一个朋友一起玩，他会给你一些反馈。你是演员，你的朋友是评论家。一开始你不知道怎么玩，所以你随机尝试一些动作。评论家观察你的动作并提供反馈。通过这些反馈，您可以更新您的策略并更好地玩该游戏。另一方面，你的朋友（评论家）也会更新来提供反馈，以便下次反馈得更好。这就是`Actor-Critic`背后的思想。学习两个函数近似：控制智能体如何采取动作的策略：{% mathjax %}\pi_{\theta}(s){% endmathjax %}；通过衡量所采取的动作有多好来协助策略更新**价值函数**：{% mathjax %}\hat{q}_w(s,a){% endmathjax %}。
 
 `Actor-Critic`过程：正如所见，使用`Actor-Critic`方法，有两个函数近似（两个神经网络）。在每个时间步{% mathjax %}t{% endmathjax %}，从环境中获取当前状态{% mathjax %}S_t{% endmathjax %}​并将其作为输入传递给`Actor`和`Critic`。我们的策略输入状态并输出动作。
+{% asset_img ml_1.png %}
+
+评论家(`Critic`)将该动作作为输入，并使用{% mathjax %}S_t{% endmathjax %}​和{% mathjax %}A_t{% endmathjax %}​计算在该状态下采取该动作的价值：`Q`值。
+{% asset_img ml_2.png %}
+
+在环境中执行的动作{% mathjax %}A_t{% endmathjax %}​输出新的状态{% mathjax %}S_{t+1}{% endmathjax %}和奖励{% mathjax %}R_{t+1}{% endmathjax %}​。
+{% asset_img ml_3.png %}
+
+演员(`Actor`)使用`Q`值更新其策略参数。记作：{% mathjax %}\Delta\theta = \alpha\nabla_{\theta}(\log_{\pi_{\theta}}(s,a))\hat{q_w}(s,a){% endmathjax %}。由于其更新了参数，演员(`Actor`)在给定新状态{% mathjax %}S_{t+1}{% endmathjax %}​的情况下生成在{% mathjax %}A_{t+1}{% endmathjax %}时要采取的下一个动作。然后，评论家(`Critic`)会更新其价值参数。
+{% asset_img ml_4.png %}
+
+我们可以使用`Advantage`函数作为评论家(`Critic`)来代替**动作值值函数**来进一步提高学习的稳定性。其思想是`Advantage`函数计算某个动作相对于某个状态下其他动作的相对优势：与该状态下的平均值相比，在某个状态下采取该动作更好，它从**状态-动作对**中减去状态的平均值，记作{% mathjax %}A(s,a) = Q(s,a) - V(s){% endmathjax %}。通过这个函数计算，如果在该状态下采取这个动作，得到的额外奖励与在该状态下得到的平均奖励的差值。额外的奖励是超出该状态预期值的奖励。
+- 如果{% mathjax %}A(s,a) > 0{% endmathjax %}：**梯度**就会被推向那个方向。
+- 如果{% mathjax %}A(s,a) < 0{% endmathjax %}，**梯度**就会被推向相反的方向。
+
+实现`Advantage`函数需要两个值函数{% mathjax %}-Q(s,a){% endmathjax %} 和{% mathjax %}V(s){% endmathjax %}。可以使用`TD`误差作为`Advantage`函数的良好预测值。记作{% mathjax %}Q(s,a) = r + \gamma V(s')\;,\;A(s,a) = r + \gamma V(s') - V(s){% endmathjax %}。
