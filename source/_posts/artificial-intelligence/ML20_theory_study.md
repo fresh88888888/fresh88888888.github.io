@@ -74,3 +74,21 @@ mathjax:
 #### 近端策略优化(PPO)
 
 **近端策略优化**(`PPO`)是一种通过避免策略更新过大来提高智能体训练稳定性的架构。这样做可以保证我们的策略更新不会太大，并且训练更加稳定。训练期间较小的策略更新更有可能收敛到最优解。策略更新步调过大，很容易生成糟糕的策略，并且需要很长时间，甚至没有恢复的可能。为此，我们需要使用当前策略和上一个策略之间的比率来衡量当前策略与上一个策略相比的变化率。将这个比率限制在一个范围内{% mathjax %}[1-\epsilon,1 + \epsilon]{% endmathjax %}，这意味着我们消除了当前策略与旧策略相差太大的几率。
+
+回顾移一下，**策略目标函数**，{% mathjax %}L^{PG}(\theta) = \mathbb{E}_t[\log\pi_{\theta}(a_t,s_t)\ast A_t]{% endmathjax %}，通过这个函数执行**梯度上升**，这将推动智能体采取更高回报的动作并避免有害动作。主要问题来自于步长：步长太小，训练过程太慢；步长太高，训练的变异性太大。它目的是利用`PPO`的目标函数来约束策略的更新，该函数使用`clip`将策略变化限制在一个小的范围内。旨在避免破坏性的大规模权重更新：
+{% mathjax '{"conversion":{"em":14}}' %}
+L^{\text{CLIP}}(\theta) = \mathbb{E}_t[\min(r_t(\theta)\hat{A}_t, \text{clip}(r_t(\theta), 1 - \epsilon, 1 + \epsilon)\hat{A}_t)]
+{% endmathjax %}
+其中{% mathjax %}r_t(\theta){% endmathjax %}是**比率函数**，**比率函数**的计算公式为：{% mathjax %}r_t(\theta) = \frac{\pi_{\theta}(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)}{% endmathjax %}。它是在当前策略中在状态{% mathjax %}s_t{% endmathjax %}采取动作{% mathjax %}a_t{% endmathjax %}的概率，除以上一个策略的概率。我们可以看到，{% mathjax %}r_t(\theta){% endmathjax %}表示当前策略与旧策略之间的概率比：
+- 如果{% mathjax %}r_t(\theta) > 1{% endmathjax %}，则在状态{% mathjax %}s_t{% endmathjax %}下的动作{% mathjax %}a_t{% endmathjax %}在当前策略中比旧策略中更有可能发生。
+- 如果{% mathjax %}0 \leq r_t(\theta) \leq 1{% endmathjax %}，则当前策略采取该动作的可能性小于旧策略。
+
+因此，这个概率比是预测旧策略和当前策略之间差异的简单方法。裁剪智能体的目标函数中未裁剪的部分：这个比率可以替代在**策略目标函数**中使用的对数概率。
+{% mathjax '{"conversion":{"em":14}}' %}
+L^{\text{CLIP}}(\theta) = \mathbb{\hat{E}}_t[\frac{\pi_{\theta}(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)}\hat{A}_t] = \mathbb{\hat{E}}_t[r_t(\theta)\hat{A}_t]
+{% endmathjax %}
+如果没有约束，当前策略中采取的动作比之前策略中采取的动作更有可能发生，这将导致显著的**策略梯度下降**，从而导致过度的策略更新。裁剪代理目标函数的裁剪部分，通过裁剪比率，确保不会有太大的策略更新，因为当前策略不能与旧策略有太大差别。为此，这里有两个方法：
+- `TRPO`(`Trust Region Policy Optimization`)利用目标函数外的`KL`散度约束来约束策略更新，但该方法实现起来比较复杂，计算时间较长。
+- `PPO`将**目标函数**中的裁剪概率比直接与其裁剪后的替代目标函数相加。
+
+他的剪辑部分是{% mathjax %}r_t(\theta){% endmathjax %}被剪辑范围是在{% mathjax %}[1-\epsilon, 1+ \epsilon]{% endmathjax %}之间。使用裁剪替代**目标函数**，我们得到两个概率比，一个未裁剪，一个裁剪，范围介于{% mathjax %}[1-\epsilon, 1+ \epsilon]{% endmathjax %}之间，{% mathjax %}\epsilon{% endmathjax %}是一个超参数，可以帮助定义这个剪辑范围（在论文中{% mathjax %}\epsilon = 0.2{% endmathjax %}）。然后，取剪辑和未剪辑目标中的最小值，因此最终结果是未剪辑目标的下限。取剪辑和非剪辑目标中的最小值意味着将根据比率和优势情况选择剪辑或非剪辑目标。
