@@ -108,3 +108,28 @@ L^{\text{CLIP}}(\theta) = \mathbb{\hat{E}}_t[\frac{\pi_{\theta}(a_t|s_t)}{\pi_{\
 L_t^{\text{CLIP+VF+S}}(\theta) = \hat{\mathbb{E}}_t[L_t^{\text{CLIP}}(\theta) - c_1L_t^{\text{VF}}(\theta) + c_2 S[\pi_{\theta}](s_t)]
 {% endmathjax %}
 其中{% mathjax %}c_1,c_2{% endmathjax %}是系数，{% mathjax %}L_t^{\text{VF}}(\theta){% endmathjax %}是价值损失函数，{% mathjax %}S[\pi_{\theta}](s_t){% endmathjax %}是熵奖励函数，为了确保其充分的探索。
+
+`Sample Factory`是最快的**强化学习**(`RL`)库之一，专注于同步和异步**策略梯度**(`PPO`)实现。`Sample Factory`具有的相关特性：
+- 高度优化的算法架构，实现学习的最大吞吐量。
+- 支持同步和异步训练机制。
+- 支持串行（单进程）模式，方便调试。
+- 在基CPU和GPU加速的环境下均实现了最优性能。
+- 支持**单智能体**和**多智能体**训练，**自我对弈**，同时支持在一个或多个GPU上同时训练多个策略。
+- 支持`PBT`(`Population-Based Training`)模型训练方法。
+- 支持离散、连续、混合动作空间。
+- 支持基于矢量、基于图像、字典观察空间。
+- 通过解析动作/观察空间规范自动创建模型架构。支持自定义模型架构。
+- 支持自定义环境导入工程。
+- 详细的WandB和Tensorboard摘要、自定义指标。
+- 整合了多个示例（调整参数和训练模型）并与环境集成。
+
+`Sample Factory`工作原理，如下图所示：
+{% asset_img ml_8.png %}
+
+`Sample Factory`的工作原理是由多个执行工作者(`rollout workers`)、推理工作者(`inference workers`)和一个学习工作者(`learner worker`)进程构成。工作者进程之间通过**共享内存**进行通信，从而降低了进程之间的通信成本。执行工作者(`rollout workers`)与环境进行互动，并将观察结果发送给推理工作者(`inference workers`)。推理工作者查询策略的指定版本，并将动作发送回执行工作者(`rollout workers`)。经过k步之后，执行工作者(`rollout workers`)会将经验轨迹发送给学习工作者(`learner worker`)，以便学习工作者(`learner worker`)能够更新智能体的**策略网络**。
+
+`Sample Factory`中的`Actor Critic`模型由`3`个组件构成：
+- **编码器**(`encoder`)：处理输入观察值（图像、矢量）并将其映射到矢量，这部分可以自定义。
+- **核心**(`core`)：整合一个或多个编码器的向量，可以选择在基于内存的智能体中包含单层或多层`LSTM/GRU`。
+- **解码器**(`decoder`)：在计算策略和值输出之前，将附加层应用于模型**核心**(`core`)的输出。
+
