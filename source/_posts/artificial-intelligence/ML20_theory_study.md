@@ -87,8 +87,24 @@ L^{\text{CLIP}}(\theta) = \mathbb{E}_t[\min(r_t(\theta)\hat{A}_t, \text{clip}(r_
 {% mathjax '{"conversion":{"em":14}}' %}
 L^{\text{CLIP}}(\theta) = \mathbb{\hat{E}}_t[\frac{\pi_{\theta}(a_t|s_t)}{\pi_{\theta_{\text{old}}}(a_t|s_t)}\hat{A}_t] = \mathbb{\hat{E}}_t[r_t(\theta)\hat{A}_t]
 {% endmathjax %}
-如果没有约束，当前策略中采取的动作比之前策略中采取的动作更有可能发生，这将导致显著的**策略梯度下降**，从而导致过度的策略更新。裁剪代理目标函数的裁剪部分，通过裁剪比率，确保不会有太大的策略更新，因为当前策略不能与旧策略有太大差别。为此，这里有两个方法：
+如果没有约束，当前策略中采取的动作比之前策略中采取的动作更有可能发生，这将导致显著的**策略梯度下降**，从而导致过度的策略更新。裁剪代理目标函数的裁剪部分，通过裁剪比率，确保不会有太大的策略更新，因为当前策略不能与旧策略有太大差别。为此，这里有`2`个方法：
 - `TRPO`(`Trust Region Policy Optimization`)利用目标函数外的`KL`散度约束来约束策略更新，但该方法实现起来比较复杂，计算时间较长。
 - `PPO`将**目标函数**中的裁剪概率比直接与其裁剪后的替代目标函数相加。
 
 他的剪辑部分是{% mathjax %}r_t(\theta){% endmathjax %}被剪辑范围是在{% mathjax %}[1-\epsilon, 1+ \epsilon]{% endmathjax %}之间。使用裁剪替代**目标函数**，我们得到两个概率比，一个未裁剪，一个裁剪，范围介于{% mathjax %}[1-\epsilon, 1+ \epsilon]{% endmathjax %}之间，{% mathjax %}\epsilon{% endmathjax %}是一个超参数，可以帮助定义这个剪辑范围（在论文中{% mathjax %}\epsilon = 0.2{% endmathjax %}）。然后，取剪辑和未剪辑目标中的最小值，因此最终结果是未剪辑目标的下限。取剪辑和非剪辑目标中的最小值意味着将根据比率和优势情况选择剪辑或非剪辑目标。
+{% asset_img ml_7.png %}
+
+如上图所示，这里有`6`种情况：
+- 情况`1`、`2`的概率比范围介于{% mathjax %}[1-\epsilon, 1+ \epsilon]{% endmathjax %}之间，在情况`1`中，具有积极优势：该动作优于该状态下所有动作的平均值。因此，我们应该激励当前策略增加在该状态下采取该动作的概率；在情况`2`中，具有负面优势：该动作比该状态下所有动作的平均值更差。因此，我们应该降低当前策略在该状态下采取该动作的概率。
+- 情况`3`、`4`的概率比低于{% mathjax %}1-\epsilon{% endmathjax %}范围，如果概率比{% mathjax %}1-\epsilon{% endmathjax %}低，则在该状态下采取该动作的概率比旧策略低。在情况`3`中，优势预测为正({% mathjax %} A > 0{% endmathjax %})，那么应该增加在该状态下采取该动作的概率；在情况`4`中，优势预测为负，为了提升该状态下采取该动作的概率。由于{% mathjax %}\text{Gradient} = 0{% endmathjax %}（因为在一条水平线上），所以不用更新权重。
+- 情况`5`、`6`：概率比高于{% mathjax %}1+ \epsilon{% endmathjax %}范围，如果概率比高于{% mathjax %}1+ \epsilon{% endmathjax %}，则当前策略中该状态下采取该动作的概率远高于上一个策略。在情况`5`中，优势为正，与上一个策略相比，在该状态下采取该行动的概率已经很高，由于{% mathjax %}\text{Gradient} = 0{% endmathjax %}（因为在一条水平线上），所以不用更新权重；在情况`6`中，优势为负，希望降低在该状态下采取该动作的概率。
+
+使用未裁剪的目标部分来更新策略。当最小值是裁剪的目标部分时，这里不会更新策略权重，因为梯度将等于`0`。因此，仅会在以下情况下更新策略：
+- 概率比在{% mathjax %}[1-\epsilon, 1+ \epsilon]{% endmathjax %}范围内的时候。
+- 概率比超出了{% mathjax %}[1-\epsilon, 1+ \epsilon]{% endmathjax %}范围，但是概率比小于{% mathjax %}1-\epsilon{% endmathjax %}且{% mathjax %}A > 0{% endmathjax %}，或概率比大于{% mathjax %}1+ \epsilon{% endmathjax %}且{% mathjax %}A < 0{% endmathjax %}。
+
+你可能会想，为什么当最小值为截断比时，梯度为`0`。当概率比被截断时，在这种情况下，导数将不是{% mathjax %}r_t(\theta)\ast A_t{% endmathjax %}​的导数，而是{% mathjax %}(1 - \epsilon)\ast A_t{% endmathjax %}​或{% mathjax %}(1 + \epsilon)\ast A_t{% endmathjax %}​的导数，其中两者都等于`0`。`PPO Actor-Critic`的最终裁剪替代了目标损失，它利用裁剪替代**目标函数**、**价值损失函数**和**熵奖励**的组合：
+{% mathjax '{"conversion":{"em":14}}' %}
+L_t^{\text{CLIP+VF+S}}(\theta) = \hat{\mathbb{E}}_t[L_t^{\text{CLIP}}(\theta) - c_1L_t^{\text{VF}}(\theta) + c_2 S[\pi_{\theta}](s_t)]
+{% endmathjax %}
+其中{% mathjax %}c_1,c_2{% endmathjax %}是系数，{% mathjax %}L_t^{\text{VF}}(\theta){% endmathjax %}是价值损失函数，{% mathjax %}S[\pi_{\theta}](s_t){% endmathjax %}是熵奖励函数，为了确保其充分的探索。
