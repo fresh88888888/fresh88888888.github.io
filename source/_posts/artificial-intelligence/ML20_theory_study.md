@@ -149,5 +149,32 @@ L_t^{\text{CLIP+VF+S}}(\theta) = \hat{\mathbb{E}}_t[L_t^{\text{CLIP}}(\theta) - 
 - 在在线强化学习中，智能体直接收集数据：它通过与环境交互来收集一批经验，然后，从这批经验（或通过**重放缓冲区**）中学习（更新其策略）。意味着要么直接在现实世界中训练智能体，要么使用模拟器。如果没有，就需要构建它，这可能非常复杂（如何在环境中反映真实世界的复杂性）且不安全。
 - 在离线强化学习中，智能体仅从其他智能体或人类演示中收集数据，且不与环境进行交互。流程如下：使用一个或多个策略且人机交互生成数据集，在该数据集上运行**离线强化学习算法**来学习策略。这种方法有一个缺点：**反事实查询问题**。如果我们的智能体决定做某件事，而我们没有相关数据，该怎么办？
 
+**马尔可夫决策过程**(`MDP`)：**马尔可夫决策过程**(`MDP`)定义为一个元组{% mathjax %}\mathcal{M} = (\mathcal{S}, \mathcal{A}, T, d0, r, \gamma){% endmathjax %}，其中{% mathjax %}\mathcal{S}{% endmathjax %}是一组状态且{% mathjax %}s\in \mathcal{S}{% endmathjax %}，可以是离散的也可以是连续的（即**多维向量**），{% mathjax %}\mathcal{A}{% endmathjax %}是一组动作且{% mathjax %}a\in\mathcal{A}{% endmathjax %}，同样可以是离散的或连续的，{% mathjax %}T{% endmathjax %}是一个条件概率分布，形式为{% mathjax %}T(s_{t+1},|s_t,a_t){% endmathjax %}，用于描述系统的动态，{% mathjax %}d_0{% endmathjax %}是初始状态分布，形式为{% mathjax %}d_0(s_0){% endmathjax %}，{% mathjax %}r\;:\;\mathcal{S}\times \mathcal{A}\rightarrow \mathbb{R}{% endmathjax %}是奖励函数，{% mathjax %}\gamma \in (0,1]{% endmathjax %}是值为标量的**折扣因子**。
+
+**部分可观察的马尔可夫决策过程**：**部分可观察的马尔可夫决策过程**定义为一个元组{% mathjax %}\mathcal{M} = (\mathcal{S}, \mathcal{A},\mathcal{O},T, d0, E,r, \gamma){% endmathjax %}，其中\mathcal{S}, \mathcal{A}, T, d0, r, \gamma的定义与之前相同，{% mathjax %}\mathcal{O}{% endmathjax %}是一组观测值，其中每个观测值由{% mathjax %}o\in \mathcal{O}{% endmathjax %}给出，{% mathjax %}E{% endmathjax %}是一个**发射函数**，它定义了分布{% mathjax %}E(o_t|s_t){% endmathjax %}。**强化学习**问题的最终目标是学习一种策略，该策略定义了以状态为条件的动作的分布{% mathjax %}\pi(a_t|s_t){% endmathjax %}，或以部分观察设置中的观察为条件的动作分布{% mathjax %}\pi(a_t|o_t){% endmathjax %}。该策略还可以以观察历史为条件，{% mathjax %}\pi(a_t|o_0:t){% endmathjax %}。从这些定义中，我们可以得出**轨迹分布**。轨迹是长度为{% mathjax %}H{% endmathjax %}的状态和动作序列，由{% mathjax %}\tau = (s_0,a_0,\ldots,s_H,a_H){% endmathjax %}给出，其中{% mathjax %}H{% endmathjax %}可能是无限大。给定**马尔可夫决策过程**(`MDP`){% mathjax %}\mathcal{M}{% endmathjax %}和策略{% mathjax %}\pi{% endmathjax %}的轨迹分布{% mathjax %}p_{\pi}{% endmathjax %}由以下公式给出：
+{% mathjax '{"conversion":{"em":14}}' %}
+p_{pi}(\tau) = d_0(s_0)\prod\limits^{H}_{t=0}\pi(a_t|s_t)T(s_{t+1}|s_t,a_t)
+{% endmathjax %}
+其中包含观测值{% mathjax %}o_t{% endmathjax %}和**发射函数**{% mathjax %}E(o_t|s_t){% endmathjax %}，此定义可轻松扩展到部分观察。**强化学习**目标{% mathjax %}J(\pi){% endmathjax %}可写为该轨迹分布下的期望值：
+{% mathjax '{"conversion":{"em":14}}' %}
+J(\pi) = \mathbb{E}_{\tau\sim p_{\pi}(\tau)}\bigg[\sum\limits_{t=0}^{H}\gamma^t r(s_t,a_t)\bigg]
+{% endmathjax %}
+当{% mathjax %}H{% endmathjax %}为无穷大时，有时也可以方便地假设由{% mathjax %}\pi(a_t|s_t)T(S_{t+1}|s_t,a_t){% endmathjax %}定义的在{% mathjax %}(s_t,a_t){% endmathjax %}上的**马尔可夫链**是可以遍历的，并根据该**马尔可夫链**的预期奖励来定义目标。由于**折扣因子**的作用。在许多情况下，我们会发现引用轨迹分布{% mathjax %}p_{\pi}(\tau){% endmathjax %}的边际很方便。我们将使用{% mathjax %}d^{\pi}(s){% endmathjax %}来指代按时间步总体状态平均访问频率，并使用{% mathjax %}d^{\pi}_t(s_t){% endmathjax %}来指代时间步{% mathjax %}t{% endmathjax %}的状态访问频率。所有标准**强化学习算法**都遵循相同的学习规律：**智能体**通过使用某种行为策略与**马尔可夫决策过程**(`MDP`){% mathjax %}\mathcal{M}{% endmathjax %}进行交互，该策略可能与{% mathjax %}\pi(a|s){% endmathjax %}匹配也可能不匹配，通过观察当前状态{% mathjax %}s_t{% endmathjax %}、选择一个动作{% mathjax %}a_t{% endmathjax %}，然后观察产生的下一个状态{% mathjax %}s_{t+1}{% endmathjax %}和奖励值{% mathjax %}r_t = r(s_t,a_t){% endmathjax %}。这可能会重复多步，然后**智能体**使用观察到的转换{% mathjax %}(s_t,a_t,s_{t+1},r_t){% endmathjax %}来更新其策略。此更新也可能利用先前观察到的转换。我们将使用{% mathjax %}\mathcal{D}{% endmathjax %}来表示**智能体**可用于更新策略（“**学习**”）的**转换集**，该**转换集**可能由所有转换（迄今为止看到的）或其中的某个子集组成。
+
+**策略梯度**：**强化学习**(`RL`)目标的最直接方法之一是直接估计其梯度。在这种情况下，我们通常假设策略由参数向量{% mathjax %}\theta{% endmathjax %}参数化，因此由{% mathjax %}\pi_{\theta}(a_t|s_t){% endmathjax %}πθ(at|st) 给出。例如，{% mathjax %}\theta{% endmathjax %}可能表示输出 (离散) 动作{% mathjax %}a_t{% endmathjax %}对数的深度网络的权重。在这种情况下，我们可以将目标相对于{% mathjax %}\theta{% endmathjax %}的梯度表示为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\nabla_{\theta}J(\pi_{\theta}) = \mathbb{E}_{\tau\sim p_{\pi_{\theta}}}(\tau)\bigg[\sum\limits_{t=0}^H \gamma^t\nabla_{\theta}\log \pi_{\theta}(a_t|s_t)\underbrace{\bigg( \sum\limits_{t'=t}^H \gamma^{t'-t} r(s_{t'},a_{t'} - b(s_t)) \bigg)}_{\text{return estimate}\;\hat{A}(s_t,a_t)}  \bigg]
+{% endmathjax %}
+其中**回报预测器**{% mathjax %}\hat{A}(s_t,a_t){% endmathjax %}本身可以作为单独的神经网络进行学习，或者可以简单地用**蒙特卡洛样本**进行预测，在这种情况下，我们只需从{% mathjax %}p_{\pi_{\theta}}(\tau){% endmathjax %}生成样本，然后对采样轨迹的时间步中的奖励进行汇总。基线{% mathjax %}b(s_t){% endmathjax %}可以预测为采样轨迹的平均奖励，或者使用**价值函数预测器**{% mathjax %}V(s_t){% endmathjax %}。可以等效地将此梯度表达式写为对{% mathjax %}d^{\pi}(s){% endmathjax %}的期望，如下所示：
+{% mathjax '{"conversion":{"em":14}}' %}
+\nabla_{\theta}J(\pi_{\theta}) = \sum_{t=0}^H \mathbb{E}_{s_t\sim d^{\pi}_t(s_t),a_t\sim\pi_{\theta}(a_t,s_t)}\bigg[\gamma^t\nabla_{\theta}\log \pi_{\theta}(a_t|s_t)\hat{A}(s_t,a_t) \bigg]
+{% endmathjax %}
+一种常见的修改是删除梯度前面的{% mathjax %}\gamma^{t}{% endmathjax %}项，这近似于平均奖励设置。删除该项并采用无限期公式，可以进一步将**策略梯度**重写为{% mathjax %}d^{\pi}(s){% endmathjax %}下的期望，如下所示：
+{% mathjax '{"conversion":{"em":14}}' %}
+\nabla_{\theta}J(\pi_{\theta}) = \frac{1}{1 - \gamma}\mathbb{E}_{s\sim d^{\pi}(s_t),a\sim\pi_{\theta}(a,s)}\bigg[\nabla_{\theta}\log \pi_{\theta}(a|s)\hat{A}(s,a) \bigg]
+{% endmathjax %}
+其中常数缩放项{% mathjax %}\frac{1}{1-\gamma}{% endmathjax %}经常被忽略。这种无限期公式通常便于分析和推导**策略梯度**方法。最后可以总结出一个**蒙特卡洛策略梯度算法**，如下所示：
+<embed src="algorithm.pdf" type="application/pdf">
+
 
 
