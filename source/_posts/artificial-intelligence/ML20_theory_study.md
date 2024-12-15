@@ -174,7 +174,7 @@ J(\pi) = \mathbb{E}_{\tau\sim p_{\pi}(\tau)}\bigg[\sum\limits_{t=0}^{H}\gamma^t 
 \nabla_{\theta}J(\pi_{\theta}) = \frac{1}{1 - \gamma}\mathbb{E}_{s\sim d^{\pi}(s_t),a\sim\pi_{\theta}(a,s)}\bigg[\nabla_{\theta}\log \pi_{\theta}(a|s)\hat{A}(s,a) \bigg]
 {% endmathjax %}
 其中常数缩放项{% mathjax %}\frac{1}{1-\gamma}{% endmathjax %}经常被忽略。这种无限期公式通常便于分析和推导**策略梯度**方法。最后可以总结出一个**蒙特卡洛策略梯度算法**，如下所示：
-<embed src="algorithm.pdf" type="application/pdf">
+<embed src="algorithm.pdf" type="application/pdf" width="100%", height="200">
 
 
 
