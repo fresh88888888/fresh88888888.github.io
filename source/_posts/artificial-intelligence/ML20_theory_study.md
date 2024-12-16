@@ -176,3 +176,18 @@ J(\pi) = \mathbb{E}_{\tau\sim p_{\pi}(\tau)}\bigg[\sum\limits_{t=0}^{H}\gamma^t 
 其中常数缩放项{% mathjax %}\frac{1}{1-\gamma}{% endmathjax %}经常被忽略。这种无限期公式通常便于分析和推导**策略梯度**方法。最后可以总结出一个**蒙特卡洛策略梯度算法**，如下所示：
 <embed src="algorithm.pdf" type="application/pdf" width="100%" height="200">
 
+**近似动态规划**(`Approximate dynamic programming`)。优化**强化学习**目标的另一种方法是**观察**，如果我们能够准确估计状态或状态-动作对的**价值函数**，那么很容易接近最优策略。**价值函数**提供了预期累积奖励的预测，当给定状态{% mathjax %}s_t{% endmathjax %}，在状态值函数{% mathjax %}V^{\pi}(s_t){% endmathjax %}的情况下，或者当给定状态-动作对元组{% mathjax %}(s_t,a_t){% endmathjax %}，在状态-动作对的**价值函数**{% mathjax %}Q^{\pi}(s_t,a_t){% endmathjax %}的情况下，遵循一些策略{% mathjax %}\pi(s_t,a_t){% endmathjax %}获得奖励，可以将这些**价值函数**定义为：
+{% mathjax '{"conversion":{"em":14}}' %}
+V^{\pi}(s_t) = \mathbb{E}_{\tau\sim p_{\pi}(\tau|s_t)}\bigg[\sum\limits_{t'=t}^H \gamma^{t' - t}r(s_t,a_t) \bigg] \\
+Q^{\pi}(s_t,a_t) = \mathbb{E}_{\tau\sim p_{\pi}}(\tau|s_t,a_t)\bigg[\sum\limits_{t'=t}^H \gamma^{t' - t}r(s_t,a_t) \bigg]
+{% endmathjax %}
+由此，可以推导出这些**价值函数**的递归定义，其形式为：
+{% mathjax '{"conversion":{"em":14}}' %}
+V^{\pi}(s_t) = \mathbb{E}_{a_t\sim p_{\pi}}(\tau|a_t|s_t)\bigg[Q^{\pi}(s_t,a_t) \bigg] \\
+Q^{\pi}(s_t,a_t) = r(s_t,a_t) + \gamma\mathbb{E}_{\tau\sim T(s_{t+1}|s_t,a_t)}\bigg[V^{\pi}(s_{t+1}) \bigg]
+{% endmathjax %}
+我们可以把这两个方程结合起来，用{% mathjax %}Q^{\pi}(s_{t+1},a_{t+1}){% endmathjax %}来表示{% mathjax %}Q^{\pi}(s_t,a_t){% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+Q^{\pi}(s_t,a_t) = r(s_t,a_t) + \gamma\mathbb{E}_{\tau\sim T(s_{t+1}|s_t,a_t),a_{t+1}\sim\pi(a_{t+1}|s_{t+1})}\bigg[Q^{\pi}(s_{t+1},a_{t+1}) \bigg]
+{% endmathjax %}
+可以用策略{% mathjax %}pi{% endmathjax %}的**贝尔曼算子**来表示，将其表示为{% mathjax %}\mathcal{B}^{\pi}{% endmathjax %}。例如，公式{% mathjax %}Q^{\pi}(s_t,a_t) = r(s_t,a_t) + \gamma\mathbb{E}_{\tau\sim T(s_{t+1}|s_t,a_t),a_{t+1}\sim\pi(a_{t+1}|s_{t+1})}\bigg[Q^{\pi}(s_{t+1},a_{t+1}) \bigg]{% endmathjax %}可以写成{% mathjax %}\vec{Q}^{\pi} = \mathcal{B}^{\pi}\vec{Q}^{\pi}{% endmathjax %}，其中{% mathjax %}\vec{Q^{\pi}}{% endmathjax %}表示以长度为{% mathjax %}|\mathcal{S}|\times|\mathcal{A}|{% endmathjax %}的向量表示的`Q`函数{% mathjax %}Q^{\pi}{% endmathjax %}。在继续基于这些定义推导学习算法之前，需要讨论一下**贝尔曼算子**的一些性质。这个**贝尔曼算子**有一个唯一的不动点，它对应于策略{% mathjax %}\pi(a|s){% endmathjax %}的真实`Q`函数，可以通过重复迭代{% mathjax %}\vec{Q}^{\pi}_{k+1} = \mathcal{B}^{\pi}\vec{Q}^{\pi}_k{% endmathjax %}来获得，并且可以证明{% mathjax %}\lim_{k\rightarrow \infty}\vec{Q}^{\pi}_k = \vec{Q}^{\pi}{% endmathjax %}，对此的证明来自以下观察：{% mathjax %}\mathcal{B}^{\pi}{% endmathjax %}是{% mathjax %}\mathcal{\ell}_{\infty}{% endmathjax %}范数的一个收缩。
