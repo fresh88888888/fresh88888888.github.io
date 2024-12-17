@@ -210,7 +210,7 @@ Q^{\pi}(s_t,a_t) = r(s_t,a_t) + \gamma\mathbb{E}_{s_{t+1}\sim T(s_{t+1}|s_t,a_t)
 
 采用重要性抽样来预测{% mathjax %}J(\pi){% endmathjax %}，其中轨迹从{% mathjax %}\pi_{\beta}(\tau){% endmathjax %}中采样。这被称为**离线策略评估**。原则上，一旦能够评估{% mathjax %}J(\pi){% endmathjax %}，就可以选择性能最佳的策略。可以使用**重要性抽样**来推导出**离线策略轨迹**的{% mathjax %}J(\pi){% endmathjax %}无偏估计量。
 {% mathjax '{"conversion":{"em":14}}' %}
-J(\pi_{\theta}) & = \mathbb{E}_{\tau\sim\pi_{\beta}(\tau)}\bigg[\frac{\pi_{\theta}(\tau)}{\pi_{\beta}(\tau)}\sum\limits_{t=0}^H \gamma^t r(s,a) \bigg] \\
+J(\pi_{\theta}) & = \mathbb{E}_{\tau\sim\pi_{\beta}(\tau)}\bigg[\frac{\pi_{\theta}(\tau)}{\pi_{\beta}(\tau)}\sum\limits_{t=0}^H \gamma^t r(s,a) \bigg] \
 & = \mathbb{E}_{\tau\sim\pi_{\beta}(\tau)}\bigg[\bigg(\prod_{t=0}^H\frac{\pi_{\theta}(a_t|s_t)}{\pi_{\beta}(a_t|s_t)}\bigg)\sum\limits_{t=0}^H \gamma^t r(s,a) \bigg] \approx \sum\limits_{i=1}^n w^i_H \sum\limits_{t=0}^H \gamma^t r^i_t
 {% endmathjax %}
 其中{% mathjax %}w^i_t = \frac{1}{n}\prod_{t'=0}^t \frac{\pi_{\theta}(a_{t'}|s_{t'})}{\pi_{\beta}(a_{t'}|s_{t'})}{% endmathjax %}和{% mathjax %}\{(s^i_0,a^i_0,r^i_0,s^i_1,ldots)\}^n_{i=1}{% endmathjax %}是来自{% mathjax %}\pi_{\beta}(\tau){% endmathjax %}的{% mathjax %}n{% endmathjax %}个轨迹样本。不幸的是，由于重要性权重的乘积，这种**估计量**可能具有非常高的方差（如果 {% mathjax %}H{% endmathjax %}是无穷大，则可能无界）。对**重要性权重**进行自正则化（即，将权重除以{% mathjax %}\sum\limits_{i=1}^n w^i_H{% endmathjax %}）会产生加权**重要性抽样**估计量，该估计量有偏差，但方差可以低得多，并且仍然是一个强一致性估计量。为了改进这个估计量，我们需要利用问题的统计结构。因为{% mathjax %}r_t{% endmathjax %}不依赖于{% mathjax %}s_{t'}{% endmathjax %}和{% mathjax %}a_{t'}{% endmathjax %}且{% mathjax %}t' > t{% endmathjax %}，我们可以从未来时间步中删除**重要性权重**，从而得到每个决策**重要性抽样**估计量：
