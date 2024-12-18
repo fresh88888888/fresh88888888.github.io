@@ -179,14 +179,14 @@ J(\pi) = \mathbb{E}_{\tau\sim p_{\pi}(\tau)}\bigg[\sum\limits_{t=0}^{H}\gamma^t 
 **近似动态规划**(`Approximate dynamic programming`)。优化**强化学习**目标的另一种方法是**观察**，如果我们能够准确估计状态或状态-动作对的**价值函数**，那么很容易接近最优策略。**价值函数**提供了预期累积奖励的预测，当给定状态{% mathjax %}s_t{% endmathjax %}，在状态值函数{% mathjax %}V^{\pi}(s_t){% endmathjax %}的情况下，或者当给定状态-动作对元组{% mathjax %}(s_t,a_t){% endmathjax %}，在状态-动作对的**价值函数**{% mathjax %}Q^{\pi}(s_t,a_t){% endmathjax %}的情况下，遵循一些策略{% mathjax %}\pi(s_t,a_t){% endmathjax %}获得奖励，可以将这些**价值函数**定义为：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
-V^{\pi}(s_t) = \mathbb{E}_{\tau\sim p_{\pi}(\tau|s_t)}\bigg[\sum\limits_{t'=t}^H \gamma^{t' - t}r(s_t,a_t) \bigg] \
+V^{\pi}(s_t) = \mathbb{E}_{\tau\sim p_{\pi}(\tau|s_t)}\bigg[\sum\limits_{t'=t}^H \gamma^{t' - t}r(s_t,a_t) \bigg] \\
 Q^{\pi}(s_t,a_t) = \mathbb{E}_{\tau\sim p_{\pi}}(\tau|s_t,a_t)\bigg[\sum\limits_{t'=t}^H \gamma^{t' - t}r(s_t,a_t) \bigg]
 \end{align}
 {% endmathjax %}
 由此，可以推导出这些**价值函数**的递归定义，其形式为：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
-V^{\pi}(s_t) = \mathbb{E}_{a_t\sim p_{\pi}}(\tau|a_t|s_t)\bigg[Q^{\pi}(s_t,a_t) \bigg] \
+V^{\pi}(s_t) = \mathbb{E}_{a_t\sim p_{\pi}}(\tau|a_t|s_t)\bigg[Q^{\pi}(s_t,a_t) \bigg] \\
 Q^{\pi}(s_t,a_t) = r(s_t,a_t) + \gamma\mathbb{E}_{\tau\sim T(s_{t+1}|s_t,a_t)}\bigg[V^{\pi}(s_{t+1}) \bigg]
 \end{align}
 {% endmathjax %}
@@ -215,7 +215,7 @@ Q^{\pi}(s_t,a_t) = r(s_t,a_t) + \gamma\mathbb{E}_{s_{t+1}\sim T(s_{t+1}|s_t,a_t)
 采用重要性抽样来预测{% mathjax %}J(\pi){% endmathjax %}，其中轨迹从{% mathjax %}\pi_{\beta}(\tau){% endmathjax %}中采样。这被称为**离线策略评估**。原则上，一旦能够评估{% mathjax %}J(\pi){% endmathjax %}，就可以选择性能最佳的策略。可以使用**重要性抽样**来推导出**离线策略轨迹**的{% mathjax %}J(\pi){% endmathjax %}无偏估计量。
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
-J(\pi_{\theta}) & = \mathbb{E}_{\tau\sim\pi_{\beta}(\tau)}\bigg[\frac{\pi_{\theta}(\tau)}{\pi_{\beta}(\tau)}\sum\limits_{t=0}^H \gamma^t r(s,a) \bigg] \
+J(\pi_{\theta}) & = \mathbb{E}_{\tau\sim\pi_{\beta}(\tau)}\bigg[\frac{\pi_{\theta}(\tau)}{\pi_{\beta}(\tau)}\sum\limits_{t=0}^H \gamma^t r(s,a) \bigg] \\
 & = \mathbb{E}_{\tau\sim\pi_{\beta}(\tau)}\bigg[\bigg(\prod_{t=0}^H\frac{\pi_{\theta}(a_t|s_t)}{\pi_{\beta}(a_t|s_t)}\bigg)\sum\limits_{t=0}^H \gamma^t r(s,a) \bigg] \approx \sum\limits_{i=1}^n w^i_H \sum\limits_{t=0}^H \gamma^t r^i_t
 \end{align}
 {% endmathjax %}
@@ -228,3 +228,4 @@ J(\pi_{\theta}) = \mathbb{E}_{\tau\sim\pi_{\beta}(\tau)}\bigg[\bigg(\prod_{t=0}^
 J(\pi_{\theta}) \approx \sum\limits_{i=1}^n\sum\limits_{t=0}^H \gamma^t (w^i_t(r^i_t - \hat{Q}^{\pi_{\theta}}(s_t,a_t)) - w^i_{t-1}\mathbb{E}_{a\sim\pi_{\theta}(a|s_t)}[\hat{Q}^{\pi_{\theta}}(s_t,a)])
 {% endmathjax %}
 这被称为**双重稳定估计量**，因为如果{% mathjax %}\pi_{\beta}{% endmathjax %}已知或模型正确，它就是无偏的。可以通过对权重进行**归一化**来形成加权版本。通过利用要评估的策略知识训练模型，以及通过优化权衡偏差和方差，形成更复杂的估计量。除了**一致性**或**无偏估计**之外，经常希望对策略的性能有保证。基于**浓度不等式**得出了**置信界限**，专门用于处理**重要性加权估计量**的高方差和可能的范围。或者，根据分布假设（例如，渐近正态性）或通过引导构建**置信界限**。此类估计量还可用于策略改进，通过搜索与估计回报有关的策略。在**离线强化学习**的应用中，希望改进**行为策略**。可以使用**重要性抽样估计量**的较低**置信界限**来搜索策略，确保满足安全约束。
+
