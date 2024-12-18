@@ -179,15 +179,15 @@ J(\pi) = \mathbb{E}_{\tau\sim p_{\pi}(\tau)}\bigg[\sum\limits_{t=0}^{H}\gamma^t 
 **近似动态规划**(`Approximate dynamic programming`)。优化**强化学习**目标的另一种方法是**观察**，如果我们能够准确估计状态或状态-动作对的**价值函数**，那么很容易接近最优策略。**价值函数**提供了预期累积奖励的预测，当给定状态{% mathjax %}s_t{% endmathjax %}，在状态值函数{% mathjax %}V^{\pi}(s_t){% endmathjax %}的情况下，或者当给定状态-动作对元组{% mathjax %}(s_t,a_t){% endmathjax %}，在状态-动作对的**价值函数**{% mathjax %}Q^{\pi}(s_t,a_t){% endmathjax %}的情况下，遵循一些策略{% mathjax %}\pi(s_t,a_t){% endmathjax %}获得奖励，可以将这些**价值函数**定义为：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
-V^{\pi}(s_t) = \mathbb{E}_{\tau\sim p_{\pi}(\tau|s_t)}\bigg[\sum\limits_{t'=t}^H \gamma^{t' - t}r(s_t,a_t) \bigg] \\
-Q^{\pi}(s_t,a_t) = \mathbb{E}_{\tau\sim p_{\pi}}(\tau|s_t,a_t)\bigg[\sum\limits_{t'=t}^H \gamma^{t' - t}r(s_t,a_t) \bigg]
+V^{\pi}(s_t) & = \mathbb{E}_{\tau\sim p_{\pi}(\tau|s_t)}\bigg[\sum\limits_{t'=t}^H \gamma^{t' - t}r(s_t,a_t) \bigg] \\
+Q^{\pi}(s_t,a_t) & = \mathbb{E}_{\tau\sim p_{\pi}}(\tau|s_t,a_t)\bigg[\sum\limits_{t'=t}^H \gamma^{t' - t}r(s_t,a_t) \bigg]
 \end{align}
 {% endmathjax %}
 由此，可以推导出这些**价值函数**的递归定义，其形式为：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
-V^{\pi}(s_t) = \mathbb{E}_{a_t\sim p_{\pi}}(\tau|a_t|s_t)\bigg[Q^{\pi}(s_t,a_t) \bigg] \\
-Q^{\pi}(s_t,a_t) = r(s_t,a_t) + \gamma\mathbb{E}_{\tau\sim T(s_{t+1}|s_t,a_t)}\bigg[V^{\pi}(s_{t+1}) \bigg]
+V^{\pi}(s_t) & = \mathbb{E}_{a_t\sim p_{\pi}}(\tau|a_t|s_t)\bigg[Q^{\pi}(s_t,a_t) \bigg] \\
+Q^{\pi}(s_t,a_t) & = r(s_t,a_t) + \gamma\mathbb{E}_{\tau\sim T(s_{t+1}|s_t,a_t)}\bigg[V^{\pi}(s_{t+1}) \bigg]
 \end{align}
 {% endmathjax %}
 我们可以把这两个方程结合起来，用{% mathjax %}Q^{\pi}(s_{t+1},a_{t+1}){% endmathjax %}来表示{% mathjax %}Q^{\pi}(s_t,a_t){% endmathjax %}：
@@ -229,3 +229,20 @@ J(\pi_{\theta}) \approx \sum\limits_{i=1}^n\sum\limits_{t=0}^H \gamma^t (w^i_t(r
 {% endmathjax %}
 这被称为**双重稳定估计量**，因为如果{% mathjax %}\pi_{\beta}{% endmathjax %}已知或模型正确，它就是无偏的。可以通过对权重进行**归一化**来形成加权版本。通过利用要评估的策略知识训练模型，以及通过优化权衡偏差和方差，形成更复杂的估计量。除了**一致性**或**无偏估计**之外，经常希望对策略的性能有保证。基于**浓度不等式**得出了**置信界限**，专门用于处理**重要性加权估计量**的高方差和可能的范围。或者，根据分布假设（例如，渐近正态性）或通过引导构建**置信界限**。此类估计量还可用于策略改进，通过搜索与估计回报有关的策略。在**离线强化学习**的应用中，希望改进**行为策略**。可以使用**重要性抽样估计量**的较低**置信界限**来搜索策略，确保满足安全约束。
 
+**重要性抽样**还可用于直接预测**策略梯度**，而不仅仅是获得给定策略值的估计值。**策略梯度方法**旨在通过计算策略参数的梯度预测来优化{% mathjax %}J(\pi){% endmathjax %}。我们可以使用**蒙特卡洛样本**预测梯度，但这需要**在线策略轨迹**（即{% mathjax %}\tau\sim \pi_{\theta}(\tau){% endmathjax %}）。在这里，我们将这种方法扩展到离线设置。以前的工作通常集中在离线策略设置上，其中轨迹是从不同的**行为策略**{% mathjax %}\pi_{\beta}(a|s){% endmathjax %}中采样的。然而，与离线设置相比，这种方法假设可以不断从{% mathjax %}\pi_{\beta}{% endmathjax %}中采样新轨迹，而旧轨迹则被重新使用以提高效率。注意{% mathjax %}J(\pi){% endmathjax %}和**策略梯度**之间结构相似，可以将预测{% mathjax %}J(\pi){% endmathjax %}**离线策略**的技术应用于**策略梯度**。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+\nabla_{\theta}J(\pi_{\theta}) & = \mathbb{E}_{\tau\sim\pi_{\beta}(\tau)}\bigg[\frac{\pi_{\theta}(\tau)}{\pi_{\beta}(\tau)}\sum\limits_{t=0}^H \gamma^t \nabla_{\theta}\log \pi_{\theta}(a_t,s_t)\hat{A}(s_t,a_t) \bigg] \\
+& = \mathbb{E}_{\tau\sim\pi_{\beta}(\tau)}\bigg[\bigg(\prod_{t=0}^H\frac{\pi_{\theta}(a_t|s_t)}{\pi_{\beta}(a_t|s_t)}\bigg)\sum\limits_{t=0}^H \gamma^t \nabla_{\theta}\log \pi_{\theta}(a_t,s_t)\hat{A}(s_t,a_t) \bigg] \\
+& \approx \sum\limits_{i=1}^n w^i_H \sum\limits_{t=0}^H \gamma^t \nabla_{\theta}\log \pi_{\theta}(a_t^i,s_t^i)\hat{A}(s_t^i,a_t^i)
+\end{align}
+{% endmathjax %}
+其中{% mathjax %}\{(s_0^i,a_0^i,r_0^i,s_1^i,\ldots)\}^n_{i=1}{% endmathjax %}是来自{% mathjax %}\pi_{\beta}(\tau){% endmathjax %}的{% mathjax %}n{% endmathjax %}个轨迹样本。类似地，我们可以对**重要性权重**进行归一化，从而得到**加权重要性抽样策略梯度估计量**，该估计量有偏差，但方差很低，并且仍然是一致的估计量。如果我们使用{% mathjax %}\hat{A}{% endmathjax %}基线的蒙特卡洛估计量（即{% mathjax %}\hat{A}(s_t^i,a_t^i) = \sum\limits_{t'=t}^H\gamma^{t'-t}r^{t'} - b(s^i_t){% endmathjax %}，其中{% mathjax %}r_t{% endmathjax %}不依赖于{% mathjax %}s_{t'}{% endmathjax %}和{% mathjax %}a_{t'}{% endmathjax %}且{% mathjax %}t' > t{% endmathjax %}），通过降低**重要性权重**，从而得到每个决策**重要性抽样策略梯度估计量**：
+{% mathjax '{"conversion":{"em":14}}' %}
+\nabla_{\theta}J(\pi_{\theta}) = \sum\limits_{i=1}^n\sum\limits_{t=0}^H w^i_t\gamma^t\bigg(\sum\limits_{t'=t}^H \gamma^{t' - t}\frac{w^i_{t'}}{w^i_t}r_{t'} - b(s^i_t) \bigg) \nabla_{\theta}\log \pi_{\theta}(a_t^i,s_t^i)
+{% endmathjax %}
+该估计量具有高方差，通过对权重进行**归一化**来形成加权的每个决策**重要性估计量**。与策略评估的**双重稳定估计量**的发展并行，还推导出用于策略梯度的**双重稳定估计量**。不幸的是，在许多实际问题中，这些估计量的方差太高而无效。从此类估计量派生的实用离线策略算法也可以采用**正则化**，使得学习到的策略{% mathjax %}\pi_{\theta}(a|s){% endmathjax %}不会偏离**行为策略**{% mathjax %}\pi_{\beta}(a|s){% endmathjax %}太远，从而导致**重要性权重**的方差变大。这种**正则化**的例子是（未归一化的）**重要性权重**的最大值。该**正则化梯度估计量**{% mathjax %}\nabla_{\theta}\bar{J}(\pi_{\theta}){% endmathjax %} 具有以下形式：
+{% mathjax '{"conversion":{"em":14}}' %}
+\nabla_{\theta}\bar{J}(\pi_{\theta}) = \bigg( \sum\limits_{i=1}^n w^i_H \sum\limits_{t=0}^H \gamma^t \nabla_{\theta}\log \pi_{\theta}(a_t^i,s_t^i)\hat{A}(s_t^i,a_t^i)\bigg) + \lambda log\bigg( \sum\limits_{i=1}^n w^i_H \bigg)
+{% endmathjax %}
+当{% mathjax %}n\leftarrow \infty{% endmathjax %}时，则{% mathjax %}\sum\limits_{i=1}^n w^i_H \leftarrow 1{% endmathjax %}，这意味着**梯度估计器**是一致的。然而，在样本数量有限的情况下，这样的估计器会自动调整策略{% mathjax %}\pi_{\theta}{% endmathjax %}以确保至少一个样本具有较高的**重要性权重**。基于**重要性抽样**的**深度强化学习算法**通常采用基于样本的`KL`**散度正则化器**，当在策略{% mathjax %}\pi_{\theta}{% endmathjax %}上使用**熵正则化器**时，它的函数形式在数学上与此类似。
