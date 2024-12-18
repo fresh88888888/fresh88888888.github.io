@@ -113,8 +113,8 @@ L_t^{\text{CLIP+VF+S}}(\theta) = \hat{\mathbb{E}}_t[L_t^{\text{CLIP}}(\theta) - 
 - 高度优化的算法架构，实现学习的最大吞吐量。
 - 支持同步和异步训练机制。
 - 支持串行（单进程）模式，方便调试。
-- 在基CPU和GPU加速的环境下均实现了最优性能。
-- 支持**单智能体**和**多智能体**训练，**自我对弈**，同时支持在一个或多个GPU上同时训练多个策略。
+- 在基`CPU`和`GPU`加速的环境下均实现了最优性能。
+- 支持**单智能体**和**多智能体**训练，**自我对弈**，同时支持在一个或多个`GPU`上同时训练多个策略。
 - 支持`PBT`(`Population-Based Training`)模型训练方法。
 - 支持离散、连续、混合动作空间。
 - 支持基于矢量、基于图像、字典观察空间。
@@ -210,7 +210,7 @@ Q^{\pi}(s_t,a_t) = r(s_t,a_t) + \gamma\mathbb{E}_{s_{t+1}\sim T(s_{t+1}|s_t,a_t)
 **有模型强化学习**：**有模型强化学习**是一个通用术语，指利用转换或动态函数{% mathjax %}T(s_{t+1}|s_t,a_t){% endmathjax %}显式预测的一类方法，该函数由参数向量{% mathjax %}\psi{% endmathjax %}参数化，将其表示为{% mathjax %}T_{\psi}(s_{t+1}|s_t,a_t){% endmathjax %}。**有模型强化学习**方法没有单一的配方。一些常用的**有模型强化学习**算法仅学习动态模型{% mathjax %}T_{\psi}(s_{t+1}|s_t,a_t){% endmathjax %}，然后在测试时利用它进行规划，通常通过**模型预测控制**(`MPC`)和各种轨迹优化方法。其他**有模型强化学习**方法除了动态模型外，还利用学习到的策略{% mathjax %}\pi_{\theta}(a_t|s_t){% endmathjax %}，并采用**时间反向传播**来优化策略，以实现预期的奖励目标。还有一组算法使用该模型生成“合成”样本，以扩充**无模型强化学习**方法可用的样本集。经典的`Dyna`算法将此方法与`Q-Learning`和通过模型从先前看到的状态进行的一步预测相结合，而最近提出的各种算法采用基于合成模型的**策略梯度**和`Actor Critic`算法。
 <embed src="algorithm_2.pdf" type="application/pdf" width="100%" height="200">
 
-**离线强化学习**问题可以定义为强化学习问题的数据驱动方法。最终目标仍然是优化在方程中的目标。然而，**智能体**与环境交互并使用行为策略不再具有收集转换的能力。相反，学习算法提供了一个静态转换数据集{% mathjax %}\mathcal{D}=\{s^i_t,a^i_t,s^i_{t+1},r^i_t\}{% endmathjax %}，并且必须使用该数据集学习**最佳策略**。这个公式更接近标准的监督学习问题，可以将{% mathjax %}\mathcal{D}{% endmathjax %}视为策略的训练集。本质上，**离线强化学习**要求学习算法完全从固定数据集中充分了解`MDP`{% mathjax %}\mathcal{M}{% endmathjax %}背后的动态系统，然后构建一个策略{% mathjax %}\pi(a|s){% endmathjax %}，当它用于与`MDP`交互时，该策略可获得最大的累积奖励。我们将使用{% mathjax %}\pi_{\beta}{% endmathjax %}来表示{% mathjax %}\mathcal{D}{% endmathjax %}中状态和动作的分布，假设状态-动作对元组{% mathjax %}(s,a)\in \mathcal{D}{% endmathjax %}根据{% mathjax %}s\sim d^{\pi_{\beta}}(s){% endmathjax %}进行采样，并根据行为策略对动作进行采样，使得{% mathjax %}a\sim \pi_{\beta}(a|s){% endmathjax %}。**离线策略强化学习**表示所有可以使用转换{% mathjax %}\mathcal{D}{% endmathjax %}数据集的**强化学习算法**，其中每个转换中的相应动作都是使用除当前策略{% mathjax %}\pi(a|s){% endmathjax %}之外的任何策略收集的。`Q-Learning`算法、利用`Q`函数的`Actor Critic`算法和许多**有模型强化学习算法**都是**离线策略算法**。然而，**离线​​策略算法**在学习过程中仍然经常使用额外的交互（即在线数据收集）。因此，术语“**完全离线策略**”有时用于表示不执行额外的在线数据收集。另一个常用术语是“**批量强化学习**”。因为在迭代学习算法中使用“批量”也可以指一种使用一批数据、更新模型，然后获得不同批次的方法，而不是传统的在线学习算法，后者一次使用一个样本。原则上任何**离线策略强化学习算法**都可以用作**离线强化学习算法**。例如，只需使用`Q-Learning`而无需额外的在线探索，使用{% mathjax %}\mathcal{D}{% endmathjax %}预填充数据缓冲区，即可获得简单的**离线强化学习方法**。
+**离线强化学习**问题可以定义为数据驱动的强化学习问题。最终目标是优化方程。然而，**智能体**与环境交互并使用行为策略不再具有收集转换的能力。相反，学习算法提供了一个静态转换数据集{% mathjax %}\mathcal{D}=\{s^i_t,a^i_t,s^i_{t+1},r^i_t\}{% endmathjax %}，并且必须使用该数据集学习**最佳策略**。这个公式更接近标准的监督学习问题，可以将{% mathjax %}\mathcal{D}{% endmathjax %}视为策略的训练集。本质上，**离线强化学习**要求学习算法完全从固定数据集中充分了解`MDP`{% mathjax %}\mathcal{M}{% endmathjax %}背后的动态系统，然后构建一个策略{% mathjax %}\pi(a|s){% endmathjax %}，当它用于与`MDP`交互时，该策略可获得最大的累积奖励。我们将使用{% mathjax %}\pi_{\beta}{% endmathjax %}来表示{% mathjax %}\mathcal{D}{% endmathjax %}中状态和动作的分布，假设状态-动作对元组{% mathjax %}(s,a)\in \mathcal{D}{% endmathjax %}根据{% mathjax %}s\sim d^{\pi_{\beta}}(s){% endmathjax %}进行采样，并根据行为策略对动作进行采样，使得{% mathjax %}a\sim \pi_{\beta}(a|s){% endmathjax %}。**离线策略强化学习**表示所有可以使用转换{% mathjax %}\mathcal{D}{% endmathjax %}数据集的**强化学习算法**，其中每个转换中的相应动作都是使用除当前策略{% mathjax %}\pi(a|s){% endmathjax %}之外的任何策略收集的。`Q-Learning`算法、利用`Q`函数的`Actor Critic`算法和许多**有模型强化学习算法**都是**离线策略算法**。然而，**离线​​策略算法**在学习过程中仍然经常使用额外的交互（即在线数据收集）。因此，术语“**完全离线策略**”有时用于表示不执行额外的在线数据收集。另一个常用术语是“**批量强化学习**”。因为在迭代学习算法中使用“批量”也可以指一种使用一批数据、更新模型，然后获得不同批次的方法，而不是传统的在线学习算法，后者一次使用一个样本。原则上任何**离线策略强化学习算法**都可以用作**离线强化学习算法**。例如，只需使用`Q-Learning`而无需额外的在线探索，使用{% mathjax %}\mathcal{D}{% endmathjax %}预填充数据缓冲区，即可获得简单的**离线强化学习方法**。
 
 采用重要性抽样来预测{% mathjax %}J(\pi){% endmathjax %}，其中轨迹从{% mathjax %}\pi_{\beta}(\tau){% endmathjax %}中采样。这被称为**离线策略评估**。原则上，一旦能够评估{% mathjax %}J(\pi){% endmathjax %}，就可以选择性能最佳的策略。可以使用**重要性抽样**来推导出**离线策略轨迹**的{% mathjax %}J(\pi){% endmathjax %}无偏估计量。
 {% mathjax '{"conversion":{"em":14}}' %}
