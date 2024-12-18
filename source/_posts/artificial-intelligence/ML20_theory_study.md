@@ -251,7 +251,7 @@ J(\pi_{\theta}) \approx \sum\limits_{i=1}^n\sum\limits_{t=0}^H \gamma^t (w^i_t(r
 {% mathjax '{"conversion":{"em":14}}' %}
 J_{\pi_{\beta}}(\pi_{\theta}) = \mathbb{E}_{s\sim d^{\pi_{\beta}}}[V^{\pi}(s)]
 {% endmathjax %}
-请注意，{% mathjax %}d^{\pi_{\beta}}(s){% endmathjax %}和{% mathjax %}d^{\pi_{\beta}}(s){% endmathjax %}在预测回报的状态分布（{% mathjax %}d^{\pi_{\beta}}(s) `vs` {% mathjax %} d^{\pi}(s){% endmathjax %}）有所不同，这使得{% mathjax %}J_{}{% endmathjax %}成为{% mathjax %}J_{\pi_{\theta}}{% endmathjax %}的有**偏估计量**。在某些情况下，这可能是次优解决方案。但是，在离线情况下，可以通过从数据集{% mathjax %}\mathcal{D}{% endmathjax %}中抽样状态轻松计算状态分布下的期望，从而无需进行**重要性抽样**。
+请注意，{% mathjax %}d^{\pi_{\beta}}(s){% endmathjax %}和{% mathjax %}d^{\pi_{\beta}}(s){% endmathjax %}在预测回报的状态分布（{% mathjax %}d^{\pi_{\beta}}(s){% endmathjax %}`vs`{% mathjax %}d^{\pi}(s){% endmathjax %}）有所不同，这使得{% mathjax %}J_{\pi_{\beta}}{% endmathjax %}成为{% mathjax %}J_{\pi_{\theta}}{% endmathjax %}的**有偏估计量**。在某些情况下，这可能是次优解决方案。但是，在离线情况下，可以通过从数据集{% mathjax %}\mathcal{D}{% endmathjax %}中抽样状态轻松计算状态分布下的期望，从而无需进行**重要性抽样**。
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
 \nabla_{\theta}J(\pi_{\theta}) & = \mathbb{E}_{s\sim d^{\pi_{\beta}}(s),a\sim\pi_{\theta}(a,s)}\bigg[Q^{\pi_{\theta}(s,a)} \nabla_{\theta}\log \pi_{\theta}(a|s)+ \nabla_{\theta}Q^{\pi_{\theta}}(s,a) \bigg] \\
