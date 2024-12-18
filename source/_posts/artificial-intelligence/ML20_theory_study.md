@@ -246,3 +246,16 @@ J(\pi_{\theta}) \approx \sum\limits_{i=1}^n\sum\limits_{t=0}^H \gamma^t (w^i_t(r
 \nabla_{\theta}\bar{J}(\pi_{\theta}) = \bigg( \sum\limits_{i=1}^n w^i_H \sum\limits_{t=0}^H \gamma^t \nabla_{\theta}\log \pi_{\theta}(a_t^i,s_t^i)\hat{A}(s_t^i,a_t^i)\bigg) + \lambda log\bigg( \sum\limits_{i=1}^n w^i_H \bigg)
 {% endmathjax %}
 当{% mathjax %}n\leftarrow \infty{% endmathjax %}时，则{% mathjax %}\sum\limits_{i=1}^n w^i_H \leftarrow 1{% endmathjax %}，这意味着**梯度估计器**是一致的。然而，在样本数量有限的情况下，这样的估计器会自动调整策略{% mathjax %}\pi_{\theta}{% endmathjax %}以确保至少一个样本具有较高的**重要性权重**。基于**重要性抽样**的**深度强化学习算法**通常采用基于样本的`KL`**散度正则化器**，当在策略{% mathjax %}\pi_{\theta}{% endmathjax %}上使用**熵正则化器**时，它的函数形式在数学上与此类似。
+
+**重要性加权策略**目标要求在时间步上乘以每个动作的**重要性权重**，这会导致非常高的方差。可以通过使用**行为策略**的状态分布{% mathjax %}d^{\pi_{\beta}}(s){% endmathjax %}代替当前策略的状态分布{% mathjax %}d^{\pi}(s){% endmathjax %}来得出**近似的重要性采样梯度**。由于状态分布不匹配，这会导致梯度有偏差，但在实践中可以提供合理的学习性能。相应的目标，我们将其表示为{% mathjax %}J_{\pi_{\beta}}(\pi_{\theta}){% endmathjax %}，以强调其对**行为策略状态分布**的依赖性，由以下公式给出：
+{% mathjax '{"conversion":{"em":14}}' %}
+J_{\pi_{\beta}}(\pi_{\theta}) = \mathbb{E}_{s\sim d^{\pi_{\beta}}}[V^{\pi}(s)]
+{% endmathjax %}
+请注意，{% mathjax %}d^{\pi_{\beta}}(s){% endmathjax %}和{% mathjax %}d^{\pi_{\beta}}(s){% endmathjax %}在预测回报的状态分布（{% mathjax %}d^{\pi_{\beta}}(s) `vs` {% mathjax %} d^{\pi}(s){% endmathjax %}）有所不同，这使得{% mathjax %}J_{}{% endmathjax %}成为{% mathjax %}J_{\pi_{\theta}}{% endmathjax %}的有**偏估计量**。在某些情况下，这可能是次优解决方案。但是，在离线情况下，可以通过从数据集{% mathjax %}\mathcal{D}{% endmathjax %}中抽样状态轻松计算状态分布下的期望，从而无需进行**重要性抽样**。
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+\nabla_{\theta}J(\pi_{\theta}) & = \mathbb{E}_{s\sim d^{\pi_{\beta}}(s),a\sim\pi_{\theta}(a,s)}\bigg[Q^{\pi_{\theta}(s,a)} \nabla_{\theta}\log \pi_{\theta}(a|s)+ \nabla_{\theta}Q^{\pi_{\theta}}(s,a) \bigg] \\
+& \approx \mathbb{E}_{s\sim d^{\pi_{\beta}}(s),a\sim\pi_{\theta}(a,s)}\bigg[Q^{\pi_{\theta}(s,a)} \nabla_{\theta}\log \pi_{\theta}(a|s) \bigg]
+\end{align}
+{% endmathjax %}
+在限制条件下，**近似梯度**保留了{% mathjax %}J_{\pi_{\beta}}(\pi){% endmathjax %}的局部最优值。这种**近似梯度**被广泛用于**深度强化学习算法**。为了计算**近似梯度**的估计值，需要从**离线策略轨迹估计** {% mathjax %}Q^{\pi_{\theta}}(s,a){% endmathjax %}。一些估计器使用动作样本，这需要**重要性权重**从{% mathjax %}\pi_{\beta}{% endmathjax %}样本校正{% mathjax %}\pi_{\theta}{% endmathjax %}样本。通过引入**控制变量**和**裁剪重要性权重**来控制方差，可以获得进一步的改进。如果我们想避免使用**离线策略状态分布**产生的偏差和使用每个动作**重要性权重**产生的高方差，可以尝试直接**预测状态边际重要性**。使用**状态边际重要性权重**估计器的方差小于使用每个动作**重要性权重**的乘积。然而，准确计算这个比率通常是很难。根据所用底层**贝尔曼方程**的形式，可以将它们分为两类：使用“**前向**”**贝尔曼方程**直接预测**重要性比率**的方法，以及在类似于价值函数的函数上使用“**后向**”**贝尔曼方程**的方法，然后从学习到的**价值函数**中得出**重要性比率**。基于**前向贝尔曼方程**的方法。**状态边际重要性比率**{% mathjax %}\rho^{\pi}(s){% endmathjax %}满足一种“**前向**”**贝尔曼方程**：
