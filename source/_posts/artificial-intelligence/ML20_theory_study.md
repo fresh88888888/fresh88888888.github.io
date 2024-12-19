@@ -264,11 +264,11 @@ J_{\pi_{\beta}}(\pi_{\theta}) = \mathbb{E}_{s\sim d^{\pi_{\beta}}}[V^{\pi}(s)]
 {% endmathjax %}
 可以利用这种关系进行**时间差异更新**，预测策略下的**状态边际重要性比率**。例如，当使用**随机近似**时，`Gelada`和`Bellemare`使用以下更新规则来在线预测{% mathjax %}\rho^{\pi}(s'){% endmathjax %}：
 {% mathjax '{"conversion":{"em":14}}' %}
-\hat{rho}^{\pi}(s')\leftarrow \hat{rho}^{\pi}(s') + \alpha\bigg[(1 - \gamma) + \gamma\frac{\pi(a|s)}{\pi_{\beta}(a|s)}\hat{rho}^{\pi}(s) - \hat{rho}^{\pi}(s') \bigg]
+\hat{\rho}^{\pi}(s')\leftarrow \hat{\rho}^{\pi}(s') + \alpha\bigg[(1 - \gamma) + \gamma\frac{\pi(a|s)}{\pi_{\beta}(a|s)}\hat{\rho}^{\pi}(s) - \hat{\rho}^{\pi}(s') \bigg]
 {% endmathjax %}
 其中{% mathjax %}s\sim d^{\pi_{\beta}}(s),a\sim \pi_{\beta}(a|s),s'\sim T(s'|s,a){% endmathjax %}。已经使用了几种技术来稳定学习，包括使用{% mathjax %}TD(\lambda){% endmathjax %}预测和自动调整特征维度。这里请参阅`Hallak`和`Mannor (2017)`以及`Gelada`和`Bellemare (2019)`。`Gelada`和`Bellemare (2019)`还讨论了一些实用技巧，例如**软归一化**和**折扣评估**，使这些方法适应深度`Q-Learning`设置，这与**线性函数逼近**不同。`Wen`等人`(2020)`从**幂迭代**的角度看待问题，并提出了一种**变分幂方法**，将**函数逼近**和**幂迭代**结合起来预测{% mathjax %}\rho^{\pi}{% endmathjax %}。
 {% mathjax '{"conversion":{"em":14}}' %}
-L(\rho,f) = \gamma\mathbb{E}_{s,a,s'\sim \mathcal{D}}\bigg[ \bigg(\rho(s)\frac{\pi(a|s)}{\pi_{\beta}(a|s)} - \rho(s')\bigg)f(s')\bigg] + (1-\gamma)\mathbb{E}_{s_0\simd_0}[(1-\rho(s))f(s)]
+L(\rho,f) = \gamma\mathbb{E}_{s,a,s'\sim \mathcal{D}}\bigg[ \bigg(\rho(s)\frac{\pi(a|s)}{\pi_{\beta}(a|s)} - \rho(s')\bigg)f(s')\bigg] + (1-\gamma)\mathbb{E}_{s_0\sim d_0}[(1-\rho(s))f(s)]
 {% endmathjax %}
 其中{% mathjax %}L(\rho,f)=0,\forall f{% endmathjax %}当且仅当{% mathjax %}\rho = \rho^{\pi}{% endmathjax %}。可以通过最小化{% mathjax %}L(\rho,f){% endmathjax %}的最坏情况预测来学习{% mathjax %}\rho{% endmathjax %}，此方法是解决**对抗性鞍点优化**：{% mathjax %}\min_{\rho}\max_{f}L(\rho,f)^2{% endmathjax %}。最近的研究改进了这种方法，特别是消除了对{% mathjax %}\pi_{\beta}{% endmathjax %}的访问需要。一旦获得{% mathjax %}\rho^*{% endmathjax %}，就会使用该估计量来计算**离线策略梯度**。`Zhang`等人(`2020`)提出了另一种**离线策略评估方法**，该方法通过直接优化**前向贝尔曼方程**的**贝尔曼残差误差**的变体来计算状态-动作对边际的重要性比率{% mathjax %}\rho^{\pi}(s,a):= \frac{d^{\pi}(s,a)}{d^{\pi_{\beta}}(s,a)}{% endmathjax %}，该方程包含动作，如下所示:
 
