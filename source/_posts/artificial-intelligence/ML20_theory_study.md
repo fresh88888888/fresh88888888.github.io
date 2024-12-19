@@ -280,6 +280,14 @@ L(\rho,f) = \gamma\mathbb{E}_{s,a,s'\sim \mathcal{D}}\bigg[ \bigg(\rho(s)\frac{\
 {% endmathjax %}
 进一步应用了**受对偶嵌入**(`Dai et al., 2016`)启发的技巧，使目标变得易于处理，并避免抽样估计而导致的偏差。原始对偶求解器可能无法求解以上方程，通过用{% mathjax %}\frac{1}{d^{\pi_{\beta}}}{% endmathjax %}引起的范数替换f散度来修改目标。这创建了一个优化问题，该问题在线性函数近似下证明是收敛的。
 {% mathjax '{"conversion":{"em":14}}' %}
-\underset{\rho^{\pi}}{\min}\;\;\frec{1}{2}\|(\bar{\mathcal{B}}^{\pi}\circ\rho^{\pi})(s,a),(d^{\pi_{\beta}}\circ\rho^{\pi})(s,a)\|^2_{(d^{\pi_{\beta}})} + \frac{\lambda}{2}(\mathbb{E}_{s,a,s'\sim\mathcal{D}}[\rho^{\pi}(s,a)] - 1)^2
+\underset{\rho^{\pi}}{\min}\;\;\frac{1}{2}\|(\bar{\mathcal{B}}^{\pi}\circ\rho^{\pi})(s,a),(d^{\pi_{\beta}}\circ\rho^{\pi})(s,a)\|^2_{(d^{\pi_{\beta}})} + \frac{\lambda}{2}(\mathbb{E}_{s,a,s'\sim\mathcal{D}}[\rho^{\pi}(s,a)] - 1)^2
 {% endmathjax %}
 通过**凸对偶**实现**后向贝尔曼方程**的方法。由于这些方法从优化角度出发，因此它们可以发挥**凸优化**和**在线学习**的作用。`Lee`和`He (2018)`将应用于凸优化技术的工作扩展到**策略优化**和**离线策略设置**。证明了离线策略设置中的样本复杂度界限，但是，将这些结果扩展到实际的深度强化学习设置已被证明具有难度。
+{% mathjax '{"conversion":{"em":14}}' %}
+\rho^{\pi} = \text{arg}\;\underset{x:\mathcal{S}\times\mathcal{A}\rightarrow \mathbb{R}}{\min} \frac{1}{2}\mathbb{E}_{s,a,s'\sim\mathcal{D}}[x(s,a)^2] - \mathbb{E}_{s\sim d^{\pi}(s),a\sim\pi(a|s)}[x(s,a)]
+{% endmathjax %}
+这个目标需要来自在**策略状态边际分布** {% mathjax %}d^{\pi}(s){% endmathjax %}的样本。关键的思想是改变变量{% mathjax %}x(s,a) = v(s,a) - \mathbb{E}_{s'\sim T(s'|s,a),a'\sim \pi(a'|s')}[v(s',a')]{% endmathjax %}并引入变量{% mathjax %}v(s,a){% endmathjax %}来简化以上公式。为简洁起见，这里定义了一个修改的`Bel`算子{% mathjax %}\tilde{\mathcal{B}^{\pi}}v(s,a):= \mathbb{E}_{s'\sim T(s'|s,a),a'\sim \pi(a'|s')}[v(s',a')]{% endmathjax %}，没有奖励项{% mathjax %}r(s,a){% endmathjax %}的{% mathjax %}\mathcal{B}^{\pi}{% endmathjax %}表达式。
+{% mathjax '{"conversion":{"em":14}}' %}
+\underset{x:\mathcal{S}\times\mathcal{A}\rightarrow \mathbb{R}}{\min} \frac{1}{2}\mathbb{E}_{s,a,s'\sim\mathcal{D}}\bigg[\bigg(v(s,a) - \tilde{\mathcal{B}^{\pi}}v(s,a)\bigg)^2\bigg] - \mathbb{E}_{s_0\sim d_0^{\pi}(s_0),a\sim\pi(a|s_0)}[v(s_0,a)]
+{% endmathjax %}
+值得注意的是，以上公式不需要**在线策略样本**来评估。最优解表示为{% mathjax %}v^*{% endmathjax %}，我们可以使用关系{% mathjax %}\rho^{\pi}(s,a) = v^* (s,a) - \tilde{\mathcal{B}^{\pi}}v^*(s,a){% endmathjax %}获得**密度比**{% mathjax %}\rho^{\pi}{% endmathjax %}。然后可以使用**密度比**进行**离线策略评估**和改进。
