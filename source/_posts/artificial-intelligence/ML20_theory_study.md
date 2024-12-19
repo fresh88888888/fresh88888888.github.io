@@ -291,3 +291,21 @@ L(\rho,f) = \gamma\mathbb{E}_{s,a,s'\sim \mathcal{D}}\bigg[ \bigg(\rho(s)\frac{\
 \underset{x:\mathcal{S}\times\mathcal{A}\rightarrow \mathbb{R}}{\min} \frac{1}{2}\mathbb{E}_{s,a,s'\sim\mathcal{D}}\bigg[\bigg(v(s,a) - \tilde{\mathcal{B}^{\pi}}v(s,a)\bigg)^2\bigg] - \mathbb{E}_{s_0\sim d_0^{\pi}(s_0),a\sim\pi(a|s_0)}[v(s_0,a)]
 {% endmathjax %}
 值得注意的是，以上公式不需要**在线策略样本**来评估。最优解表示为{% mathjax %}v^*{% endmathjax %}，我们可以使用关系{% mathjax %}\rho^{\pi}(s,a) = v^* (s,a) - \tilde{\mathcal{B}^{\pi}}v^*(s,a){% endmathjax %}获得**密度比**{% mathjax %}\rho^{\pi}{% endmathjax %}。然后可以使用**密度比**进行**离线策略评估**和改进。
+
+{% mathjax %}f{% endmathjax %}-散度正则化的强化学习(`RL`)问题，带有权衡因子{% mathjax %}\alpha{% endmathjax %}，由以下公式给出：
+{% mathjax '{"conversion":{"em":14}}' %}
+\underset{\pi}{\max}\;\;\mathcal{E}_{s\sim d^{\pi}(s),s\sim\pi(\cdot|s)}[r(s,a)] - \alpha D_f(d^{\pi}(s,a), d^{\pi_{\beta}}(s,a))
+{% endmathjax %}
+通过利用如下所示的{% mathjax %}f{% endmathjax %}-散度的变分（对偶）方式：
+{% mathjax '{"conversion":{"em":14}}' %}
+D_f(p,q) = \underset{x:\mathcal{S}\times\mathcal{A}\rightarrow \mathbb{R}}{\max} (\mathbb{E}_{y\sim p(y)}[x(\mathbf{y})] - \mathbb{E}_{y\sim q(y)}[f^*(x(\mathbf{y}))])
+{% endmathjax %}
+然后将变量从{% mathjax %}x{% endmathjax %}更改为{% mathjax %}Q{% endmathjax %}，其中{% mathjax %}Q{% endmathjax %}满足{% mathjax %}Q(s,a) = \mathbb{E}_{s'\sim T(s'|s,a),a'\sim \pi(a'|s')}[r(s,a) - \alpha x(s,a) + \gamma Q(s',a')]{% endmathjax %}，这样就得到一个用于正则化**强化学习**(`RL`)目标的**鞍点优化**问题。
+{% mathjax '{"conversion":{"em":14}}' %}
+\underset{\pi}{\max}\;\;\underset{Q}{\min}\;\;L(Q,\pi_{\beta},\pi) := \mathbb{E}_{s_0\sim d_0(s_0),a\sim \pi(\cdot|s_0)}[Q(s_0,a)] + \alpha\mathbb{E}_{s,a\sim d^{\pi_{\beta}}(s,a)}\bigg[ f^*\bigg(\frac{r(s,a) + \gamma \mathbb{E}_{s'\sim T(s'|s,a),a'\sim \pi(a'|s')}[Q(s',a')] - Q(s,a)}{\alpha} \bigg)\bigg]
+{% endmathjax %}
+当{% mathjax %}f(x) = x^2,\;f^*(x) = x^2{% endmathjax %}时，可以证明，在最佳{% mathjax %}Q{% endmathjax %}函数{% mathjax %}Q^*{% endmathjax %}​​处，关于{% mathjax %}L(Q^*,\pi_{\beta},\pi){% endmathjax %}策略的导数恰好等于**正则化策略梯度问题**中的**在线策略梯度**：
+{% mathjax '{"conversion":{"em":14}}' %}
+\frac{\partial}{\partial \pi}L(Q^*,\pi_{\beta},\pi) = \mathbb{E}_{s\sim d^{\pi}(s),a\sim\pi(\cdot|s)}\bigg[ \tilde{Q_{\pi}}(s,a)\cdot \nabla_{\pi}\log_{\pi}(a|s) \bigg]
+{% endmathjax %}
+其中{% mathjax %}\tilde{Q_{\pi}}{% endmathjax %}是与正则化**强化学习**(`RL`)问题相对应的**动作值函数**。
