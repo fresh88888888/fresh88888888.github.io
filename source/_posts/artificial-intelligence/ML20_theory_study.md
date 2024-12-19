@@ -292,7 +292,7 @@ L(\rho,f) = \gamma\mathbb{E}_{s,a,s'\sim \mathcal{D}}\bigg[ \bigg(\rho(s)\frac{\
 {% endmathjax %}
 值得注意的是，以上公式不需要**在线策略样本**来评估。最优解表示为{% mathjax %}v^*{% endmathjax %}，我们可以使用关系{% mathjax %}\rho^{\pi}(s,a) = v^* (s,a) - \tilde{\mathcal{B}^{\pi}}v^*(s,a){% endmathjax %}获得**密度比**{% mathjax %}\rho^{\pi}{% endmathjax %}。然后可以使用**密度比**进行**离线策略评估**和改进。
 
-{% mathjax %}f{% endmathjax %}-散度正则化的强化学习(`RL`)问题，带有权衡因子{% mathjax %}\alpha{% endmathjax %}，由以下公式给出：
+{% mathjax %}f{% endmathjax %}-散度正则化的强化学习问题，带有权衡因子{% mathjax %}\alpha{% endmathjax %}，由以下公式给出：
 {% mathjax '{"conversion":{"em":14}}' %}
 \underset{\pi}{\max}\;\;\mathcal{E}_{s\sim d^{\pi}(s),s\sim\pi(\cdot|s)}[r(s,a)] - \alpha D_f(d^{\pi}(s,a), d^{\pi_{\beta}}(s,a))
 {% endmathjax %}
