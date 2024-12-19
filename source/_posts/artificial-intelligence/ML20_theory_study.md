@@ -271,4 +271,15 @@ J_{\pi_{\beta}}(\pi_{\theta}) = \mathbb{E}_{s\sim d^{\pi_{\beta}}}[V^{\pi}(s)]
 L(\rho,f) = \gamma\mathbb{E}_{s,a,s'\sim \mathcal{D}}\bigg[ \bigg(\rho(s)\frac{\pi(a|s)}{\pi_{\beta}(a|s)} - \rho(s')\bigg)f(s')\bigg] + (1-\gamma)\mathbb{E}_{s_0\sim d_0}[(1-\rho(s))f(s)]
 {% endmathjax %}
 其中{% mathjax %}L(\rho,f)=0,\forall f{% endmathjax %}当且仅当{% mathjax %}\rho = \rho^{\pi}{% endmathjax %}。可以通过最小化{% mathjax %}L(\rho,f){% endmathjax %}的最坏情况预测来学习{% mathjax %}\rho{% endmathjax %}，此方法是解决**对抗性鞍点优化**：{% mathjax %}\min_{\rho}\max_{f}L(\rho,f)^2{% endmathjax %}。最近的研究改进了这种方法，特别是消除了对{% mathjax %}\pi_{\beta}{% endmathjax %}的访问需要。一旦获得{% mathjax %}\rho^*{% endmathjax %}，就会使用该估计量来计算**离线策略梯度**。`Zhang`等人(`2020`)提出了另一种**离线策略评估方法**，该方法通过直接优化**前向贝尔曼方程**的**贝尔曼残差误差**的变体来计算状态-动作对边际的重要性比率{% mathjax %}\rho^{\pi}(s,a):= \frac{d^{\pi}(s,a)}{d^{\pi_{\beta}}(s,a)}{% endmathjax %}，该方程包含动作，如下所示:
-
+{% mathjax '{"conversion":{"em":14}}' %}
+\underbrace{d^{\pi_{\beta}}(s',a')\rho^{\pi}(s',a')}_{:=(d^{\pi_{\beta}}\circ\rho^{\pi})(s',a')} = \underbrace{(1 - \gamma)d_0(s')\pi(a'|s') + \gamma\sum\limits_{s,a} d^{\pi_{\beta}}(s,a)\rho^{\pi}(s,a)\pi(a|s)T(s'|s,a)}_{:=(\bar{\mathcal{B}}^{\pi}\circ\rho^{\pi})(s',a')}
+{% endmathjax %}
+可以通过**前向贝尔曼方程**的两边之间应用**散度度量**来推导，同时**限制重要性比率**{% mathjax %}\rho^{\pi}(s,a){% endmathjax %}，使其在数据集{% mathjax %}\mathcal{D}{% endmathjax %}上的期望积分为`1`，防止出现退化，如下所示：
+{% mathjax '{"conversion":{"em":14}}' %}
+\underset{\rho^{\pi}}{\min}\;\;D_f((\bar{\mathcal{B}}^{\pi}\circ\rho^{\pi})(s,a),(d^{\pi_{\beta}}\circ\rho^{\pi})(s,a))\;\;\;\mathbb{E}_{s,a,s'\sim\mathcal{D}}[\rho^{\pi}(s,a)]= 1
+{% endmathjax %}
+进一步应用了**受对偶嵌入**(`Dai et al., 2016`)启发的技巧，使目标变得易于处理，并避免抽样估计而导致的偏差。原始对偶求解器可能无法求解以上方程，通过用{% mathjax %}\frac{1}{d^{\pi_{\beta}}}{% endmathjax %}引起的范数替换f散度来修改目标。这创建了一个优化问题，该问题在线性函数近似下证明是收敛的。
+{% mathjax '{"conversion":{"em":14}}' %}
+\underset{\rho^{\pi}}{\min}\;\;\frec{1}{2}\|(\bar{\mathcal{B}}^{\pi}\circ\rho^{\pi})(s,a),(d^{\pi_{\beta}}\circ\rho^{\pi})(s,a)\|^2_{(d^{\pi_{\beta}})} + \frac{\lambda}{2}(\mathbb{E}_{s,a,s'\sim\mathcal{D}}[\rho^{\pi}(s,a)] - 1)^2
+{% endmathjax %}
+通过**凸对偶**实现**后向贝尔曼方程**的方法。由于这些方法从优化角度出发，因此它们可以发挥**凸优化**和**在线学习**的作用。`Lee`和`He (2018)`将应用于凸优化技术的工作扩展到**策略优化**和**离线策略设置**。证明了离线策略设置中的样本复杂度界限，但是，将这些结果扩展到实际的深度强化学习设置已被证明具有难度。
