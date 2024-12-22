@@ -32,7 +32,7 @@ mathjax:
 - **局部性**：模型组合操作是局部的还是全局的。
 - **过度概括**：模型是否关注或对异常具有鲁棒性。
 
-**强化学习**(`RL`)中的**马尔可夫决策过程**(`MDP`)。`MDP`由一个元组{% mathjax %}M = (S,A,R,T,p){% endmathjax %}组成，其中{% mathjax %}S{% endmathjax %}是状态空间；{% mathjax %}A{% endmathjax %}是动作空间；{% mathjax %}R\;:\;S\times A \times S\rightarrow \mathbb{R}{% endmathjax %}是**奖励函数**；{% mathjax %}T(s_0|s,a){% endmathjax %}是**随机的马尔可夫转换函数**；{% mathjax %}p(s_0){% endmathjax %}是**初始状态分布**。我们还考虑部分可观察的`MDP`(`POMDP`)由一个元组{% mathjax %}M = (S,A,O,R,T,\phi,p){% endmathjax %}组成，其中{% mathjax %}O{% endmathjax %}是观察空间，{% mathjax %}\phi : S\rightarrow O{% endmathjax %}是发射或观察函数。在`POMDP`中，策略仅观察由{% mathjax %}\phi{% endmathjax %}产生的。 `MDP`的问题是学习一个策略{% mathjax %}\pi(a|s){% endmathjax %}，该策略在给定状态下产生动作分布，使得`MDP`中策略的累积奖励最大化：
+**强化学习**(`RL`)中的**马尔可夫决策过程**(`MDP`)。`MDP`由一个元组{% mathjax %}M = (S,A,R,T,p){% endmathjax %}组成，其中{% mathjax %}S{% endmathjax %}是状态空间；{% mathjax %}A{% endmathjax %}是动作空间；{% mathjax %}R\;:\;S\times A \times S\rightarrow \mathbb{R}{% endmathjax %}是**奖励函数**；{% mathjax %}T(s_0|s,a){% endmathjax %}是**随机的马尔可夫转换函数**；{% mathjax %}p(s_0){% endmathjax %}是**初始状态分布**。我们还考虑部分可观察的`MDP`(`POMDP`)由一个元组{% mathjax %}M = (S,A,O,R,T,\phi,p){% endmathjax %}组成，其中{% mathjax %}O{% endmathjax %}是观察空间，{% mathjax %}\phi : S\rightarrow O{% endmathjax %}是发射或观察函数。在`POMDP`中，策略观察由{% mathjax %}\phi{% endmathjax %}产生的。 `MDP`的问题是学习一个策略{% mathjax %}\pi(a|s){% endmathjax %}，该策略在给定状态下产生动作分布，使得`MDP`中策略的累积奖励最大化：
 {% mathjax '{"conversion":{"em":14}}' %}
 \pi^* = \text{arg}\;\underset{\pi\in \prod}{\max}\mathbb{E}_{s\sim  p(s_0)}[\mathcal{R}(s)]
 {% endmathjax %}
@@ -40,3 +40,32 @@ mathjax:
 {% mathjax '{"conversion":{"em":14}}' %}
 \mathcal{R}(s):= \mathbb{E}_{a_t\sim\pi(a_t|s_t),s_{t+1}\sim T()s_{t+1}|s_t,a_t}\bigg[\sum\limits_{t=0}^{\infty}R(s_t,a_t,s_{t+1})|s_0 = s \bigg]
 {% endmathjax %}
+策略是从状态{% mathjax %}s{% endmathjax %}获得的总预期奖励。`POMDP`的目标是相同的，但策略使用观察而不是状态作为输入。如果**马尔可夫决策过程**(`MDP`)没有固定的时间范围，则该总和可能不存在。因此我们通常使用两种回报形式之一，要么假设每个回合有固定的步数（时间范围`H`），要么通过折扣因子{% mathjax %}\gamma{% endmathjax %}对预期奖励做指数折扣。请注意，这里将策略形式化为**马尔可夫策略**，以简化问题。但该策略可以将完整历史记录{% mathjax %}(s_1,a_1,r_1,\ldots,s_{t-1},a_{t-1},r_{t-1},s_t){% endmathjax %}作为输入，例如使用**循环神经网络**。我们将状态和动作空间的历史集合定义为{% mathjax %}H[S,A] = \{(s_1,a_1,r_1,\ldots,s_{t-1},a_{t-1},r_{t-1},s_t)|t\in \mathbb{N}\}{% endmathjax %}，观察空间也是如此。**非马尔可夫策略**使其具有自适应性。
+
+谈到**零样本泛化**(`ZSG`)，我们希望有一种推理任务、环境实例或级别集合一种方式：泛化的需求源于在不同的环境实例集合上训练和测试的场景。以`OpenAI Procgen`为例：在这个基准测试套件中，每个游戏都是程序生成的集合。生成哪种级别完全由级别种子决定，标准协议是在一组固定的`200`种级别上训练策略，然后评估整个级别分布的性能。所有基准测试都共享这种结构：它们有一个级别或任务的集合，由某个种子、`ID`或参数向量指定，并且通过在级别或任务集合上的不同分布进行训练和测试来衡量**泛化**。**上下文马尔可夫决策过程**(`CMDP`)的定义：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathcal{M} = (S',A,O,R,T,C,\phi\;:\;S'\times C\rigtharrow O,p(s'|c),p(c))
+{% endmathjax %}
+{% mathjax %}A,O,R,T,\phi{% endmathjax %}与`POMDP`的定义相同。{% mathjax %}C{% endmathjax %}是上下文空间。`CMDP`是一个拥有状态空间{% mathjax %}S:=S'\times C{% endmathjax %}、初始状态分布{% mathjax %}p((s',c)) = p(c)p(s'|c){% endmathjax %}的`POMDP`，即`POMDP`{% mathjax %}(S'\times C,A,O,R,T,\phi,p(c)p(s'|c)){% endmathjax %}。因此，{% mathjax %}R{% endmathjax %}的类型为{% mathjax %}R:S'\times C\rightarrow \mathbb{R}{% endmathjax %}，并且{% mathjax %}T((s,c),a){% endmathjax %}是**转移概率分布**的形式。对于要成为`CMDP`的元组，必须对转移函数进行分解，使得上下文在一个回合内不会发生变化，如果{% mathjax %}c'\neq c{% endmathjax %}，则{% mathjax %}T((s,c),a)((s',c')) = 0{% endmathjax %}。{% mathjax %}S_0{% endmathjax %}则被称为**底层状态空间**，将{% mathjax %}p(c){% endmathjax %}称为**上下文分布**。
+
+在这个定义中，上下文(`context`)充当种子(`seed`)、ID或参数向量的角色，这决定了级别的高低。这里的“**上下文**”指的是在模拟或算法中所使用的状态信息，它包含了所有必要的参数和设置，以便于生成可重复的结果。因此，它不应该在一集合内改变，而应该在各个集合之间改变。`CMDP`是整个任务或环境实例的集合；在`Procgen`中，每个游戏（例如`starpilot、coinrun`等）都是一个单独的`CMDP`。上下文分布{% mathjax %}p(c){% endmathjax %}用于确定级别、任务或环境实例的训练和测试集合；在`Procgen`中，这个分布在训练时固定的`200`个种子上是均匀的，在测试时所有种子上是均匀的。请注意，此定义未指定智能体是否观察到上下文：如果对于某个底层观察空间{% mathjax %}O'{% endmathjax %}和{% mathjax %}\phi((s',c)) = (\phi'(s),c){% endmathjax %}，对于某个底层观察函数{% mathjax %}\phi':S'\rightarrow O'{% endmathjax %}，则观察到上下文，否则没有。需要观察到上下文才能使`CMDP`成为`MDP`（而不是`POMDP`），{% mathjax %}\phi'{% endmathjax %}不能是恒等式，这种情况下`POMDP`不太可能是`MDP`。由于**奖励函数**、**转换函数**、**初始状态分布**和**发射函数**都将上下文作为输入，因此上下文的选择决定了除了**动作空间**之外`MDP`的一切，我们假设动作空间是固定的。给定一个上下文{% mathjax %}c^*{% endmathjax %}，`CMDP`{% mathjax %}\mathcal{M}{% endmathjax %}限制为单个上下文的`MDP`称为**上下文马尔可夫决策过程**(`CMDP`){% mathjax %}\mathcal{M}_{c^*}{% endmathjax %}。通常这是一个新的`CMDP`，如果{% mathjax %}c = c^*{% endmathjax %}，则{% mathjax %}p(c):= 1{% endmathjax %}，否则为`0`。这是一个特定的任务或环境实例，例如，`Procgen`中游戏的单个等级，由上下文的单个随机种子指定。一些`MDP`具有随机转换或奖励函数。当模拟这些`MDP`时，研究人员通常通过选择随机种子来控制这种随机性。理论上，这些随机**MDP**可以被视为上下文`MDP`，其中上下文是随机种子。不认为随机`MDP`以这种方式自动关联上下文，并假设随机种子始终是随机选择的，而不是作为上下文建模。这更接近于现实世界中随机动态的场景，这里无法控制随机性。
+
+使用`CMDP`形式来描述我们关注的**泛化**问题类别。如前所述，泛化需求源于训练和测试环境实例之间的差异，因此我们希望指定一组训练上下文`MDP`和一组测试集。通过上下文集合来指定这些上下文`MDP`集合，因为上下文唯一地决定了`MDP`。首先，需要描述如何使用训练和测试上下文集来创建新的`CMDP`。
+
+**定义**：对于任何`CMDP`{% mathjax %}\mathcal{M} = (S',A,O,R,T,C,\phi,p(s'|c),p(c)){% endmathjax %}，可以选择上下文集合{% mathjax %}C'\subseteq C{% endmathjax %}的一个子集，然后生成一个新的`CMDP`。
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathcal{M}|_{C'} = (S',A,O,R,T,C',\phi\,p(s'|c),p'(c))
+{% endmathjax %}
+其中，若{% mathjax %}c\in C'{% endmathjax %}，则{% mathjax %}p'(c) = \frac{p(c)}{Z}{% endmathjax %}，否则为`0`，且{% mathjax %}Z{% endmathjax %}是一个重正化项{% mathjax %}Z = \sum_{c\in C'}p(c){% endmathjax %}，确保{% mathjax %}p'(c){% endmathjax %}是**概率分布**。这样，我们就可以根据上下文将整个上下文`MDP`集合拆分为更小的子集。例如，在`Procgen`中，所有种子集的任何可能子集都可用于定义具有有限级别集的不同版本的游戏。对于目标，我们使用策略的预期回报：
+
+**定义**：对于任何`CMDP`{% mathjax %}\mathcal{M}{% endmathjax %}，定义策略的预期回报为`CMDP`：
+{% mathjax '{"conversion":{"em":14}}' %}
+R(\pi,\mathcal{M}) := \mathbb{E}_{c\sim p(c)}[\mathcal{R}(\pi,\mathcal{M}_c)]
+{% endmathjax %}
+其中{% mathjax %}\mathcal{R}{% endmathjax %}是（上下文）`MDP`中策略的预期回报，而{% mathjax %}p(c){% endmathjax %}是**上下文分布**。现在可以正式定义**零样本策略转移**(`ZSPT`)问题类。
+
+**定义**（**零样本策略迁移**）：`ZSPT`问题由上下文集合{% mathjax %}C{% endmathjax %}的`CMDP`{% mathjax %}\mathcal{M}{% endmathjax %}的选择以及训练和测试上下文集合{% mathjax %}C_{\text{train}},C_{\text{train}}\subseteq C{% endmathjax %}的选择定义。目标是生成**非马尔可夫策略**{% mathjax %}\pi:H[O,A]\rightarrow A{% endmathjax %}，从而最大化测试`CMDP`{% mathjax %}\mathcal{M}|_{C_{\text{test}}}{% endmathjax %}中的预期回报：
+{% mathjax '{"conversion":{"em":14}}' %}
+J(\pi) = \mathbf{R}(\pi, \mathcal{M}|_{C_{\text{test}}})
+{% endmathjax %}
+该策略可以跟`CMDP`{% mathjax %}\mathcal{M}|_{C_{\text{train}}}{% endmathjax %}训练来产生，针对固定环境和回合样本{% mathjax %}N_s,N_e{% endmathjax %}。
