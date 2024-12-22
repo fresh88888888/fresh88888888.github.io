@@ -72,7 +72,7 @@ J(\pi) = \mathbf{R}(\pi, \mathcal{M}|_{C_{\text{test}}})
 
 **零样本泛化**(`ZSG`)研究通常涉及开发能够解决各种`ZSPT`问题的算法。例如，在`Procgen`中，目标是生成一种可以解决每个游戏的`ZSPT`问题的算法。希望在对关卡的训练分布（固定的`200`个关卡集）进行`2500`万步（{% mathjax %}N_s = 25,N_e = \infty{% endmathjax %}）训练后，在测试分布（即关卡的完整分布）上实现尽可能高的回报。
 
-**定义**：（`ZSPT`可控上下文）。可控上下文`ZSPT`问题与上面的`ZSPT`问题相同，只是学习算法可以在训练期间调整训练`CMDP`{% mathjax %}C_{\text{train}}{% endmathjax %}的上下文分布，只要它保持仅从训练上下文集合中采样的属性：如果{% mathjax %}c\in C_{\text{train}}{% endmathjax %}，则{% mathjax %}p_{\text{train}} = 0{% endmathjax %}。
+**定义**（`ZSPT`**可控上下文**）：可控上下文`ZSPT`问题与上面的`ZSPT`问题相同，只是学习算法可以在训练期间调整训练`CMDP`{% mathjax %}C_{\text{train}}{% endmathjax %}的上下文分布，只要它保持仅从训练上下文集合中采样的属性：如果{% mathjax %}c\in C_{\text{train}}{% endmathjax %}，则{% mathjax %}p_{\text{train}} = 0{% endmathjax %}。
 
 请注意，这种形式定义了一类问题，每个问题都由`CMDP`、训练和测试上下文集合的选择以及上下文是否可控决定。不对上下文-`MDP`之间`CMDP`内的共享结构做出任何假设：对于任何特定问题，学习可能需要某种此类假设（隐式或显式）。评估**零样本泛化**。与监督学习一样，可以将训练和测试性能之间的差距视为**泛化**的衡量标准。将其定义为类似于监督学习中的定义，交换训练和测试之间的顺序（最大化奖励，而不是最小化损失）：
 {% mathjax '{"conversion":{"em":14}}' %}
