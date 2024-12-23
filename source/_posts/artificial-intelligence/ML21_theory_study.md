@@ -93,3 +93,15 @@ J(\pi) = \mathbf{R}(\pi, \mathcal{M}|_{C_{\text{test}}})
 为了提高泛化能力，需要学习**状态嵌入**，它对应于**神经网络**的任务状态表示，将行为相似的状态聚集在一起，同时将行为不同的状态分开。为此，提出了**对比度量嵌入**(`CME`)，利用**对比学习**的优势来学习**基于状态相似性度量的表示**。使用**策略相似性度量**(`PSM`)实例化对比嵌入，以学习策略相似性嵌入(`PSE`)。`PSE`将相似的表示分配给在这些状态和未来状态下具有相似行为的状态。通过使用`UMAP`（一种流行的高维数据可视化技术）将`PSE`和**基线方法**学习到的表示投影到`2D`点，从而对它们进行可视化。与之前的方法不同，`PSE`将行为相似的状态聚集在一起，将不相似的状态分开。此外，`PSE`将状态划分为两组：(1) 跳跃前的所有状态和 (2) 动作不影响结果的状态（跳跃后的状态）。
 
 总体而言，这项研究通过两项贡献推动了**强化学习**中的**泛化**：**策略相似性度量**和**对比度量嵌入**。`PSE`结合了这两个方法来增强**泛化**。未来研究希望找到更好的方法来定义**行为相似性**并利用这种结构进行**表征学习**。
+
+#### Decision Transformers 
+
+`Decision Transformers`是一种新的**强化学习模型**。这一模型将**强化学习**(`RL`)问题抽象为条件序列建模问题。**条件序列建模**：与传统的通过**拟合值函数**或计算**策略梯度**来训练策略的方法不同，`Decision Transformers`利用**序列建模算法**（如`Transformer`），在给定期望回报、过去状态和动作的情况下生成未来的动作。这种方法是**自回归**的，意味着它会根据输入的历史数据逐步预测未来的动作。`Decision Transformers`模型会将状态、动作和回报作为输入，通过**因果自注意力机制**处理这些信息，从而生成一系列未来的动作。这种方法不仅简化了**强化学习**(`RL`)中的策略优化过程，还允许模型在没有与环境直接交互的情况下进行训练，这种方式被称为**离线强化学习**。
+
+**离线强化学习**：在由元组{% mathjax %}(S,A,P,R){% endmathjax %}描述的**马尔可夫决策过程**(`MDP`)中进行学习。`MDP`元组由状态{% mathjax %}s\in S{% endmathjax %}、动作{% mathjax %}a\in A{% endmathjax %}、转换动态{% mathjax %}P(s_0|s,a){% endmathjax %}和奖励函数{% mathjax %}r = R(s,a){% endmathjax %}组成。分别使用{% mathjax %}s_t{% endmathjax %}、{% mathjax %}a_t{% endmathjax %}和{% mathjax %}r_t = R(s_t,a_t){% endmathjax %}表示时间步{% mathjax %}t{% endmathjax %}时的状态、动作和奖励。轨迹由一系列状态、动作和奖励组成：{% mathjax %}\tau = (s_0,a_0,r_0,s_1,a_1,r_1,\ldots,s_T,a_T,r_T){% endmathjax %}。轨迹在时间步{% mathjax %}t{% endmathjax %}的回报{% mathjax %}R_t = \sum\limits_{t'=t}^T r_{t'}{% endmathjax %}，是该时间步未来奖励的总和。**强化学习**的目标是学习一种策略，该策略可最大化`MDP`中的预期回报{% mathjax %}\mathbb{E}[\sum_{t=1}^T r_t]{% endmathjax %}。在**离线强化学习**中，无法通过环境交互获取数据，而是只能访问由任意策略的轨迹展开组成的一些固定的有限数据集。这种设置更难，因为它剥夺了**智能体**探索环境和收集额外反馈的能力。
+
+`Transformers`：作为一种高效建模序列数据的架构。这些模型由**堆叠**的**自注意力层**和**残差连接**组成。每个自注意力层接收对应于唯一输入标记的`n`个嵌入{% mathjax %}\sum_{i=1}^n{% endmathjax %}，并输出{% mathjax %}n{% endmathjax %}个嵌入{% mathjax %}\sum_{i=1}^n{% endmathjax %}，保留输入维度。第{% mathjax %}i{% endmathjax %}个标记通过线性变换映射到键{% mathjax %}k_i{% endmathjax %}、查询 {% mathjax %}q_i{% endmathjax %}和值{% mathjax %}v_i{% endmathjax %}。**自注意力层**的第{% mathjax %}i{% endmathjax %}个输出由查询{% mathjax %}q_i{% endmathjax %}和其他键{% mathjax %}k_j{% endmathjax %}之间的归一化点积加权值{% mathjax %}v_j{% endmathjax %}得出：
+{% mathjax '{"conversion":{"em":14}}' %}
+z_i = \sum\limits_{j=1}^n \text{softmax}(\{\langle q_i, k_{j'}\rangle\}_{j' = 1}^n)_j\cdot v_j
+{% endmathjax %}
+这允许该层通过查询和键向量的**相似性**（最大化点积）隐式状态返回关联来分配“信用”。在这项工作中，使用`GPT`架构，它使用**因果自注意力掩码**修改了`Transformer`架构，以实现自回归生成，用序列中的前一个标记{% mathjax %}(j\in [1,i]){% endmathjax %}替换{% mathjax %}n{% endmathjax %}个标记上的求和/激活。
