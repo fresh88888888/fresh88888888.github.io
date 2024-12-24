@@ -135,7 +135,6 @@ def decision_transformer(R,s,a,t):
   a_hidden = unstack(hidden_states).actions
 
   # predict actions
-
   return pred_a(a_hidden)
 
 # training loop
@@ -161,3 +160,14 @@ while not done:  # autoregressive generation/sampling
 ```
 `Decision Transformer`，旨在统一**语言/序列建模**和**强化学习**的思想。在离线强化学习基准测试中，表明`Decision Transformer`可以匹敌或超越专为离线强化学习设计的强大算法，并且只需对语言建模架构进行最小的修改。可以考虑更复杂的回报、状态和动作嵌入，以回报分布为条件来模拟随机设置而不是确定性回报。`Transformer`模型也可用于模拟轨迹的状态演变，可能作为基于模型的**强化学习**的替代方案，我们希望在未来的工作中探索这一点。在实际应用中，了解`Transformer`在`MDP`设置中犯的错误以及可能产生的负面后果非常重要，但这些后果尚未得到充分探索。训练模型的数据集也很重要，这可能会增加破坏性偏差，特别是当考虑研究使用更多来自可疑来源的数据来增强**强化学习**的智能体时。例如，恶意行为者的奖励设计可能会产生意想不到的动作，因为模型是通过调节期望的回报来产生动作。
 
+#### 强化学习—语言模型
+
+**语言模型**(`LM`)在处理文本时展现出了前所未有的能力。它们用庞大的文本语料库来训练，使它们能够编码各种类型的知识，也包括抽象的物理规律类知识，这些知识是否能让机器人等**智能体**在解决日常任务时收益呢？智能体缺乏学习知识的方法。这种限制阻碍了**智能体**适应环境（例如，修复错误的知识）或学习新技能。
+
+**强化学习算法**通常在缺乏稠密和良好设计的**奖励函数**时表现不佳。内在激励的探索方法通过奖励**智能体**访问新颖的状态或转移来解决这一限制，但在大的环境中，这些方法的好处有限，因为大多数发现的新颖性与后续任务无关。介绍一种利用文本语料库中的背景知识来引导探索的方法。这种方法称为`ELLM`，它通过奖励**智能体**实现由语言模型根据**智能体**当前状态的描述所建议的目标。通过利用**大语言模型**的预训练，`ELLM`指导智能体朝向对人类有意义且可能有用的行为发展，而无需人类参与。在`Crafter`游戏环境和`Housekeep`机器人模拟器中评估了`ELLM`，结果表明，经过`ELLM`训练的智能体在预训练过程中对常识行为的覆盖更好，并且在一系列后续任务上表现相当或更佳。
+{% asset_img ml_3.png  %}
+
+这里考虑由元组{% mathjax %}(\mathcal{S},\mathcal{A},\mathcal{O},\Omega,\mathcal{T}, \gamma, \mathcal{R}){% endmathjax %}定义的**部分可观测马尔可夫决策过程**(`POMDP`)，其中观察值{% mathjax %}\in \Omega{% endmathjax %}是通过{% mathjax %}\mathcal{O}(o|s,a){% endmathjax %}从状态{% mathjax %}s\in \mathcal{S}{% endmathjax %}和动作{% mathjax %}a\in \mathcal{A}{% endmathjax %}导出的。{% mathjax %}\mathcal{T}(s'|s,a){% endmathjax %}描述了环境的动态，而{% mathjax %}\mathcal{R}{% endmathjax %}和{% mathjax %}\gamma{% endmathjax %}分别是环境的**奖励函数**和**折扣因子**。
+{% asset_img ml_4.png 左边：ELLM的策略参数化，右边：LLM奖励计划 %}
+
+`ELLM`使用`GPT-3`来作为适当的探索目标，并利用`SentenceBERT`嵌入来计算目标与行为之间的相似性，从而作为一种内在奖励。
