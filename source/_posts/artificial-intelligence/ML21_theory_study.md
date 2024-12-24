@@ -100,14 +100,64 @@ J(\pi) = \mathbf{R}(\pi, \mathcal{M}|_{C_{\text{test}}})
 
 **离线强化学习**：在由元组{% mathjax %}(S,A,P,R){% endmathjax %}描述的**马尔可夫决策过程**(`MDP`)中进行学习。`MDP`元组由状态{% mathjax %}s\in S{% endmathjax %}、动作{% mathjax %}a\in A{% endmathjax %}、转换动态{% mathjax %}P(s_0|s,a){% endmathjax %}和奖励函数{% mathjax %}r = R(s,a){% endmathjax %}组成。分别使用{% mathjax %}s_t{% endmathjax %}、{% mathjax %}a_t{% endmathjax %}和{% mathjax %}r_t = R(s_t,a_t){% endmathjax %}表示时间步{% mathjax %}t{% endmathjax %}时的状态、动作和奖励。轨迹由一系列状态、动作和奖励组成：{% mathjax %}\tau = (s_0,a_0,r_0,s_1,a_1,r_1,\ldots,s_T,a_T,r_T){% endmathjax %}。轨迹在时间步{% mathjax %}t{% endmathjax %}的回报{% mathjax %}R_t = \sum\limits_{t'=t}^T r_{t'}{% endmathjax %}，是该时间步未来奖励的总和。**强化学习**的目标是学习一种策略，该策略可最大化`MDP`中的预期回报{% mathjax %}\mathbb{E}[\sum_{t=1}^T r_t]{% endmathjax %}。在**离线强化学习**中，无法通过环境交互获取数据，而是只能访问由任意策略的轨迹展开组成的一些固定的有限数据集。这种设置更难，因为它剥夺了**智能体**探索环境和收集额外反馈的能力。
 
-`Transformers`：作为一种高效建模序列数据的架构。这些模型由**堆叠**的**自注意力层**和**残差连接**组成。每个自注意力层接收对应于唯一输入标记的`n`个嵌入{% mathjax %}\sum_{i=1}^n{% endmathjax %}，并输出{% mathjax %}n{% endmathjax %}个嵌入{% mathjax %}\sum_{i=1}^n{% endmathjax %}，保留输入维度。第{% mathjax %}i{% endmathjax %}个标记通过线性变换映射到键{% mathjax %}k_i{% endmathjax %}、查询 {% mathjax %}q_i{% endmathjax %}和值{% mathjax %}v_i{% endmathjax %}。**自注意力层**的第{% mathjax %}i{% endmathjax %}个输出由查询{% mathjax %}q_i{% endmathjax %}和其他键{% mathjax %}k_j{% endmathjax %}之间的归一化点积加权值{% mathjax %}v_j{% endmathjax %}得出：
+`Transformer`：作为一种高效建模序列数据的架构。这些模型由**堆叠**的**自注意力层**和**残差连接**组成。每个自注意力层接收对应于唯一输入标记的`n`个嵌入{% mathjax %}\sum_{i=1}^n{% endmathjax %}，并输出{% mathjax %}n{% endmathjax %}个嵌入{% mathjax %}\sum_{i=1}^n{% endmathjax %}，保留输入维度。第{% mathjax %}i{% endmathjax %}个标记通过线性变换映射到键{% mathjax %}k_i{% endmathjax %}、查询 {% mathjax %}q_i{% endmathjax %}和值{% mathjax %}v_i{% endmathjax %}。**自注意力层**的第{% mathjax %}i{% endmathjax %}个输出由查询{% mathjax %}q_i{% endmathjax %}和其他键{% mathjax %}k_j{% endmathjax %}之间的归一化点积加权值{% mathjax %}v_j{% endmathjax %}得出：
 {% mathjax '{"conversion":{"em":14}}' %}
 z_i = \sum\limits_{j=1}^n \text{softmax}(\{\langle q_i, k_{j'}\rangle\}_{j' = 1}^n)_j\cdot v_j
 {% endmathjax %}
 这允许该层通过查询和键向量的**相似性**（最大化点积）隐式状态返回关联来分配“信用”。在这项工作中，使用`GPT`架构，它使用**因果自注意力掩码**修改了`Transformer`架构，以实现自回归生成，用序列中的前一个标记{% mathjax %}(j\in [1,i]){% endmathjax %}替换{% mathjax %}n{% endmathjax %}个标记上的求和/激活。
 
-**轨迹表示**：选择**轨迹表示**的关键要求是，它应该使`Transformers`能够学习的模式，并且能够在测试时有条件地生成动作。建奖励模型并非易事，因为希望模型根据未来的期望回报而不是过去的回报来生成动作。因此，不是直接提供奖励，而是向模型提供回报{% mathjax %}\hat{R}_t = \sum_{t' = t}^T r_{t'}{% endmathjax %}。该表示适合自回归训练和生成：
+**轨迹表示**：选择**轨迹表示**的关键要求是，它应该使`Transformers`能够学习的模式，并且能够在测试时有条件地生成动作。创建奖励模型并非易事，因为希望模型根据未来的期望回报而不是过去的回报来生成动作。因此，不是直接提供奖励，而是向模型提供回报{% mathjax %}\hat{R}_t = \sum_{t' = t}^T r_{t'}{% endmathjax %}。该表示适合自回归训练和生成：
 {% mathjax '{"conversion":{"em":14}}' %}
 \tau = (\hat{R}_1, s_1, a_1,\hat{R}_2, s_2, a_2,\ldots,\hat{R}_T, s_T, a_T)
 {% endmathjax %}
-在测试时，可以指定期望的性能（例如，`1`表示成功或`0`表示失败）以及环境起始状态，作为启动生成的条件信息。在执行当前状态的生成操作后，我将目标回报减少已获得的奖励并重复，直到回合终止。
+在测试时，可以指定期望的性能（例如，`1`表示成功或`0`表示失败）以及环境起始状态，作为启动生成的条件信息。在执行当前状态的生成操作后，我将目标回报减少已获得的奖励并重复，直到回合终止。**架构**：将最后{% mathjax %}K{% endmathjax %}个时间步输入到`Decision Transformer`中，总共{% mathjax %}3K{% endmathjax %}个`token`（每个模态包含：未来回报、状态或动作）。为了获得`token`嵌入，让每种模态学习一个线性层，将原始输入投射到嵌入维度，然后进行层规范化。对于具有视觉输入的环境，状态被输入到**卷积编码器**而不是线性层。此外，每个时间步的嵌入都会被学习并添加到每个`token`中，请注意，这与`Transformer`使用的位置嵌入不同，因为一个时间步对应`3`个`token`。然后，这些`token`由`GPT`模型处理，该模型通过**自回归**建模预测未来的动作`token`。**训练**：这里获得了一个离线轨迹数据集。从数据集中抽取序列长度为{% mathjax %}K{% endmathjax %}的小批量数据。与输入`token`{% mathjax %}s_t{% endmathjax %}相对应的预测头经过训练以预测出{% mathjax %}a_t{% endmathjax %}，对于离散动作使用**交叉熵损失**，对于连续动作使用**均方误差**，并且对每个时间步的损失进行平均。
+```python
+# R,s,a,t : return-to-go, states, actions, or timesteps
+# transformer : transformer with causal masking (GPT)
+# embed_s, embed_a, embed_R : linear embedding layers 
+# embed_t : learned episode positional embedding
+# pred_a : linear action prediction layer
+
+def decision_transformer(R,s,a,t):
+  # compute embeddingsfor tokens
+  pos_embedding = embed_t(t)   # per-timestep(note: not per-token)
+  s_embedding = embed_s(s) + pos_embedding
+  a_embedding = embed_a(a) + pos_embedding
+  R_embedding = embed_R(R) + pos_embedding
+
+  # interleave token as (R_1,s_1,a_1,...,R_k,s_k,a_k)
+  input_embeds = stack(R_embedding, s_embedding, a_embedding)
+
+  # use transformer to get hidden state
+  hidden_states = transformer(input_embeds = input_embeds)
+
+  # select a hidden states for action prediction tokens
+  a_hidden = unstack(hidden_states).actions
+
+  # predict actions
+
+  return pred_a(a_hidden)
+
+# training loop
+for (R,s,a,t) in dataloader:   # dims: (batch_size, K, dim)
+  a_preds = decision_transformer(R,s,a,t)
+  loss = mean((a_preds - a) ** 2)  # L2 loss for continuous actions
+  optimizer.zero_grad()
+  loss.backward()
+  optimizer.step()
+
+# evaluation loop
+target_return = 1
+R,s,a,t, done = [target_return], [env.reset()], [], [1], False
+while not done:  # autoregressive generation/sampling
+  # sample next action
+  action = decision_transformer(R,s,a,t)[-1]   # for cts actions
+  new_s, r, done, _ = env.step(action)
+
+  # append new tokens to sequence 
+  R = R + [R[-1] - r]   # decrement returns -to -go with reward
+  s,a,t = s + [new_s], a + [action], t + [len(R)]
+  R,s,a,t= R[-K:], ...  # only keep context length of K
+```
+`Decision Transformer`，旨在统一**语言/序列建模**和**强化学习**的思想。在离线强化学习基准测试中，表明`Decision Transformer`可以匹敌或超越专为离线强化学习设计的强大算法，并且只需对语言建模架构进行最小的修改。可以考虑更复杂的回报、状态和动作嵌入，以回报分布为条件来模拟随机设置而不是确定性回报。`Transformer`模型也可用于模拟轨迹的状态演变，可能作为基于模型的**强化学习**的替代方案，我们希望在未来的工作中探索这一点。在实际应用中，了解`Transformer`在`MDP`设置中犯的错误以及可能产生的负面后果非常重要，但这些后果尚未得到充分探索。训练模型的数据集也很重要，这可能会增加破坏性偏差，特别是当考虑研究使用更多来自可疑来源的数据来增强**强化学习**的智能体时。例如，恶意行为者的奖励设计可能会产生意想不到的动作，因为模型是通过调节期望的回报来产生动作。
+
