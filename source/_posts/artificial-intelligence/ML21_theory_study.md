@@ -167,7 +167,7 @@ while not done:  # autoregressive generation/sampling
 **强化学习算法**通常在缺乏稠密和良好设计的**奖励函数**时表现不佳。内在激励的探索方法通过奖励**智能体**访问新颖的状态或转移来解决这一限制，但在大的环境中，这些方法的好处有限，因为大多数发现的新颖性与后续任务无关。介绍一种利用文本语料库中的背景知识来引导探索的方法。这种方法称为`ELLM`，它通过奖励**智能体**实现由语言模型根据**智能体**当前状态的描述所建议的目标。通过利用**大语言模型**的预训练，`ELLM`指导智能体朝向对人类有意义且可能有用的行为发展，而无需人类参与。在`Crafter`游戏环境和`Housekeep`机器人模拟器中评估了`ELLM`，结果表明，经过`ELLM`训练的智能体在预训练过程中对常识行为的覆盖更好，并且在一系列后续任务上表现相当或更佳。
 {% asset_img ml_3.png  %}
 
-这里考虑由元组{% mathjax %}(\mathcal{S},\mathcal{A},\mathcal{O},\Omega,\mathcal{T}, \gamma, \mathcal{R}){% endmathjax %}定义的**部分可观测马尔可夫决策过程**(`POMDP`)，其中观察值{% mathjax %}\in \Omega{% endmathjax %}是通过{% mathjax %}\mathcal{O}(o|s,a){% endmathjax %}从状态{% mathjax %}s\in \mathcal{S}{% endmathjax %}和动作{% mathjax %}a\in \mathcal{A}{% endmathjax %}导出的。{% mathjax %}\mathcal{T}(s'|s,a){% endmathjax %}描述了环境的动态，而{% mathjax %}\mathcal{R}{% endmathjax %}和{% mathjax %}\gamma{% endmathjax %}分别是环境的**奖励函数**和**折扣因子**。
+这里考虑由元组{% mathjax %}(\mathcal{S},\mathcal{A},\mathcal{O},\Omega,\mathcal{T}, \gamma, \mathcal{R}){% endmathjax %}定义的**部分可观测马尔可夫决策过程**(`POMDP`)，其中观察值{% mathjax %}o\in \Omega{% endmathjax %}是通过{% mathjax %}\mathcal{O}(o|s,a){% endmathjax %}从状态{% mathjax %}s\in \mathcal{S}{% endmathjax %}和动作{% mathjax %}a\in \mathcal{A}{% endmathjax %}导出的。{% mathjax %}\mathcal{T}(s'|s,a){% endmathjax %}描述了环境的动态，而{% mathjax %}\mathcal{R}{% endmathjax %}和{% mathjax %}\gamma{% endmathjax %}分别是环境的**奖励函数**和**折扣因子**。
 {% asset_img ml_4.png 左边：ELLM的策略参数化，右边：LLM奖励计划 %}
 
 `ELLM`使用`GPT-3`来作为适当的探索目标，并利用`SentenceBERT`嵌入来计算目标与行为之间的相似性，从而作为一种内在奖励。
