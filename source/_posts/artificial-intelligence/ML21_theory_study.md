@@ -170,4 +170,30 @@ while not done:  # autoregressive generation/sampling
 这里考虑由元组{% mathjax %}(\mathcal{S},\mathcal{A},\mathcal{O},\Omega,\mathcal{T}, \gamma, \mathcal{R}){% endmathjax %}定义的**部分可观测马尔可夫决策过程**(`POMDP`)，其中观察值{% mathjax %}o\in \Omega{% endmathjax %}是通过{% mathjax %}\mathcal{O}(o|s,a){% endmathjax %}从状态{% mathjax %}s\in \mathcal{S}{% endmathjax %}和动作{% mathjax %}a\in \mathcal{A}{% endmathjax %}导出的。{% mathjax %}\mathcal{T}(s'|s,a){% endmathjax %}描述了环境的动态，而{% mathjax %}\mathcal{R}{% endmathjax %}和{% mathjax %}\gamma{% endmathjax %}分别是环境的**奖励函数**和**折扣因子**。
 {% asset_img ml_4.png 左边：ELLM的策略参数化，右边：LLM奖励计划 %}
 
-`ELLM`使用`GPT-3`来作为适当的探索目标，并利用`SentenceBERT`嵌入来计算目标与行为之间的相似性，从而作为一种内在奖励。
+`ELLM`使用`GPT-3`来作为适当的探索目标，并利用`SentenceBERT`嵌入来计算目标与行为之间的相似性，从而作为一种内在奖励。M个智能体在优化内在奖励{% mathjax %}\mathcal{R}_{\text{int}}{% endmathjax %}的同时，或者替代外部奖励{% mathjax %}\mathcal{R}{% endmathjax %}。特别是`CB-IM`方法通过一系列目标条件奖励函数来定义{% mathjax %}\mathcal{R}_{\text{int}}{% endmathjax %}。具体来说，`CB-IM`方法的内在奖励 {% mathjax %}\mathcal{R}_{\text{int}}{% endmathjax %}可以表示为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathcal{R}_{\text{int}}(o,a,o') = \mathbb{E}_{g\sim \mathcal{G}}[\mathcal{R}_{\text{int}}(o,a,o'|g)]
+{% endmathjax %}
+`CB-IM`智能体在优化内在奖励{% mathjax %}\mathcal{R}_{\text{int}}{% endmathjax %}时，期望能够在原始奖励{% mathjax %}\mathcal{R}{% endmathjax %}上表现良好，前提是内在奖励{% mathjax %}\mathcal{R}_{\text{int}}{% endmathjax %}更易于优化并且与{% mathjax %}\mathcal{R}{% endmathjax %}高度一致，这样最大化的行为也会最大化{% mathjax %}\mathcal{R}{% endmathjax %}。每个`CB-IM`算法必须在以上公式中定义两个要素：从中抽样的目标分布，即{% mathjax %}\mathcal{G}{% endmathjax %}；**目标条件奖励函数**{% mathjax %}\mathcal{R}_{\text{int}}(o,a,o'|g){% endmathjax %}。基于这些要素，`CB-IM`算法训练一个目标条件策略{% mathjax %}\pi(a,o|g){% endmathjax %}来最大化{% mathjax %}\mathcal{R}_{\text{int}}{% endmathjax %}。对于某些内在奖励函数，智能体可能会立即在原始奖励函数{% mathjax %}\mathcal{R}{% endmathjax %}下获得高奖励；而对于其他函数，则可能需要通过额外的微调来优化{% mathjax %}\mathcal{R}{% endmathjax %}。在以上公式中，目标空间{% mathjax %}\mathcal{G}{% endmathjax %}是由**目标条件奖励函数**{% mathjax %}\mathcal{R}_{\text{int}}(\cdot|g){% endmathjax %}决定的：每个选择的{% mathjax %}g{% endmathjax %}都会引发一个对应的最佳行为分布。因此，`CB-IM算`法的设计需要确保目标选择和奖励函数能够有效引导智能体朝向更一般的奖励函数{% mathjax %}\mathcal{R}{% endmathjax %}，以便在探索过程中实现有效的学习和优化。在选择目标分布{% mathjax %}\mathcal{G}{% endmathjax %}和**目标条件奖励函数**{% mathjax %}\mathcal{R}_{\text{int}}(\cdot|g){% endmathjax %}时，为了帮助智能体朝着一般奖励函数{% mathjax %}\mathcal{R}{% endmathjax %}取得进展，所针对的目标在探索过程中应满足以下三个属性：
+- **多样性**：针对多样化的目标可以增加目标行为与其中一个目标相似的机会。
+- **常识敏感性**：学习应集中于可行的目标（例如“砍树”比“喝树”更合理），这些目标在我们关心的目标分布中更可能出现（例如“喝水”比“走进岩浆”更合理）。
+- **上下文敏感性**：学习应关注当前环境配置中可行的目标（例如，仅在视野中有树时才砍树）。
+
+这些属性旨在确保智能体能够有效地选择和优化目标，从而在复杂环境中实现对一般**奖励函数**{% mathjax %}\mathcal{R}{% endmathjax %}的有效学习。大多数CB-IM算法手动定义与原始任务{% mathjax %}\mathcal{R}{% endmathjax %}对齐的奖励函数{% mathjax %}\mathcal{R}_{\text{int}}{% endmathjax %}和目标分布的支持{% mathjax %}\mathcal{G}{% endmathjax %}，但使用各种内在动机来指导目标抽样，例如新颖性、学习进展和中间难度。在“利用大型语言模型进行探索”(`ELLM`)中，建议利用基于语言的目标表示和基于语言模型的目标生成，以减轻对环境手动编码定义的需求。大型语言模型中捕获的世界知识将使得自动生成多样化、人类可理解且上下文敏感的目标成为可能。预训练的大语言模型大致分为三类：**自回归模型**、**掩码模型**和**编码器-解码器模型**。**自回归模型**（例如`GPT`）通过最大化给定所有前文的下一个单词的**对数似然**来进行训练，因此能够进行语言生成。仅**编码器模型**（例如`BERT`）则通过掩码目标进行训练，从而有效地编码句子的语义。在大文本语料库上预训练语言模型能够在多种语言理解和生成任务中实现令人印象深刻的`0-shot`或`few-shot`表现，这些任务不仅需要语言知识，还需要世界知识。`ELLM`利用**自回归语言模型**生成目标，并使用**掩码语言模型**构建目标的向量表示。当**大语言模型**生成目标时，目标分布的支持范围变得与自然语言字符串的空间一样广泛。虽然无条件查询大语言模型以获取目标可以提供多样性和常识敏感性，但上下文敏感性需要对智能体状态的了解。因此，在每个时间步，需要使用一系列智能体可用动作的提示和当前观察的文本描述，借助状态描述器{% mathjax %}C_{\text{obs}}:\Omega\rightarrow \sum^*{% endmathjax %}来获取目标，其中{% mathjax %}\sum^*{% endmathjax %}是所有字符串的集合。
+
+**大语言模型**(`LLM`)中提取目标的两种具体策略：
+- **开放式生成**，其中`LLM`输出建议目标的文本描述（例如“接下来你应该...”）。
+- **封闭式生成**，其中将一个可能的目标作为问答任务提供给`LLM（`例如“智能体应该做什么？（是/否）”）。在这种情况下，只有当“是”的对数概率大于“否”时，`LLM`的目标建议才被接受。
+
+前者更适合开放式探索，而后者更适合具有大量但可界定目标空间的环境。**目标条件奖励**，通过测量LLM生成的目标与智能体在环境中转移描述之间的语义相似性来计算给定目标{% mathjax %}g{% endmathjax %}的奖励{% mathjax %}\mathcal{R}_{\text{int}}{% endmathjax %}，该测量由转移描述器{% mathjax %}\mathcal{C}_{\text{transition}}:\Omega\times A \times \Omega \rightarrow \sum{% endmathjax %}完成。
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathcal{R}_{\text{int}}(o,a,o'|g) =
+\begin{cases}
+      \Delta(\mathcal{C}_{\text{transition}}(o,a,o'),g)\;\; & \text{if} > T \\
+      0 \;\; & \text{otherwise}
+\end{cases}
+{% endmathjax %}
+在这里，**语义相似性函数**{% mathjax %}\Delta(\cdot,\cdot){% endmathjax %}定义为来自语言模型编码器{% mathjax %}E(\cdot){% endmathjax %}对描述和目标的表示之间的**余弦相似性**：
+{% mathjax '{"conversion":{"em":14}}' %}
+\Delta(\mathcal{C}_{\text{transition}}(o,a,o'),g) = \frac{E(\mathcal{C}_{\text{transition}}(o,a,o'))\cdot E(g)}{E(\|\mathcal{C}_{\text{transition}}(o,a,o'))\| \|E(g)\|}
+{% endmathjax %}
