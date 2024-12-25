@@ -203,6 +203,6 @@ while not done:  # autoregressive generation/sampling
 {% endmathjax %}
 因此，`CB-IM`方法的总体奖励函数可以重写为：
 {% mathjax '{"conversion":{"em":14}}' %}
-\mathcal{R}_{\text{int}}(o,a,o') = \mathbb{E}_{\text{LLM}(g^{1\ldots k}|C_{\text{obs}}(o))}^{[\Delta^{\max}]}
+\mathcal{R}_{\text{int}}(o,a,o') = \mathbb{E}_{\text{LLM}(g^{1\ldots k}|C_{\text{obs}}(o))^{[\Delta^{\max}]}}
 {% endmathjax %}
 为了施加新颖性偏差，过滤掉智能体在同一回合中已经实现的语言模型建议。这可以防止智能体重复探索相同的目标。考虑两种形式的智能体训练：**目标条件设置**，其中智能体获得建议目标列表的句子嵌入{% mathjax %}\pi(a|o,E(g^{1:k})){% endmathjax %}；**无目标设置**，其中智能体无法访问建议目标{% mathjax %}\pi(a|o){% endmathjax %}。虽然在这两种情况下{% mathjax %}\mathcal{R}_{\text{int}}{% endmathjax %}保持不变，但训练一个目标条件的智能体会引入挑战和好处：智能体可能需要时间来学习不同目标的含义并将其与奖励联系起来，但拥有一个**语言-目标条件策略**可能比仅依赖探索奖励训练的智能体更适合下游任务。本文重点关注大语言模型先验对**强化学习**探索的好处，并假设存在一个预先存在的描述。在模拟中，可以通过真实状态模拟器免费获取。在现实世界应用中，可以使用**物体检测模型**、**描述生成模型**或**动作识别模型**。另外，也可以使用具有类似语言模型组件的**多模态视觉-语言模型**。
