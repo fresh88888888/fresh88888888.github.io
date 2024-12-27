@@ -36,6 +36,7 @@
 <meta property="og:image" content="https://fresh88888888.github.io/2024/12/26/artificial-intelligence/ML22_theory_study/ml_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/12/26/artificial-intelligence/ML22_theory_study/ml_2.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2024/12/26/artificial-intelligence/ML22_theory_study/ml_3.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2024/12/26/artificial-intelligence/ML22_theory_study/ml_4.png">
 <meta property="article:published_time" content="2024-12-26T02:00:11.000Z">
 <meta property="article:modified_time" content="2024-12-26T02:00:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -155,7 +156,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#RLHF"><span class="nav-number">1.</span> <span class="nav-text">RLHF</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">预训练语言模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E5%A5%96%E5%8A%B1%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">训练奖励模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%BE%AE%E8%B0%83"><span class="nav-number">1.3.</span> <span class="nav-text">强化学习微调</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#RLHF"><span class="nav-number">1.</span> <span class="nav-text">RLHF</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">预训练语言模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E5%A5%96%E5%8A%B1%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">训练奖励模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%BE%AE%E8%B0%83"><span class="nav-number">1.3.</span> <span class="nav-text">强化学习微调</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NLPO"><span class="nav-number">2.</span> <span class="nav-text">NLPO</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -303,14 +304,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.4k</span>
+      <span>3.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>8 分钟</span>
+      <span>11 分钟</span>
     </span>
 </div>
 
@@ -341,6 +342,10 @@
 <img data-src="/2024/12/26/artificial-intelligence/ML22_theory_study/ml_3.png" class="">
 
 <p>作为一个可选项，<code>RLHF</code>可以通过迭代<strong>奖励模型</strong>和策略共同优化。随着策略模型更新，用户可以继续将输出和早期的输出进行合并排名。<code>Anthropic</code>在他们的论文中讨论了迭代在线<code>RLHF</code>，其中策略的迭代包含在跨模型的<code>Elo</code><strong>排名系统</strong>中。这样引入策略和<strong>奖励模型</strong>演变的复杂动态，代表了一个复杂和开放的研究问题。收集人类偏好数据的质量和数量决定了<code>RLHF</code>系统性能的上限。<code>RLHF</code>系统需要两种人类偏好数据：<strong>人工生成的文本</strong>和<strong>对模型输出的偏好标签</strong>。除开数据方面的限制，一些有待开发的设计选项可以让<code>RLHF</code>取得长足进步。例如对<code>RL</code><strong>优化器</strong>的改进方面，<code>PPO</code>是一种较旧的算法，但目前没有什么结构性原因让其他算法可以在现<code>有RLHF</code>工作中更具有优势。另外，微调<code>LM</code>策略的成本是策略生成的文本都需要在<code>RM</code>上进行评估，通过离线<code>RL</code>优化策略可以节约这些大模型<code>RM</code>的预测成本。最近，出现了新的<code>RL</code>算法如<strong>隐式语言</strong><code>Q-Learning</code>(<code>Implicit Language Q-Learning，ILQL</code>) 也适用于当前<code>RL</code>的优化。在<code>RL</code>训练过程的其他核心权衡，例如探索和开发(<code>exploration-exploitation</code>) 的平衡也有待尝试和记录。</p>
+<h4 id="NLPO"><a href="#NLPO" class="headerlink" title="NLPO"></a>NLPO</h4><p>大多数<strong>语言模型</strong>在训练时并没有直接的<strong>人类偏好信号</strong>，监督目标字符串仅作为代理。一个整合用户反馈的选项是采用人机协作，即用户在模型训练过程中需要为每个样本提供反馈，但这种密集监督的程度往往是不可行且低效的。自动化指标提供了一个有前景的折衷方案：如<strong>成对学习偏好模型</strong>、<code>BERTScore</code>、<code>BLEURT</code>等人类偏好的模型，与早期指标（如<code>BLEU</code>、<code>METEOR</code>等）相比，显著提高了与人类判断的相关性，并且评估成本较低。然而，这些函数通常不是<strong>逐词可微分</strong>的：与人类一样，这些指标只能对完整生成结果提供质量估计。<strong>强化学习</strong>(<code>RL</code>)为优化不可微分的标量目标提供了一条自然路径。最近的研究表明，通过约束基于偏好的奖励来结合流畅性概念，<strong>强化学习</strong>(<code>RL</code>)在将<code>LM</code>与人类偏好对齐方面取得了很好的结果，但这一研究方向的进展受到缺乏开源基准和算法实现的严重阻碍——导致人们认为<strong>强化学习</strong>(<code>RL</code>)是<code>NLP</code>的一个具有挑战性的范式。为了促进构建<strong>强化学习</strong>(<code>RL</code>)<strong>算法</strong>以更好地对齐语言模型(<code>LM</code>)。首先，发布了<code>RL4LMs</code>库，使得生成<code>HuggingFace</code>模型（如GPT-2或T5）能够使用多种现有的<strong>强化学习</strong>(<code>RL</code>)方法进行训练，例如<code>PPO</code>、<code>A2C</code>等。接下来，使用<code>RL4LMs</code>训练的模型应用于新的<code>GRUE</code>（<strong>通用强化语言理解评估</strong>）基准：<code>GRUE</code>是一个包含<code>7</code>个<code>NLP</code>任务的集合；与其他基准不同的是，每个任务配对<strong>奖励函数</strong>，而不是进行监督训练。<code>GRUE</code>保证模型在保持流畅的语言生成能力的同时，优化这些<strong>奖励函数</strong>。通过<strong>强化学习</strong>(<code>RL</code>)训练语言模型——无论是否进行任务监督预训练——以优化奖励。最后，除了现有的<strong>强化学习</strong>(<code>RL</code>)方法，还引入了一种新颖的<strong>在线强化学习</strong>(<code>RL</code>)<strong>算法——自然语言策略优化</strong>(<code>NLPO</code>)，该算法能够在逐词级别动态学习任务特定的约束。实验结果和人类评估表明，与其他方法相比，<strong>自然语言策略优化</strong>(<code>NLPO</code>)在学习偏好奖励的同时，更好地保持了语言流畅性，包含了<code>PPO</code>的能力。在使用<strong>标量奖励反馈</strong>进行学习时，发现<strong>强化学习</strong>(<code>RL</code>)可以更具：<strong>数据效率</strong>，优于通过<strong>监督学习</strong>使用额外专家示范（尽管两者结合是最佳选择）——当作为<strong>自然语言策略优化</strong>(<code>NLPO</code>)方法的信号时，学习到的<strong>奖励函数</strong>在性能上优于使用<code>5</code>倍数据训练的监督方法；<strong>参数效率</strong>——使得一个结合<strong>监督</strong>和<strong>自然语言策略优化</strong>(<code>NLPO</code>)训练的<code>2.2</code>亿参数模型超越一个<code>30</code>亿参数的<strong>监督模型</strong>。</p>
+<p>在情感引导的续写任务中，<strong>自然语言策略优化</strong>(<code>NLPO</code>)旨在使<strong>语言模型</strong>（即<strong>策略</strong>）根据评论提示生成积极的情感续写。这里需要平衡两个目标：<code>1</code>、作为奖励的自动化人类偏好<strong>智能体</strong>（此处为<strong>情感分类器</strong>）；<code>2</code>、通过与未经过<strong>显式人类反馈训练</strong>的语言模型之间的<code>KL</code><strong>散度</strong>来衡量“<strong>自然性</strong>”。如下图所示，<strong>自然语言策略优化</strong>(<code>NLPO</code>)与流行的<strong>策略梯度</strong>(<code>PPO</code>)的验证学习曲线比较。如果去掉<code>KL</code>-惩罚，<strong>强化学习</strong>(<code>RL</code>)方法可以轻松获得高奖励，但代价是更高的<strong>困惑度</strong>。建议方法：<code>NLPO + KL</code>成功地在<strong>奖励</strong>和<strong>自然性</strong>之间取得了比以往研究更有效的<strong>平衡</strong>。</p>
+<img data-src="/2024/12/26/artificial-intelligence/ML22_theory_study/ml_4.png" class="">
+
 
     </div>
 
@@ -420,7 +425,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">73:38</span>
+    <span title="站点阅读时长">73:42</span>
   </span>
 </div>
 <div class="busuanzi-count">
