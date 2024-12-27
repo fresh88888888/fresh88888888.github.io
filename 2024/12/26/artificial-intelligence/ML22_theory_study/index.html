@@ -304,14 +304,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>3.4k</span>
+      <span>3.8k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>11 分钟</span>
+      <span>13 分钟</span>
     </span>
 </div>
 
@@ -346,6 +346,8 @@
 <p>在情感引导的续写任务中，<strong>自然语言策略优化</strong>(<code>NLPO</code>)旨在使<strong>语言模型</strong>（即<strong>策略</strong>）根据评论提示生成积极的情感续写。这里需要平衡两个目标：<code>1</code>、作为奖励的自动化人类偏好<strong>智能体</strong>（此处为<strong>情感分类器</strong>）；<code>2</code>、通过与未经过<strong>显式人类反馈训练</strong>的语言模型之间的<code>KL</code><strong>散度</strong>来衡量“<strong>自然性</strong>”。如下图所示，<strong>自然语言策略优化</strong>(<code>NLPO</code>)与流行的<strong>策略梯度</strong>(<code>PPO</code>)的验证学习曲线比较。如果去掉<strong>自然</strong><code>KL</code><strong>惩罚</strong>(<code>naturall KL penalty</code>)，<strong>强化学习</strong>(<code>RL</code>)方法可以轻松获得高奖励，但代价是更高的<strong>困惑度</strong>。建议方法：<code>NLPO + KL</code>成功地在<strong>奖励</strong>和<strong>自然性</strong>之间取得了比以往研究更有效的<strong>平衡</strong>。</p>
 <img data-src="/2024/12/26/artificial-intelligence/ML22_theory_study/ml_4.png" class="">
 
+<p><strong>模仿学习</strong>(<code>Imitation Learning, IL</code>)是一种<strong>强化学习范式</strong>，旨在通过从专家示范中进行<strong>监督学习</strong>来执行任务。许多与<strong>自然语言处理</strong>(<code>NLP</code>)相关的算法，如<strong>调度采样</strong>(<code>Schedule Sampling, SS</code>)、<strong>并行调度采样</strong>(<code>Parallel SS</code>)、<code>Transformer</code><strong>调度采样</strong>、<strong>差分调度采样</strong>(<code>Differential SS</code>)、<code>LOL</code>(<code>Learning to Optimize Language Sequences</code>)、<code>TextGAIL</code>和<code>SEARNN</code>，都受到<strong>DAGGER</strong>和<strong>SEARN</strong>的启发。然而，这些算法在生成过程中普遍存在<strong>偏差</strong>和<strong>马尔可夫决策过程</strong>(<code>MDP</code>)问题。在<strong>大动作空间强化学习</strong>中，<code>MIXER</code>结合了<strong>调度采样</strong>和<strong>REINFORCE</strong>的思想。<code>actor-critic</code>算法解决了<code>REINFORCE</code>进行语言生成时的<strong>方差</strong>和<strong>大动作空间问题</strong>；<code>KG-A2C、TrufLL、AE-DQN</code>和<code>GALAD</code>通过消除和减少探索过程中的动作空间来解决类似问题。</p>
+<p><code>RL4LMs</code>是一个开源库，提供了用于<strong>微调</strong>和<strong>评估</strong>基于<strong>语言模型</strong>(<code>LM</code>)的<strong>强化学习</strong>(<code>RL</code>)算法的构建模块。该库是基于<code>HuggingFace</code>和<code>stable-baselines-3</code>构建。<code>RL4LMs</code>可以用于训练<code>HuggingFace</code>中的任何<strong>解码器</strong>或<strong>编码器-解码器</strong><code>Transformer</code>模型，并支持来自<code>stable-baselines-3</code>的任何在线<strong>强化学习算法</strong>。此外，还提供了针对<code>LM</code>微调的在<strong>线强化学习算法</strong>的实现，例如<code>PPO、TRPO、A2C</code>和<code>NLPO</code>。该库是<strong>模块化</strong>的，用户可以插入自定义<strong>环境</strong>、<strong>奖励函数</strong>、<strong>指标</strong>和<strong>算法</strong>。在初始版本中，支持<code>6</code>种不同的<code>NLP</code>任务、<code>16</code>种评估<strong>指标</strong>和<strong>奖励</strong>，以及<code>4</code>种<strong>强化学习算法</strong>。</p>
 
     </div>
 
@@ -425,7 +427,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">73:42</span>
+    <span title="站点阅读时长">73:43</span>
   </span>
 </div>
 <div class="busuanzi-count">
