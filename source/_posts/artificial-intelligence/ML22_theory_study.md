@@ -64,7 +64,7 @@ mathjax:
 - **多样性/流畅性/自然性指标**，如困惑度、平均分段类型标记比率（`MSSTR`）、单词和双词的**香农熵**、不同`n-gram`的比例(`Distinct-1`、`Distinct-2`)，以及在整个生成文本中仅出现一次的`n-gram`数量。
 - **基于模型的人类偏好的特定任务指标**，在`Ouyang`等人的方法中收集的人类偏好数据上训练的**分类器**。
 
-`RL4LMs`支持通过在线`actor-critic`算法对**语言模型**进行**微调**和**从头训练**。这类算法允许训练一个参数化的**控制策略**，定义为{% mathjax %}\pi_{\theta}:S\rightarrow \Delta(A){% endmathjax %}，这是一个函数，在给定状态下选择一个动作，以最大化轨迹上的**长期折扣奖励**{% mathjax %}\mathbb{E}_{\pi}[\sum_{t=0}^T \gamma^t R(s_t,a_t)]{% endmathjax %}。基准实验专注于**微调**一个预训练的语言模型{% mathjax %}\pi_0{% endmathjax %}，并将其作为**智能体策略**的初始策略{% mathjax %}\pi_{\theta} = \pi_0{% endmathjax %}。类似地，用于估计价值函数的价值网络{% mathjax %}V_{\phi}{% endmathjax %}也从{% mathjax %}\pi_0{% endmathjax %}初始化，除了最后一层是随机初始化以输出一个标量值。与其他**深度强化学习**`actor-critic`**算法**一样，**价值函数**和`Q`**值函数**为：
+`RL4LMs`支持通过在线`actor-critic`算法对**语言模型**进行**微调**和**从头训练**。这类算法允许训练一个参数化的**控制策略**，定义为{% mathjax %}\pi_{\theta}:S\rightarrow \Delta(A){% endmathjax %}，这是一个函数，在给定状态下选择一个动作，以最大化轨迹上的**长期折扣奖励**{% mathjax %}\mathbb{E}_{\pi}\bigg[\sum_{t=0}^T \gamma^t R(s_t,a_t)\bigg]{% endmathjax %}。基准实验专注于**微调**一个预训练的语言模型{% mathjax %}\pi_0{% endmathjax %}，并将其作为**智能体策略**的初始策略{% mathjax %}\pi_{\theta} = \pi_0{% endmathjax %}。类似地，用于估计价值函数的价值网络{% mathjax %}V_{\phi}{% endmathjax %}也从{% mathjax %}\pi_0{% endmathjax %}初始化，除了最后一层是随机初始化以输出一个标量值。与其他**深度强化学习**`actor-critic`**算法**一样，**价值函数**和`Q`**值函数**为：
 {% mathjax '{"conversion":{"em":14}}' %}
 \begin{align}
 V_t^{\pi} & = \mathbb{E}_{a_t\sim \pi}\bigg[\sum\limits_{\tau = t}^T \gamma R(s_{\tau},a_{\tau, y}) \bigg] \\
@@ -75,7 +75,7 @@ Q_t^{\pi}(s_t,a_t) & = R(s_t,a_t,y) + \gamma \mathbb{E}_{s_{t+1}\sim P}[V_{t+1}^
 {% mathjax '{"conversion":{"em":14}}' %}
 A_t^{\pi}(s,a) = Q_t^{\pi}(s,a) = Q_t^{\pi}(s,a) - V_t^{\pi}
 {% endmathjax %}
-为了提高训练的稳定性，优势使用广义优势估计（Generalized Advantage Estimation）进行近似。给定输入输出对{% mathjax %}(x,y){% endmathjax %}和**智能体**的生成预测，由于环境奖励是序列级且稀疏的，按照`Wu`的方法，使用逐标记的`KL`惩罚来正则化奖励函数，以防止模型过度偏离初始化的语言模型{% mathjax %}\pi_0{% endmathjax %}。正则化后的奖励函数为：
+为了提高训练的稳定性，优势使用**广义优势估计**(`Generalized Advantage Estimation`)进行近似。给定输入输出对{% mathjax %}(x,y){% endmathjax %}和**智能体**的生成预测，由于环境奖励是序列级且稀疏的，按照`Wu`的方法，使用逐标记的`KL`惩罚来正则化奖励函数，以防止模型过度偏离初始化的语言模型{% mathjax %}\pi_0{% endmathjax %}。正则化后的奖励函数为：
 {% mathjax '{"conversion":{"em":14}}' %}
 \hat{R}(s_t,a_t,y) = R(s_t,a_t,y) - \beta \text{KL}(\pi_{\theta}(a_t|s_t)\|\pi_{0}(a_t|s_t))
 {% endmathjax %}
