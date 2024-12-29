@@ -83,3 +83,5 @@ A_t^{\pi}(s,a) = Q_t^{\pi}(s,a) = Q_t^{\pi}(s,a) - V_t^{\pi}
 
 语言生成的**动作空间**比大多数**离散动作空间**的**强化学习**(`RL`)**算法**设计的要大几个数量级，例如，`GPT-2`和`GPT-3`的词汇大小分别为`50K`和`32K`。**动作空间**的大小是使用现有**强化学习方法**训练**语言模型**时不稳定的核心原因。为了解决这个问题，需要引入了`NLPO`（**自然语言策略优化**），该方法受到**动作消除/无效动作掩蔽**工作的启发。`NLPO`是`PPO`的一个**参数化掩蔽**扩展，学习在训练过程掩蔽上下文中不太相关的`token`。`NLPO`通过`top-p`采样实现这一点，该方法将`token`限制在其累积概率大于概率参数{% mathjax %}p{% endmathjax %}的最小可能集合中。
 具体而言，`NLPO`维护一个**掩蔽策略**{% mathjax %}\pi_{\psi}{% endmathjax %}：**掩蔽策略**是当前策略{% mathjax %}\pi_{\theta}{% endmathjax %}的副本，但仅每{% mathjax %}\tua{% endmathjax %}步更新一次。通过从词汇中选择`top-p`标记来创建一个参数化的**无效掩蔽**，然后对剩余标记应用**无效掩蔽**——即在训练期间从{% mathjax %}\pi_{\theta}{% endmathjax %}抽样动作时，将它们的概率设置为`0`；这种周期性更新的策略{% mathjax %}\pi_{\psi}{% endmathjax %}受到离线`Q-Learning`算法的启发，为策略{% mathjax %}\pi_{\theta}{% endmathjax %}提供了一个额外约束，以平衡包含更多任务相关信息的好处与源自{% mathjax %}\pi_{\theta}{% endmathjax %}的`KL`**惩罚**之间的关系，以及奖励操纵的风险。`NLPO`算法的伪代码实现如下：
+<embed src="algorithm.pdf" type="application/pdf" width="100%" height="200">
+
