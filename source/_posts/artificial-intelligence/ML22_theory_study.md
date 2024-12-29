@@ -56,3 +56,27 @@ mathjax:
 `RL4LMs`是一个开源库，提供了用于**微调**和**评估**基于**语言模型**(`LM`)的**强化学习**(`RL`)算法的构建模块。该库是基于`HuggingFace`和`stable-baselines-3`构建。`RL4LMs`可以用于训练`HuggingFace`中的任何**解码器**或**编码器-解码器**`Transformer`模型，并支持来自`stable-baselines-3`的任何在线**强化学习算法**。此外，还提供了针对`LM`微调的在**线强化学习算法**的实现，例如`PPO、TRPO、A2C`和`NLPO`。该库是**模块化**的，用户可以插入自定义**环境**、**奖励函数**、**指标**和**算法**。在初始版本中，支持`6`种不同的`NLP`任务、`16`种评估**指标**和**奖励**，以及`4`种**强化学习算法**。
 
 每个环境都是一个**自然语言处理**(`NLP`)任务：我们有一个监督数据集{% mathjax %}D = \{(x_i,y_i)\}^N_{i=1}{% endmathjax %}，其中包含{% mathjax %}N{% endmathjax %}个示例，其中{% mathjax %}x\in X{% endmathjax %}是语言输入，{% mathjax %}y\in Y{% endmathjax %}是目标字符串。生成可以视为一个**马尔可夫决策过程**(`MDP`){% mathjax %}h(S,A,R,P,\gamma,T){% endmathjax %}，使用有限的词汇表{% mathjax %}V{% endmathjax %}。`MDP`中的每个回合从数据集中抽取一个数据点{% mathjax %}(x,y){% endmathjax %}开始，并在当前时间步{% mathjax %}t{% endmathjax %}超过时间范围{% mathjax %}T{% endmathjax %}或生成结束句子(`EOS`)标记时结束。输入{% mathjax %}x = \{x_0,\ldots,x_m\}{% endmathjax %}是一个特定任务的提示，作为初始状态{% mathjax %}s_0 = \{x_0,\ldots,x_m\}{% endmathjax %}，其中{% mathjax %}s_0\in S{% endmathjax %}，而{% mathjax %}S{% endmathjax %}是**状态空间**，且{% mathjax %}x_m\in V{% endmathjax %}。环境中的一个动作{% mathjax %}a_t \in A{% endmathjax %}由词汇表{% mathjax %}V{% endmathjax %}中的一个标记组成。转移函数{% mathjax %}P: S\times A\rightarrow \Delta(S){% endmathjax %}确定性地将动作{% mathjax %}a_t{% endmathjax %}附加到状态{% mathjax %}s_{t-1} = (x_0,\ldots,x_m,a_0,\ldots,a_{t-1}){% endmathjax %}的末尾。这一过程持续到时间范围结束，即{% mathjax %}t\leq T{% endmathjax %}，并且获得状态{% mathjax %}s_T = (x_0,\ldots,x_m,a_0,\ldots,a_T){% endmathjax %}。在每个回合结束时，会根据状态和目标字符串的组合{% mathjax %}(s_T,y){% endmathjax %}发出奖励{% mathjax %}R: S\times A \times Y\rightarrow R_1{% endmathjax %}，例如，像`PARENT`这样的**自动化指标**。`RL4LMs`提供了一个类似`OpenAI Gym`的`API`，用于模拟这种基于`LM`的`MDP`公式。这种抽象允许快速添加新任务，并与所有已实现的算法兼容。
+
+由于`RL4LMs`提供了一个通用接口，用于每个标记或每个序列生成奖励，因此可以快速将各种**强化学习算法**应用于多样化的文本指标作为奖励。提供了以下接口：
+- `n-gram`**重叠指标**，如`ROUGE`、`BLEU`、`SacreBLEU`、`METEOR`。
+- **基于模型的语义指标**，如`BertScore`和`BLEURT`，这些指标通常与人类判断具有更高的相关性。
+- **特定任务指标**，如`CIDER`、`SPICE`（用于图像描述/常识生成）、`PARENT`（用于数据到文本生成）和`SummaCZS`（用于摘要的真实性）。
+- **多样性/流畅性/自然性指标**，如困惑度、平均分段类型标记比率（`MSSTR`）、单词和双词的**香农熵**、不同`n-gram`的比例(`Distinct-1`、`Distinct-2`)，以及在整个生成文本中仅出现一次的`n-gram`数量。
+- **基于模型的人类偏好的特定任务指标**，在`Ouyang`等人的方法中收集的人类偏好数据上训练的**分类器**。
+
+`RL4LMs`支持通过在线`actor-critic`算法对**语言模型**进行**微调**和**从头训练**。这类算法允许训练一个参数化的**控制策略**，定义为{% mathjax %}\pi_{\theta}:S\rightarrow \Delta(A){% endmathjax %}，这是一个函数，在给定状态下选择一个动作，以最大化轨迹上的**长期折扣奖励**{% mathjax %}\mathbb{E}_{\pi}[\sum_{t=0}^T \gamma^t R(s_t,a_t)]{% endmathjax %}。基准实验专注于**微调**一个预训练的语言模型{% mathjax %}\pi_0{% endmathjax %}，并将其作为**智能体策略**的初始策略{% mathjax %}\pi_{\theta} = \pi_0{% endmathjax %}。类似地，用于估计价值函数的价值网络{% mathjax %}V_{\phi}{% endmathjax %}也从{% mathjax %}\pi_0{% endmathjax %}初始化，除了最后一层是随机初始化以输出一个标量值。与其他**深度强化学习**`actor-critic`**算法**一样，**价值函数**和`Q`**值函数**为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+V_t^{\pi} & = \mathbb{E}_{a_t\sim \pi}\bigg[\sum\limits_{\tau = t}^T \gamma R(s_{\tau},a_{\tau, y}) \bigg] \\
+Q_t^{\pi}(s_t,a_t) & = R(s_t,a_t,y) + \gamma \mathbb{E}_{s_{t+1}\sim P}[V_{t+1}^{\pi}(s_{t+1})]
+\end{align}
+{% endmathjax %}
+优势函数的定义为：
+{% mathjax '{"conversion":{"em":14}}' %}
+A_t^{\pi}(s,a) = Q_t^{\pi}(s,a) = Q_t^{\pi}(s,a) - V_t^{\pi}
+{% endmathjax %}
+为了提高训练的稳定性，优势使用广义优势估计（Generalized Advantage Estimation）进行近似。给定输入输出对{% mathjax %}(x,y){% endmathjax %}和**智能体**的生成预测，由于环境奖励是序列级且稀疏的，按照`Wu`的方法，使用逐标记的`KL`惩罚来正则化奖励函数，以防止模型过度偏离初始化的语言模型{% mathjax %}\pi_0{% endmathjax %}。正则化后的奖励函数为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\hat{R}(s_t,a_t,y) = R(s_t,a_t,y) - \beta \text{KL}(\pi_{\theta}(a_t|s_t)\|\pi_{0}(a_t|s_t))
+{% endmathjax %}
+其中{% mathjax %}\hat{R}{% endmathjax %}是**正则化**后的`KL`奖励，{% mathjax %}y{% endmathjax %}是真实预测，{% mathjax %}\text{KL}(\pi_{\theta}(a_t|s_t)\|\pi_{0}(a_t|s_t)) = (\log_{pi_0}(s_t|s_t) - \log_{pi_{\theta}}(a_t|s_t)){% endmathjax %}，`KL`系数{% mathjax %}\beta{% endmathjax %}是动态调整的。
