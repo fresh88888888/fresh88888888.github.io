@@ -124,7 +124,7 @@ V_{\pi,\mathcal{E}}^{\gamma} = r_{\pi} + \gamma P_{\pi}V_{\pi,\mathcal{E}}^{\gam
 {% mathjax '{"conversion":{"em":14}}' %}
 \bigg|\mathbb{E}_{\pi}\bigg[ \sum\limits_{t=0}^{T-1}R_{t+1}|\mathcal{E},S_0 = s\bigg] - T\cdot \lambda_{\pi,\mathcal{E}}(s)\bigg| \leq \tau
 {% endmathjax %}
-对于所有{% mathjax %}T\geq 0{% endmathjax %}且{% mathjax %}s\in \mathcal{S}{% endmathjax %}。当{% mathjax %}\pi^*{% endmathjax %}是环境{% mathjax %}\mathcal{E}{% endmathjax %}的**最优策略**时，{% mathjax %}\tau^_{*,\mathcal{E}}:= \tau^_{\pi^*,\mathcal{E}}{% endmathjax %}等价于`Bartlett`和`Tewari(2009)`中的**跨度**(`span`)概念。定义{% mathjax %}\Omega_{*}{% endmathjax %}为所有**弱通信**`MDP`{% mathjax %}\mathcal{E}{% endmathjax %}的集合，并对**先验分布**{% mathjax %}\mathbb{P}(\mathcal{E}\in \cdot){% endmathjax %}做出以下假设。该假设表明，我们关注的是具有**有界奖励平均时间**的**弱通信**`MDP`。此定义强调了在评估策略性能时，**奖励平均时间**的关键作用。**奖励平均时间**反映了在给定环境和策略下，**智能体**需要多长时间才能稳定地估计其**长期平均奖励**，从而影响其学习和决策过程。通过引入这一概念，我够更好地理解和分析在不同环境下**智能体**的表现及其**遗憾界限**。
+对于所有{% mathjax %}T\geq 0{% endmathjax %}且{% mathjax %}s\in \mathcal{S}{% endmathjax %}。当{% mathjax %}\pi^*{% endmathjax %}是环境{% mathjax %}\mathcal{E}{% endmathjax %}的**最优策略**时，{% mathjax %}\tau_{*,\mathcal{E}}:= \tau_{\pi^*,\mathcal{E}}{% endmathjax %}等价于`Bartlett`和`Tewari(2009)`中的**跨度**(`span`)概念。定义{% mathjax %}\Omega_{*}{% endmathjax %}为所有**弱通信**`MDP`{% mathjax %}\mathcal{E}{% endmathjax %}的集合，并对**先验分布**{% mathjax %}\mathbb{P}(\mathcal{E}\in \cdot){% endmathjax %}做出以下假设。该假设表明，我们关注的是具有**有界奖励平均时间**的**弱通信**`MDP`。此定义强调了在评估策略性能时，**奖励平均时间**的关键作用。**奖励平均时间**反映了在给定环境和策略下，**智能体**需要多长时间才能稳定地估计其**长期平均奖励**，从而影响其学习和决策过程。通过引入这一概念，我够更好地理解和分析在不同环境下**智能体**的表现及其**遗憾界限**。
 
 #### 总结
 
