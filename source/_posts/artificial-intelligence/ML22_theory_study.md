@@ -124,7 +124,31 @@ V_{\pi,\mathcal{E}}^{\gamma} = r_{\pi} + \gamma P_{\pi}V_{\pi,\mathcal{E}}^{\gam
 {% mathjax '{"conversion":{"em":14}}' %}
 \bigg|\mathbb{E}_{\pi}\bigg[ \sum\limits_{t=0}^{T-1}R_{t+1}|\mathcal{E},S_0 = s\bigg] - T\cdot \lambda_{\pi,\mathcal{E}}(s)\bigg| \leq \tau
 {% endmathjax %}
-对于所有{% mathjax %}T\geq 0{% endmathjax %}且{% mathjax %}s\in \mathcal{S}{% endmathjax %}。当{% mathjax %}\pi^*{% endmathjax %}是环境{% mathjax %}\mathcal{E}{% endmathjax %}的**最优策略**时，{% mathjax %}\tau_{*,\mathcal{E}}:= \tau_{\pi^*,\mathcal{E}}{% endmathjax %}等价于`Bartlett`和`Tewari(2009)`中的**跨度**(`span`)概念。定义{% mathjax %}\Omega_{*}{% endmathjax %}为所有**弱通信**`MDP`{% mathjax %}\mathcal{E}{% endmathjax %}的集合，并对**先验分布**{% mathjax %}\mathbb{P}(\mathcal{E}\in \cdot){% endmathjax %}做出以下假设。该假设表明，我们关注的是具有**有界奖励平均时间**的**弱通信**`MDP`。此定义强调了在评估策略性能时，**奖励平均时间**的关键作用。**奖励平均时间**反映了在给定环境和策略下，**智能体**需要多长时间才能稳定地估计其**长期平均奖励**，从而影响其学习和决策过程。通过引入这一概念，我够更好地理解和分析在不同环境下**智能体**的表现及其**遗憾界限**。
+对于所有{% mathjax %}T\geq 0{% endmathjax %}且{% mathjax %}s\in \mathcal{S}{% endmathjax %}。当{% mathjax %}\pi^*{% endmathjax %}是环境{% mathjax %}\mathcal{E}{% endmathjax %}的**最优策略**时，{% mathjax %}\tau_{*,\mathcal{E}}:= \tau_{\pi^*,\mathcal{E}}{% endmathjax %}等价于`Bartlett`和`Tewari(2009)`中的**跨度**(`span`)概念。定义{% mathjax %}\Omega_{*}{% endmathjax %}为所有**弱通信**`MDP`{% mathjax %}\mathcal{E}{% endmathjax %}的集合，并对**先验分布**{% mathjax %}\mathbb{P}(\mathcal{E}\in \cdot){% endmathjax %}做出以下假设。该假设表明，我们关注的是**有界奖励平均时间**的**弱通信**`MDP`。此定义强调了在评估策略性能时，**奖励平均时间**的关键作用。**奖励平均时间**反映了在给定环境和策略下，**智能体**需要多长时间才能稳定地估计其**长期平均奖励**，从而影响其学习和决策过程。通过引入这一概念，我够更好地理解和分析在不同环境下**智能体**的表现及其**遗憾界限**。存在{% mathjax %}\tau < \infty{% endmathjax %}，使得**环境**的**先验分布**{% mathjax %}\mathbb{P}(\mathcal{E}\in \cdot){% endmathjax %}满足：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathbb{P}(\mathcal{E}\in \Omega_*,\tau_{*,\mathcal{E}\leq \tau}) = 1
+{% endmathjax %}
+对于所有{% mathjax %}\pi,s\in \mathcal{S}{% endmathjax %}和{% mathjax %}\gamma\in [0,1){% endmathjax %}。
+{% mathjax '{"conversion":{"em":14}}' %}
+\bigg|V^{\gamma}_{\pi,\mathcal{E}}(s) - \frac{\lambda_{\pi,\mathcal{E}(s)}}{1 - \gamma} \bigg| \leq \tau_{\pi,\mathcal{E}(s)}
+{% endmathjax %}
+我们再次注意到，对于**弱通信**的环境{% mathjax %}\mathcal{E}\in \Omega_*{% endmathjax %}，**最优平均奖励**是与状态无关的。
+{% mathjax '{"conversion":{"em":14}}' %}
+\bigg|V_{*,\mathcal{E}^{\gamma}(s)} - V_{*,\mathcal{E}^{\gamma}(s')} \bigg| \leq 2\tau_{*,\mathcal{E}} \leq 2\tau
+{% endmathjax %}
+对所有状态{% mathjax %}s{% endmathjax %}，{% mathjax %}s'\in \mathcal{S}{% endmathjax %}。
+
+**折扣遗憾**：为了分析算法在{% mathjax %}T{% endmathjax %}个时间步上的表现，设定{% mathjax %}K = \text{arg }\max\{k:t_k\leq T\}{% endmathjax %}为在时间{% mathjax %}T{% endmathjax %}之前的伪回合数量。在后续分析中，采用约定{% mathjax %}t_{K+1} = T + 1{% endmathjax %}。为了获得一般{% mathjax %}T{% endmathjax %}的界限，可以始终填充其余的时间步以形成完整的**伪回合**，并且渐近速率保持不变。此外，很容易看出，对于所有{% mathjax %}\gamma \in [0,1),\mathbb{E}[K]\leq (1-\gamma)T + 1{% endmathjax %}。给定折扣因子{% mathjax %}\gamma \in [0,1){% endmathjax %}到时间{% mathjax %}T{% endmathjax %}的{% mathjax %}\gamma{% endmathjax %}**折扣遗憾**为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\text{Regret}_{\gamma}(K,\pi) := \sum\limits_{k=1}^K \Delta_k
+{% endmathjax %}
+定义**伪回合**{% mathjax %}k{% endmathjax %}的**遗憾**为{% mathjax %}\Delta_k = V_{*,\mathcal{E}^{\gamma}(s_{k,1})} - V_{\pi_k,\mathcal{E}^{\gamma}(s_{k,1})}{% endmathjax %}，其中{% mathjax %}V_{*,\mathcal{E}^{\gamma}} = V_{\pi_*,\mathcal{E}^{\gamma}} = V_{\pi^{\mathcal{E}},\mathcal{E}^{\gamma}}{% endmathjax %}，且{% mathjax %}\pi_k\sim \mu_k(\mathcal{H}_{t_k}),A_t\sim \pi_k(\cdot|S_t),S_{t+1}\sim p(cdot|S_t,A_t){% endmathjax %}，以及{% mathjax %}R_t= r(S_t,A_t,S_{t+1}){% endmathjax %}对于{% mathjax %}t\in E_k{% endmathjax %}。
+
+**经验估计**：定义算法使用的**经验转移概率**。令{% mathjax %}N_t(s,a) = \sum_{\tau = 1}^t\;\mathbb{L}\{(S_{\tau},A_{\tau}) = (s,a)\}{% endmathjax %}为在时间步{% mathjax %}t{% endmathjax %}之前，在状态{% mathjax %}s{% endmathjax %}中采样动作{% mathjax %}a{% endmathjax %}的次数。对于每一对{% mathjax %}(s,a){% endmathjax %}，如果{% mathjax %}N_{t_k}(s,a) > 0{% endmathjax %}，则**伪回合**{% mathjax %}k{% endmathjax %}之前的**经验转移概率**为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\hat{p}_k(s'|s,a) = \sum\limits_{t=1}^{k-1}\; \sum\limits_{t\in E_k} \frac{\mathbb{L}\{(S_{t},A_{t},S_{t+1}) = (s,a,s')\}}{N_{t_k}(s,a)}
+{% endmathjax %}
+对于所有{% mathjax %}s'\in \mathcal{S}{% endmathjax %}。如果在伪回合{% mathjax %}k{% endmathjax %}之前，状态{% mathjax %}s{% endmathjax %}中的动作{% mathjax %}a{% endmathjax %}从未被采样过，令{% mathjax %}\hat{p}_k(s'|s,a) = 1{% endmathjax %}对于随机的{% mathjax %}s'\in \mathcal{S}{% endmathjax %}，并且{% mathjax %}\hat{p}_k(s''|s,a) = 0{% endmathjax %}对于{% mathjax %}s''\in \mathcal{S}\setminus \{s'\}{% endmathjax %}。相应的矩阵表示{% mathjax %}\hat{P}^k{% endmathjax %}也按类似方式定义。
 
 #### 总结
 
