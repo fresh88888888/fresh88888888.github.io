@@ -83,7 +83,7 @@ A_t^{\pi}(s,a) = Q_t^{\pi}(s,a) = Q_t^{\pi}(s,a) - V_t^{\pi}
 
 语言生成的**动作空间**比大多数**离散动作空间**的**强化学习**(`RL`)**算法**设计的要大几个数量级，例如，`GPT-2`和`GPT-3`的词汇大小分别为`50K`和`32K`。**动作空间**的大小是使用现有**强化学习方法**训练**语言模型**时不稳定的核心原因。为了解决这个问题，需要引入了`NLPO`（**自然语言策略优化**），该方法受到**动作消除/无效动作掩蔽**工作的启发。`NLPO`是`PPO`的一个**参数化掩蔽**扩展，学习在训练过程掩蔽上下文中不太相关的`token`。`NLPO`通过`top-p`采样实现这一点，该方法将`token`限制在其累积概率大于概率参数{% mathjax %}p{% endmathjax %}的最小可能集合中。
 具体而言，`NLPO`维护一个**掩蔽策略**{% mathjax %}\pi_{\psi}{% endmathjax %}：**掩蔽策略**是当前策略{% mathjax %}\pi_{\theta}{% endmathjax %}的副本，但仅每{% mathjax %}\tau{% endmathjax %}步更新一次。通过从词汇中选择`top-p`标记来创建一个参数化的**无效掩蔽**，然后对剩余标记应用**无效掩蔽**——即在训练期间从{% mathjax %}\pi_{\theta}{% endmathjax %}抽样动作时，将它们的概率设置为`0`；这种周期性更新的策略{% mathjax %}\pi_{\psi}{% endmathjax %}受到离线`Q-Learning`算法的启发，为策略{% mathjax %}\pi_{\theta}{% endmathjax %}提供了一个额外约束，以平衡包含更多任务相关信息的好处与源自{% mathjax %}\pi_{\theta}{% endmathjax %}的`KL`**惩罚**之间的关系，以及奖励操纵的风险。`NLPO`算法的伪代码实现如下：
-<embed src="algorithm_1.pdf" type="application/pdf" width="100%" height="200">
+<embed src="algorithm_2.pdf" type="application/pdf" width="100%" height="200">
 
 #### PSRL
 
@@ -152,7 +152,7 @@ V_{\pi,\mathcal{E}}^{\gamma} = r_{\pi} + \gamma P_{\pi}V_{\pi,\mathcal{E}}^{\gam
 
 **持续后验采样强化学习**(`Continuing Posterior Sampling for Reinforcement Learning, CPSRL`)**算法**，该算法将**后验采样强化学习**(`PSRL`)扩展到具有{% mathjax %}\gamma{% endmathjax %}折扣规划的无限时间范围设置。该算法从环境的**先验分布**开始，其中包含**动作**{% mathjax %}\mathcal{A}{% endmathjax %}和状态{% mathjax %}\mathcal{S}{% endmathjax %}。此外，算法设置一个指示器{% mathjax %} X_1 = 0{% endmathjax %}并假设一个**折扣因子**{% mathjax %}\gamma{% endmathjax %}。在每个时间步{% mathjax %}t{% endmathjax %}开始，如果指示器{% mathjax %}X_t = 0{% endmathjax %}，**持续后验采样强化学习**(`CPSRL`)从基于当时可用历史{% mathjax %}\mathcal{H}_t{% endmathjax %}的**后验分布**中抽样环境{% mathjax %}\mathcal{E}_t = (\mathcal{A},\mathcal{S},p_t){% endmathjax %}，并将 
 {% mathjax %}t{% endmathjax %}标记为**新伪回合**的开始。然后，它计算并遵循策略{% mathjax %}\pi_t = \pi^{\mathcal{E}_t}{% endmathjax %}在时间{% mathjax %}t{% endmathjax %}的执行。否则，如果{% mathjax %}X_t = 1{% endmathjax %}，它在时间{% mathjax %}t{% endmathjax %}继续使用策略{% mathjax %}\pi_t = \pi_{t-1}{% endmathjax %}并将时间步{% mathjax %}t{% endmathjax %}添加到当前**伪回合**中。接着，{% mathjax %}X_{t+1}{% endmathjax %}从参数为{% mathjax %}\gamma{% endmathjax %}的**伯努利分布**中抽样，以便在下一个时间步使用。
-<embed src="algorithm_2.pdf" type="application/pdf" width="100%" height="200">
+<embed src="algorithm_1.pdf" type="application/pdf" width="100%" height="200">
 
 与传统的`PSRL`相比，**持续后验采样强化学习**(`CPSRL`)仅增加了一个独立的伯**努利随机数生成器**来决定何时重新采样。尽管**持续后验采样强化学习**(`CPSRL`)并不是专门设计用于实际应用，但这种重新采样机制带来了可扩展性和通用性。例如，当环境具有极大的状态或动作空间时，例如`Atari`游戏(`Mnih et al., 2015`)，依赖于**状态-动作**访问统计的先前重新采样方法需要一个庞大的**查找表**，而**持续后验采样强化学习**(`CPSRL`)中的重新采样方法仍然可以应用，并且计算开销很小。将**后验采样强化学习**(`PSRL`)扩展到环境没有重置计划的情境下，**智能体**必须在无限时间范围内进行规划。理论上证明了**持续后验采样**(`CPSRL`)具有接近理论最优性的**遗憾上界**。值得注意，**持续后验采样强化学习**(`CPSRL`)仅依赖于一个**伯努利随机数生成器**来重新采样环境，而不是以往工作中复杂的**回合停止**方案。这种设计原则可以很容易地应用于具有大状态空间的一般环境。在表格和连续的`RiverSwim`环境中的模拟展示了该方法的有效性。此外，**持续后验采样强化学习**(`CPSRL`)还突出了**折扣因子**在**智能体**设计中的作用，因为**折扣因子**不再被视为学习目标的一部分，而主要作为**智能体**动态调整其规划时间范围的工具。因此，这项工作可能为理解**折扣因子**提供了重要的一步，而**折扣因子**在**强化学习**应用中已经广泛流行。
 
