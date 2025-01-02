@@ -28,3 +28,22 @@ mathjax:
 {% endmathjax %}
 具体而言，给定一个数据集{% mathjax %}\mathcal{D} = \{(x_i,y_i^*)\}_{i=1}^N{% endmathjax %}，其中包含问题 {% mathjax %}x_i{% endmathjax %}和对应的`oracle`响应{% mathjax %}y_i{% endmathjax %}，目标是获得一个`LLM`{% mathjax %}\pi_{\theta}(\cdot|[x,\hat{y}_{1:t},p_{1:t}]){% endmathjax %}，该模型在给定问题{% mathjax %}x{% endmathjax %}、之前模型对该问题的尝试{% mathjax %}\hat{y}_{1:t}{% endmathjax %}，以及**辅助指令**{% mathjax %}p_{1:t}{% endmathjax %}（例如，查找错误并改进响应的指令；或来自环境的额外编译器反馈）时，尽可能正确地解决给定问题。为此，将这一**目标编码**为优化的以下学习目标：与标准的**监督微调**不同，后者训练模型{% mathjax %}\pi{% endmathjax %}在给定{% mathjax %}x{% endmathjax %}的情况下产生单一响应{% mathjax %}\hat{y}{% endmathjax %}，训练{% mathjax %}\pi{% endmathjax %}对其自身先前的响应历史{% mathjax %}\hat{y}_{1:i-1}{% endmathjax %}作出反应。通过将**单回合问题**转换为**多回合马尔可夫决策过程**(`MDP`)。需要注意，基于提示的方法(`Self-Refine`)仍然可以被视为训练{% mathjax %}\pi{% endmathjax %}优化{% mathjax %}\pi(y^*|x){% endmathjax %}，但仅在允许调节提示{% mathjax %}\pi{% endmathjax %}来优化以上公式，由于参数{% mathjax %}\theta{% endmathjax %}不变，这样做并不能有效地完全优化该目标。
 
+**递归内省**(`RISE`)方法，首先将问题转换为**多回合马尔可夫决策过程**，然后收集数据，最后在这个**多回合马尔可夫决策过程**中运行**离线奖励加权监督学习**。
+{% asset_img ml_2.png %}
+
+将**单回合问题**转换为**多回合马尔可夫决策过程**，**状态**由**提示**、**先验的历史**和来自环境的**可选反馈**组成。**动作**是基于迄今为止多轮交互状态生成的`LLM`响应。**数据收集**：通过将当前模型展开{% mathjax %}k-1{% endmathjax %}次，然后生成改进版本的响应来收集数据，该响应可以通过以下方式获得：(1)**自我蒸馏**：从当前模型中采样多个响应，并使用最佳的响应；(2)**蒸馏**：通过查询更强大的模型获得`oracle`响应。
+
+**思维链**(`Chain-of-Thought, CoT`)是一种提升**大语言模型**(`LLM`)在复杂**推理任务**上的技术。它的核心理念是**模拟人类的推理过程**，通过逐步推导出一系列中间步骤或子目标，从而最终得出正确答案。其特点：
+- **逐步推理**：`CoT`技术要求模型在生成最终答案之前，先产生一系列中间推理步骤。这些步骤构成了一个“**思维链**”，帮助模型更清晰地理解问题并找到解决方案。
+- **可解释性**：由于`CoT`提供了推理过程的可见性，用户可以更容易理解模型的决策过程，从而提高模型的可解释性。
+- **逻辑推理能力**：`CoT`能够帮助模型进行复杂的逻辑推理，特别是在需要综合多个事实或信息片段的问题上。
+- **上下文利用**：在`CoT`中，模型可以利用上下文信息，通过逐步推理来解决问题，而不是仅仅依赖于直接的答案。
+
+构建**递归内省**(`RISE`)方法的第一步是将**单回合数据集**的提示和`oracle`**响应**构建为**多回合马尔可夫决策过程**。给定一个数据集{% mathjax %}\mathcal{D} = \{(x_i,y_i)\}{% endmathjax %}，其中包含提示{% mathjax %}x_i{% endmathjax %}和相应的`oracle`响应{% mathjax %}y_i^*{% endmathjax %}（例如，**数学问题**及其**自然语言响应**），将从{% mathjax %}\mathcal{D}{% endmathjax %}构建一个诱导的`MDP`{% mathjax %}\mathcal{M}{% endmathjax %}，然后在这个`MDP`中学习**策略**。该`MDP`中的初始状态是一个提示{% mathjax %}x_i \in \mathcal{D}{% endmathjax %}。将基础模型的输出响应表示为动作{% mathjax %}a{% endmathjax %}。给定状态{% mathjax %}s{% endmathjax %}，下一个状态可以通过将表示状态{% mathjax %}s{% endmathjax %}的标记与模型提出的动作{% mathjax %}a{% endmathjax %}以及一个额外的固定提示{% mathjax %}f{% endmathjax %}连接起来获得。**奖励函数**是一个**稀疏**的**二元指标**，用于指示在给定状态{% mathjax %}s{% endmathjax %}下答案的正确性，定义为：{% mathjax %}s,r([x_i,\ldots],a) = 1{% endmathjax %}当且仅当{% mathjax %}a = y_i^*{% endmathjax %}，并由**答案检查函数**获得。这种从数据集{% mathjax %}\mathcal{D}{% endmathjax %}到`MDP`{% mathjax %}\mathcal{M}{% endmathjax %}的构造如下所示：
+{% mathjax '{"conversion":{"em":14}}' %}
+\begin{align}
+\mathcal{D} & = \{(x_i,y_i^*)\}\;\rightarrow \;\mathcal{M}\;:\;p(s_0) = \text{Unif}(x_1,x_2,\ldots,x_N) \\
+P(s'|s,a) & = \delta(s' = \text{concat}[s,a,f]) \\
+r(s,a) & = 1\;(a = y^*_i\;\text{if }x_i\in s)
+\end{align}
+{% endmathjax %}
