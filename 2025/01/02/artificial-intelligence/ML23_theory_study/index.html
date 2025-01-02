@@ -26,12 +26,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fresh88888888.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/local-search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true}}</script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-next/8.17.1/config.min.js"></script>
 
-    <meta name="description" content="递归内省(Recursive Introspection)递归内省(Recursive Introspection)是一种新方法，旨在教导语言模型智能体（如大语言模型，LLMs）如何自我改进。该方法的核心在于使模型能够对自身行为进行内省、推理并纠正错误。其主要特点：自我改进能力，递归内省的目标是使语言模型能够在多轮交互中逐步改善其响应。这种方法强调通过反复的反馈和调整，模型能够识别并纠正先前的错误">
+    <meta name="description" content="递归内省递归内省(Recursive Introspection)是一种新方法，旨在教导语言模型智能体（如大语言模型，LLMs）如何自我改进。该方法的核心在于使模型能够对自身行为进行内省、推理并纠正错误。其主要特点：自我改进能力，递归内省的目标是使语言模型能够在多轮交互中逐步改善其响应。这种方法强调通过反复的反馈和调整，模型能够识别并纠正先前的错误；RISE方法，该方法被称为RISE(Recurs">
 <meta property="og:type" content="article">
 <meta property="og:title" content="机器学习(ML)(二十三) — 强化学习探析">
 <meta property="og:url" content="https://fresh88888888.github.io/2025/01/02/artificial-intelligence/ML23_theory_study/index.html">
 <meta property="og:site_name" content="UMBRELLA">
-<meta property="og:description" content="递归内省(Recursive Introspection)递归内省(Recursive Introspection)是一种新方法，旨在教导语言模型智能体（如大语言模型，LLMs）如何自我改进。该方法的核心在于使模型能够对自身行为进行内省、推理并纠正错误。其主要特点：自我改进能力，递归内省的目标是使语言模型能够在多轮交互中逐步改善其响应。这种方法强调通过反复的反馈和调整，模型能够识别并纠正先前的错误">
+<meta property="og:description" content="递归内省递归内省(Recursive Introspection)是一种新方法，旨在教导语言模型智能体（如大语言模型，LLMs）如何自我改进。该方法的核心在于使模型能够对自身行为进行内省、推理并纠正错误。其主要特点：自我改进能力，递归内省的目标是使语言模型能够在多轮交互中逐步改善其响应。这种方法强调通过反复的反馈和调整，模型能够识别并纠正先前的错误；RISE方法，该方法被称为RISE(Recurs">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-01-02T08:00:11.000Z">
 <meta property="article:modified_time" content="2025-01-02T08:00:11.000Z">
@@ -151,7 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E5%86%85%E7%9C%81-Recursive-Introspection"><span class="nav-number">1.</span> <span class="nav-text">递归内省(Recursive Introspection)</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E5%86%85%E7%9C%81"><span class="nav-number">1.</span> <span class="nav-text">递归内省</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -299,14 +299,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>618</span>
+      <span>466</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
@@ -316,7 +316,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h4 id="递归内省-Recursive-Introspection"><a href="#递归内省-Recursive-Introspection" class="headerlink" title="递归内省(Recursive Introspection)"></a>递归内省(Recursive Introspection)</h4><p><strong>递归内省</strong>(<code>Recursive Introspection</code>)是一种新方法，旨在教导<strong>语言模型智能体</strong>（如<strong>大语言模型</strong>，<code>LLMs</code>）如何自我改进。该方法的核心在于使模型能够对自身行为进行<strong>内省</strong>、<strong>推理</strong>并<strong>纠正错误</strong>。其主要特点：<strong>自我改进能力</strong>，<strong>递归内省</strong>的目标是使<strong>语言模型</strong>能够在多轮交互中逐步改善其响应。这种方法强调通过反复的<strong>反馈</strong>和<strong>调整</strong>，模型能够识别并纠正先前的错误；<code>RISE</code><strong>方法</strong>，该方法被称为<code>RISE</code>(<code>Recursive IntroSpEction</code>)，是一种<strong>微调技术</strong>，允许模型在面对复杂问题时，通过观察之前的失败尝试和额外的环境反馈来调整其<strong>策略</strong>；<strong>多轮数据收集与训练</strong>，<code>RISE</code>借鉴了<strong>在线模仿学习</strong>和<strong>强化学习</strong>的原则，提出了多轮数据收集和训练策略，以增强<code>LLM</code>在后续迭代中<strong>递归检测</strong>和<strong>纠正错误</strong>的能力。</p>
+    <div class="post-body" itemprop="articleBody"><h4 id="递归内省"><a href="#递归内省" class="headerlink" title="递归内省"></a>递归内省</h4><p><strong>递归内省</strong>(<code>Recursive Introspection</code>)是一种新方法，旨在教导<strong>语言模型智能体</strong>（如<strong>大语言模型</strong>，<code>LLMs</code>）如何自我改进。该方法的核心在于使模型能够对自身行为进行<strong>内省</strong>、<strong>推理</strong>并<strong>纠正错误</strong>。其主要特点：<strong>自我改进能力</strong>，<strong>递归内省</strong>的目标是使<strong>语言模型</strong>能够在多轮交互中逐步改善其响应。这种方法强调通过反复的<strong>反馈</strong>和<strong>调整</strong>，模型能够识别并纠正先前的错误；<code>RISE</code><strong>方法</strong>，该方法被称为<code>RISE</code>(<code>Recursive IntroSpEction</code>)，是一种<strong>微调技术</strong>，允许模型在面对复杂问题时，通过观察之前的失败尝试和额外的环境反馈来调整其<strong>策略</strong>；<strong>多轮数据收集与训练</strong>，<code>RISE</code>借鉴了<strong>在线模仿学习</strong>和<strong>强化学习</strong>的原则，提出了多轮数据收集和训练策略，以增强<code>LLM</code>在后续迭代中<strong>递归检测</strong>和<strong>纠正错误</strong>的能力。</p>
 <span id="more"></span>
 
 <p><code>RISE</code>将单轮提示的<strong>微调</strong>视为解决多轮<strong>马尔可夫决策过程</strong>(<code>MDP</code>)，其中初始状态为提示。受<strong>在线模仿学习</strong>和<strong>强化学习</strong>的启发，提出了多轮数据收集和训练策略，以使<code>LLM</code>具备在后续迭代中<strong>递归检测</strong>和纠正其先前错误的能力。实验表明，<code>RISE</code>使<code>Llama2、Llama3</code>和<code>Mistral</code>模型能够通过在更多回合在数学推理任务上自我改进，在相同推理时间计算下超越了几种单轮策略。还发现<code>RISE</code>具有良好的扩展性，通常在更强大的模型上获得更大的收益。<code>RISE</code>对响应做出了改进，使其能够在不干扰单轮能力的情况下找到挑战性提示的正确解决方案。</p>
@@ -392,14 +392,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">3m</span>
+    <span title="站点总字数">1.3m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">42:06</span>
+    <span title="站点阅读时长">74:20</span>
   </span>
 </div>
 <div class="busuanzi-count">
