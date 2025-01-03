@@ -14,7 +14,7 @@ mathjax:
 
 #### 递归内省
 
-**递归内省**(`Recursive Introspection`)是一种新方法，旨在教导**语言模型智能体**（如**大语言模型**，`LLMs`）如何自我改进。该方法的核心在于使模型能够对自身行为进行**内省**、**推理**并**纠正错误**。其主要特点：**自我改进能力**，**递归内省**的目标是使**语言模型**能够在多轮交互中逐步改善其响应。这种方法强调通过反复的**反馈**和**调整**，模型能够识别并纠正先前的错误；`RISE`**方法**，该方法被称为`RISE`(`Recursive IntroSpEction`)，是一种**微调技术**，允许模型在面对复杂问题时，通过观察之前的失败尝试和额外的环境反馈来调整其**策略**；**多轮数据收集与训练**，`RISE`借鉴了**在线模仿学习**和**强化学习**的原则，提出了多轮数据收集和训练策略，以增强`LLM`在后续迭代中**递归检测**和**纠正错误**的能力。
+**递归内省**(`Recursive Introspection`)是一种新方法，旨在教授**语言模型智能体**（如**大语言模型**，`LLMs`）如何自我改进。该方法的核心在于使模型能够对自身行为进行**内省**、**推理**并**纠正错误**。其主要特点：**自我改进能力**，**递归内省**的目标是使**语言模型**能够在多轮交互中逐步改善其响应。这种方法强调通过反复的**反馈**和**调整**，模型能够识别并纠正先前的错误；`RISE`**方法**，该方法被称为`RISE`(`Recursive IntroSpEction`)，是一种**微调技术**，允许模型在面对复杂问题时，通过观察之前的失败尝试和额外的环境反馈来调整其**策略**；**多轮数据收集与训练**，`RISE`借鉴了**在线模仿学习**和**强化学习**的原则，提出了多轮数据收集和训练策略，以增强`LLM`在后续迭代中**递归检测**和**纠正错误**的能力。
 <!-- more -->
 
 `RISE`将单轮提示的**微调**视为解决多轮**马尔可夫决策过程**(`MDP`)，其中初始状态为提示。受**在线模仿学习**和**强化学习**的启发，提出了多轮数据收集和训练策略，以使`LLM`具备在后续迭代中**递归检测**和纠正其先前错误的能力。实验表明，`RISE`使`Llama2、Llama3`和`Mistral`模型能够通过在更多回合在数学推理任务上自我改进，在相同推理时间计算下超越了几种单轮策略。还发现`RISE`具有良好的扩展性，通常在更强大的模型上获得更大的收益。`RISE`对响应做出了改进，使其能够在不干扰单轮能力的情况下找到挑战性提示的正确解决方案。
@@ -47,3 +47,17 @@ P(s'|s,a) & = \delta(s' = \text{concat}[s,a,f]) \\
 r(s,a) & = 1\;(a = y^*_i\;\text{if }x_i\in s)
 \end{align}
 {% endmathjax %}
+在`MDP`构建完成后，下一步是训练模型在**回放**过程中自我改进。可以采用一种**离线学习**的方法，具体描述如下：
+- **步骤一**：**自我改进**的数据收集，为了确保这个**多回合马尔可夫决策过程**(`MDP`)的回放数据对教授模型如何**自我改进**是有用的，它必须满足几个条件：(1)必须展示学习者可能犯的错误，并展示如何在下一次尝试中改进这些错误；(2)数据必须展示与给定问题和上下文中先前尝试相关的响应；(3)必须不包含在后续**回合**中退化的**回放**。在给定回合{% mathjax %}k{% endmathjax %}中，对于给定问题{% mathjax %}x_i{% endmathjax %}，展开当前模型{% mathjax %}\pi_{\theta_k}(\cdot|\cdot){% endmathjax %}尝试生成多个顺序，记作{% mathjax %}y^i_t\sim \pi_{\theta_k}(\cdot|s^i_t){% endmathjax %}。在有外部输入（例如，**编译器反馈**）的情况下，观察到一个可变长度的**自然语言**外部输入{% mathjax %}f^i_t{% endmathjax %}（例如，在数学问题中，要求模型**自我纠正**）。还观察到一个**标量奖励值**{% mathjax %}r(s^i_t,y^i_t){% endmathjax %}，简称为{% mathjax %}r^i_t{% endmathjax %}，将这个模型**回放**的数据集记作{% mathjax %}\mathcal{D}_{\text{on-policy}}:= \{(s^i_t,y^i_t,f^i_t)^T_{t=1}\}{% endmathjax %}。对于每个时间步，构建响应{% mathjax %}y^i_t{% endmathjax %}，记作{% mathjax %}\tilde{y}^i_t{% endmathjax %}。与这个改进响应相关的**奖励分数**为{% mathjax %}r(s^i_t,\tilde{y}^i_t){% endmathjax %}，或简称为{% mathjax %}\tilde{r}^i_t{% endmathjax %}。为了获得响应{% mathjax %}y^i_t{% endmathjax %}的改进版本，可以采用几种策略。最直接的方法是查找一个更强大的模型，根据提示{% mathjax %}x^i{% endmathjax %}、先前响应{% mathjax %}y^i_t{% endmathjax %}和外部反馈{% mathjax %}f^i_t{% endmathjax %}（可选）提供正确的响应。将其称为**蒸馏变体**，因为它使用强大的“**教师**”**模型**来指导**自我改进**（请注意，这与经典的**知识蒸馏**概念不同）。
+{% mathjax '{"conversion":{"em":14}}' %}
+\tilde{\mathcal{D}}_{\text{on-policy + distill}} := \bigg\{\{(s^i_t,\tilde{y}_t^i,f^i_t,\tilde{r}^i_t)\}_{t=1}^T \bigg\}_{i=1}^{|\mathcal{D}|}
+{% endmathjax %}
+第二种变体，旨在减轻对**教师模型**的依赖，通过从学习者自身多次采样来构建改进响应。将这种方法称为**自我蒸馏变体**。具体而言，对于数据集中每个状态{% mathjax %}s^i_t\in \mathcal{D}_{\text{on-policy}}{% endmathjax %}，从模型中采样{% mathjax %}N{% endmathjax %}个响应{% mathjax %}\tilde{y}^i_t[0],\tilde{y}^i_t[1],\ldots,\tilde{y}^i_t[N]\sim \pi_{\theta}(\cdot|s^i_t){% endmathjax %}，并使用这{% mathjax %}N{% endmathjax %}个候选响应中最好的一个（根据**奖励值**{% mathjax %}\tilde{r}^i_t[0],\tilde{r}^i_t[1],\ldots,\tilde{r}^i_t[N]{% endmathjax %}来衡量）来重新标记改进轨迹中下一步{% mathjax %}t+1{% endmathjax %}的模型响应。形式上，设{% mathjax %}\tilde{y}^i_t[m] = \text{arg }\max_{j\in[N]}r(s_i,\tilde{y}^i_t[j]){% endmathjax %}，那么在步骤{% mathjax %}t+1{% endmathjax %}中将数据集{% mathjax %}\mathcal{D}_{\text{on-policy}}{% endmathjax %}中的响应标记为**改进响应**及其相关的**奖励值**{% mathjax %}\tilde{r}^i_t[m]{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+\tilde{\mathcal{D}}_{\text{on-policy + self-distillation}} := \bigg\{\{(s^i_{t+1},\tilde{y}_t^i[m],f^i_{t+1},\tilde{r}^i_t[m])\}_{t=0}^{T-1} \bigg\}_{i=1}^{|\mathcal{D}|}
+{% endmathjax %}
+- **步骤二**：**策略改进**，通过上上面的数据构建方案，现在可以在这些数据集上**训练模型**。一般来说，可以使用任何**离线强化学习**(`RL`)方法在这些数据上进行训练，也可以使用**加权监督学习**的方法。执行**加权监督回归**，其中权重由数据集{% mathjax %}\tilde{\mathcal{D}}{% endmathjax %}中**奖励值**的**指数变换**给出。
+{% mathjax '{"conversion":{"em":14}}' %}
+\text{Reward-Weighted RL:  }\underset{\theta}{\max}\;\mathbb{E}_{x^i\sim \tilde{\mathcal{D}}}\bigg[ \sum\limits_{t=1}^T \log\pi_{\theat}(\tilde{y}^i_t|s^i_t)\cdot \exp(r^i_t/\tau)\bigg]
+{% endmathjax %}
+**温度参数**{% mathjax %}\tau{% endmathjax %}用于进一步扩展或缩小良好和不良动作之间的差异。在初步实验中，发现以上公式会导致偏向于提高高奖励响应的**对数似然**，优先更新那些奖励已经很高的简单问题。为了解决这个问题，对以上公式进行了轻微修改，使得指数化的奖励围绕在给定提示的所有尝试中平均的均值进行**中心化**，这类似于**优势加权回归**(`advantage-weighted regression, AWR`)。使用**优势**代替**奖励**有助于避免在简单问题上出现“**富者愈富**”的现象。
