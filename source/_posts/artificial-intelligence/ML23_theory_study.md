@@ -58,6 +58,8 @@ r(s,a) & = 1\;(a = y^*_i\;\text{if }x_i\in s)
 {% endmathjax %}
 - **步骤二**：**策略改进**，通过上上面的数据构建方案，现在可以在这些数据集上**训练模型**。一般来说，可以使用任何**离线强化学习**(`RL`)方法在这些数据上进行训练，也可以使用**加权监督学习**的方法。执行**加权监督回归**，其中权重由数据集{% mathjax %}\tilde{\mathcal{D}}{% endmathjax %}中**奖励值**的**指数变换**给出。
 {% mathjax '{"conversion":{"em":14}}' %}
-\text{Reward-Weighted RL:  }\underset{\theta}{\max}\;\mathbb{E}_{x^i\sim \tilde{\mathcal{D}}}\bigg[ \sum\limits_{t=1}^T \log\pi_{\theat}(\tilde{y}^i_t|s^i_t)\cdot \exp(r^i_t/\tau)\bigg]
+\text{Reward-Weighted RL:  }\underset{\theta}{\max}\;\mathbb{E}_{x^i\sim \tilde{\mathcal{D}}}\bigg[ \sum\limits_{t=1}^T \log\pi_{\theta}(\tilde{y}^i_t|s^i_t)\cdot \exp(r^i_t/\tau)\bigg]
 {% endmathjax %}
 **温度参数**{% mathjax %}\tau{% endmathjax %}用于进一步扩展或缩小良好和不良动作之间的差异。在初步实验中，发现以上公式会导致偏向于提高高奖励响应的**对数似然**，优先更新那些奖励已经很高的简单问题。为了解决这个问题，对以上公式进行了轻微修改，使得指数化的奖励围绕在给定提示的所有尝试中平均的均值进行**中心化**，这类似于**优势加权回归**(`advantage-weighted regression, AWR`)。使用**优势**代替**奖励**有助于避免在简单问题上出现“**富者愈富**”的现象。
+
+**优势加权回归**(`Advantage-Weighted Regression, AWR`)是一种**强化学习**中的**策略优化**方法，旨在通过利用**优势函数**来改进学习过程。它的核心思想是通过对**回报**进行**加权**，从而增强学习信号的质量，并有效利用历史数据，即使在非互动环境中也能发挥作用。
