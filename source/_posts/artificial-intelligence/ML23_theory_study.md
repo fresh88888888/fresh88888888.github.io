@@ -101,7 +101,7 @@ R(T) \leq B
 {% endmathjax %}
 将**后悔差距**降低到`0`（即实现**后悔等价**）意味着，即使**智能体**可以自由偏离，学习到的策略在群体中任意**智能体**的角度来看，至少与专家的策略同样优秀。但所有**智能体**在选择替代路线时的动机不会比在应用程序的历史版本下更大。较小的**价值差距**通常并不意味着较小的**后悔差距**。考虑在所有服从的情况下**学习者**策略与偏离的第{% mathjax %}i{% endmathjax %}个**智能体**之间的性能差异({% mathjax %}J_i(\pi_{\sigma}){% endmathjax %})和({% mathjax %}J_i(\pi_{\sigma},\phi_i){% endmathjax %})。我们可以将这个量分解为以下内容：
 {% mathjax '{"conversion":{"em":14}}' %}
-J_i(\pi_{\sigma},\phi_i) - J_i(\pi_{\sigma}) = \underbrace{(J_i(\pi_{\sigma},\phi_i) - J_i(\pi_{\sigma_E},\phi_i))}_{(\text{I: value gap under \phi_i})} + \underbrace{(J_i(\pi_{\sigma_E},\phi_i) - J_i(\pi_{\sigma_E}))}_{(\text{II: expert regret \phi_i})} + \underbrace{(J_i(\pi_{\sigma_E}) - J_i(\pi_{\sigma}))}_{(\text{III: SAIL value gap})}
+J_i(\pi_{\sigma},\phi_i) - J_i(\pi_{\sigma}) = \underbrace{(J_i(\pi_{\sigma},\phi_i) - J_i(\pi_{\sigma_E},\phi_i))}_{(\text{I: value gap under }\phi_i)} + \underbrace{(J_i(\pi_{\sigma_E},\phi_i) - J_i(\pi_{\sigma_E}))}_{(\text{II: expert regret }\phi_i)} + \underbrace{(J_i(\pi_{\sigma_E}) - J_i(\pi_{\sigma}))}_{(\text{III: SAIL value gap})}
 {% endmathjax %}
 其中{% mathjax %}\pi_{\sigma_E},\phi_i{% endmathjax %}表示在专家建议和偏差{% mathjax %}\phi_i{% endmathjax %}下的**智能体**联合行为。第三项是标准的**单智能体价值差距**（即在假设没有**智能体**偏离的情况下的性能差异）。第二项是专家在偏差{% mathjax %}\phi_i{% endmathjax %}下的遗憾（即无法控制的量）。**后悔差距**与**价值差距**目标之间的差异可以归结为第一项：{% mathjax %}J_i(\pi_{\sigma},\phi_i) - J_i(\pi_{\sigma_E},\phi_i){% endmathjax %}。请注意，由于偏差{% mathjax %}\phi_i{% endmathjax %}引起的状态分布变化，最小化第三项并不能保证第一项的结果。在**多智能体模仿学习**(`MAIL`)中，**后悔**是困难的，因为它需要知道**专家**在面对任意**智能体**偏差时会做什么。
 - **马尔可夫博弈**中**多智能体模仿学习**(`MAIL`)的**后悔差距**。与**单智能体模仿学习**中的标准目标——**价值差距**不同，**后悔差距**捕捉了群体中的**智能体**可能会偏离中介建议的事实。从**价值差距**到**后悔差距**的转变反映了**单智能体模仿学习**和**多智能体模仿学习**问题之间的根本区别。
