@@ -150,3 +150,4 @@ J_i(\pi_{\sigma},\phi_i) - J_i(\pi_{\sigma}) = \underbrace{(J_i(\pi_{\sigma},\ph
 {% endmathjax %}
 {% asset_img ml_5.png "遗憾等价意味着价值等价，但反之不成立" %}
 
+当学习者的策略在**价值/遗憾**等价时，则**价值/遗憾差距**为`0`。如上图所示，**多智能体模仿学习**(`MAIL`)中**价值**和**遗憾差距**之间的关系，用{% mathjax %}J_i(\pi_{\sigma},f){% endmathjax %}和{% mathjax %}\mathcal{R}_{\Phi}(\sigma,f){% endmathjax %}来表示策略{% mathjax %}\sigma{% endmathjax %}在**奖励函数**{% mathjax %}f{% endmathjax %}下的价值/遗憾。
