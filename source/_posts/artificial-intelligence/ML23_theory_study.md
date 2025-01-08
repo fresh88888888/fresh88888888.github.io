@@ -171,7 +171,7 @@ J_i(\pi_{\sigma},\phi_i) - J_i(\pi_{\sigma}) = \underbrace{(J_i(\pi_{\sigma},\ph
 
 然后，通过与定理三结合，可以得出**低价值差距**并不意味着学习者正在执行**相关均衡**。
 
-**推论**：存在一个**马尔可夫博弈**(`MG`)、一个专家策略{% mathjax %}\sigam_E{% endmathjax %}和一个学习者策略{% mathjax %}\sigam{% endmathjax %}，使得{% mathjax %}\sigma_E{% endmathjax %}诱导了一个{% mathjax %}\delta_1{% endmathjax %}-近似的**相关均衡**(`CE`)，并且{% mathjax %}\sigam{% endmathjax %}满足{% mathjax %}\max_{i\in [m]}(J_i(\pi_{\sigma_E}) - J_i(\pi_{\sigma})) = \dalta_2{% endmathjax %}，则{% mathjax %}\sigma{% endmathjax %}诱导一个{% mathjax %}\Omega(H){% endmathjax %}-近似的**相关均衡**(`CE`)。综合这些结果表明，如果希望在智能体中诱导出一个**相关均衡**(`CE`)，那么**遗憾差距**是一个更合适的目标。
+**推论**：存在一个**马尔可夫博弈**(`MG`)、一个专家策略{% mathjax %}\sigma_E{% endmathjax %}和一个学习者策略{% mathjax %}\sigma{% endmathjax %}，使得{% mathjax %}\sigma_E{% endmathjax %}诱导了一个{% mathjax %}\delta_1{% endmathjax %}-近似的**相关均衡**(`CE`)，并且{% mathjax %}\sigma{% endmathjax %}满足{% mathjax %}\max_{i\in [m]}(J_i(\pi_{\sigma_E}) - J_i(\pi_{\sigma})) = \delta_2{% endmathjax %}，则{% mathjax %}\sigma{% endmathjax %}诱导一个{% mathjax %}\Omega(H){% endmathjax %}-近似的**相关均衡**(`CE`)。综合这些结果表明，如果希望在智能体中诱导出一个**相关均衡**(`CE`)，那么**遗憾差距**是一个更合适的目标。
 
 尽管已经表明**价值差距**在某种意义上是一个“**较弱**”的目标，但在许多现实场景中，**智能体**可能是**非战略性**的。在这些场景中，**最小化价值差距**可以是一个合理的学习目标。**单智能体逆向强化学习**算法的**多智能体**推广可以有效地**最小化价值差距**——因此，在**多智能体**学习中，价值是“简单的”。**行为克隆**(`BC`)和**逆向强化学习**是两个旨在**最小化价值差距**的**单智能体模仿学习算法**。通过在**联合策略**上运行这些算法，我们可以将**行为克隆**(`BC`)和**逆强化学习** 应用于**多智能体**设置，称之为**联合行为克隆**(`J-BC`)和**联合逆向强化学习**(`J-IRL`)。这样做会导致与**单智能体**设置相同的**价值差距界限**。
 
