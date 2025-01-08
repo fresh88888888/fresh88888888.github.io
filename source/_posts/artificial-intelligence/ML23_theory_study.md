@@ -149,5 +149,20 @@ J_i(\pi_{\sigma},\phi_i) - J_i(\pi_{\sigma}) = \underbrace{(J_i(\pi_{\sigma},\ph
 \mathcal{R}_{\Phi}(\sigma) - \mathcal{R}_{\Phi}(\sigma_E) = \underset{i\in [m]}{\max}\;\underset{\phi_i\in \Phi_i}{\max}(J_i(\pi_{\sigma,\phi_i}) - J_i(\pi_{\sigma})) - \underset{k\in [m]}{\max}\;\underset{\phi_k\in \Phi_k}{\max}(J_k(\pi_{\sigma_E,\phi_k}) - J_k(\pi_{\sigma_E}))
 {% endmathjax %}
 {% asset_img ml_5.png "遗憾等价意味着价值等价，但反之不成立" %}
-
 当学习者的策略在**价值/遗憾**等价时，则**价值/遗憾差距**为`0`。如上图所示，**多智能体模仿学习**(`MAIL`)中**价值**和**遗憾差距**之间的关系，用{% mathjax %}J_i(\pi_{\sigma},f){% endmathjax %}和{% mathjax %}\mathcal{R}_{\Phi}(\sigma,f){% endmathjax %}来表示策略{% mathjax %}\sigma{% endmathjax %}在**奖励函数**{% mathjax %}f{% endmathjax %}下的价值/遗憾。
+
+如果**奖励函数类**和**偏差类**都是完整的，那么**遗憾等价性**等同于**价值等价性**。当**奖励函数类**是完整的时，则{% mathjax %}\mathcal{F} = \{\mathcal{S}\times \mathcal{A}\rightarrow [-1,1]\}{% endmathjax %}（即**所有状态-动作指标的凸组合**）；而当**偏差类**是完整的时，则对于每个智能体{% mathjax %}i{% endmathjax %}，有{% mathjax %}\Phi_i = \{\mathcal{S}\times \mathcal{A}\rightarrow \mathcal{A}_i\}{% endmathjax %}（即**所有可能的偏差**）。
+
+定理一：如果**奖励函数类**{% mathjax %}\mathcal{F}{% endmathjax %}和**偏差类**{% mathjax %}\Phi{% endmathjax %}是完整的，并且满足**遗憾等价性**（即{% mathjax %}\text{sup}_{d\in\mathcal{F}}(\mathcal{R}_{\Phi}(\sigma,f)-\mathcal{R}_{\Phi}(\sigma_E,f)) = 0{% endmathjax %}），那么**价值等价性**也得以满足：{% mathjax %}\text{sup}_{d\in\mathcal{F}}\max_{i\in [m]}(J_i(\pi_{\sigma_E},f) - J_i(\pi_{\sigma},f)) = 0{% endmathjax %}。
+
+定理二：存在一个**马尔可夫博弈**(`MG`)、一个专家策略{% mathjax %}\sigma_E{% endmathjax %}和一个训练过的策略{% mathjax %}\sigma{% endmathjax %}，使得**真实奖励函数**{% mathjax %}r{% endmathjax %}满足**遗憾等价性**，即{% mathjax %}\mathcal{R}_{\Phi}(\sigmar) - \mathcal{R}_{\Phi}(\sigma_E,r) = 0{% endmathjax %}，而**价值差距**为{% mathjax %}\max_{i\in [m]}(J_i(\pi_{\sigma_E},r) - J_i(\pi_{\sigma},r)) \neq 0{% endmathjax %}。
+
+综合这些结果，当**奖励函数**/**偏差类**足够表达时，**遗憾等价性**比**价值等价性**更强。**价值等价性**并不代表着**低遗憾差距**！在最坏的情况下，**价值等价性**无法提供任何有意义的**遗憾差距**保证。这揭示了`SAIL`与`MAIL`之间的一个关键区别。
+
+定理三：存在一个**马尔可夫博弈**(`MG`)、一个专家策略{% mathjax %}\sigma_E{% endmathjax %}和一个学习者策略{% mathjax %}\sigma{% endmathjax %}，使得即使策略{% mathjax %}\pi_{\sigma}{% endmathjax %}的**占用测度**与{% mathjax %}\pi_{\sigma_E}{% endmathjax %}完全匹配，即对所有状态和动作组合有{% mathjax %}\forall(s,\vec{a}),p^{\pi_{\sigma}}(s,\vec{a}) = p^{\pi_{\sigma_E}}(s,\vec{a}){% endmathjax %}（即在所有奖励下具有**价值等价性**），**遗憾差距**却满足{% mathjax %}\mathcal{R}_{\Phi}(\sigma) - \mathcal{R}_{\Phi}(\sigma_E) \geq \Omega(H){% endmathjax %}。
+如下图所示，**专家**和**学习者策略**仅访问下路径中的状态{% mathjax %}s_2,s_4,\ldots,s_{2H - 2}{% endmathjax %}。训练过的策略通过在访问的状态{% mathjax %}s_2,s_4,\ldots,s_{2H - 2}{% endmathjax %}中采取相同的动作，完美匹配了专家的**占用测度**。然而，专家演示缺乏对状态{% mathjax %}s_1{% endmathjax %}的覆盖，因为通过执行{% mathjax %}\pi_E{% endmathjax %}无法到达该状态。当**智能体**`1`偏离原始策略时，这一遗漏变得至关重要，使得状态{% mathjax %}s_1{% endmathjax %}在高概率下无法到达。因此，训练过的策略在状态{% mathjax %}s_1{% endmathjax %}的表现可能很差，而专家在**真实奖励函数**下却能表现出色。这一例子突显了**价值等价性**与**遗憾等价性**之间的关键区别：前者仅依赖于策略实际访问的状态，而后者则依赖于学习者在未访问状态下对**智能体**偏离所做出的**反事实推荐**。
+
+正如定理三所示，即使学习者能够从专家演示中获得关于均衡路径的**无限样本**，学习者仍可能对专家在未被访问（但可由偏离的**智能体**的**联合策略**到达）的状态下的行为一无所知。因此，从信息理论的角度来看，学习者无法在不知道专家在这些状态下会如何行动的情况下**最小化遗憾差距**。这展示了**最小化遗憾差距**的根本困难，因此，在`MAIL`中，**遗憾**是“困难”的。因此，需要一种新的`MAIL`算法范式来**最小化遗憾差距**。
+{% asset_img ml_6.png "一个捕捉“遗憾是困难的”原因的马尔可夫博弈示例" %}
+
+在这里，{% mathjax %}\sigma_E(a_1 a_1|s_0) = 1{% endmathjax %}。注意，当所有智能体都遵循{% mathjax %}\sigma_E{% endmathjax %}时，且状态{% mathjax %}s_1{% endmathjax %}是未被访问的，但在偏离策略{% mathjax %}\phi_1{% endmathjax %}下，其访问概率为`1`（{% mathjax %}\phi_1(s_0,a_1) = \phi_1(s_1,a_1) = a_2{% endmathjax %}）。这意味着，除非知道专家{% mathjax %}\sigma_E{% endmathjax %}在状态{% mathjax %}s_1{% endmathjax %}下会如何进行**反事实推荐**，否则无法**最小化遗憾差距**。
