@@ -153,16 +153,32 @@ J_i(\pi_{\sigma},\phi_i) - J_i(\pi_{\sigma}) = \underbrace{(J_i(\pi_{\sigma},\ph
 
 如果**奖励函数类**和**偏差类**都是完整的，那么**遗憾等价性**等同于**价值等价性**。当**奖励函数类**是完整的时，则{% mathjax %}\mathcal{F} = \{\mathcal{S}\times \mathcal{A}\rightarrow [-1,1]\}{% endmathjax %}（即**所有状态-动作指标的凸组合**）；而当**偏差类**是完整的时，则对于每个智能体{% mathjax %}i{% endmathjax %}，有{% mathjax %}\Phi_i = \{\mathcal{S}\times \mathcal{A}\rightarrow \mathcal{A}_i\}{% endmathjax %}（即**所有可能的偏差**）。
 
-定理一：如果**奖励函数类**{% mathjax %}\mathcal{F}{% endmathjax %}和**偏差类**{% mathjax %}\Phi{% endmathjax %}是完整的，并且满足**遗憾等价性**（即{% mathjax %}\text{sup}_{d\in\mathcal{F}}(\mathcal{R}_{\Phi}(\sigma,f)-\mathcal{R}_{\Phi}(\sigma_E,f)) = 0{% endmathjax %}），那么**价值等价性**也得以满足：{% mathjax %}\text{sup}_{d\in\mathcal{F}}\max_{i\in [m]}(J_i(\pi_{\sigma_E},f) - J_i(\pi_{\sigma},f)) = 0{% endmathjax %}。
+**定理一**：如果**奖励函数类**{% mathjax %}\mathcal{F}{% endmathjax %}和**偏差类**{% mathjax %}\Phi{% endmathjax %}是完整的，并且满足**遗憾等价性**（即{% mathjax %}\text{sup}_{d\in\mathcal{F}}(\mathcal{R}_{\Phi}(\sigma,f)-\mathcal{R}_{\Phi}(\sigma_E,f)) = 0{% endmathjax %}），那么**价值等价性**也得以满足：{% mathjax %}\text{sup}_{d\in\mathcal{F}}\max_{i\in [m]}(J_i(\pi_{\sigma_E},f) - J_i(\pi_{\sigma},f)) = 0{% endmathjax %}。
 
-定理二：存在一个**马尔可夫博弈**(`MG`)、一个专家策略{% mathjax %}\sigma_E{% endmathjax %}和一个训练过的策略{% mathjax %}\sigma{% endmathjax %}，使得**真实奖励函数**{% mathjax %}r{% endmathjax %}满足**遗憾等价性**，即{% mathjax %}\mathcal{R}_{\Phi}(\sigmar) - \mathcal{R}_{\Phi}(\sigma_E,r) = 0{% endmathjax %}，而**价值差距**为{% mathjax %}\max_{i\in [m]}(J_i(\pi_{\sigma_E},r) - J_i(\pi_{\sigma},r)) \neq 0{% endmathjax %}。
+**定理二**：存在一个**马尔可夫博弈**(`MG`)、一个专家策略{% mathjax %}\sigma_E{% endmathjax %}和一个训练过的策略{% mathjax %}\sigma{% endmathjax %}，使得**真实奖励函数**{% mathjax %}r{% endmathjax %}满足**遗憾等价性**，即{% mathjax %}\mathcal{R}_{\Phi}(\sigma,r) - \mathcal{R}_{\Phi}(\sigma_E,r) = 0{% endmathjax %}，而**价值差距**为{% mathjax %}\max_{i\in [m]}(J_i(\pi_{\sigma_E},r) - J_i(\pi_{\sigma},r)) \neq 0{% endmathjax %}。
 
 综合这些结果，当**奖励函数**/**偏差类**足够表达时，**遗憾等价性**比**价值等价性**更强。**价值等价性**并不代表着**低遗憾差距**！在最坏的情况下，**价值等价性**无法提供任何有意义的**遗憾差距**保证。这揭示了`SAIL`与`MAIL`之间的一个关键区别。
 
-定理三：存在一个**马尔可夫博弈**(`MG`)、一个专家策略{% mathjax %}\sigma_E{% endmathjax %}和一个学习者策略{% mathjax %}\sigma{% endmathjax %}，使得即使策略{% mathjax %}\pi_{\sigma}{% endmathjax %}的**占用测度**与{% mathjax %}\pi_{\sigma_E}{% endmathjax %}完全匹配，即对所有状态和动作组合有{% mathjax %}\forall(s,\vec{a}),p^{\pi_{\sigma}}(s,\vec{a}) = p^{\pi_{\sigma_E}}(s,\vec{a}){% endmathjax %}（即在所有奖励下具有**价值等价性**），**遗憾差距**却满足{% mathjax %}\mathcal{R}_{\Phi}(\sigma) - \mathcal{R}_{\Phi}(\sigma_E) \geq \Omega(H){% endmathjax %}。
+**定理三**：存在一个**马尔可夫博弈**(`MG`)、一个专家策略{% mathjax %}\sigma_E{% endmathjax %}和一个学习者策略{% mathjax %}\sigma{% endmathjax %}，使得即使策略{% mathjax %}\pi_{\sigma}{% endmathjax %}的**占用测度**与{% mathjax %}\pi_{\sigma_E}{% endmathjax %}完全匹配，即对所有状态和动作组合有{% mathjax %}\forall(s,\vec{a}),p^{\pi_{\sigma}}(s,\vec{a}) = p^{\pi_{\sigma_E}}(s,\vec{a}){% endmathjax %}（即在所有奖励下具有**价值等价性**），**遗憾差距**却满足{% mathjax %}\mathcal{R}_{\Phi}(\sigma) - \mathcal{R}_{\Phi}(\sigma_E) \geq \Omega(H){% endmathjax %}。
 如下图所示，**专家**和**学习者策略**仅访问下路径中的状态{% mathjax %}s_2,s_4,\ldots,s_{2H - 2}{% endmathjax %}。训练过的策略通过在访问的状态{% mathjax %}s_2,s_4,\ldots,s_{2H - 2}{% endmathjax %}中采取相同的动作，完美匹配了专家的**占用测度**。然而，专家演示缺乏对状态{% mathjax %}s_1{% endmathjax %}的覆盖，因为通过执行{% mathjax %}\pi_E{% endmathjax %}无法到达该状态。当**智能体**`1`偏离原始策略时，这一遗漏变得至关重要，使得状态{% mathjax %}s_1{% endmathjax %}在高概率下无法到达。因此，训练过的策略在状态{% mathjax %}s_1{% endmathjax %}的表现可能很差，而专家在**真实奖励函数**下却能表现出色。这一例子突显了**价值等价性**与**遗憾等价性**之间的关键区别：前者仅依赖于策略实际访问的状态，而后者则依赖于学习者在未访问状态下对**智能体**偏离所做出的**反事实推荐**。
 
 正如定理三所示，即使学习者能够从专家演示中获得关于均衡路径的**无限样本**，学习者仍可能对专家在未被访问（但可由偏离的**智能体**的**联合策略**到达）的状态下的行为一无所知。因此，从信息理论的角度来看，学习者无法在不知道专家在这些状态下会如何行动的情况下**最小化遗憾差距**。这展示了**最小化遗憾差距**的根本困难，因此，在`MAIL`中，**遗憾**是“困难”的。因此，需要一种新的`MAIL`算法范式来**最小化遗憾差距**。
 {% asset_img ml_6.png "一个捕捉“遗憾是困难的”原因的马尔可夫博弈示例" %}
 
 在这里，{% mathjax %}\sigma_E(a_1 a_1|s_0) = 1{% endmathjax %}。注意，当所有智能体都遵循{% mathjax %}\sigma_E{% endmathjax %}时，且状态{% mathjax %}s_1{% endmathjax %}是未被访问的，但在偏离策略{% mathjax %}\phi_1{% endmathjax %}下，其访问概率为`1`（{% mathjax %}\phi_1(s_0,a_1) = \phi_1(s_1,a_1) = a_2{% endmathjax %}）。这意味着，除非知道专家{% mathjax %}\sigma_E{% endmathjax %}在状态{% mathjax %}s_1{% endmathjax %}下会如何进行**反事实推荐**，否则无法**最小化遗憾差距**。
+
+**定理四**：如果专家策略{% mathjax %}\sigma_E{% endmathjax %}诱导了一个{% mathjax %}\delta{% endmathjax %}-近似的**相关均衡**(`CE`)，并且学习者策略{% mathjax %}\sigma{% endmathjax %}满足{% mathjax %}\mathcal{R}_{\Phi}(\sigma) - \mathcal{R}_{\Phi}(\sigma_E)\leq \delta_2{% endmathjax %}，那么{% mathjax %}\sigma{% endmathjax %}诱导一个{% mathjax %}\delta_1 + \delta_2{% endmathjax %}-近似的**相关均衡**(`CE`)。
+
+然后，通过与定理三结合，可以得出**低价值差距**并不意味着学习者正在执行**相关均衡**。
+
+**推论**：存在一个**马尔可夫博弈**(`MG`)、一个专家策略{% mathjax %}\sigam_E{% endmathjax %}和一个学习者策略{% mathjax %}\sigam{% endmathjax %}，使得{% mathjax %}\sigma_E{% endmathjax %}诱导了一个{% mathjax %}\delta_1{% endmathjax %}-近似的**相关均衡**(`CE`)，并且{% mathjax %}\sigam{% endmathjax %}满足{% mathjax %}\max_{i\in [m]}(J_i(\pi_{\sigma_E}) - J_i(\pi_{\sigma})) = \dalta_2{% endmathjax %}，则{% mathjax %}\sigma{% endmathjax %}诱导一个{% mathjax %}\Omega(H){% endmathjax %}-近似的**相关均衡**(`CE`)。综合这些结果表明，如果希望在智能体中诱导出一个**相关均衡**(`CE`)，那么**遗憾差距**是一个更合适的目标。
+
+尽管已经表明**价值差距**在某种意义上是一个“**较弱**”的目标，但在许多现实场景中，**智能体**可能是**非战略性**的。在这些场景中，**最小化价值差距**可以是一个合理的学习目标。**单智能体逆向强化学习**算法的**多智能体**推广可以有效地**最小化价值差距**——因此，在**多智能体**学习中，价值是“简单的”。**行为克隆**(`BC`)和**逆向强化学习**是两个旨在**最小化价值差距**的**单智能体模仿学习算法**。通过在**联合策略**上运行这些算法，我们可以将**行为克隆**(`BC`)和**逆强化学习** 应用于**多智能体**设置，称之为**联合行为克隆**(`J-BC`)和**联合逆向强化学习**(`J-IRL`)。这样做会导致与**单智能体**设置相同的**价值差距界限**。
+
+**定理五**：如果`J-BC`返回一个策略{% mathjax %}\sigma{% endmathjax %}，使得{% mathjax %}\mathbb{E}_{s\sim d_{\pi_{\sigma_E}}}[\mathcal{L}(\sigma_E(s),\sigma(s))]\leq \epsilon{% endmathjax %}，那么**价值差距**{% mathjax %}\max_{i\in [m]}(J_i(\pi_{\sigma_E}) - J_i(\pi_{\sigma})) \leq \mathcal{O}(\epsilon H^2){% endmathjax %}。
+
+**定理六**：如果`J-IRL`输出一个策略{% mathjax %}\sigma{% endmathjax %}，其此刻的匹配误差满足：
+{% mathjax '{"conversion":{"em":14}}' %}
+\underset{f\in \mathcal{F}}{\text{sup}}\;\mathbb{E}_{\pi_{\sigma_E}}\bigg[\sum\limits_{h=1}^H f(s_h,\vec{a}_h) \bigg] - \mathbb{E}_{\pi_{\sigma}}\bigg[\sum\limits_{h=1}^H f(s_h,\vec{a}_h) \bigg] \leq \epsilon H
+{% endmathjax %}
+那么**价值差距**为：{% mathjax %}\max_{i\in [m]}(J_i(\pi_{\sigma_E}) - J_i(\pi_{\sigma})) \leq \mathcal{O}(\epsilon H){% endmathjax %}。满足上述任一定理的条件可以通过归约到**无遗憾在线学习**以高效地实现。
