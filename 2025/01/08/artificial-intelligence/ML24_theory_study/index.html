@@ -299,14 +299,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>825</span>
+      <span>1.8k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
+      <span>1 分钟</span>
     </span>
 </div>
 
@@ -327,6 +327,9 @@
 <p><strong>行为策略</strong>在<strong>强化学习</strong>中起着至关重要的作用，因为它直接影响到数据的多样性和质量。一个好的<strong>行为策略</strong>能够提供丰富的数据，使得<strong>智能体</strong>能够更有效地学习并优化其<strong>目标策略</strong>。</p>
 <p><strong>优势感知策略优化</strong>(<code>A2PO</code>)是一种新颖的<strong>离线强化学习</strong>方法，旨在处理混合质量数据集中的<strong>策略优化</strong>问题。该方法通过显式构建<strong>优势感知策略约束</strong>，帮助<strong>智能体</strong>在没有在线交互的情况下有效学习。特点：<strong>优势感知</strong>，<code>A2PO</code>利用<strong>条件变分自动编码器</strong>(<code>CVAE</code>)来解耦不同的<strong>行为策略</strong>，明确建模每个动作的优势值，从而优化<strong>智能体</strong>的决策过程；<strong>混合质量数据集</strong>，该方法特别设计用于处理来自多种<strong>行为策略</strong>的混合质量数据集，解决了传统方法在面对不一致动作和回报时可能出现的约束冲突问题；实验验证，在<code>D4RL</code>基准上进行的大量实验表明，<code>A2PO</code>在单一质量和混合质量数据集上均优于现有的其他<strong>离线强化学习</strong>方法，如<code>BCQ</code>、<code>TD3+BC</code>和<code>CQL</code>等。</p>
 <p><code>A2PO</code>适用于需要从静态数据集中学习的各种应用场景，如机器人控制、自动驾驶和游戏<code>AI</code>等。通过有效利用历史数据，该方法能够减少探索过程中的风险和成本，同时提升<strong>智能体</strong>的性能。<code>A2PO</code>为<strong>离线强化学习</strong>领域提供了一种新的思路，尤其是在处理复杂数据集时，其<strong>优势感知机制</strong>显著提高了<strong>策略优化</strong>的效果。</p>
+<p><strong>离线强化学习</strong>(<code>Offline Reinforcement Learning, ORL</code>)旨在从预先收集的数据集中学习有效的<strong>控制策略</strong>，而无需在线探索。这种方法在多个现实世界应用中取得了前所未有的成功，包括机器人控制和电网控制等。然而，<strong>离线强化学习</strong>面临着一个严峻的挑战，即<strong>分布外</strong>(<code>Out-Of-Distribution, OOD</code>)<strong>问题</strong>，这涉及到<strong>学习策略</strong>产生的数据与<strong>行为策略</strong>收集的数据之间的<strong>分布偏移</strong>。因此，直接在<strong>在线强化学习</strong>方法上应用会出现<strong>外推误差</strong>，即<strong>对未见状态-动作对的错误估计</strong>。为了解决这个<code>OOD</code>问题，<strong>离线强化学习</strong>方法尝试在数据集的分布范围内对<strong>智能体</strong>施加适当的保守约束，例如，通过正则化项限制<strong>学习策略</strong>，或对<code>OOD</code>动作的价值过高估计进行惩罚。<strong>离线强化学习</strong>在处理混合质量数据集时常常遇到约束冲突问题。具体而言，当训练数据来自多个具有不同回报的<strong>行为策略</strong>时，现有工作仍然平等对待每个样本约束，而没有考虑数据质量和多样性的差异。这种忽视导致对冲突动作施加不当约束，最终导致更差的结果。</p>
+<p><strong>分布外</strong>(<code>OOD</code>)：指的是在训练过程中，<strong>智能体</strong>所选择的<strong>状态-动作对</strong>不在其训练数据集的分布中。这意味着<strong>智能体</strong>在决策时可能会遇到未曾见过的情况，从而导致对这些<strong>状态-动作对</strong>的价值估计不准确。在<strong>离线强化学习</strong>中，<strong>智能体</strong>使用的是预先收集的静态数据集，而不是实时与环境交互。因此，<strong>智能体</strong>无法从环境中获取新的<strong>状态-动作对</strong>，这限制了其学习能力。当<strong>智能体</strong>尝试采取在训练数据集中没有出现过的动作时，就会出现<code>OOD</code>问题。这些未见过的<strong>状态-动作对</strong>可能会导致<code>Q</code>值或策略的高估，从而影响整体性能。</p>
+<p><code>A2PO</code>能够实现来自不同<strong>行为策略</strong>的<strong>优势感知策略约束</strong>，其中采用了定制的<strong>条件变分自动编码器</strong>(<code>CVAE</code>)来推断与<strong>行为策略</strong>相关的<strong>多样化动作分布</strong>，通过将优势值建模为条件变量。在<code>D4RL</code>基准上进行了大量实验，包括单一质量和混合质量数据集，结果表明，所提出的<code>A2PO</code>方法在性能上显著优于其他先进的<strong>离线强化学习</strong>基线，以及优势加权竞争者。</p>
 
     </div>
 
@@ -399,14 +402,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">1.4m</span>
+    <span title="站点总字数">3m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">75:04</span>
+    <span title="站点阅读时长">42:17</span>
   </span>
 </div>
 <div class="busuanzi-count">
