@@ -93,5 +93,5 @@ a_{\xi}\sim p_{\psi}(\cdot|\tilde{z},c),\;、text{其中}\;\tilde{z}\sim \pi_{\o
 {% endmathjax %}
 在第一项中，{% mathjax %}a^*_{\xi}{% endmathjax %}是通过固定的最大优势条件{% mathjax %}\xi^* = 1{% endmathjax %}输入生成的**最优动作**，而{% mathjax %}a_{\xi}{% endmathjax %}是通过根据公式从评论家获得的**优势条件**{% mathjax %}\xi{% endmathjax %}得到的。同时，遵循`TD3+BC`的方法，在第一项中添加了**归一化系数**{% mathjax %}\lambda = \frac{\alpha}{\frac{1}{N}\sum_{(s_i,a_i)}|Q(s_i,a_i)|}{% endmathjax %}以保持`Q`值目标和**正则化**之间的**尺度平衡**，其中{% mathjax %}\alpha{% endmathjax %}是一个超参数，用于控制**归一化**`Q`**值**的规模。第一项鼓励在条件{% mathjax %}c^*{% endmathjax %}下的**最优策略**选择产生最高期望回报的动作，这与传统**强化学习**方法中的策略改进步骤一致。第二个**行为克隆项**明确对**优势感知策略**施加约束，确保**策略选择**符合由评论家确定的**优势条件**{% mathjax %}\xi{% endmathjax %}的样本动作。因此，具有**低优势条件**{% mathjax %}\xi{% endmathjax %}的次优样本不会干扰**最优策略**{% mathjax %}\pi_{\omega}(\cdot|c^*){% endmathjax %}的优化，并对相应策略{% mathjax %}\pi_{\omega}(\cdot|c){% endmathjax %}强制施加有效约束。
 {% note warning %}
-**注意**，在**策略评估**和改进过程中，**解码器**{% mathjax %}p_{\psi}{% endmathjax %}是固定的。`A2PO`实现选择`TD3+BC`作为其基础框架，以确保其稳健性。
+**注意**，在**策略评估**和改进过程中，**解码器**是固定的。`A2PO`实现选择`TD3+BC`作为其基础框架，以确保其稳健性。
 {% endnote %}
