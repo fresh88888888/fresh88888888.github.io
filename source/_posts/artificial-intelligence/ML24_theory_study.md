@@ -56,5 +56,42 @@ mathjax:
 \mathcal{L}_{\pi}(\omega) = \mathbb{E}_{s\sim\mathcal{D}}[-Q_{\theta}(s,\pi_{\omega}(s))]
 {% endmathjax %}
 {% note warning %}
+`A2PO`方法由两个关键步骤组成：**行为策略解耦**和**智能体策略优化**。在**行为策略解耦**阶段，使用**条件变分自编码器**(`CVAE`)解开**行为策略**，基于收集的**状态-动作对**的优势值条件下的**动作分布**。通过输入不同的优势值，新的**条件变分自编码器**(`CVAE`)允许**智能体**推断与各种**行为策略**相关的不同**动作分布**。然后，在**智能体**策略优化阶段，从优势条件导出的**动作分布**作为解耦的**行为策略**，建立一个**优势感知的策略约束**来指导**智能体**的训练。
+
 **注意**，**离线强化学习**将在优化损失上施加保守约束，以应对**分布外**(`OOD`)问题。此外，最终学习到的策略{% mathjax %}\pi_{\omega}{% endmathjax %}的性能在很大程度上依赖于与**行为策略**{% mathjax %}\{\pi_{\beta_i}\}{% endmathjax %}相关的离线数据集{% mathjax %}\mathcal{D}{% endmathjax %}的质量。
+{% endnote %}
+
+##### 行为策略解耦
+
+为了实现**行为策略解耦**，我们采用**条件变分自编码器**(`CVAE`)将不同具体**行为策略**{% mathjax %}\pi_{\beta_i}{% endmathjax %}的**行为分布**与基于优势的条件变量关联起来，这与之前的方法大相径庭，后者仅利用`CVAE`来近似仅基于特定状态{% mathjax %}s{% endmathjax %}的整体混合质量行为策略集{% mathjax %}\{\pi_{\beta_i}\}_{i=1}^M{% endmathjax %}。具体而言，对`CVAE`的架构进行了调整，使其具备**优势感知能力**。**编码器**{% mathjax %}q_{\varphi}(z|a,c){% endmathjax %}接收条件{% mathjax %}c{% endmathjax %}和动作{% mathjax %}a{% endmathjax %}，将它们投影到潜在表示{% mathjax %}z{% endmathjax %}中。给定特定条件{% mathjax %}c{% endmathjax %}和**编码器**输出{% mathjax %}z{% endmathjax %}，**解码器**{% mathjax %}p_{\psi}(a|z,c){% endmathjax %}捕捉条件{% mathjax %}c{% endmathjax %}与潜在表示{% mathjax %}z{% endmathjax %}之间的相关性，以重构原始动作{% mathjax %}a{% endmathjax %}。与之前的方法不同，这里不仅考虑状态{% mathjax %}s{% endmathjax %}，还考虑优势值{% mathjax %} \xi{% endmathjax %}作为`CVAE`的条件。**状态-优势条件**{% mathjax %}c{% endmathjax %}被公式化为：
+{% mathjax '{"conversion":{"em":14}}' %}
+c = s\| \xi
+{% endmathjax %}
+因此，给定当前状态{% mathjax %}s{% endmathjax %}和优势值{% mathjax %}\xi{% endmathjax %}作为**联合条件**，`CVAE`模型能够生成与优势值{% mathjax %}\xi{% endmathjax %}正相关的不同质量的相应动作{% mathjax %}a{% endmathjax %}。对于**状态-动作对**{% mathjax %}(s,a){% endmathjax %}，优势值{% mathjax %}\xi{% endmathjax %}可以通过以下公式计算：
+{% mathjax '{"conversion":{"em":14}}' %}
+\xi = \tanh (\underset{i=1,2}{\min}\;Q_{\theta_i}(s,a) - V_{\phi}(s))
+{% endmathjax %}
+其中采用两个`Q`-**网络**并使用最小操作以确保**离线强化学习**环境中的保守性。此外，我们使用了{% mathjax %}\tanh(\cdot){% endmathjax %}**函数**将优势条件归一化到{% mathjax %}(-1,1){% endmathjax %}范围内。这一操作防止了过多的异常值影响`CVAE`的性能，提高了生成的可控性。`CVAE`模型使用**状态-优势条件**{% mathjax %}c{% endmathjax %}和相应的动作{% mathjax %}a{% endmathjax %}进行训练。训练目标涉及**最大化经验下界**(`ELBO`)上采样的小批量数据的**对数似然**。
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathcal{L}_{\text{CAVE}}(\varphi,\psi) = -\mathbb{E}_{\mathcal{D}}\bigg[ \mathbb{E}_{q\varphi(z|a,c)}[\log(p_{\psi}(a|z,c))] + alpha\cdot \mathbf{KL} [q_{\varphi}(z|a,c)\|p(z)]\bigg]
+{% endmathjax %}
+其中，{% mathjax %}\alpha{% endmathjax %}是用于平衡`KL`-**散度损失项**的系数，{% mathjax %}p(z){% endmathjax %}表示**先验分布**，设置为{% mathjax %}\mathcal{N}(0,1){% endmathjax %}。第一个对数似然项鼓励生成的动作尽可能与真实动作匹配，而第二个`KL`-**散度项**则使潜在**变量分布**与**先验分布**{% mathjax %}p(z){% endmathjax %}对齐。在每轮`CVAE`训练中，从离线数据集中抽取一小批**状态-动作对**{% mathjax %}(s,a){% endmathjax %}。这些对被输入到{% mathjax %}Q_{\theta}{% endmathjax %}和{% mathjax %}V_{\phi}{% endmathjax %}中，通过以上公式获取相应的优势条件{% mathjax %}\xi{% endmathjax %}。然后，**优势感知**的`CVAE`随后通过以上公式进行优化。结合优势条件{% mathjax %}\xi{% endmathjax %}，`CVAE`捕捉了{% mathjax %}\xi{% endmathjax %}与**行为策略**的**动作分布**之间的关系，这进一步使得`CVAE`能够基于**状态-优势条件**{% mathjax %}c{% endmathjax %}生成动作{% mathjax %}a{% endmathjax %}，使得**动作质量**与**优势条件**{% mathjax %}\xi{% endmathjax %}正相关。此外，`优势感知`的`CVAE`被用于为下一阶段的**智能体策略优化**建立一个**优势感知策略约束**。
+
+##### 智能体策略优化
+
+**智能体**是基于`actor-critic`框架构建的。**评论家**由两个`Q`-**网络**{% mathjax %}Q_{\theta_{i=1,2}}{% endmathjax %}和一个`V`-**网络**{% mathjax %}V_{\phi}{% endmathjax %}组成，用于**近似智能体策略**的价值。**演员**，即**优势感知策略**{% mathjax %}\pi_{\omega}(\cdot|c){% endmathjax %}，以{% mathjax %}c = s\|\xi{% endmathjax %}为输入，基于状态{% mathjax %}s{% endmathjax %}和指定的**优势条件**{% mathjax %}\xi{% endmathjax %}生成潜在表示{% mathjax %}\tilde{z}{% endmathjax %}。然后，这个潜在表示{% mathjax %}\tilde{z}{% endmathjax %}以及条件{% mathjax %}c{% endmathjax %}被输入到**解码器**{% mathjax %}p_{\psi}{% endmathjax %}中，以生成可识别的动作{% mathjax %}a_{\xi}{% endmathjax %}：
+{% mathjax '{"conversion":{"em":14}}' %}
+a_{\xi}\sim p_{\psi}(\cdot|\tilde{z},c),\;、text{其中}\;\tilde{z}\sim \pi_{\omega}(\cdot|c)
+{% endmathjax %}
+**智能体**的**优势感知策略**{% mathjax %}\pi_{\omega}{% endmathjax %}预计将生成与指定的优势输入{% mathjax %}\xi{% endmathjax %}正相关的不同质量的动作，该输入在公式{% mathjax %}\xi = \tanh (\underset{i=1,2}{\min}\;Q_{\theta_i}(s,a) - V_{\phi}(s)){% endmathjax %}中被归一化到{% mathjax %}(-1,1){% endmathjax %}范围内。因此，输出的最优动作{% mathjax %}a^*{% endmathjax %}是通过输入{% mathjax %}c^* = s\|\xi^*{% endmathjax %}获得的，其中{% mathjax %}\xi^* = 1{% endmathjax %}。需要注意的是，**评论家网络**旨在**近似最优策略**{% mathjax %}\pi_{\omega}(\cdot|c^*){% endmathjax %}的期望值。根据`actor-critic`框架，**智能体**优化包括**策略评估**和**策略改进**两个步骤。在**策略评估**步骤中，通过**最小化与最优策略**{% mathjax %}\pi_{\omega}(\cdot|c^*){% endmathjax %}的**时间差损失**来更新评论家。具体而言，对于`V`-**网络**{% mathjax %}V_{\phi}{% endmathjax %}，采用**一步贝尔曼算子**来近似在当前**智能体感知策略**下的**状态价值**，该**状态价值**以最优优势输入{% mathjax %}\xi^* = 1{% endmathjax %}为条件，如下所示：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathcal{L}_{\text{TD}}(\phi) = \mathbb{E}_{(s,a,r,s')\sim \mathcal{D},\tilde{z}^*\sim \pi_{\omega}(\cdot|c*),a^*_{\xi}\sim p_{\psi}(\cdot|\tilde{z}^*,c^*)}\bigg[ r + \gamma\underset{i}{\min}\;Q_{\hat{\theta}_i}(s' - a^*_{\xi})- V_{\phi}(s)^2\bigg]
+{% endmathjax %}
+目标网络{% mathjax %}\hat{Q}_{\theta}{% endmathjax %}是通过软更新方式进行更新的。对于`Q`-**网络**，两个`Q`-**网络**实体{% mathjax %}Q_{\theta_i}{% endmathjax %}都是按照公式与**智能体策略**{% mathjax %}\pi_{\omega}(\cdot|c^*){% endmathjax %}进行优化。在**策略改进**阶段，**演员损失**定义为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathcal{L}_{\text{AC}}(\omega) = -\lambda \cdot \mathbb{E}_{s\sim \mathcal{D},\tilde{z}^*\sim \pi_{\omega}(\cdot|c^*),a^*_{\xi}\sim p_{\psi}(\cdot|\tilde{z}^*,c^*)}\bigg[ Q_{\theta_1(s,a_{\xi}^*)}\bigg] + \mathbb{E}_{(s,a)\sim \mathcal{D},\tilde{z}\sim \pi_{\omega}(\cdot|c),a_{\xi}\sim p_{\psi}(\cdot|\tilde{z},c)}\bigg[ (a - q_{\xi})^2 \bigg] 
+{% endmathjax %}
+在第一项中，{% mathjax %}a^*_{\xi}{% endmathjax %}是通过固定的最大优势条件{% mathjax %}\xi^* = 1{% endmathjax %}输入生成的**最优动作**，而{% mathjax %}a_{\xi}{% endmathjax %}是通过根据公式从评论家获得的**优势条件**{% mathjax %}\xi{% endmathjax %}得到的。同时，遵循`TD3+BC`的方法，在第一项中添加了**归一化系数**{% mathjax %}\lambda = \frac{\alpha}{\frac{1}{N}\sum_{(s_i,a_i)}|Q(s_i,a_i)|}{% endmathjax %}以保持`Q`值目标和**正则化**之间的**尺度平衡**，其中{% mathjax %}\alpha{% endmathjax %}是一个超参数，用于控制**归一化**`Q`**值**的规模。第一项鼓励在条件{% mathjax %}c^*{% endmathjax %}下的**最优策略**选择产生最高期望回报的动作，这与传统**强化学习**方法中的策略改进步骤一致。第二个**行为克隆项**明确对**优势感知策略**施加约束，确保**策略选择**符合由评论家确定的**优势条件**{% mathjax %}\xi{% endmathjax %}的样本动作。因此，具有**低优势条件**{% mathjax %}\xi{% endmathjax %}的次优样本不会干扰**最优策略**{% mathjax %}\pi_{\omega}(\cdot|c^*){% endmathjax %}的优化，并对相应策略{% mathjax %}\pi_{\omega}(\cdot|c){% endmathjax %}强制施加有效约束。
+{% note warning %}
+**注意**，在**策略评估**和改进过程中，**解码器**{% mathjax %}p_{\psi}{% endmathjax %}是固定的。`A2PO`实现选择`TD3+BC`作为其基础框架，以确保其稳健性。
 {% endnote %}
