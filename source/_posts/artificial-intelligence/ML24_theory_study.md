@@ -49,3 +49,13 @@ mathjax:
 {% mathjax %}s_{t+1}{% endmathjax %}。此外，**智能体**还会收到奖**励信号**{% mathjax %}r_t{% endmathjax %}。**强化学习**的目标是学习一个**最优策略**{% mathjax %}\pi^*{% endmathjax %}，以最大化期望回报：{% mathjax %}\pi^* = \text{arg }\max_{\pi}\;\mathbb{E}_{\pi}\bigg[\sum\limits_{k=0}^{\infty} \gamma^k r_{t+k}\bigg]{% endmathjax %}。在**离线强化学习**中，**智能体**只能从离线数据集中学习，而无法与环境进行在线交互。在单一质量设置中，离线数据集{% mathjax %}\mathcal{D} = \{(s_t,a_t,r_t,s_{t+1})|t=1,\ldots,N\}{% endmathjax %}是由单一行为策略{% mathjax %}\pi_{\beta}{% endmathjax %}收集的，包含{% mathjax %}N{% endmathjax %}次转换。在混合质量设置中，离线数据集{% mathjax %}\mathcal{D} = \bigcup_i\{(s_{i,t},a_{i,t},r_{i,t},s_{i,t+1})|t=1,\ldots,N\}{% endmathjax %}是由多个**行为策略**{% mathjax %}\{\pi_{\beta_i}\}_{i=1}^M{% endmathjax %}收集的。通过**动作价值函数**{% mathjax %}Q^{\pi}(s,a) = \mathbb{E}_{\pi}[\sum_{t=0}^{infty} \gamma^t r(s_t,a_t)|s_0 = s,a_0 = a]{% endmathjax %}来评估学习到的策略{% mathjax %}pi{% endmathjax %}。**状态价值函数**定义为{% mathjax %}V^{\pi}(s) = \mathbb{E}_{a\sim\pi}[Q^{\pi}(s,a)]{% endmathjax %}，而**优势函数**定义为{% mathjax %}A^{\pi}(s,a) = Q^{\pi}(s,a) - V^{\pi}(s){% endmathjax %}。对于连续控制，`A2PO`实现使用基于`actor-critic`框架的`TD3`算法作为其基础，以确保稳健的性能。**演员网络**{% mathjax %}\pi_{\omega}{% endmathjax %}，即学习到的策略，由参数{% mathjax %}\omega{% endmathjax %}参数化，而**评论家网络**则由参数为{% mathjax %}\theta{% endmathjax %}的`Q`-网络{% mathjax %}Q_{\theta}{% endmathjax %}和参数为{% mathjax %}\phi{% endmathjax %}的`V`-网络{% mathjax %}V_{\phi}{% endmathjax %}组成。`actor-critic`框架涉及两个步骤：**策略评估**和**策略改进**。在**策略评估**阶段，通过**时间差**(`TD`)**损失优化**`Q`-网络{% mathjax %}Q_{\theta}{% endmathjax %}。
 {% asset_img ml_1.png "优势感知策略优化(Advantage-Aware Policy Optimization, A2PO)方法示意图" %}
 
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathcal{L}_Q(\theta) = \mathbb{E}_{(s,a,r,s')\sim\mathcal{D},a'\sim\pi_{\hat{\omega}}(s')}[Q_{\theta}(s,a) - (r(s,a) + \gamma Q_{\hat{\theta}}(s',a'))]^2
+{% endmathjax %}
+我们将**目标网络**的参数{% mathjax %}\hat{\theta}{% endmathjax %}和{% mathjax %}\hat{\omega}{% endmathjax %}定期更新，以保持学习的稳定性，这些参数是通过在线参数{% mathjax %}\theta{% endmathjax %}和{% mathjax %}\omega{% endmathjax %}更新的。`V`-网络{% mathjax %}V_{\phi}{% endmathjax %}也可以通过类似的**时间差**(`TD`)**损失**进行优化。在连续控制中的策略改进阶段，`演员网络` {% mathjax %}\pi_{\omega}{% endmathjax %}可以通过确定性**策略梯度损失**进行优化。
+{% mathjax '{"conversion":{"em":14}}' %}
+\mathcal{L}_{\pi}(\omega) = \mathbb{E}_{s\sim\mathcal{D}}[-Q_{\theta}(s,\pi_{\omega}(s))]
+{% endmathjax %}
+{% note warning %}
+**注意**，**离线强化学习**将在优化损失上施加保守约束，以应对**分布外**(`OOD`)问题。此外，最终学习到的策略{% mathjax %}\pi_{\omega}{% endmathjax %}的性能在很大程度上依赖于与**行为策略**{% mathjax %}\{\pi_{\beta_i}\}{% endmathjax %}相关的离线数据集{% mathjax %}\mathcal{D}{% endmathjax %}的质量。
+{% endnote %}
