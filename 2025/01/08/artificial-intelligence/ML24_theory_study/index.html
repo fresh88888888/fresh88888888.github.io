@@ -34,6 +34,7 @@
 <meta property="og:description" content="A2PO离线强化学习旨在利用离线数据集来构建有效的智能体策略，而无需在线交互。这种方法需要在行为策略的支持下施加适当的保守约束，以应对分布外问题。然而，现有工作在处理来自多个行为策略的离线数据集时，常常面临约束冲突问题，即不同的行为策略可能在状态空间中表现出不一致的动作和不同的回报。为了解决这一问题，近期的优势加权方法优先考虑具有高优势值的样本进行智能体训练，但不可避免地忽视了行为策略的多样性。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fresh88888888.github.io/2025/01/08/artificial-intelligence/ML24_theory_study/ml_1.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2025/01/08/artificial-intelligence/ML24_theory_study/ml_2.png">
 <meta property="article:published_time" content="2025-01-08T08:00:11.000Z">
 <meta property="article:modified_time" content="2025-01-08T08:00:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -301,14 +302,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>6.3k</span>
+      <span>7.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>21 分钟</span>
+      <span>25 分钟</span>
     </span>
 </div>
 
@@ -371,6 +372,21 @@
 
 <p>为了<strong>解决混合质量离线数据集中的约束冲突问题</strong>，这里采用了<code>A2PO</code>的方法，通过<strong>优势感知的策略约束</strong>。具体而言，<code>A2PO</code>利用<strong>条件变分自编码器</strong>(<code>CVAE</code>)有效地解耦与各种<strong>行为策略</strong>相关的<strong>动作分布</strong>。这是通过将所有训练数据的优势值建模为条件变量来实现的。因此，<strong>优势感知</strong>的<strong>智能体策略优化</strong>可以集中于最大化高优势值，同时遵循由混合质量数据集施加的<strong>解耦分布约束</strong>。实验结果表明，<code>A2PO</code>成功解耦了潜在的<strong>行为策略</strong>，并显著优于先进的<strong>离线强化学习</strong>竞争者。<strong>局限性</strong>：<code>A2PO</code>的局限性在于它在训练过程中引入了<code>CVAE</code>，这可能导致相当大的时间开销。</p>
 <h4 id="深度强化学习—结构"><a href="#深度强化学习—结构" class="headerlink" title="深度强化学习—结构"></a>深度强化学习—结构</h4><p><strong>强化学习</strong>(<code>RL</code>)在<strong>深度神经网络</strong>(<code>DNN</code>)强大的<strong>函数逼近</strong>能力的支持下，在众多应用中取得了显著成功。然而，它在应对各种现实场景方面的实用性仍然有限，这些场景具有多样化和不可预测的动态、噪声信号以及庞大的状态和<strong>动作空间</strong>。这一局限性源于<strong>数据效率低、泛化能力有限、安全保障缺失</strong>以及<strong>缺乏可解释性</strong>等多个因素。为克服这些挑战并改善在这些关键指标上的表现，一个有前景的方向是将关于问题的额外结构信息纳入<strong>强化学习</strong>的学习过程中。各种<strong>强化学习</strong>的子领域已提出了归纳整合的方法。将这些不同的方法整合到一个统一框架下，阐明结构在学习问题中的作用，并将这些方法分类为不同的结构整合模式。并为<strong>强化学习</strong>研究奠定了<strong>设计模式</strong>视角的基础。</p>
+<p><strong>强化学习</strong>(<code>RL</code>)在<strong>序列决策</strong>和<strong>控制问题</strong>中发挥了重要作用，例如游戏、机器人操作和优化化学反应。大多数传统<strong>强化学习</strong>研究集中在设计解决由任务固有动态引发的<strong>序列决策问题</strong>的<strong>智能体</strong>，例如控制套件<code>OpenAI Gym</code>中的小车倒立摆任务所遵循的微分方程。然而，当环境发生变化时，它的性能就会显著下降。此外，将<strong>强化学习智能体</strong>部署于还面临额外挑战，例如复杂的动态、难以处理且计算成本高昂的状态和<strong>动作空间</strong>，以及<strong>噪声奖励信号</strong>。因此，<strong>强化学习</strong>的研究开始划分为两种范式来解决这些问题：<strong>泛化</strong>，开发出能够解决更广泛问题的方法，其中<strong>智能体</strong>在各种任务和环境中进行训练；<strong>可部署性</strong>，专门针对具体现实问题而设计的方法，如特征工程、计算预算优化和安全性。<strong>泛化</strong>与<strong>可部署性</strong>的交集涵盖了需要处理任务多样性的同时又能针对特定应用进行部署。为了促进这一领域的研究，<code>Mannor</code>和<code>Tamar</code>主张采用以<strong>设计模式</strong>为导向的方法，将方法抽象为专门针对特定问题的模式。</p>
+<p><strong>强化学习</strong>(<code>RL</code>)的<strong>设计模式</strong>之路上，对<strong>设计决策</strong>与其适用问题属性之间关系的理解存在一些空白。尽管使用状态抽象来处理<strong>高维空间</strong>的决策似乎是显而易见的，但对于使用<strong>关系神经架构</strong>来解决某些问题的决策却并不那么显而易见。为此，理解如何将额外的<strong>领域知识</strong>融入<strong>学习流程</strong>，将为这一过程增添原则性的支撑。学习问题本身的结构，包括<strong>状态空间</strong>、<strong>动作空间</strong>、<strong>奖励函数</strong>或<strong>环境动态的先验知识</strong>，是<strong>领域知识</strong>的重要来源。<br>尽管这些方法在<strong>强化学习</strong>的发展历史中一直是研究主题，但在<strong>深度强化学习</strong>中实现这些目标的方法却散落在现代<strong>强化学习</strong>研究的各个子领域中。融入结构意味着利用关于可分解性的附加信息，以提高样本效率、泛化能力、可解释性和安全性。一个<strong>强化学习</strong>(<code>RL</code>)<strong>智能体</strong>可以选择适合学习者当前状态和学习目标的学习材料、活动和评估。这种场景充满了<strong>结构特性</strong>和<strong>分解</strong>，例如学习风格或学习者的隐性技能熟练度、学习项目中的<strong>知识领域</strong>之间的关系，以及模块化内容交付机制。虽然可以通过将问题视为一个整体来构建<strong>马尔科夫决策过程</strong>(<code>MDP</code>)，但这并不一定是最有效的解决方案。相反，可以通过不同方式构建问题，其中关于这种可分解性的<strong>先验知识</strong>可以将<strong>归纳偏见</strong>编码到<strong>强化学习</strong>(<code>RL</code>)<strong>智能体</strong>中。关于分解的<strong>先验知识</strong>还可以通过辅助方法发现，例如<strong>大语言模型</strong>(<code>LLMs</code>)，这些模型能够分析大量教育内容，提取关键概念、学习目标和难度水平。将附加信息融入学习流程，例如使用<code>LLM</code>生成内在<strong>奖励</strong>，可以提高<strong>强化学习</strong>(<code>RL</code>)<strong>智能体</strong>收敛速度，使其对问题变化具有<strong>鲁棒性</strong>，并帮助提高<strong>安全性</strong>和<strong>可解释性</strong>。</p>
+<img data-src="/2025/01/08/artificial-intelligence/ML24_theory_study/ml_2.png" class="" title="强化学习框架-结构">
+
+<p><strong>强化学习</strong>(<code>RL</code>)的辅助信息可用于提高样本效率、泛化性、可解释性很安全性等指标。辅助信息的另一个特定来源是<strong>可分解性</strong>，包括<strong>潜在空间</strong>(<code>Latent</code>)、<strong>因子化</strong>(<code>Factored</code>)、<strong>关系型</strong>(<code>Relational</code>)和<strong>模块化</strong>(<code>Modular</code>)。强化学习的结构大致分为<code>7</code>种<strong>设计模式</strong>：</p>
+<ul>
+<li><strong>抽象</strong>(<code>Abstraction</code>)：通过简化环境或任务，将复杂问题转化为更易处理的形式。</li>
+<li><strong>增强</strong>(<code>Augmentation</code>)：利用额外的信息或功能来丰富智能体的学习过程。</li>
+<li><strong>辅助优化</strong>(<code>Auxiliary Optimization</code>)：引入辅助任务以促进主任务的学习。</li>
+<li><strong>辅助模型</strong>(<code>Auxiliary Model</code>)：使用辅助模型来提供额外的信息或指导。</li>
+<li><strong>仓储</strong>(<code>Warehouse</code>)：利用存储机制来管理和重用经验。</li>
+<li><strong>环境生成</strong>(<code>Environment Generation</code>)：动态生成环境以适应不同的学习需求。</li>
+<li><strong>显式设计</strong>(<code>Explicitly Designed</code>)：针对特定问题设计特定的解决方案。</li>
+</ul>
+<p>在实际应用中，例如一个出租车服务的<strong>强化学习</strong>(<code>RL</code>)<strong>智能体</strong>，需要学习城市的布局、交通模式和乘客行为等信息。直接学习所有这些信息可能会让智能体感到不知所措。因此，通过将问题分解为更易处理的部分并在学习管道中融入结构，可以使问题变得更加可管理。通过将<strong>结构假设</strong>与<strong>分解方法</strong>结合，<strong>强化学习模型</strong>不仅可以提高效率，还能变得更加智能和适应现实世界的挑战。</p>
 
     </div>
 
@@ -450,7 +466,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">75:22</span>
+    <span title="站点阅读时长">75:27</span>
   </span>
 </div>
 <div class="busuanzi-count">
