@@ -117,3 +117,26 @@ a_{\xi}\sim p_{\psi}(\cdot|\tilde{z},c),\;、text{其中}\;\tilde{z}\sim \pi_{\o
 - **显式设计**(`Explicitly Designed`)：针对特定问题设计特定的解决方案。
 
 在实际应用中，例如一个出租车服务的**强化学习**(`RL`)**智能体**，需要学习城市的布局、交通模式和乘客行为等信息。直接学习所有这些信息可能会让智能体感到不知所措。因此，通过将问题分解为更易处理的部分并在学习管道中融入结构，可以使问题变得更加可管理。通过将**结构假设**与**分解方法**结合，**强化学习模型**不仅可以提高效率，还能变得更加智能和适应现实世界的挑战。
+
+**序列决策问题**通常使用**马尔可夫决策过程**(`MDP`)的概念进行形式化，可以写成一个五元组{% mathjax %}\mathcal{M} = \langle \mathcal{S},\mathcal{A},R,P,p \rangle{% endmathjax %}。在任何时间步，环境处于状态{% mathjax %}s\in \mathcal{S}{% endmathjax %}，其中{% mathjax %}p{% endmathjax %}是**初始状态分布**。**智能体**采取一个动作{% mathjax %}a\in\mathcal{A}{% endmathjax %}，使环境转移到一个新的状态{% mathjax %}s'\in \mathcal{S}{% endmathjax %}。随机转移函数控制这种转移的动态，表示为{% mathjax %}P\;:\;\mathcal{S}\times \mathcal{A}\rightarrow \Delta(\mathcal{A}){% endmathjax %}，它以状态{% mathjax %}s{% endmathjax %}和动作{% mathjax %}a{% endmathjax %}为输入，输出一个关于后续状态的**概率分布**{% mathjax %}\Delta(\cdot){% endmathjax %}，从中可以抽样得到后续状态{% mathjax %}s'{% endmathjax %}。对于每个转移，**智能体**会获得一个奖励{% mathjax %}\mathcal{R}:\mathcal{S}\times \mathcal{A}\rightarrow \mathbb{R}{% endmathjax %}，其中{% mathjax %}R\in \mathcal{R}{% endmathjax %}。序列{% mathjax %}(s,a,r,s'){% endmathjax %}被称为一次**经验**。**智能体**根据策略{% mathjax %}\pi\;:\;\mathcal{S}\rightarrow \Delta(\mathcal{A}){% endmathjax %}行动，该策略在**策略空间**{% mathjax %}\Pi{% endmathjax %}中生成给定状态下的**动作概率分布**。这是一个确定性策略的**德尔塔分布**，这意味着该策略输出一个单一的动作。使用当前策略，**智能体**可以反复生成经验，而这样的经验序列也称为轨迹{% mathjax %}(\tau){% endmathjax %}。
+{% mathjax '{"conversion":{"em":14}}' %}
+\tau = \{(s_t,a_t,r_t,s_{t+1})\}_{t\in [t_0,t_{T-1}]}\;\forall(s,a,r,s)\in \mathcal{S}\times \mathcal{A}\times \mathcal{R}\times \mathcal{S}
+{% endmathjax %}
+在**情节强化学习**(`episodic RL`)中，轨迹由在多个情节中收集的经验组成，每个情节都会重置环境。相对而言，在**持续设置**(`continual settings`)中，轨迹包含在单个情节中收集的一段时间内的经验。轨迹{% mathjax %}\tau{% endmathjax %}中的奖励可以累积成一个称为**回报**(`return`){% mathjax %}G{% endmathjax %}的**期望总和**，该回报可以为任何起始状态{% mathjax %}s{% endmathjax %}计算如下：
+{% mathjax '{"conversion":{"em":14}}' %}
+G(\pi,s) = \mathbb{E}_{(s_0=s,a_1,r_1,\ldots)\sim \pi}\bigg[ \sum\limits_{t=0}^{\infty} r_t \bigg]
+{% endmathjax %}
+为了使公式中的总和可处理，假设问题的时间范围为固定长度{% mathjax %}T{% endmathjax %}（有限时间回报），即轨迹在{% mathjax %}T{% endmathjax %}步后终止，要么通过**折扣因子**{% mathjax %}\gamma{% endmathjax %}来折扣未来的奖励（无限时间回报）。然而，折扣也可以应用于有限时间范围。解决一个**马尔可夫决策过程**(`MDP`)相当于确定策略{% mathjax %}\pi^*\in \Pi{% endmathjax %}，以最大化其轨迹的**回报期望**。这个期望可以通过（**状态-动作**）**值函数**{% mathjax %}Q\in \mathcal{Q}{% endmathjax %}来捕捉。给定一个策略{% mathjax %}\pi{% endmathjax %}，这个期望可以递归地写成：
+{% mathjax '{"conversion":{"em":14}}' %}
+Q^{\pi}(s,a)= \mathbb{E}_{\pi}[\sum\limits_{t=0}^T r_t|s_0 = s,a_0 = a]= \mathbb{E}_{\pi}[R(s,a) + \gamma\mathbb{E}_{a'\sim \pi(\cdot|s')}[Q^{\pi}(s',a')]]
+{% endmathjax %}
+因此，目标现在可以表述为寻找一个能够最大化{% mathjax %}Q^{\pi}(s,a){% endmathjax %}的**最优策略**。
+{% mathjax '{"conversion":{"em":14}}' %}
+\pi^*\in \underset{\pi\in \Pi}{\text{arg }\max}Q^{\pi}(s,a)\; \forall(s,a)\in \mathcal{S}\times \mathcal{A}
+{% endmathjax %}
+我们还考虑**部分可观测马尔可夫决策过程**(`POMDP`)，它建模了状态无法完全观察的情况。`POMDP`被定义为一个七元组{% mathjax %}\mathcal{M} = \langle \mathcal{S},\mathcal{A},\mathcal{O},R,P,\xi,p \rangle{% endmathjax %}，其中{% mathjax %}\mathcal{S},\mathcal{A},R,P,p {% endmathjax %}的定义与上述相同。**智能体**现在不是观察状态{% mathjax %}s\in \mathcal{S}{% endmathjax %}，而是可以访问通过**发射函数**{% mathjax %}\xi : \mathcal{S}\times \mathcal{A}\rightarrow \Delta(\mathcal{O}){% endmathjax %}从实际状态生成的观察{% mathjax %}o\in \mathcal{O}{% endmathjax %}。因此，观察在经验生成过程中取代了状态的角色。然而，解决`POMDP`需要维护一个额外的**信念**，因为多个{% mathjax %}(s,a){% endmathjax %}可以导致相同的{% mathjax %}o{% endmathjax %}。
+
+**强化学习**(`RL`)算法的任务是通过模拟其**转移动态**{% mathjax %}P(s'|s,a){% endmathjax %}和**奖励函数**{% mathjax %}R(s,a){% endmathjax %}与**马尔可夫决策过程**(`MDP`)进行交互，并学习最优策略完成的。在**深度强化学习**中，策略是一个**深度神经网络**，用于生成轨迹{% mathjax %}\tau{% endmathjax %}。我通过最小化目标{% mathjax %}J{% endmathjax %}来优化策略。一个`MDP`的模型{% mathjax %}\hat{\mathcal{M}}{% endmathjax %}允许**智能体**通过模拟生成经验来规划轨迹。使用这种模型的**强化学习**方法被归类为基于模型的**强化学习**(Model-Based RL)。另一方面，如果没有这样的模型，则需要直接从经验中学习策略，这类方法则属于**无模型强化学习**(`Model-Free RL`)。
+**强化学习**方法还可以根据目标{% mathjax %}J{% endmathjax %}的类型进行分类。使用**值函数**的方法，以及相应的**蒙特卡洛估计**或**时间差分**(`Temporal Difference, TD`)**误差**，用于学习策略，这类方法属于**基于值的强化学习**(`Value-Based RL`)。**时间差分方法**中的一个关键思想是**自举**(`bootstrapping`)，它使用已学习的值估计来改善前一个状态的估计。**在线策略方法**直接更新生成经验的策略，而**离线策略方法**则使用单独的策略来生成经验。基于策略的方法直接对策略进行参数化，并使用**策略梯度定理**来创建目标{% mathjax %}J{% endmathjax %}。实践中的**强化学习**方法的一个核心研究主题集中在通过迭代学习上述一个或多个量来近似全局解决方案，使用**监督学习**和**函数近似**。使用管道的概念来讨论不同的**强化学习**方法。下图展示了**强化学习**管道的结构。**管道**可以定义为一个数学元组{% mathjax %}\omega = \langle \mathcal{S},\mathcal{A},R,PQ,\pi,\hat{\mathcal{M}},J,\mathcal{E} \rangle{% endmathjax %}，其中所有定义与之前相同。为了求解**马尔可夫决策过程**(`MDP`)，管道在给定环境{% mathjax %}\mathcal{E}{% endmathjax %}的情况下运作，通过将状态{% mathjax %}s\in \mathcal{S}{% endmathjax %}作为输入并产生动作{% mathjax %}a\in \mathcal{A}{% endmathjax %}作为输出。环境根据动态{% mathjax %}P{% endmathjax %}和**奖励函数**{% mathjax %}R{% endmathjax %}运作。管道可能通过直接与环境{% mathjax %}\mathcal{E}{% endmathjax %}交互来生成经验，即从经验中学习，或通过模拟已学习的环境模型{% mathjax %}\hat{\mathcal{M}}{% endmathjax %}来生成经验。优化过程涵盖当前策略{% mathjax %}\pi{% endmathjax %}、其值函数{% mathjax %}Q{% endmathjax %}、奖励{% mathjax %}R{% endmathjax %}和学习目标{% mathjax %}J{% endmathjax %}之间的相互作用。
+{% asset_img ml_3.png "强化学习管道" %}
+
