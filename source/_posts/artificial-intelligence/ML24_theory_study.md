@@ -144,4 +144,37 @@ Q^{\pi}(s,a)= \mathbb{E}_{\pi}[\sum\limits_{t=0}^T r_t|s_0 = s,a_0 = a]= \mathbb
 {% mathjax '{"conversion":{"em":14}}' %}
 \beta\;:\;\omega \rightarrow \omega \times \mathcal{Z}
 {% endmathjax %}
-在元组{% mathjax %}\omega{% endmathjax %}中增加一个额外的函数{% mathjax %}Z{% endmathjax %}，该函数作用于其他元组元素 {% mathjax %}\mathcal{X}\in \omega{% endmathjax %}。例如，融入**边信息**可以通过添加一个**编码器**{% mathjax %}Z{% endmathjax %}来学习**状态抽象**，将**状态空间**{% mathjax %}\mathcal{S}{% endmathjax %}映射到一个**潜在表示**{% mathjax %}\kappa{% endmathjax %}，该表示可用于控制。
+在元组{% mathjax %}\omega{% endmathjax %}中增加一个额外的函数{% mathjax %}Z{% endmathjax %}，该函数作用于其他元组元素 {% mathjax %}\mathcal{X}\in \omega{% endmathjax %}。例如，融入**边信息**可以通过添加一个**编码器**{% mathjax %}Z{% endmathjax %}来学习**状态抽象**，将**状态空间**{% mathjax %}\mathcal{S}{% endmathjax %}映射到一个**潜在表示**{% mathjax %}\kappa{% endmathjax %}，该表示可用于控制。**样本效率**(`Sample Efficiency`)与**强化学习**的**样本复杂度**(`Sample Complexity`)密切相关。直观上，如果一个**管道**在相同的时间步数下表现出比基线更高的奖励，就认为它更具**样本效率**。为了正式定义这一点，使用探索的**样本复杂度**的概念：给定某个{% mathjax %}\epsilon > 0{% endmathjax %}，将**样本复杂度**定义为策略在时间步数{% mathjax %}t{% endmathjax %}之后产生的值{% mathjax %}V^{\pi} < V^{*} - \epsilon{% endmathjax %}。这一定义直接衡量了**智能体**表现不佳的次数（由{% mathjax %}\epsilon{% endmathjax %}量化），并将“**快速**”学习者视为那些尽可能少地表现不佳的学习者。引入**边信息**会导致**样本复杂度**的降低，从而提高**样本效率**。
+
+**探索**是**强化学习**中的一个关键问题，改善**样本复杂度**的一种具体方法是通过使**用边信息**直接影响探索机制。Amin等人将**探索方法**根据**智能体**用于探索世界的信息类型分为以下几类：
+- **无奖励探索方法**：在这种方法中，外部奖励不会影响行动选择，而是依赖于内在动机的形式进行探索，例如**多样性最大化**。
+- **随机行动选择方法**：利用估计的**价值函数**、**策略**或**奖励**来诱导探索行为。
+- **乐观/基于奖励的探索方法**：采用乐观面对不确定性的范式，倾向于选择具有更高不确定值的行动。
+- **深思熟虑的探索方法**：使用动态的**后验分布**（**贝叶斯设置**）或**元学习**技术来优化解决探索问题。
+- **概率匹配方法**：利用启发式选择下一个行动。
+
+**迁移**和**泛化**涵盖了评估**强化学习**(`RL`)**智能体**在不同**马尔可夫决策过程**(`MDP`)上表现的性能指标：**迁移评估**一个在某个`MDP`{% mathjax %}\mathcal{M}_i{% endmathjax %}上训练的**智能体**在另一个`MDP`{% mathjax %}\mathcal{M}_j{% endmathjax %}上的表现。这可以通过`one-shot`方式进行，即**智能体**不对{% mathjax %}\mathcal{M}_j{% endmathjax %}进行**微调**，或者通过`few-shot`方式进行，即**智能体**在{% mathjax %}\mathcal{M}_j{% endmathjax %}上进行一些策略更新，以尽可能快地学习。通常，两个`MDP`之间的性能差距决定了**迁移性能**。
+{% mathjax '{"conversion":{"em":14}}' %}
+J_{\text{transfer}}(\pi)\;:=\; \mathbf{G}(\pi, \mathcal{M}_i)- \mathbf{G}(\pi, \mathcal{M}_j)
+{% endmathjax %}
+**泛化**(`Generalization`)将这一概念扩展到在一组训练**马尔可夫决策过程**(`MDP`){% mathjax %}\mathcal{M}_{\text{train}}{% endmathjax %}上训练**智能体**，然后在一组不同的`MDP`{% mathjax %}\mathcal{M}_{\text{test}}{% endmathjax %}上评估其性能。因此，这一指标可以用来衡量**泛化能力**。
+{% mathjax '{"conversion":{"em":14}}' %}
+\text{Gen}(\pi)\;:=\;\mathbf{G}(\pi,\mathbf{\mathcal{M}}_{\text{train}}) - \mathbf{G}(\pi,\mathbf{\mathcal{M}}_{\text{test}})
+{% endmathjax %}
+当训练和测试的**马尔可夫决策过程**(`MDP`)从同一分布中抽样时，可以对更严格形式的**泛化**进行评估，即{% mathjax %}\mathbf{\mathcal{M}}_{\text{train}},\mathbf{\mathcal{M}}_{\text{test}}\sim p(\mathbf{\mathcal{M}}){% endmathjax %}。根据迁移的方式(`one-shot、few-shot`)，这一概念涵盖了任何形式的`MDP`分布，包括多任务设置。将**边信息**融入学习中可以最小化{% mathjax %}\text{Gen}(\pi){% endmathjax %}。在`one-shot`情况下实现这一目标的三种方式：
+- **增加**{% mathjax %}\mathbf{\mathcal{M}}_{\text{train}}{% endmathjax %}和{% mathjax %}\mathbf{\mathcal{M}}_{\text{test}}{% endmathjax %}**之间的相似性**，通过**数据增强**、**领域随机化**、**环境- 生成**或通过**隐式或显式地影响优化目标**等技术。
+- **处理**{% mathjax %}\mathbf{\mathcal{M}}_{\text{train}}{% endmathjax %}和{% mathjax %}\mathbf{\mathcal{M}}_{\text{test}}{% endmathjax %}**之间的差异**，通过**编码归纳偏置**、**正则化**、**学习不变性**或**在线适应**。
+- **处理特定于强化学习的问题**，如**探索**和**非平稳数据分布**。
+
+**可解释性**(`Interpretability`)指的是对系统的机制性理解，以使其更加透明。**模型可解释性**的三个基本属性：
+- **可模拟性**(`Simulatability`)：指的是人类能够模拟系统内部工作原理的能力。
+- **可分解性**(`Decomposability`)：指的是为系统的各个工作部分增加直观理解的能力。
+- **透明性**(`Transparency`)：指的是改善对系统功能的理解，例如量化其收敛特性。
+
+鉴于**强化学习**(`RL`)**管道**中各个部分的耦合特性，增加**可解释性**意味着学习一个符合至少一种此类属性的`MDP`**策略**。引入**边信息**可以帮助在这三个方面提高性能，这取决于**边信息**的性质及其包含内容。然而，由于**可解释性指标**可能具有主观性，特别是在**强化学习**的情况下，这些指标在不同环境下的表现可能会有所不同，因此并未明确提供**可解释性**的正式度量。相反，通过**可分解性**的视角来寻求**可解释性**，检查方法所利用的分解是否可以单独模拟或是否为行动选择机制增加了透明度。
+
+**安全性**(`Safety`)指的是学习能够最大化**回报期望**的策略，这些策略在学习和/或部署过程中确保合理的系统性能/或遵循与安全相关的约束。例如，**基于模型的强化学习**方法通常会学习**环境模型**，然后利用该模型规划一系列动作。然而，这些模型往往是从噪声数据中学习的，将它们部署到现实世界中可能导致**智能体**进入灾难性状态。因此，**安全强化学习**(`Safe-RL`)文献中的方法专注于在训练过程中引入与安全相关的约束，以减轻此类问题。虽然**强化学习**中的安全性本身是一个广泛的领域，但我们在这项工作中考虑了两个特定类别：带约束的**安全学习**和**安全探索**。前者将学习过程置于一个或多个约束{% mathjax %}c_i \in C{% endmathjax %}之下。根据严格的必要性，这些约束可以通过多种方式纳入，例如**期望安全**、**值安全**、**安全轨迹**以及**安全状态**和**动作**。可以将其表述为：
+{% mathjax '{"conversion":{"em":14}}' %}
+\underset{\pi\in \Pi}{\max}\mathbb{E}_{\pi}(G)\;\text{ s.t. }c_i = \{h_i\leq \alpha \}
+{% endmathjax %}
+其中{% mathjax %}h_i{% endmathjax %}可以是与**回报**、**轨迹**、**值**、**状态**和**动作**相关的函数，{% mathjax %}\alpha{% endmathjax %}是一个**安全阈值**。因此，**边信息**可以用于这些约束的公式化。另一方面，**安全探索**(`Safe Exploration`)修改了探索过程，以外部知识为依据，转化为将**边信息**融入探索过程。虽然从直观上看，这与使用**边信息**进行**定向探索**重叠，这种定向探索的最终目标是确保安全，这可能会以牺牲**样本效率**或**泛化能力**为代价。
