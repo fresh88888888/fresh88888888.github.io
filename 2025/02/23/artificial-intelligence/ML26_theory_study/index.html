@@ -155,7 +155,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB"><span class="nav-number">1.</span> <span class="nav-text">论文解读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AGI-%E6%8E%A2%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">AGI 探析</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB"><span class="nav-number">1.</span> <span class="nav-text">论文解读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AGI-%E6%8E%A2%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">AGI 探析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#AI%E6%84%9F%E7%9F%A5"><span class="nav-number">2.1.</span> <span class="nav-text">AI感知</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AI%E6%8E%A8%E7%90%86"><span class="nav-number">2.2.</span> <span class="nav-text">AI推理</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -303,14 +303,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>4k</span>
+      <span>7.5k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>13 分钟</span>
+      <span>25 分钟</span>
     </span>
 </div>
 
@@ -358,12 +358,49 @@
 <img data-src="/2025/02/23/artificial-intelligence/ML26_theory_study/ml_3.png" class="">
 
 <p>由上图所示，<code>AGI</code>内部，即<code>AGI</code>的“<strong>大脑</strong>”，由四个主要组成部分：<strong>感知</strong>、<strong>推理</strong>、<strong>记忆</strong>和<strong>元认知</strong>。人类大脑的复杂性，以及其特定功能区域分别负责<strong>认知</strong>和<strong>行为</strong>的不同方面，为<code>AGI</code>系统的架构提供了一个引人入胜的类比。类似于人类大脑分为感官处理、情感、认知和执行功能等区域，<code>AGI</code>系统的“<strong>大脑</strong>”也可以基本上分为四个主要组成部分：<strong>感知</strong>、<strong>记忆</strong>、<strong>推理能力</strong>和<strong>元认知</strong>。这些组成部分反映了人类<strong>认知</strong>的基本方面，并在创建一个真正智能的系统中扮演着不同的关键角色。<strong>感知</strong>是指在<code>AGI</code>与其环境交互过程中对感官信息的组织和解释，被视为<code>AGI</code>的基本能力，包括<strong>视觉、听觉、触觉、嗅觉</strong>等。<code>AGI</code>的<strong>推理</strong>是基于对环境的感知，并对环境执行行动。<code>AGI</code>与环境的互动，包括<strong>感知</strong>的获取和行动的执行，将被保存为<code>AGI</code>的<strong>记忆</strong>。这些<strong>记忆</strong>将被用于<code>AGI</code>的<strong>元认知</strong>。</p>
-<p><strong>感知</strong>是指系统解释和理解周围世界的能力。这涉及对感官数据的处理和分析，以构建对环境的动态和上下文理解。<strong>自然语言</strong>作为人类交流的主要方式，已经从早期人类互动的起源发展到复杂的系统，如<strong>大语言模型</strong>(<code>LLMs</code>)。这些模型扩展了理解和参与对话以及执行创意任务的能力。然而，文本本身可能无法完全捕捉到现实世界经验的深度，这凸显了<strong>多模态智能</strong>的重要性，即结合图像、视频和音频以实现更丰富的<strong>人机交互</strong>。从传统<code>LLMs</code>到<strong>多模态模型</strong>的转变代表了一次重大的技术飞跃，促进了跨多种输入的更加逼真的互动。这一转变由近期<strong>多模态</strong><code>LLMs</code>的发展所突显，解决了仅依赖语言理解的局限性，并为涉及多种数据形式的复杂挑战打开了大门。整合各种模型应遵循两个原则：1）理解“如何”将外部模态信息纳入，并确保不同模块的无缝整合；2）确定“使用什么”信息以保持原始模型的完整性并增强整体能力。利用现成的<code>LLMs</code>和<strong>多模态编码器</strong>的主要目标是在它们之间建立无缝连接。这种连接可以是外部的，即在不改变现有模型结构的情况下对齐多模态知识，也可以是内部的，允许<code>LLMs</code>与其他模态编码器进行更为复杂的交互。这些方法通常需要大量训练，例如创建一个可学习的接口，将<code>LLM</code>与非语言模态（特别是视觉）联系起来。类似于<code>LLM</code>的<strong>预训练</strong>和<strong>微调</strong>，<strong>多模态</strong><code>LLMs</code>(<code>MLLMs</code>)遵循一个基于<strong>预训练</strong><code>LLM</code>的两阶段训练范式，并将其适应<strong>多模态领域</strong>。第一阶段，称为<strong>视觉-语言对齐阶段</strong>，旨在使<strong>语言模型</strong>能够理解视觉标记。第二阶段涉及<strong>多模态指令调整</strong>，以使模型与人类感知相一致。这些阶段根据<code>LLM</code>与<strong>多模态编码器</strong>之间的组合架构有明确的分类。</p>
+<h5 id="AI感知"><a href="#AI感知" class="headerlink" title="AI感知"></a>AI感知</h5><p><strong>感知</strong>是指系统解释和理解周围世界的能力。这涉及对感官数据的处理和分析，以构建对环境的动态和上下文理解。<strong>自然语言</strong>作为人类交流的主要方式，已经从早期人类互动的起源发展到复杂的系统，如<strong>大语言模型</strong>(<code>LLMs</code>)。这些模型扩展了理解和参与对话以及执行创意任务的能力。然而，文本本身可能无法完全捕捉到现实世界经验的深度，这凸显了<strong>多模态智能</strong>的重要性，即结合图像、视频和音频以实现更丰富的<strong>人机交互</strong>。从传统<code>LLMs</code>到<strong>多模态模型</strong>的转变代表了一次重大的技术飞跃，促进了跨多种输入的更加逼真的互动。这一转变由近期<strong>多模态</strong><code>LLMs</code>的发展所突显，解决了仅依赖语言理解的局限性，并为涉及多种数据形式的复杂挑战打开了大门。整合各种模型应遵循两个原则：1）理解“如何”将外部模态信息纳入，并确保不同模块的无缝整合；2）确定“使用什么”信息以保持原始模型的完整性并增强整体能力。利用现成的<code>LLMs</code>和<strong>多模态编码器</strong>的主要目标是在它们之间建立无缝连接。这种连接可以是外部的，即在不改变现有模型结构的情况下对齐多模态知识，也可以是内部的，允许<code>LLMs</code>与其他模态编码器进行更为复杂的交互。这些方法通常需要大量训练，例如创建一个可学习的接口，将<code>LLM</code>与非语言模态（特别是视觉）联系起来。类似于<code>LLM</code>的<strong>预训练</strong>和<strong>微调</strong>，<strong>多模态</strong><code>LLMs</code>(<code>MLLMs</code>)遵循一个基于<strong>预训练</strong><code>LLM</code>的两阶段训练范式，并将其适应<strong>多模态领域</strong>。第一阶段，称为<strong>视觉-语言对齐阶段</strong>，旨在使<strong>语言模型</strong>能够理解视觉标记。第二阶段涉及<strong>多模态指令调整</strong>，以使模型与人类感知相一致。这些阶段根据<code>LLM</code>与<strong>多模态编码器</strong>之间的组合架构有明确的分类。</p>
 <p><strong>模态的外部连接</strong>，外部方法基于通过额外结构和现有模型将视觉分支与<code>LLMs</code>（<strong>大语言模型</strong>）连接起来的理念。</p>
 <ul>
 <li><strong>投影式</strong>：<strong>模态连接器</strong>存在于<code>LLMs</code>和多<strong>模态编码器</strong>之外，可以通过简单的<strong>线性投影</strong>或相对复杂的选择方法来实现。这种类型的<code>MLLM</code>（<strong>多模态大语言模型</strong>）通常在两个对齐训练阶段激活投影层或<code>LLMs</code>。</li>
 <li><strong>查询式</strong>：这些<code>MLLMs</code>使用设计更为复杂的连接器，但仍然独立于<code>LLMs</code>和<strong>多模态编码器</strong>之外。这种模型本质上利用了类似<strong>注意力</strong>的交互，即在可学习变量与视觉标记之间进行交互。由于其连接器能够学习到比简单投影式更复杂的数据模式，因此仅<strong>激活连接器</strong>也能获得更优的多模态性能。</li>
 <li><strong>语言式</strong>：语言作为接口是将所有现成模型整合为一个整体的流行方向。这些方法利用各种预构建模块进行生成和其他任务，<code>LLMs</code>主要负责模块的协调。利用工具的一个主要优势是这些系统可以更灵活地进行规划，以便做出决策或创作多媒体内容，语言作为桥梁。一个突出的最新方法是<code>GPT-4V</code><strong>模型</strong>，它可以通过连接最先进的生成器生成生动的图像。虽然这些方法为各种任务提供了更广泛的技术解决方案，但它们在实现与接口式方法相当的性能深度方面通常不如后者。</li>
+</ul>
+<p><strong>模态的内部连接</strong>，将<strong>多模态编码器</strong>与<code>LLM</code>（<strong>大语言模型</strong>）连接的另一种方法是调整<code>LLM</code>的内部模块。</p>
+<ul>
+<li><strong>基于交叉注意力</strong>：<code>Flamingo(Alayrac et al., 2022)</code>提出了一种<strong>感知器</strong>，在<code>LLMs</code>的<strong>注意力模块</strong>内增加了额外的<strong>交叉注意力机制</strong>。<code>Flamingo</code>的几种变体也使用相同或类似的框架来调整<code>MLLMs</code>（<code>多模态大语言模型</code>）。</li>
+<li><strong>自回归式</strong>：像<code>Fuyu(Bavishi et al., 2023)</code>及其变体这样的<code>MLLMs</code>将视觉标记视为<strong>语言标记</strong>，并从预训练阶段开始使用相同的自回归训练损失来更新整个模型参数。</li>
+</ul>
+<p><strong>多模态大语言模型</strong>(<code>MLLMs</code>)的额外模态：尽管早期模型主要集中在视觉输入和文本输出上，但近期的发展已扩展到包括多种模态的输入和输出形式。在输入方面，通过适当的<strong>模态编码器</strong>和训练数据，<code>LLMs</code>（<strong>大语言模型</strong>）现在可以理解视频、音频以及多种非语言模态，使这种方法具有<strong>可扩展性</strong>和<strong>可访问性</strong>。在输出方面，最近的研究转向了创建超越单纯文本生成的混合内容。<code>LLMs</code>已经从最初的检索图像和生成文本发展到同时生成视觉和文本内容。生成图像和文本的详细技术路径包括对具有统一表示的图像-文本数据进行<strong>自回归调整</strong>，以及将文本特征转换为<strong>图像生成模型</strong>(<code>Stable Diffusion</code>)的符号调整。此外，视觉领域的最新进展为在没有文本的情况下生成内容提供了可扩展的方法，增强了将视觉模型扩展到生成任务的潜力。这为在语言之外的其他模态中扩展和发现类似的“<code>AGI</code><strong>现象</strong>”提供了可能性。</p>
+<p>当前<code>AGI</code>级别的<strong>感知模型</strong>仍然受到模态有限和<strong>鲁棒性</strong>不足的限制。为解决这些问题，所以提出了几个潜在的未来研究方向：</p>
+<ul>
+<li><strong>模态多样化</strong>：整合多种数据类型以提升模型能力是至关重要的。需要探索不常见的模态（如图形），并同时整合多种模态（如图像、音频和视频）。这需要精心设计的模块、高质量的数据以及平衡管理不同模态之间的相互作用及其与语言的关系。例如，虽然<code>GPT-4V</code>只能处理语言和视觉信息，但最新的<code>Gemini</code><strong>模型</strong>已将其能力扩展到更广泛的音频和视频范围。潜在的方法包括使用统一模态表示工具（如<code>ImageBind</code>和<code>LanguageBind</code>）来弥合模态差距，减轻从其他模态学习的负担。</li>
+<li><strong>提高多模态系统的鲁棒性和可靠性</strong>：随着越来越多的综合基准测试出现，这些测试不仅涵盖一般情况，还包括挑战性输入（如数学问题、反事实指令和攻击字符串），显然<strong>多模态系统</strong>（特别是较小的系统）在面对对抗性示例时表现不佳，并且严重依赖语言，缺乏在分布异常情况下的<strong>推理能力</strong>（如多面板图像、草图和长序列图像）。这些观察结果在实际应用中可能带来潜在风险。为应对这些挑战并构建更具<strong>鲁棒性</strong>的多模态<code>AGI</code>模型，可以考虑将对抗性示例纳入训练或增加训练数据指令格式的多样性。</li>
+<li><strong>可解释的多模态模型</strong>：与传统模型不同，<strong>多模态模型</strong>涉及不同模态之间的复杂交互，因此揭示其内部工作机制以理解和创建更强大的<strong>多模态模型</strong>至关重要。为此，研究努力提供了训练或生成过程中的解释，揭示了模型性能和推理的洞见。方法如用多样化的训练数据探测模型性能已被探索。此外，<code>Gemini</code>团队通过提供生成解释来增强用户对<code>AI</code>推理过程的信任和理解。提高<strong>多模态模型</strong>的另一个方面是增加透明度，这包括识别特定的模型组件或配置，这些组件或配置有助于系统的能力（如<strong>视觉编码器</strong>、<strong>连接器</strong>或<strong>训练范式</strong>）。研究还特别调查了不同模态处理器对整体模型性能的影响。随着<strong>多模态模型</strong>的发展，未来的研究必须优先考虑<strong>可解释性</strong>和<strong>透明度</strong>，以便充分发挥这些强大<code>AI</code>系统的潜力，同时确保其负责任和道德。例如，未来的研究方向可以探索严格控制的实验来训练<code>AI</code>模型，以分解每个部分，或探测模型组件以找到最有效的模块。</li>
+</ul>
+<h5 id="AI推理"><a href="#AI推理" class="headerlink" title="AI推理"></a>AI推理</h5><p><strong>推理</strong>是基于<strong>可用信息</strong>、<strong>逻辑</strong>和<strong>先验知识</strong>得出<strong>结论</strong>或做出决策的<strong>认知过程</strong>。它包括<strong>评估证据</strong>、<strong>识别关系</strong>以及<strong>应用规则</strong>或<strong>原则</strong>来解决问题。<code>AI</code><strong>推理</strong>指的是<code>AI</code><strong>系统</strong>模拟这一过程的能力，使机器能够<strong>理解情境</strong>、<strong>推断结论</strong>并以类似人类推理的方式<strong>做出决策</strong>。</p>
+<p>当前<code>AI</code><strong>推理</strong>的状况，大量研究表明，<strong>推理能力</strong>已经在<strong>大型机器学习模型</strong>中显现。<strong>大语言模型</strong>(<code>LLMs</code>)，包括<code>GPT-3</code>、<code>LLaMA 2</code>和<code>PALM 2</code>，已经在各种<code>NLP</code>任务中实现了灵活的零样本和少样本推理能力。<strong>大视觉语言模型</strong>(<code>LVLMs</code>)，如<code>GPT-4</code><strong>视觉版</strong>和<code>Gemini</code>，通过有效地整合视觉和语言推理，进一步推动了这一进展。已经开发出多种策略，以在不更新模型的情况下激发有效和高效的推理。这些方法在包括算术、常识、符号推理以及模拟和现实世界挑战在内的广泛任务中显著提高了模型性能。</p>
+<p>思维导航：</p>
+<ul>
+<li><strong>思维链</strong>(<code>CoT</code>)：<strong>思维链</strong>生成一系列中间推理步骤，称为“<strong>思维</strong>”，以使模型能够分解多步骤问题，并为更复杂的任务分配额外的计算。这为模型的推理过程提供了<strong>可解释</strong>的洞见，帮助理解答案的推导过程，并识别推理中可能出现的错误。</li>
+<li><strong>思维树</strong>(<code>ToT</code>)：<strong>思维树</strong>使用基于树的<strong>搜索算法</strong>来导航“<strong>思维</strong>”，以进行深思熟虑的问题解决。这使得<strong>大语言模型</strong>(<code>LLMs</code>)能够探索多种推理路径，并在必要时进行<strong>前瞻</strong>或<strong>回溯</strong>。</li>
+<li><strong>思维图</strong>(<code>GoT</code>)：<strong>思维图</strong>将信息组织成图结构，其中“<strong>思维</strong>”是顶点，边对应于这些顶点之间的依赖关系。这种基于图的组织方式促进了更复杂的思维整合和操作，允许创建更复杂的<strong>推理路径</strong>和<strong>反馈机制</strong>。</li>
+<li><strong>程序思维</strong>(<code>PoT</code>)：<strong>程序思维</strong>利用语言模型将推理过程表达为程序，将计算委托给外部计算机执行生成的程序以获得答案。这种计算与推理的分离提高了对高度符号化推理问题的性能。</li>
+<li><strong>自洽推理</strong>：自洽性通过采样多样化的推理路径并选择最一致的答案，克服了<strong>贪婪解码</strong>的<strong>局限性</strong>，实现了更可靠的结果。</li>
+<li><strong>其他提示策略</strong>：许多其他提示方法已被开发出来，以提高<code>LLMs</code>的推理能力。例如，复杂性提示、自动思维链、最简至最复杂提示、分解提示、工具<code>LLM</code>和<code>ToRA</code>等方法，通过不同的方式增强了模型的推理能力。</li>
+<li><strong>动态推理与规划</strong>：<code>ReAct</code>通过交替生成<code>推理轨迹</code>和<code>行动计划</code>，实现<code>动态推理</code>。<code>DEPS</code>通过<code>动态反馈循环</code>提高计划的可靠性。<code>Inner Monologue</code>和<code>ProgPrompt</code>等方法通过实时反馈调整计划，提高任务完成率和适应性。</li>
+<li><strong>反思与改进</strong>：自我改进和反思等方法通过迭代生成和反馈，使模型能够根据反馈进行调整。<code>CRITIC</code>利用外部工具验证<code>LLMs</code>的行动，并进行自我校正。</li>
+<li><strong>整合语言模型、世界模型和代理模型</strong>：<code>LAW</code>框架结合<code>语言模型</code>、<code>世界模型</code>和<code>代理模型</code>，促进更强大的推理能力。<code>RAP</code>和<code>BIP-ALM</code>等方法通过语言模型实现更复杂的<code>推理</code>和<code>规划</code>。</li>
+<li><strong>具身智能体的推理与规划</strong>：<code>Voyager</code>和<code>Generative Agents</code>等方法通过<code>动态推理</code>和<code>反馈循环</code>，提高了<strong>具身智能体</strong>在执行任务和与环境互动方面的能力。</li>
+</ul>
+<p>尽管当前系统在各种任务中展示了令人印象深刻的推理技能，但它们仍存在一些重大缺陷和挑战：</p>
+<ul>
+<li><strong>因果学习</strong>：基础模型需要学习<strong>因果关系</strong>，以实现更好的<strong>理解</strong>和<strong>泛化</strong>。这些模型主要依赖训练数据中的模式，但这些模式并不总是能捕捉到人类知识和经验的深度和广度。此外，这些模型通常基于数据中提取的模式运行，而不是真正理解底层的<strong>因果关系</strong>。<code>Zečević</code>等人（<code>2023</code>）描述了<code>LLMs</code>如何表面上复制<strong>因果关系</strong>，但缺乏底层的<strong>因果机制</strong>，使它们更像是“因果鹦鹉”而非真正的因果模型。<code>Jin</code>等人（<code>2023</code>）提出了一个具有挑战性的因果推理数据集，并建议LLMs在可靠推理因果关系方面仍有很长的路要走。未来<code>AGI</code>的进步应专注于<strong>学习因果关系</strong>而非<strong>相关性</strong>，从而实现更好的<strong>泛化</strong>和更深入的理解。</li>
+<li><strong>复杂和长上下文推理</strong>：<code>AGI</code>必须解决复杂的<strong>多步推理任务</strong>的挑战。尽管已经开发了许多策略来缓解这一问题，但这些策略通常需要明确的指导或问题的仔细构建，这在未来可能变得不必要。即使采用这些方法，模型在处理长上下文信息并在整个推理任务中保持连贯和逻辑推理方面仍然面临挑战。</li>
+<li><strong>幻觉、不确定性评估和模糊处理</strong>：<code>AGI</code>应解决<strong>幻觉问题</strong>，即生成与提供的来源内容不符或无意义的内容。这种倾向影响性能，并在实际应用中引发重大安全问题。此外，这些模型通常难以准确评估其不确定性，并在输出中有效传达这种不确定性，这可能导致误导性的结果。它们还难以处理<strong>模糊性</strong>，这可能使其在复杂情境中的<strong>可用性</strong>复杂化。</li>
+<li><strong>社交推理</strong>：<code>AGI</code>应提高<strong>社交推理能力</strong>，以增强与人类和其他<strong>智能体</strong>的互动。当前的<code>AI</code>模型缺乏健全的<strong>心智理论</strong>，即理解他人心理状态的能力。提高这一能力对于<code>AGI</code>系统在开放环境中与人类和其他<code>智能体</code>安全有效地互动至关重要。理解社交线索和规范是这一发展的核心，因为它使<code>AGI</code>能够在不同情境中解释和回应隐含的沟通和行为期望。</li>
+<li><strong>可解释性和透明度</strong>：<code>AGI</code>应解决可<strong>解释性</strong>和<strong>透明度</strong>的挑战，从而提高其决策的<strong>可靠性</strong>。大多数<code>AI</code>系统缺乏这些特性，使得难以理解它们如何得出特定结论或答案。旨在用<strong>自然语言</strong>引出推理的技术并不总是与模型实际使用的推理过程一致，生成的解释可能具有系统性误导。这一局限性阻碍了它们的推理能力，并在需要<strong>决策审计</strong>或<strong>证明</strong>的领域（如医疗和法律）带来重大挑战。</li>
+<li><strong>动态推理和跨领域规划</strong>：未来的<code>AGI</code>系统旨在实现跨领域的<strong>动态推理</strong>、<strong>道德</strong>和<strong>高效的规划</strong>，以及前所未有的规模和速度的<strong>类人智能</strong>。我们仍然远未实现<code>AGI</code>级别的能力，即在没有重新训练或人类监督的情况下，在各种领域进行<strong>推理</strong>和<strong>规划</strong>。这一旅程包括增强<code>AI</code>系统在不同领域之间转移知识和技能的能力，使它们能够高效地应对未知情况。关键的发展重点是创建能够在广泛的战略目标和详细行动之间进行规划的算法。此外，<code>AI</code>系统在规划阶段需要更有效地管理资源（如时间、能源和成本），并确保这些规划过程符合道德标准和安全法规，特别是在敏感领域，以避免滥用或意外后果。</li>
+<li><strong>创新解决方案</strong>：未来的<code>AGI</code>系统将能够<strong>理解上下文</strong>、<strong>推断因果关系</strong>，并在各种领域中<strong>动态应用高级逻辑规划</strong>。通过综合大量信息并进行深思熟虑的规划，它们可以为<strong>创造性假设的构建</strong>、<strong>复杂道德判断的做出</strong>、<strong>新场景结果的预测</strong>以及<strong>持续学习</strong>和完善对世界的理解提供创新解决方案。这些未来的<code>AGI</code>系统不仅将在处理和生成信息方面表现出色，还将能够以深度类似于<strong>人类智能</strong>的方式理解和与世界互动，但规模和速度将远超人类能力。</li>
 </ul>
 
     </div>
@@ -444,7 +481,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">76:52</span>
+    <span title="站点阅读时长">77:04</span>
   </span>
 </div>
 <div class="busuanzi-count">
