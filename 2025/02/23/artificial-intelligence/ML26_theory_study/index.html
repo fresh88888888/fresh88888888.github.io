@@ -155,7 +155,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB"><span class="nav-number">1.</span> <span class="nav-text">论文解读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AGI-%E6%8E%A2%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">AGI 探析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#AI%E6%84%9F%E7%9F%A5"><span class="nav-number">2.1.</span> <span class="nav-text">AI感知</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AI%E6%8E%A8%E7%90%86"><span class="nav-number">2.2.</span> <span class="nav-text">AI推理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AI%E8%AE%B0%E5%BF%86"><span class="nav-number">2.3.</span> <span class="nav-text">AI记忆</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB"><span class="nav-number">1.</span> <span class="nav-text">论文解读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AGI-%E6%8E%A2%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">AGI 探析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#AI%E6%84%9F%E7%9F%A5"><span class="nav-number">2.1.</span> <span class="nav-text">AI感知</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AI%E6%8E%A8%E7%90%86"><span class="nav-number">2.2.</span> <span class="nav-text">AI推理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AI%E8%AE%B0%E5%BF%86"><span class="nav-number">2.3.</span> <span class="nav-text">AI记忆</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AI%E5%85%83%E8%AE%A4%E7%9F%A5"><span class="nav-number">2.4.</span> <span class="nav-text">AI元认知</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -303,14 +303,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>10k</span>
+      <span>11k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>9 分钟</span>
+      <span>36 分钟</span>
     </span>
 </div>
 
@@ -412,6 +412,20 @@
 <p><strong>记忆管理</strong>，记忆根据持续时间分为<strong>短期记忆</strong>和<strong>长期记忆</strong>。<strong>短期记忆</strong>：短期记忆在维持当前决策过程所需的信息方面起着至关重要的作用。一个显著的例子是<strong>上下文提示</strong>，它利用基础模型自身的上下文作为一种<strong>短期记忆</strong>。这种方法可以提供额外的信息或示例，或用于生成<strong>中间推理</strong>。更广泛地说，<strong>短期记忆</strong>包括所有决策所需的即时数据，包括：1、感知模块收集或处理的实时数据；2、推理、规划和自我进化模块的即时输出；3、从长期记忆中主动检索的信息。这些元素共同合成，指导并告知后续行动。<strong>长期记忆</strong>：长期记忆可以广泛分为两类：<strong>经验</strong>和<strong>知识</strong>。经验包括过去的<strong>观察、思考、行动</strong>等。这些丰富的经验在决策过程中起着关键作用。通过检索相关经验，<strong>智能体</strong>可以获得必要的信息，理解过去行动的反馈，并在理解和推理中实现一定程度的<strong>泛化</strong>。例如，<code>Reflexion</code>反思任务反馈信号，并将其作为文本摘要保存，直接纳入后续情境的上下文中，以提高性能。<code>Generative Agents</code>以自然语言记录经验，并使用<strong>相关性</strong>（基于<strong>嵌入</strong>）、<strong>最近性</strong>（基于<strong>规则</strong>）和<strong>重要性</strong>（基于<strong>推理</strong>）标准检索记忆。<strong>知识</strong>代表了<strong>智能体</strong>对世界和自身的理解，增强了其推理和决策能力。<strong>知识</strong>可以来自两个来源：<strong>从经验中收集</strong>和<strong>同化的知识</strong>，或者利用<strong>外部知识库</strong>。例如，<code>Voyager</code>维护一个不断扩展的可执行代码技能库，用于初步行动以完成任务。<code>ReAct</code>使用<code>Wikipedia API</code>在<strong>智能体</strong>缺乏信息时获取外部知识。</p>
 <p><strong>记忆表示</strong>，记忆表示分为<strong>文本记忆</strong>和<strong>参数记忆</strong>。<strong>文本记忆</strong>是当前表示记忆内容的主要方法，包括<strong>自然语言</strong>的原始形式和结构化形式（如元组、数据库等）。<strong>参数记忆</strong>可以通过<strong>监督微调</strong>、<strong>知识编辑</strong>和<strong>模型合并</strong>等技术将领域特定知识整合到模型参数中。<strong>文本记忆</strong>在每次推理时都需要将记忆纳入<strong>上下文提示</strong>，导致成本更高且处理时间更长。相比之下，<strong>参数记忆</strong>在写入阶段成本更高，因为微调模型比简单的文本存储更具挑战性。在<strong>可解释性</strong>方面，<strong>文本记忆</strong>通常比<strong>参数记忆</strong>更透明，因为<strong>自然语言</strong>是人类理解的最直接方式。</p>
 <p><strong>记忆利用</strong>，利用记忆的两种常见技术是<strong>记忆检索</strong>和<strong>长上下文</strong><code>LLMs</code>。<strong>记忆检索</strong>：<strong>记忆检索</strong>涉及从<strong>长期记忆</strong>中读取信息到<strong>短期记忆</strong>中以供即时使用。这可以通过<strong>基于规则的检索</strong>或<strong>检索增强方法</strong>实现。<strong>基于规则的检索</strong>可以使用<strong>关键词</strong>、<strong>时间步长</strong>或<strong>特定模式搜索记忆</strong>。<strong>检索增强方法</strong>如<code>Dense Passage Retriever</code>(<code>DPR</code>)创建文档的<strong>稠密表示</strong>，并基于其<strong>先验概率检索</strong>最相关的文档。<strong>长上下文</strong><code>LLMs</code>：<strong>长上下文</strong><code>LLMs</code>通过扩展<strong>上下文窗口</strong>，为模型访问<strong>长期记忆</strong>开辟了新的途径。<code>Ring Attention</code>和<code>LongRoPE</code>等技术通过改进<strong>注意机制</strong>和<strong>存储方法</strong>，大大降低了<strong>长上下文推理</strong>的时间和成本。随着<code>GPU</code>性能的提升和注意机制的突破，<code>LLMs</code>的<strong>上下文窗口</strong>已从<code>GPT-2</code>的<code>1024</code>个<code>token</code>扩展到<code>GPT-4</code>的<code>8192</code>个<code>token</code>，甚至超过<code>16K</code>个<code>token</code>。这些扩展的<strong>上下文窗口</strong>使得<code>AI</code>系统能够更有效地存储和回忆上下文中的<strong>知识</strong>和<strong>经验</strong>，从而实现更快速和全面的<strong>基于上下文的推理</strong>。</p>
+<p><code>AGI</code><strong>级别的记忆</strong>，实现<code>AGI</code>级别的记忆需要管理庞大且动态组织的信息，改进记忆在推理和规划中的利用，并具备自主更新和丰富记忆库的能力。这涉及类似人类的有意记忆使用，但超越人类的能力，允许更全面和复杂的回忆。</p>
+<ul>
+<li><strong>未来的</strong><code>AGI</code><strong>将高效管理多样且分层的记忆，确保隐私、协作和可扩展性</strong>。当前的<code>AI</code><strong>智能体</strong>在构建分层记忆和无缝整合各种格式的信息方面面临挑战。未来的<code>AGI</code><strong>系统</strong>预计将在处理嵌入、视频、文档和数据库等多种形式的记忆方面表现出色，既高效又有效。它们还需要处理不同级别的记忆权限：本地记忆对于保护隐私至关重要，而共享记忆（在集中或分散结构中，视需要）则是协作和分布式流程所必需的。用于记忆管理的架构预计将高度组织化和可扩展。这些系统可能具备先进的算法，用于分类和索引信息，使<strong>智能体</strong>能够高效地检索和记录各种经验和知识。此外，它们可以动态更新和重组记忆结构，确保信息的最佳存储和检索。</li>
+<li><strong>未来的</strong><code>AGI</code><strong>将通过整合检索和高级推理来增强记忆利用，实现更类似人类的智能和适应性</strong>。超越简单的<strong>记忆检索</strong>，未来的<code>AGI</code><strong>系统</strong>可以通过将<strong>检索过程</strong>与<strong>高级推理</strong>相结合，精细地合成和应用信息，从而提高<strong>记忆利用率</strong>。这些检索过程可以被学习或更新，以适应不断变化的环境。能够实时访问和应用相关信息将是实现更类似人类智能的重要一步，使这些系统能够以高度理解和适应性应对新情况。</li>
+<li><strong>未来的</strong><code>AGI</code><strong>将自主更新知识，实现持续学习和适应，同时确保安全</strong>。与主要依赖预先存在的人类生成内容的现有<strong>检索增强模型</strong>不同，未来的<code>AGI</code><strong>系统</strong>可以<strong>自主生成</strong>、<strong>评估</strong>和将新内容纳入其记忆库。这些更新应包括提高性能所需的知识和系统可以借鉴的经验。这一概念与<strong>自我进化</strong>密切相关。它将使<code>AGI</code>能够从自身的经验和洞察中学习，不断丰富和更新其知识库。在不断变化的世界中，这种能力还将使系统能够根据新信息迅速适应，并摒弃过时的知识。确保记忆更新的安全性至关重要，必须确保不会写入有害信息，以防止污染。为自主<code>AGI</code>设计安全约束涉及创建强大的<strong>验证协议</strong>，在整合之前评估新信息的<strong>真实性</strong>、<strong>相关性</strong>和影响。可以实施<strong>专家系统</strong>定期审查更新，使用<strong>异常检测标记异常</strong>和潜在有害数据，并采用其他方法来强化这些安全约束。</li>
+</ul>
+<h5 id="AI元认知"><a href="#AI元认知" class="headerlink" title="AI元认知"></a>AI元认知</h5><p><strong>元认知</strong>(<code>Choudrie和Selamat，2006</code>)是人类的<strong>关键认知</strong>和<strong>情感技能</strong>，包括<strong>理解复杂情境、自我意识</strong>和<strong>创新动机</strong>。这些能力有助于分享<strong>隐性知识</strong>并推动个人成长。开发具有如此先进<strong>元认知</strong>的<code>AGI</code>引发了一个根本性的疑问：在追求<strong>人工智能</strong>的过程中，我们是否正处于创造一种新生命形式的边缘？其影响深远，因为引入具有<strong>自我意识</strong>和<strong>自主决策能力</strong>的实体可能重新定义<strong>生命和智能</strong>的边界。这一诱人的前景需要严格的伦理考量和监管审查，以确保<code>AGI</code>的演化对人类社会产生积极影响，而不会无意中引发具有意想不到后果的<strong>范式转变</strong>。</p>
+<p><strong>当前</strong><code>AI</code><strong>元认知的现状</strong>，关于<strong>元认知</strong>的讨论延伸到<code>AGI</code>领域，这些能力被认为同样重要。对于<code>AGI</code>系统，<strong>元认知</strong>能力如<strong>自我意识</strong>、<strong>意识</strong>、<strong>自我进化能力</strong>和<strong>心智理论</strong>被认为是实现<code>AGI</code>的基础。这些内在能力可以使<code>AI</code><strong>系统</strong>自主学习、高效完成任务，并更紧密地与人类意图保持一致。</p>
+<ul>
+<li><code>AGI</code><strong>中的自我意识</strong>：在<code>AI</code>中发展<strong>自我意识</strong>，特别是在机器人领域，依赖于复杂的概念，如<strong>自我反思</strong>、<strong>元认知</strong>和<strong>自我疏离</strong>。这些概念对于构建具有支持自我描述、使用个人代词和响应自我聚焦线索能力的<strong>认知架构</strong>的社交机器人至关重要，这些能力是促进有效人类互动和环境导航的基础。随着<code>AI</code>系统的演进，赋予它们类似人类的审慎特质的哲学和实际考量正变得越来越重要，预示着一个新兴的研究领域。为了全面理解这一领域，结合<strong>心理学</strong>、<strong>人工智能</strong>和<strong>伦理学</strong>的跨学科方法至关重要。为了无缝融入以人类为中心的世界，<code>AGI</code>必须具备对自身和他人<strong>信念、意图</strong>和<strong>欲望</strong>的<strong>敏锐意识</strong>。这种“<strong>心智理论</strong>”(<code>Premack and Woodruff, 1978</code>)是一种<strong>元能力</strong>，使<code>AGI</code>能够理解和预测行为，从而促进更顺畅的人类互动。这种理解将使<code>AGI</code>在复杂的社会情境中做出更细致和明智的决策。</li>
+<li><code>AGI</code><strong>的人格特质</strong>：最近的研究表明，<code>LLMs</code>可以展示一致的<strong>人格特质</strong>，如大五人格或<code>MBTI</code>框架中的类型，<code>ChatGPT</code>通常表现出与<code>ENFJ</code>类型相符的特质。这些模型还倾向于表现出特定的<strong>认知思维风格</strong>，例如<code>ChatGPT</code>的回答中显示出整体思维的倾向。研究越来越多地致力于有意地赋予<code>LLMs</code>特定的人格，使它们能够展示出多样且可验证的行为。</li>
+<li><code>AGI</code><strong>元认知在自我进化中的能力</strong>：尽管前述研究将<code>AGI</code>定义为推理等易于衡量的能力，但可能忽视了<strong>元认知能力</strong>如<strong>自我进化</strong>或<strong>自我意识</strong>的潜在重要性。研究主要通过<strong>智能体</strong>的迭代适应来展示这一点，例如任务执行、代码执行或<strong>物理模拟反馈</strong>。其他自我进化策略包括<strong>提示适应</strong>和<strong>优化</strong>、<strong>通过错误识别</strong>和<strong>自我反思持续改进</strong>，以及作为<strong>短期</strong>或<strong>长期学习机制的记忆检索</strong>。这些方法主要强调基于<code>LLMs</code>的循环框架中任务的迭代精炼。相比之下，最新的进展提出了解决<strong>智能体跨任务自我进化的方法</strong>，强调利用过去的经验来有效进化<code>AI</code><strong>系统</strong>。</li>
+</ul>
+<p>这些特质之所以重要，首先是因为<strong>自我意识</strong>可以通过准确评估自身的优势和局限性，增强<code>AGI</code>的适应性问题解决能力，从而在面对新挑战时实时调整策略。其次，随着<code>AGI</code>与社会功能的联系越来越紧密，伦理和道德决策能力变得越来越重要，需要<strong>自我意识</strong>来导航复杂的道德困境，并确保与人类价值观的一致。此外，<code>AGI</code>自主进化和适应的潜力在没有人类指导的情况下，可能带来更高的长期效率和能力，甚至可能导致其能力的指数级增长——这是真正<code>AGI</code>的关键特征。最后，在<code>AGI</code>中融入<strong>自主意识</strong>可能带来更自然和有效的<strong>人机互动</strong>，增强协作，并在需要与人类团队或社会结构深度融合的场景中开发更直观的用户界面。</p>
 
     </div>
 
@@ -484,14 +498,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">3.1m</span>
+    <span title="站点总字数">1.4m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">42:51</span>
+    <span title="站点阅读时长">77:15</span>
   </span>
 </div>
 <div class="busuanzi-count">
