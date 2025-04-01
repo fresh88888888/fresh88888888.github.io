@@ -81,6 +81,6 @@ mathjax:
 {% asset_img ml_2.png "智能体完成任务以50%的成功率，在过去六年中大约每七个月翻一番的速度，这一趋势也预示着在不到十年的时间里，我们将看到AI智能体能独立完成需要人类花费数天或数周才能完成的软件任务" %}
 
 如下图所示，作者先定义了一个`diverse task suite`，这些任务来自于三个数据集：`HCAST、SWAA-Suite`和`RE-Bench`，这三个数据集基本上都是`Software`跟`Agent`相关。从每个数据集里面抽取了一些task，这些task所花费的时间都是不一样的。
-{% asset_img ml_2.png "测量AI Agent 时间窗口的方法" %}
+{% asset_img ml_3.png "测量AI Agent 时间窗口的方法" %}
 
 
