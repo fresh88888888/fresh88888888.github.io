@@ -36,6 +36,10 @@
 <meta property="og:image" content="https://fresh88888888.github.io/2025/03/23/artificial-intelligence/ML28_theory_study/ml_1.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2025/03/23/artificial-intelligence/ML28_theory_study/ml_2.png">
 <meta property="og:image" content="https://fresh88888888.github.io/2025/03/23/artificial-intelligence/ML28_theory_study/ml_3.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2025/03/23/artificial-intelligence/ML28_theory_study/ml_4.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2025/03/23/artificial-intelligence/ML28_theory_study/ml_5.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2025/03/23/artificial-intelligence/ML28_theory_study/ml_6.png">
+<meta property="og:image" content="https://fresh88888888.github.io/2025/03/23/artificial-intelligence/ML28_theory_study/ml_7.png">
 <meta property="article:published_time" content="2025-03-23T04:00:11.000Z">
 <meta property="article:modified_time" content="2025-03-23T04:00:11.000Z">
 <meta property="article:author" content="umbrella">
@@ -155,7 +159,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#AGI%E8%B7%AF%E7%BA%BF%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">AGI路线图</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB%E2%80%94%E2%80%94%E6%9C%AA%E6%9D%A55%E5%B9%B4%E5%86%85AI%E5%B0%86%E6%9B%BF%E4%BB%A3%E9%AB%98%E7%BA%A7%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91%E4%BA%BA%E5%91%98"><span class="nav-number">3.</span> <span class="nav-text">论文解读——未来5年内AI将替代高级软件开发人员</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#AGI%E8%B7%AF%E7%BA%BF%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">AGI路线图</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB%E2%80%94%E2%80%94%E6%9C%AA%E6%9D%A55%E5%B9%B4%E5%86%85AI%E5%B0%86%E6%9B%BF%E4%BB%A3%E9%AB%98%E7%BA%A7%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91%E4%BA%BA%E5%91%98"><span class="nav-number">3.</span> <span class="nav-text">论文解读——未来5年内AI将替代高级软件开发人员</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-1"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -303,14 +307,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>10k</span>
+      <span>11k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>8 分钟</span>
+      <span>35 分钟</span>
     </span>
 </div>
 
@@ -378,7 +382,62 @@
 <p>如下图所示，作者先定义了一个<code>diverse task suite</code>，这些任务来自于三个数据集：<code>HCAST、SWAA-Suite</code>和<code>RE-Bench</code>，这三个数据集基本上都是跟<code>Software</code>、<code>Agent</code>相关。从每个数据集里面抽取了一些<code>task</code>，这些<code>task</code>所花费的时间都是不一样的，比如说：<code>HCAST</code>这一类的<code>task</code>所花费的时间为<code>1</code>分钟<del><code>30</code>小时区间范围；<code>SWAA-Suite</code>这一类<code>task</code>所花费时间为&#96;1</del>30<code>秒区间范围；</code>RE-Bench<code>这一类</code>task<code>所花费的时间大概在</code>8<code>个小时。当有了这些数据集之后，那么让人类去解决这些</code>task<code>，可能需要</code>2~3<code>个小时才能解决。用大语言模型</code>Agent<code>去执行同样的</code>task<code>，并记录一下它们的成功率，然后就分别以人类的消耗时间和</code>AI Agent<code>的成功率做一个图，就可以看到这样一种负相关。然后取成功率为</code>50%<code>，也就是是说对于一个任务，模型解决这个任务能取得50%的成功率，这个时候对于人类所需要花费的时间是多少？这里作者称这个时间为”</code>horizon length<code>“。最后用”</code>horizon length&#96;“最为纵轴，模型的发布时间作为横轴画一个图。</p>
 <img data-src="/2025/03/23/artificial-intelligence/ML28_theory_study/ml_3.png" class="" title="测量AI Agent 时间窗口的方法">
 
-<p>这个图就是模型发布的时间与人类解决这类任务需要花费的时间的关系图，比如早期的<code>GPT-2</code>模型以<code>50%</code>的成功率，解决人类所需要<code>1~2</code>秒解决的任务，随着这个时间的发展，比如到了<code>2025</code>年，模型变得越来越复杂，然后它能解决的任务也越来越复杂。比如对于<code>Claude 3.7</code>来说，它就能够解决人类需要大概<code>30~60</code>分钟才能解决的任务。这篇论文提出的<code>metric</code>，就把模型的能力与人类的水平给联系起来了。纵轴的时间虽然表示的是人类解决这个任务所花费的时间，但是它侧面却反应的是这个任务的难易程度。所以上面那个图从另外一个角度也表达了：”随着技术的发展，模型所能解决的任务也是越来越复杂“，这里坐着给了一个例子，对于不同的任务，这种复杂的程度到底是什么样子。</p>
+<p>这个图就是模型发布的时间与人类解决这类任务需要花费的时间的关系图，比如早期的<code>GPT-2</code>模型以<code>50%</code>的成功率，解决人类所需要<code>1~2</code>秒解决的任务，随着这个时间的发展，比如到了<code>2025</code>年，模型变得越来越复杂，然后它能解决的任务也越来越复杂。比如对于<code>Claude 3.7</code>来说，它就能够解决人类需要大概<code>30~60</code>分钟才能解决的任务。这篇论文提出的<code>metric</code>，就把模型的能力与人类的水平给联系起来了。纵轴的时间虽然表示的是人类解决这个任务所花费的时间，但是它侧面却反应的是这个任务的难易程度。所以上面那个图从另外一个角度也表达了：”随着技术的发展，模型所能解决的任务也是越来越复杂“，这里坐着给了一个例子，对于不同的任务，这种复杂的程度到底是什么样子？如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>花费时间</th>
+<th>任务描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>find shell script</code></td>
+<td>3秒</td>
+<td>多项选择：那个文件是<code>shell</code>脚本？选项：<code>run.sh，run.txt，run.py，run.md</code></td>
+</tr>
+<tr>
+<td><code>wikipedia research</code></td>
+<td>1分钟</td>
+<td>研究维基百科上的简单事实信息，并对简单的问题提供准确的回答。</td>
+</tr>
+<tr>
+<td><code>oxdna simple</code></td>
+<td>9分钟</td>
+<td>检测并修复使用oxDNA软件包进行分子动力学模拟的输入文件中的错误。</td>
+</tr>
+<tr>
+<td><code>munge data</code></td>
+<td>56分钟</td>
+<td>编写一个Python脚本，通过从提供的示例文件中推断转换规则，将JSON数据从一种格式转换为另一种格式。</td>
+</tr>
+<tr>
+<td><code>cuda backtesting</code></td>
+<td>8小时</td>
+<td>通过实现自定义CUDA内核，加速Python回测工具的交易执行，同时保留所有功能，目标是提高30倍性能。</td>
+</tr>
+</tbody></table>
+<p>下面这张图展示的是：这个模型的成功率是多少？从最早期的<code>GPT-2</code>模型，一直到现在<code>GPT4o、Claude 3.5、o1、Claude 3.7</code>。我们可以看到在这个<code>benchmark</code>上面，<code>Claude 3.7</code>的性能是最好的，因为它的成功率大概能到<code>60%</code>左右。但是它离<code>100%</code>还有一定的距离。</p>
+<img data-src="/2025/03/23/artificial-intelligence/ML28_theory_study/ml_4.png" class="" title="模型的在任务(General Autonomy + SWAA + RE-Bench)上的成功率表现">
+
+<p>接下来画了一下模型的成功率与人类需要解决这类任务所花费的时间的关系图，这也是一个负相关的曲线。如下图所示，如果人类在这类任务上花费的时间比较多，说明这类任务是比较难的任务，所以模型模型的成功率就比较低。</p>
+<img data-src="/2025/03/23/artificial-intelligence/ML28_theory_study/ml_5.png" class="" title="模型的成功率与人类需要解决这类任务所花费的时间的关系图">
+
+<p>这里作者也分析了一下，为什么<code>AI Agent</code>在一些任务上失败了：</p>
+<ul>
+<li><strong>糟糕的计划和工具选择</strong>：智能体生成的高层次计划而无法独立完成，或者选择的工具无法完成预期目标。</li>
+<li><strong>错误的心算或推理</strong>：智能体在关键步骤中进行了错误的心算或逻辑推理，导致任务失败。</li>
+<li><strong>过早放弃任务</strong>：智能体在任务进行到一半时放弃，提交了无意义的答案或未经检查的解决方案。这些失败通常是由于智能体在查看所有的代码或信息之前提交了结果。</li>
+<li><strong>重复失败的操作</strong>：智能体重复进行无法推进问题解决的行为，例如反复执行错误的命令，而不尝试其他方法。</li>
+</ul>
+<p>当模型推理能力加强了之后，出现<code>repeating actions</code>（重复执行）的情况反而减少了。可能跟模型具有一定的思考能力有一定关系吧。接下来，看看下面这张图。作者做了一个实验，并展示了它的实验结果。</p>
+<img data-src="/2025/03/23/artificial-intelligence/ML28_theory_study/ml_6.png" class="">
+
+<p>如上图所示，纵轴代表的是估算(<code>estimation</code>)的方法，我们就看最后一个”<code>overall 2024-2025</code>“，作者这里选的是：把任务的难度外推1个月时间长度。这里为什么选择一个月时间长度呢？这里有一个定义”<code>One month AGI</code>“，也就是说如果模型能够解决人类需要大概一个月的时间完成的的任务，那么这样的AI基本就已经超过了人类在完成一些比较复杂的大型的软件开发项目的能力，或者比如一些新的科学发现。所以作者在这里选了一个<code>one month horizon</code>作为<code>AGI</code>的代表。我们来看一下如果基于之前的结果进行外推的话，这个<code>one month AGI</code>大概能在什么时候实现呢？根据作者的预测，大概在<code>2027~2028</code>年前后，这个<code>one month AGI</code>就可以达到了。现在是2025年，也就是大概还有2~3年时间。我们就有望看到一个非常强大的<code>AI</code>，能够自主的帮我们完成非常复杂的软件开发项目和帮助我们做科研，这个时间点真的是有可能实现。</p>
+<p>下面这张图，作者主要是比较了一下任务的难度，也就是人类完成这些任务大概需要多久。纵坐标表示的是一个<code>cost ratio</code>，也就是模型的<code>cost</code>与人类的<code>cost</code>进行比较。所以这个值越小代表模型的<code>cost</code>值越低。可以看到纵坐标最高的点是<code>1</code>，所以这下面所有的点都表示模型比人类更便宜。对于那些特别简单的任务，人类大概只需花一分钟这样的一些任务，模型的<code>cost</code>和人类的<code>cost</code>比是非常低的。大概在<code>1%</code>左右，意思就是说人类大概只需要一分钟时间完成的任务，模型的消耗只有人类消耗的<code>1%</code>。还有一些任务的<code>cost</code>值更低，这就意味着随着<code>AI</code>技术的发展，一旦<code>AI</code>能解决这一类问题的时候，那么它的成本将是非常低的。目前来看，对于比较复杂的任务，大概是在<code>1%~10%</code>之间，那么对于我们人类来说，就没有比较去学习处于被<code>AI</code>替代的技能了，我们应该尽量去学习那些更加复杂，<code>AI</code>取代不了的技能。这样我们才能在社会中生存而不被<code>AI</code>所取代。</p>
+<img data-src="/2025/03/23/artificial-intelligence/ML28_theory_study/ml_7.png" class="" title="使用LLM智能体成本占人类专家执行相同任务成本的比例">
+
+<h5 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h5><p>这篇论文主要是提出了一种<code>metric</code>，这种<code>metric</code>与一般的<code>metric</code>不太一样，就是它把人类的能力考虑了进来。用人类完成任务的时间作为一个<code>baseline</code>，然后基于这个<code>baseline</code>去评价模型的能力。第二个就是做了一些<code>evaluation</code>，比较了当前模型在比较复杂的任务上的性能如何，对于一些比较简单的任务，比如人类只需要花费<code>1~2</code>分钟完成的任务，模型已经能解决的比较好了。但比较复杂的任务，模型还有待提高。最后作者做了一个<code>extraplottion</code>的实验，预期大概在<code>2027~2028</code>年前后，至少在<strong>软件开发项目</strong>这一类任务上能够实现<code>AGI</code>。</p>
 
     </div>
 
@@ -451,14 +510,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">3.1m</span>
+    <span title="站点总字数">1.4m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">43:20</span>
+    <span title="站点阅读时长">78:53</span>
   </span>
 </div>
 <div class="busuanzi-count">
