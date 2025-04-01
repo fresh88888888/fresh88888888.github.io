@@ -404,17 +404,17 @@
 <tr>
 <td><code>oxdna simple</code></td>
 <td>9分钟</td>
-<td>检测并修复使用oxDNA软件包进行分子动力学模拟的输入文件中的错误。</td>
+<td>检测并修复使用<code>oxDNA</code>软件包进行分子动力学模拟的输入文件中的错误。</td>
 </tr>
 <tr>
 <td><code>munge data</code></td>
 <td>56分钟</td>
-<td>编写一个Python脚本，通过从提供的示例文件中推断转换规则，将JSON数据从一种格式转换为另一种格式。</td>
+<td>编写一个<code>Python</code>脚本，通过从提供的示例文件中推断转换规则，将<code>JSON</code>数据从一种格式转换为另一种格式。</td>
 </tr>
 <tr>
 <td><code>cuda backtesting</code></td>
 <td>8小时</td>
-<td>通过实现自定义CUDA内核，加速Python回测工具的交易执行，同时保留所有功能，目标是提高30倍性能。</td>
+<td>通过实现自定义<code>CUDA</code>内核，加速<code>Python</code>回测工具的交易执行，同时保留所有功能，目标是提高<code>30</code>倍性能。</td>
 </tr>
 </tbody></table>
 <p>下面这张图展示的是：这个模型的成功率是多少？从最早期的<code>GPT-2</code>模型，一直到现在<code>GPT4o、Claude 3.5、o1、Claude 3.7</code>。我们可以看到在这个<code>benchmark</code>上面，<code>Claude 3.7</code>的性能是最好的，因为它的成功率大概能到<code>60%</code>左右。但是它离<code>100%</code>还有一定的距离。</p>
@@ -433,7 +433,7 @@
 <p>当模型推理能力加强了之后，出现<code>repeating actions</code>（重复执行）的情况反而减少了。可能跟模型具有一定的思考能力有一定关系吧。接下来，看看下面这张图。作者做了一个实验，并展示了它的实验结果。</p>
 <img data-src="/2025/03/23/artificial-intelligence/ML28_theory_study/ml_6.png" class="">
 
-<p>如上图所示，纵轴代表的是估算(<code>estimation</code>)的方法，我们就看最后一个”<code>overall 2024-2025</code>“，作者这里选的是：把任务的难度外推1个月时间长度。这里为什么选择一个月时间长度呢？这里有一个定义”<code>One month AGI</code>“，也就是说如果模型能够解决人类需要大概一个月的时间完成的的任务，那么这样的AI基本就已经超过了人类在完成一些比较复杂的大型的软件开发项目的能力，或者比如一些新的科学发现。所以作者在这里选了一个<code>one month horizon</code>作为<code>AGI</code>的代表。我们来看一下如果基于之前的结果进行外推的话，这个<code>one month AGI</code>大概能在什么时候实现呢？根据作者的预测，大概在<code>2027~2028</code>年前后，这个<code>one month AGI</code>就可以达到了。现在是2025年，也就是大概还有2~3年时间。我们就有望看到一个非常强大的<code>AI</code>，能够自主的帮我们完成非常复杂的软件开发项目和帮助我们做科研，这个时间点真的是有可能实现。</p>
+<p>如上图所示，纵轴代表的是估算(<code>estimation</code>)的方法，我们就看最后一个”<code>overall 2024-2025</code>“，作者这里选的是：把任务的难度外推<code>1</code>个月时间长度。这里为什么选择一个月时间长度呢？这里有一个定义”<code>One month AGI</code>“，也就是说如果模型能够解决人类需要大概一个月的时间完成的的任务，那么这样的<code>AI</code>基本就已经超过了人类在完成一些比较复杂的大型的软件开发项目的能力，或者比如一些新的科学发现。所以作者在这里选了一个<code>one month horizon</code>作为<code>AGI</code>的代表。我们来看一下如果基于之前的结果进行外推的话，这个<code>one month AGI</code>大概能在什么时候实现呢？根据作者的预测，大概在<code>2027~2028</code>年前后，这个<code>one month AGI</code>就可以达到了。现在是<code>2025</code>年，也就是大概还有<code>2~3</code>年时间。我们就有望看到一个非常强大的<code>AI</code>，能够自主的帮我们完成非常复杂的软件开发项目和帮助我们做科研，这个时间点真的是有可能实现。</p>
 <p>下面这张图，作者主要是比较了一下任务的难度，也就是人类完成这些任务大概需要多久。纵坐标表示的是一个<code>cost ratio</code>，也就是模型的<code>cost</code>与人类的<code>cost</code>进行比较。所以这个值越小代表模型的<code>cost</code>值越低。可以看到纵坐标最高的点是<code>1</code>，所以这下面所有的点都表示模型比人类更便宜。对于那些特别简单的任务，人类大概只需花一分钟这样的一些任务，模型的<code>cost</code>和人类的<code>cost</code>比是非常低的。大概在<code>1%</code>左右，意思就是说人类大概只需要一分钟时间完成的任务，模型的消耗只有人类消耗的<code>1%</code>。还有一些任务的<code>cost</code>值更低，这就意味着随着<code>AI</code>技术的发展，一旦<code>AI</code>能解决这一类问题的时候，那么它的成本将是非常低的。目前来看，对于比较复杂的任务，大概是在<code>1%~10%</code>之间，那么对于我们人类来说，就没有比较去学习处于被<code>AI</code>替代的技能了，我们应该尽量去学习那些更加复杂，<code>AI</code>取代不了的技能。这样我们才能在社会中生存而不被<code>AI</code>所取代。</p>
 <img data-src="/2025/03/23/artificial-intelligence/ML28_theory_study/ml_7.png" class="" title="使用LLM智能体成本占人类专家执行相同任务成本的比例">
 
